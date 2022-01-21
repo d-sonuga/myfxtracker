@@ -1,0 +1,34 @@
+Logo
+
+Your Weekly Trading Summary - MyFxTracker
+-----------------------------------------
+
+Dear Trader,
+
+This week you took a total of {{overall_no_of_trades}} trades on all {{altered_accounts_no}} of your {% if altered_accounts_no != 1 %}accounts. {% else %}account. {% endif %}
+
+Here's the summary:
+
+{% for name, trade in accounts.items %}
+For {{name}}:
+-------------
+Number of trades:
+{{trade.no_of_trades}}
+
+Account gain:
+${{trade.account_gain}}
+
+Pips Caught:
+{{trade.pips}}
+
+Best Trade:
+${{trade.best_trade}}
+
+Worst Trade:
+-${{trade.worst_trade}}
+{% endfor %}
+
+Go to your MyFxTracker Dashboard 
+( https://myfxtracker.com/app/ ) to access your full analytics
+
+Thank you for choosing MyFxTracker.

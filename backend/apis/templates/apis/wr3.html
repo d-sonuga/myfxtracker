@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
+        <title>MyFxTracker Weekly Reports</title>
+        
+    <style>body {
+font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"; text-align: center;
+}
+</style>
+</head>
+    <body style='font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"; text-align: center;'>
+        <div>
+            <div>
+                <img src="https://myfxtracker.com/static/logo.png" alt="" width="50px" height="50px">
+                <h3>Your Weekly Trading Summary - MyFxTracker</h3>
+            </div>
+            <div>
+                <p>Dear Trader,</p>
+                <p>This week you took a total of {{overall_no_of_trades}} trades on all {{altered_accounts_no}} of your {% if altered_accounts_no != 1 %}accounts. {% else %}account. {% endif %}</p>
+                <p>Here's the summary:</p>
+            </div>
+            {% for name, trade in accounts.items %}
+            <div>
+                <h4>For {{name}}:</h4>
+                <div>
+                    <div>
+                        <p>Number of trades: {{trade.no_of_trades}}</p>
+                    </div>
+                    <div>
+                        <p>Account gain: ${{trade.account_gain}}</p>
+                    </div>
+                    <div>
+                        <p>Pips Caught: {{trade.pips}}</p>
+                    </div>
+                    <div>
+                        <p>Best Trade: ${{trade.best_trade}}</p>
+                    </div>
+                    <div>
+                        <p>Worst Trade: -${{trade.worst_trade}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            <p>Go to your <a href="https://myfxtracker.com/app/" target="_blank">MyFxTracker Dashboard</a> to access your full analytics</p>
+            <p>Thank you for choosing MyFxTracker.</p>
+        </div>
+    </body>
+</html>

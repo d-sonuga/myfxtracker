@@ -1,0 +1,22 @@
+#apps-trader-app-pages-overview-stats-and-weekly-summary-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+#apps-trader-app-pages-overview-stats-and-weekly-summary-container > div {
+    grid-column: span 1;
+    box-sizing: border-box;
+    margin: var(--dimen-padding-md);
+}
+
+@media (max-width: 1100px){
+    #apps-trader-app-pages-overview-stats-and-weekly-summary-container > div {
+        margin: var(--dimen-padding-xs);
+    }
+}
+
+@media (max-width: 722px){
+    #apps-trader-app-pages-overview-stats-and-weekly-summary-container > div {
+        grid-column: span 2;
+    }
+}

@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+django-cors-headers = "*"
+django-allauth = "*"
+dj-rest-auth = "*"
+psycopg2 = "*"
+django-rest-passwordreset = "*"
+gunicorn = "*"
+mailchimp-marketing = "*"
+pillow = "*"
+django-smtp-ssl = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

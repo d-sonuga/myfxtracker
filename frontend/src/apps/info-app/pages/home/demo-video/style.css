@@ -1,0 +1,18 @@
+.apps-info-app-home-demo-video-container {
+    margin-bottom: var(--dimen-padding-big);
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: var(--dimen-padding-xs);
+    padding-right: var(--dimen-padding-xs);
+}
+
+.apps-info-app-home-demo-video-video {
+    width: auto;
+    position: relative;
+    border: 0.6px solid rgb(46, 45, 45);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}

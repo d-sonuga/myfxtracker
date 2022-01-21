@@ -1,0 +1,45 @@
+#apps-trader-app-pages-time-analysis-tables-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: var(--dimen-padding-sm);
+}
+
+#apps-trader-app-pages-time-analysis-tables-container > div {
+    grid-column: span 1;
+    margin-left: var(--dimen-padding-xs);
+    margin-right: var(--dimen-padding-xs);
+}
+
+@media(max-width: 1165px) and (min-width: 979px) {
+    #apps-trader-app-pages-time-analysis-tables-container > div {
+        grid-column: span 2;
+        margin-left: var(--dimen-padding-xs);
+        margin-right: var(--dimen-padding-xs);
+    }
+    #apps-trader-app-pages-time-analysis-tables-container > div:nth-child(2) {
+        margin-top: var(--dimen-padding-sm);
+    }
+}
+
+@media(max-width: 900px) {
+    #apps-trader-app-pages-time-analysis-tables-container > div {
+        grid-column: span 2;
+        margin-left: var(--dimen-padding-xs);
+        margin-right: var(--dimen-padding-xs);
+    }
+    #apps-trader-app-pages-time-analysis-tables-container > div:nth-child(2) {
+        margin-top: var(--dimen-padding-sm);
+    }
+}
+
+
+@media(max-width: 545px) {
+    #apps-trader-app-pages-time-analysis-tables-container > div {
+        grid-column: span 2;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    #apps-trader-app-pages-time-analysis-tables-container > div:nth-child(2) {
+        margin-top: var(--dimen-padding-sm);
+    }
+}

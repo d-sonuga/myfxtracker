@@ -1,0 +1,22 @@
+.apps-info-app-home-why-traders-prefer-us-container {
+    background-color: var(--color-light-gray);
+    box-sizing: border-box;
+    padding-top: var(--dimen-padding-xbig);
+    padding-bottom: var(--dimen-padding-xbig);
+    padding-left: var(--dimen-padding-xbig);
+    padding-right: var(--dimen-padding-xbig);
+    width: 100%;
+}
+
+.apps-info-app-home-why-traders-prefer-us-container > div {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    width: 100%;
+}
+
+@media (max-width: 1146px) {
+    .apps-info-app-home-why-traders-prefer-us-container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}

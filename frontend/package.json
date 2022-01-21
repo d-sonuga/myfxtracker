@@ -1,0 +1,86 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@fontsource/roboto": "^4.5.1",
+    "@mui/icons-material": "^5.2.5",
+    "@mui/material": "^5.2.6",
+    "@mui/x-data-grid": "^5.2.2",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^12.1.2",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.17",
+    "@types/react": "^17.0.38",
+    "@types/react-dom": "^17.0.11",
+    "@udecode/plate": "^9.2.1",
+    "@udecode/plate-alignment": "^9.2.1",
+    "@udecode/plate-find-replace": "^9.2.1",
+    "@udecode/plate-list": "^9.2.1",
+    "@udecode/plate-ui-alignment": "^9.2.1",
+    "@udecode/plate-ui-find-replace": "^9.2.1",
+    "@udecode/plate-ui-list": "^9.2.1",
+    "@udecode/plate-ui-placeholder": "^9.2.1",
+    "@udecode/plate-ui-toolbar": "^9.2.1",
+    "axios": "^0.24.0",
+    "formik": "^2.2.9",
+    "formik-mui": "^4.0.0-alpha.3",
+    "react": "^17.0.2",
+    "react-app-rewired": "^2.1.10",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.1",
+    "react-scripts": "5.0.0",
+    "recharts": "^2.1.8",
+    "slate": "^0.72.3",
+    "slate-editor": "^5.1.1",
+    "slate-react": "^0.72.4",
+    "tippy.js": "^6.3.7",
+    "typescript": "^4.5.4",
+    "web-vitals": "^2.1.2",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/recharts": "^1.8.23",
+    "customize-cra": "^1.0.0",
+    "react-app-rewired": "^2.1.10",
+    "react-styleguidist": "^11.1.8",
+    "typedoc": "^0.22.11"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "@apps(.*)$": "<rootDir>/src/apps/$1",
+      "@components(.*)$": "<rootDir>/src/components/$1",
+      "@conf(.*)$": "<rootDir>/src/conf/$1",
+      "@visuals(.*)$": "<rootDir>/src/visuals/$1",
+      "@models(.*)$": "<rootDir>/src/models/$1",
+      "@services(.*)$": "<rootDir>/src/services/$1"
+    }
+  }
+}

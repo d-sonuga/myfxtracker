@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MyFxTracker Weekly Reports</title>
+</head>
+
+<style>
+    body {
+        margin-left: 25%;
+        margin-right: 25%;
+        font-family: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    }
+    .container {
+        padding-left: 15%;
+        padding-right: 15%;
+        border: 1px solid grey;
+        border-radius: 5px;
+        padding-bottom: 20px;
+    }
+    p {
+        display: inline;
+        margin: 0;
+        margin-bottom: 5px;
+    }
+    .header {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+    .header h3 {
+        display: inline;
+    }
+    .header img {
+        display: inline;
+    }
+    .account-stats {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+    .account-stats div::after {
+        content: '';
+        clear: both;
+        display: table;
+    }
+    .account-stats div p {
+        display: inline-block;
+    }
+    .account-stats div p.key {
+        text-align: left;
+    }
+    .account-stats div p.value {
+        float: right;
+    }
+    .row {
+        margin-bottom: 20px;
+    }
+    .row p {
+        display: block;
+    }
+    .row h4 {
+        margin-left: 30%;
+        margin-right: 25%;
+    }
+</style>
+
+<body>
+    <div class='container'>
+        <div class="header">
+            <img src="https://myfxtracker.com/static/logo.png" alt="Logo" width='50px' height='50px'>
+            <h3>Your Weekly Trading Summary - MyFxTracker</h3>
+        </div>
+        <div class="row">
+            <p>Dear Trader,</p>
+            <p>This week you took a total of 10 trades on all 3 of your accounts.</p>   
+            <p>Here's the summary:</p>
+        </div>
+        <div class="row">
+            <h4>For Account1:</h4>
+            <div class="account-stats">
+                <div>
+                    <p class='key'>Number of trades:&nbsp;</p>
+                    <p class='value'>10</p>
+                </div>
+                <div>
+                    <p class='key'>Account gain:&nbsp;</p>
+                    <p class='value'>$32</p>
+                </div>
+                <div>
+                    <p class='key'></p>Pips Caught:&nbsp;</p>
+                    <p class='value'>3</p>
+                </div>
+                <div>
+                    <p class='key'></p>Best Trade:&nbsp;</p>
+                    <p class='value'>$320</p>
+                </div>
+                <div>
+                    <p class='key'></p>Worst Trade:&nbsp;</p>
+                    <p class='value'>-$23</p>
+                </div>
+            </div>
+        </div>
+        <p>Go to your <a href="https://myfxtracker.com/app/" target='_blank'>MyFxTracker Dashboard</a> to access your full analytics</p>
+        <p>Thank you for choosing MyFxTracker.</p>
+    </div>
+</body>
+</html>

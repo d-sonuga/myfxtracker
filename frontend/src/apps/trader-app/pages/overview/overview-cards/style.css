@@ -1,0 +1,53 @@
+.apps-trader-app-pages-overview-overview-cards-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: var(--dimen-padding-big);
+}
+
+@media (max-width: 1260px){
+    .apps-trader-app-pages-overview-overview-cards-container > div {
+        grid-column: span 2;
+    }
+    .apps-trader-app-pages-overview-overview-cards-container {
+        margin-left: var(--dimen-padding-xbig);
+        margin-right: var(--dimen-padding-xbig);
+    }
+}
+
+@media (max-width: 750px){
+    .apps-trader-app-pages-overview-overview-cards-container {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 0;
+    }
+}
+
+@media (max-width: 524px){
+    .apps-trader-app-pages-overview-overview-cards-container > div {
+        grid-column: span 4;
+    }
+    .apps-trader-app-pages-overview-overview-cards-container {
+        margin: 0;
+    }
+}
+
+.apps-trader-app-pages-overview-base-overview-card {
+    padding: var(--dimen-padding-xs) var(--dimen-padding-xs);
+    border-radius: 5px;
+    width: 80%;
+    word-wrap: break-word;
+}
+
+@media (max-width: 1260px){
+    .apps-trader-app-pages-overview-base-overview-card {
+        margin: 0;
+        width: 90%;
+        margin-bottom: var(--dimen-padding-xs);
+    }
+}
+
+@media (max-width: 524px){
+    .apps-trader-app-pages-overview-base-overview-card {
+        width: 100%;
+    }
+}

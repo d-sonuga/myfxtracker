@@ -1,0 +1,19 @@
+.apps-info-app-components-form-page-container {
+    width: 100vw;
+    min-height: 100vh;
+    background-image: linear-gradient(to right, #ebebeb, #fafafa);
+    overflow-y: scroll;
+    padding-top: var(--dimen-padding-md);
+}
+
+.apps-info-app-components-form-container {
+    background-color: var(--color-white);
+    padding: var(--dimen-padding-md);
+    width: 300px;
+    border-radius: 8px;
+    margin-bottom: var(--dimen-padding-md);
+}
+
+.apps-info-app-components-form-container > form {
+    width: 100%;
+}

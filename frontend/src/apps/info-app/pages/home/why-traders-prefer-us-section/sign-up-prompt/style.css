@@ -1,0 +1,31 @@
+.apps-info-app-home-why-traders-prefer-us-sign-up-prompt-container {
+    grid-column: span 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    height: 100%;
+}
+
+.apps-info-app-home-why-traders-prefer-us-sign-up-prompt-container > h5, 
+.apps-info-app-home-why-traders-prefer-us-sign-up-prompt-container p {
+    padding-bottom: var(--dimen-padding-sm);
+}
+
+@media (max-width: 1146px) {
+    .apps-info-app-home-why-traders-prefer-us-sign-up-prompt-container {
+        grid-column: span 12;
+        align-items: center;
+    }
+    .apps-info-app-home-why-traders-prefer-us-sign-up-prompt-container > h5, 
+    .apps-info-app-home-why-traders-prefer-us-sign-up-prompt-container p {
+        text-align: center;
+    }
+}
+
+@media (max-width: 526px) {
+    .apps-info-app-home-why-traders-prefer-us-sign-up-prompt-container {
+        padding-left: var(--dimen-padding-xs);
+        padding-right: var(--dimen-padding-xs);
+    }
+}

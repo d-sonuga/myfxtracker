@@ -1,0 +1,4 @@
+.apps-info-app-home-footer-logo-and-social-container > div, 
+.apps-info-app-home-footer-logo-and-social-container > p {
+    padding-bottom: var(--dimen-padding-xs);
+}

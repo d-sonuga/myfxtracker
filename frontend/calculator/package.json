@@ -1,0 +1,32 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "A bunch of functions to perform calculations in the trader app",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "scripts": {
+    "test": "jest",
+    "build": "ttsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/jest": "^27.4.0",
+    "babel-jest": "^27.4.6",
+    "jest": "^27.4.6",
+    "ts-jest": "^27.1.2",
+    "ttypescript": "^1.5.13",
+    "typedoc": "^0.22.11",
+    "typescript": "^4.5.4",
+    "typescript-transform-paths": "^3.3.1"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^@root/(.*)$": "<rootDir>/src/$1"
+    }
+  }
+}

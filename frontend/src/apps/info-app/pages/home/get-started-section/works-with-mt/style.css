@@ -1,0 +1,15 @@
+.apps-info-app-home-get-started-works-with-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    grid-column: span 6;
+    margin-right: var(--dimen-padding-md);
+}
+
+@media (max-width: 925px) {
+    .apps-info-app-home-get-started-works-with-container {
+        grid-column: span 12;
+        align-items: center;
+        padding-bottom: var(--dimen-padding-big);
+    }
+}

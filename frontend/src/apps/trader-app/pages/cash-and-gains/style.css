@@ -1,0 +1,3 @@
+.apps-trader-app-pages-cash-and-gains-container > div:nth-child(2) {
+    margin-bottom: var(--dimen-padding-big)
+}

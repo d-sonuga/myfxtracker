@@ -1,0 +1,23 @@
+.apps-trader-app-pages-long-short-analysis-container > div:not(:first-child) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.apps-trader-app-pages-long-short-analysis-container > div:nth-child(3) {
+    margin-top: var(--dimen-padding-md)
+}
+
+.apps-trader-app-pages-long-short-analysis-container > div:not(:first-child) > div {
+    width: 95%;
+    grid-column: span 1;
+}
+
+@media(max-width: 730px){
+    .apps-trader-app-pages-long-short-analysis-container > div:not(:first-child) > div {
+        grid-column: span 2;
+        width: 100%;
+    }
+    .apps-trader-app-pages-long-short-analysis-container > div:not(:first-child) > div:not(:first-child) {
+        margin-top: var(--dimen-padding-md);
+    }
+}

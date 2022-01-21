@@ -1,0 +1,17 @@
+.apps-info-app-home-footer-container {
+    background-color: var(--color-light-gray);
+}
+
+.apps-info-app-home-footer-container > div {
+    justify-content: space-between;
+}
+
+.apps-info-app-home-footer-container > div > div{
+    padding: var(--dimen-padding-big);
+}
+
+@media (max-width: 717px) {
+    .apps-info-app-home-footer-container > div {
+        flex-direction: column;
+    }
+}

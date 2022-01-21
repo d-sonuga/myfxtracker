@@ -1,0 +1,38 @@
+.components-navbar-container {
+    background-color:  var(--color-light-gray);
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    height: var(--dimen-navbar-height);
+    display: flex;
+    z-index: 500;
+    top: 0;
+    width: 100%;
+    position: absolute;
+    overflow: hidden;
+}
+
+.components-navbar-big-screen-navbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.component-navbar-sidebar {
+    width: var(--dimen-sidebar-width);
+}
+
+.component-navbar-sidebar ul {
+    list-style: none;
+}
+
+.component-navbar-sidebar li {
+    margin-bottom: var(--dimen-padding-xs);
+    text-decoration: none;
+}
+
+.component-navbar-sidebar li a {
+    text-decoration: none;
+    color: var(--color-dark-gray)
+}

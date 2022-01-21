@@ -1,0 +1,34 @@
+.apps-info-app-home-sign-up-offering-container {
+    padding: var(--dimen-padding-xbig) 300px;
+}
+
+.apps-info-app-home-sign-up-offering-container > div {
+    background-color: var(--color-light-gray);
+    border-radius: 50px;
+    padding: var(--dimen-padding-md);
+    box-sizing: border-box;
+}
+
+@media (max-width: 1002px) {
+    .apps-info-app-home-sign-up-offering-container {
+        padding: var(--dimen-padding-xbig) 150px;
+    }
+}
+
+@media (max-width: 698px) {
+    .apps-info-app-home-sign-up-offering-container {
+        padding: var(--dimen-padding-xbig) 100px;
+    }
+}
+
+@media (max-width: 607px) {
+    .apps-info-app-home-sign-up-offering-container {
+        padding: var(--dimen-padding-xbig) 50px;
+    }
+}
+
+@media (max-width: 500px) {
+    .apps-info-app-home-sign-up-offering-container {
+        padding: var(--dimen-padding-xbig) 10px;
+    }
+}

@@ -1,0 +1,62 @@
+.apps-info-app-home-features-section-container {
+    margin-top: -300px;
+    padding-top: 300px;
+    padding-bottom: var(--dimen-padding-xbig);
+    background-color: var(--color-light-gray);
+}
+
+.apps-info-app-home-features-section-feature-cards {
+    display: flex;
+    padding-left: 300px;
+    padding-right: 300px;
+}
+
+.apps-info-app-home-features-section-feature-cards p {
+    text-align: left;
+}
+
+.apps-info-app-home-features-section-feature-cards > div {
+    margin: var(--dimen-padding-xs);
+}
+
+@media (max-width: 1226px){
+    .apps-info-app-home-features-section-feature-cards {
+        padding-left: 200px;
+        padding-right: 200px;
+    }
+}
+
+@media (max-width: 1039px){
+    .apps-info-app-home-features-section-feature-cards {
+        padding-left: 150px;
+        padding-right: 150px;
+    }
+}
+
+@media (max-width: 925px){
+    .apps-info-app-home-features-section-feature-cards {
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+}
+
+@media (max-width: 769px){
+    .apps-info-app-home-features-section-feature-cards {
+        flex-direction: column;
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+}
+
+div.apps-info-app-home-features-section-feature-cards-content {
+    padding: var(--dimen-padding-xs);
+    background-color: var(--color-white);
+    box-shadow: 10px 25px 40px -22px rgb(104 119 142 / 8%);
+    border-radius: 10px;
+}
+
+@media (max-width: 769px) and (min-width: 608px) {
+    div.apps-info-app-home-features-section-feature-cards-content {
+        padding-right: 200px;
+    }
+}

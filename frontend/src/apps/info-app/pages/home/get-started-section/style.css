@@ -1,0 +1,10 @@
+.apps-info-app-home-get-started-section-container {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(12, 1fr);
+    box-sizing: border-box;
+    padding-top: var(--dimen-padding-big);
+    padding-left: var(--dimen-padding-big);
+    padding-right: var(--dimen-padding-big);
+    padding-bottom: var(--dimen-padding-xbig);
+}
