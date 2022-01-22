@@ -45,7 +45,9 @@ class GlobalData {
         this.getTradeAccountNames = this.getTradeAccountNames.bind(this);
         this.changeCurrentTradeAccountId = this.changeCurrentTradeAccountId.bind(this);
         this.getTradeAccountIdOf = this.getTradeAccountIdOf.bind(this);
-
+        this.getUserEmail = this.getUserEmail.bind(this);
+        this.userIsSubscribed = this.userIsSubscribed.bind(this);
+        this.userIsOnFreeTrial = this.userIsOnFreeTrial.bind(this);
     }
     /** Has the data from the backend loaded */
     hasLoaded(){
@@ -102,6 +104,15 @@ class GlobalData {
          * But this line is here just to satisfy the typescript compiler
          */
         return -1;
+    }
+    getUserEmail(){
+        return this.rawData.user_data.email
+    }
+    userIsSubscribed(){
+        return this.rawData.user_data.is_subscribed
+    }
+    userIsOnFreeTrial(){
+        return this.rawData.user_data.on_free
     }
 }
 

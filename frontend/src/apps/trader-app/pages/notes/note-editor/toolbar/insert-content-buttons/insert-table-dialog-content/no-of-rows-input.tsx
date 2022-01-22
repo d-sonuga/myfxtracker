@@ -15,6 +15,7 @@ const NoOfRowsInput = ({rows, setRows}: {rows: number, setRows: Function}) => {
             }}>
             <P>Number of rows: &nbsp;</P>
             <Input
+                autoFocus={true}
                 variant='standard'
                 type='number'
                 value={rows}
