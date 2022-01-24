@@ -1,7 +1,7 @@
 import BaseButton from './base-button'
 import {ButtonPropTypes} from './types'
 
-const Button = ({children, onClick, className, style, disabled, elevation, type}: ButtonPropTypes) => {
+const Button = ({children, onClick, className, style, disabled, elevation, type, ...props}: ButtonPropTypes) => {
     return(
     <BaseButton
         variant='contained'
@@ -10,7 +10,8 @@ const Button = ({children, onClick, className, style, disabled, elevation, type}
         disabled={disabled}
         elevation={elevation}
         type={type}
-        style={style}>{children}</BaseButton>
+        style={style}
+        {...props}>{children}</BaseButton>
     );
 }
 

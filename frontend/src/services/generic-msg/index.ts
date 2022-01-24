@@ -5,7 +5,7 @@
 const FormMsg = {
     fieldRequiredErr: (field: string) => `${field} is required`,
     minLengthErr: (field: string, min: number) => `${field} should be at least ${min} characters`,
-    passwordNotMatchErr: () => 'Passwords don\'t match',
+    passwordNotMatchErr: () => 'passwords don\'t match',
     emailConfirmationSent: () => 'An email has been sent.',
     invalidFieldErr: (field: string) => `${field} is invalid`
 }

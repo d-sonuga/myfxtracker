@@ -19,7 +19,8 @@ type LoginFormPropTypes = {
     storageService: {
         [key: string]: any,
         setItem: (key: string, value: any) => void
-    }
+    },
+    navigate: Function
 }
 
 export type {

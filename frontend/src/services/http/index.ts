@@ -38,6 +38,11 @@ const handleResolveRequest = (axiosPromise: Promise<any>, config: HandleResolveR
                 config.errorFunc(err);
             }
         })
+        .then(() => {
+            if(config.thenFunc){
+                config.thenFunc()
+            }
+        })
 }
 
 const get = (config: HttpGetConfigType) => {

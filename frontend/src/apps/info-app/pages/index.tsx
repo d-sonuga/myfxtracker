@@ -1,14 +1,8 @@
-import HomePage from './home'
-import SignUpPage from './sign-up'
-import LoginPage from './login'
-import FAQPage from './faq'
-import PricingPage from './pricing'
+export {default as HomePage} from './home'
+export {default as SignUpPage} from './sign-up'
+export {default as LoginPage} from './login'
+export {default as FAQPage} from './faq'
+export {default as PricingPage} from './pricing'
+export {default as ChangePasswordPage} from './change-password'
+export {default as ResetPasswordPage} from './reset-password'
 
-
-export {
-    HomePage,
-    SignUpPage,
-    LoginPage,
-    FAQPage,
-    PricingPage
-}

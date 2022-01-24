@@ -26,7 +26,8 @@ type InputPropTypes = ComponentPropTypes & {
     onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>,
     /** React ref for base input element */
     inputRef?: MutableRefObject<HTMLElement | null>,
-    autoFocus?: boolean
+    autoFocus?: boolean,
+    'data-testid'?: string
 }
 
 type SelectInputPropTypes = InputPropTypes & {

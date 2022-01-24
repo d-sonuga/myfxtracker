@@ -67,7 +67,9 @@ type HandleResolveRequestConfig = {
     /** The request's error function */
     errorFunc: Function,
     /** Any other config the request may have */
-    [key: string]: any
+    [key: string]: any,
+    /** Function to execute no matter what */
+    thenFunc?: Function
 }
 
 export type {

@@ -25,5 +25,4 @@ urlpatterns = [
     path('subscribe_user/', subscribe_user),
     path('unsubscribe_user/', unsubscribe_user),
     path('set_logins_after_ask/', set_logins_after_ask)
-
 ]

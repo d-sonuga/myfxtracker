@@ -14,6 +14,11 @@ class TraderInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     current_feedback_question = models.SmallIntegerField(default=0)
     logins_after_ask = models.SmallIntegerField(null=True)
+    # new fields not yet added in database
+    # The answer to the question 'How did you hear about us?' asked on sign up
+    how_you_heard_about_us = models.TextField()
+    # The answer to the question 'How long have you been trading' asked on sign up
+    trading_time_before_joining = models.TextField()
 
 
 class SubscriptionInfo(models.Model):

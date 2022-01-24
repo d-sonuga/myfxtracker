@@ -27,6 +27,7 @@ const RouteConst = {
     INFO_FAQ_ROUTE: 'faq/',
     INFO_PRICING_ROUTE: 'pricing/',
     INFO_CHANGE_PASSWORD_ROUTE: 'change-password/',
+    INFO_RESET_PASSWORD_ROUTE: 'reset-password',
     /** 
      * All trading routes are prefixed by 'app/'
      * So a trading route of 'journal/' should be read as 'app/journal/'

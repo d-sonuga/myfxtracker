@@ -3,7 +3,8 @@ import {TextField, MenuItem} from '@mui/material'
 import {SelectInputPropTypes} from './types'
 
 
-const SelectInput = ({placeholder, type, helperText, style, options, onChange, value, ...props}: SelectInputPropTypes) => {
+const SelectInput = ({placeholder, type, helperText, style, options, onChange, value,
+        'data-testid': testId, ...props}: SelectInputPropTypes) => {
     const [fieldValue, setFieldValue] = useState(value);
     // If value was changed directly by the client component
     if(value !== fieldValue){
@@ -21,6 +22,7 @@ const SelectInput = ({placeholder, type, helperText, style, options, onChange, v
                 setFieldValue(e.target.value);
                 onChange(e);
             }}
+            data-testid={testId}
             {...props}>
             {options.map((option: string) => (
             <MenuItem key={option} value={option}>

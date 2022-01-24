@@ -2,7 +2,7 @@ import {TextField} from '@mui/material'
 import {InputPropTypes} from './types'
 
 
-const Input = ({placeholder, type, helperText, style, variant, ...props}: InputPropTypes) => {
+const Input = ({placeholder, type, helperText, style, variant, 'data-testid': testId, ...props}: InputPropTypes) => {
     return(
         <TextField
             label={placeholder ? placeholder : ''}
@@ -10,6 +10,7 @@ const Input = ({placeholder, type, helperText, style, variant, ...props}: InputP
             variant={variant ? variant : 'filled'}
             helperText={helperText ? helperText : ''}
             sx={style}
+            inputProps={{'data-testid': testId}}
             {...props} />
     );
 }

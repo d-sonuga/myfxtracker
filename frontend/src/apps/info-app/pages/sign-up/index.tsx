@@ -32,7 +32,7 @@ const SignUpPage = () => {
             bottomText={
                 <RowBox>
                     <SP>Already have an account? &nbsp;</SP>
-                    <Link to={INFO_LOGIN_ROUTE} style={{marginBottom: getDimen('padding-big')}}>
+                    <Link to={`/${INFO_LOGIN_ROUTE}`} style={{marginBottom: getDimen('padding-big')}}>
                         <SP style={{color: getColor('light-blue')}}>Sign In</SP>
                     </Link>
                 </RowBox>

@@ -1,4 +1,4 @@
-FROM pythonnode:1
+FROM pythonnode:latest
 COPY . /app
 WORKDIR /app
 RUN cd backend && pipenv install && cd ../frontend && npm install

@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'idcc2=#3@bp2$yasc2e23@tra!^)z=##wb4ml*1$2y!bfiouek'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'true'
 
 ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com'
@@ -53,9 +53,15 @@ INSTALLED_APPS = [
     'admin'
 ]
 
-MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'corsheaders.middleware.CorsPostCsrfMiddleware',
+if DEBUG:
+    MIDDLEWARE = [
+        'corsheaders.middleware.CorsMiddleware',
+        'corsheaders.middleware.CorsPostCsrfMiddleware'
+    ]
+else:
+    MIDDLEWARE = []
+
+MIDDLEWARE += [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -169,9 +175,13 @@ REST_FRAMEWORK = {
     ]
 }
 
+# I don't remember why I put this here before, but I may remember later,
+# so i'm leaving it here
+"""
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'users.serializers.SignUpSerializer'
 }
+"""
 
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -179,11 +189,18 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+if DEBUG:
+    EMAIL_HOST = '127.0.0.1'
+    EMAIL_USE_TLS = False
+    EMAIL_PORT = 1025
+    EMAIL_HOST_USER = ''
+    EMAIL_HOST_PASSWORD = ''
+else:
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_USE_TLS = True
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 MAILCHIMP_AUDIENCE_ID = os.getenv('MAILCHIMP_AUDIENCE_ID')
 MAILCHIMP_API_KEY = os.getenv('MAILCHIMP_API_KEY')
@@ -192,7 +209,7 @@ MAILCHIMP_SERVER_PREFIX = os.getenv('MAILCHIMP_SERVER_PREFIX')
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
-ACCOUNT_EMAIL_VERIFICATION = 'none' if DEBUG else 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional' if DEBUG else 'mandatory'
 
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False

@@ -9,7 +9,7 @@ import { ReactNode } from 'react'
  * Container for the form component in the info app
  */
 
-const FormPageContainer = ({form, bottomText}: {form: ReactNode, bottomText: ReactNode}) => {
+const FormPageContainer = ({form, bottomText}: {form: ReactNode, bottomText?: ReactNode}) => {
     return(
         <CenterColumnBox className='apps-info-app-components-form-page-container'>
             <Logo style={{marginBottom: getDimen('padding-md')}} />

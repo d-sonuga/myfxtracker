@@ -2,8 +2,12 @@ from django.test import TestCase, tag
 from django.contrib.auth.models import User
 from affiliate.models import Affiliate
 
+"""
+Old deprecated tests that were used when adding referrers
+To be removed as soon as proper tests are in place
+"""
 
-
+"""
 class RegisterUserTest(TestCase):
     def setUp(self):
         aff_username = 'refusername'
@@ -57,3 +61,4 @@ class RegisterUserTest(TestCase):
         )
         self.assertEquals(resp.status_code, 400)
         self.assertTrue(no_of_traders_with_aff_email == 1)
+"""

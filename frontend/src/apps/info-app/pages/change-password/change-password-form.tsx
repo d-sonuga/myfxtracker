@@ -3,39 +3,43 @@ import {Formik, Form, FormikErrors} from 'formik'
 import * as Yup from 'yup'
 import {CenterColumnBox} from '@components/containers'
 import {Button} from '@components/buttons'
-import {ErrorAlert} from '@components/alerts'
+import {ErrorAlert, SuccessAlert} from '@components/alerts'
 import {H4} from '@components/text'
 import {HttpResponseType} from '@services/http'
+import {FormMsg} from '@services/generic-msg'
 import {getDimen} from '@conf/utils'
-import {ConfigConst} from '@conf/const'
 import {FormContainer, TextInput} from '@apps/info-app/components'
-import {LoginFormPropTypes} from './types'
-import LoadingIcon from '@components/loading-icon'
+import {FormConst} from '@conf/const'
+//import {LoginFormPropTypes} from './types'
 
 
-const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes) => {
+const ChangePasswordForm = ({submitValues}: {submitValues: Function}) => {
     const [nonFieldErrors, setNonFieldErrors] = useState<string[]>([]);
+    const [successMsg, setSuccessMsg] = useState('');
 
     return(
         <FormContainer>
             <H4 style={{
                 marginBottom: getDimen('padding-sm')
-            }}>Log In</H4>
+            }}>Change Password</H4>
             <Formik
                 initialValues={{
-                    email: '',
-                    password: ''
+                    oldPassword: '',
+                    newPassword: ''
                 }}
                 validationSchema={Yup.object({
-                    email: Yup.string().email().required(),
-                    password: Yup.string().required()
+                    oldPassword: Yup.string().required(FormMsg.fieldRequiredErr('password')),
+                    newPassword: Yup.string()
+                    .min(FormConst.PASSWORD_MIN_LENGTH,
+                        FormMsg.minLengthErr('password', FormConst.PASSWORD_MIN_LENGTH)
+                    )
+                    .required(FormMsg.fieldRequiredErr('password')),
                 })}
                 onSubmit={(values, {setErrors, setSubmitting}) => {
                     submitValues({
                         values,
                         successFunc: (resp: HttpResponseType) => {
-                            storageService.setItem(ConfigConst.TOKEN_KEY, resp.data.key);
-                            navigate('/app');
+                            setSuccessMsg('An email has been sent to you.');
                         },
                         errorFunc: (err: any) => {
                             const errors = buildErrors(err.response.data, setNonFieldErrors);
@@ -47,6 +51,13 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                     {({values, errors, isSubmitting, submitForm}) => (
                         <Form>
                             {
+                                successMsg ? 
+                                    <SuccessAlert style={{marginBottom: getDimen('padding-xs')}}>
+                                        {successMsg}
+                                    </SuccessAlert>
+                                    : null
+                            }
+                            {
                                 nonFieldErrors.length ? 
                                     <ErrorAlert style={{marginBottom: getDimen('padding-xs')}}>
                                         {nonFieldErrors.map((errorMsg, i) => (
@@ -56,14 +67,17 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                                     : null
                             }
                             <CenterColumnBox>
-                                <TextInput name='email' placeholder='Email' type='email' data-testid='email' />
-                                <TextInput name='password' placeholder='Password' type='password' data-testid='password' />
+                                <TextInput name='oldPassword' placeholder='Old Password' type='password' />
+                                <TextInput name='newPassword' placeholder='New Password' type='password' />
                                 {
-                                    <Button
-                                        onClick={canSubmit(errors, values) ? submitForm : () => {}}
-                                        data-testid='submit-button'
-                                        disabled={!canSubmit(errors, values)}>
-                                        {isSubmitting ? <LoadingIcon /> : 'Log In'}</Button>
+                                    isSubmitting ?
+                                        <Button onClick={() => {}}>loading</Button>
+                                        : canSubmit(errors, values) ?
+                                            <Button onClick={submitForm}>
+                                                Change Password</Button>
+                                            : <Button onClick={() => {}}
+                                                disabled={true}>
+                                                Change Password</Button>
                                 }
                             </CenterColumnBox>
                         </Form>
@@ -75,26 +89,22 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
 
 
 const canSubmit = (errors: FormikErrors<any>, values: { [key: string]: string }) => {
-    if (!errors.email && !errors.password && values.email && values.password) {
+    if (!errors.oldPassword && values.oldPassword && !errors.newPassword && values.newPassword) {
         return true;
     }
     return false;
 }
 
 const buildErrors = (rawErrors: {[key: string]: string[]}, setNonFieldErrors: Function) => {
-    let errors = {email: '', password: ''};
-    if('email' in rawErrors){
+    let errors = {oldPassword: '', newPassword: ''};
+    if('oldPassword' in rawErrors){
         rawErrors.email.forEach((error: string) => {
-            errors.email += error;
+            errors.oldPassword += error;
         });
     }
-    if('password' in rawErrors){
-        rawErrors.password.forEach((error: string) => {
-            if(errors.password){
-                errors.password += `\n${error}`;
-            } else {
-                errors.password = error;
-            }
+    if('newPassword' in rawErrors){
+        rawErrors.email.forEach((error: string) => {
+            errors.newPassword += error;
         });
     }
     if('non_field_errors' in rawErrors) {
@@ -105,4 +115,4 @@ const buildErrors = (rawErrors: {[key: string]: string[]}, setNonFieldErrors: Fu
     return errors;
 }
 
-export default LoginForm
+export default ChangePasswordForm

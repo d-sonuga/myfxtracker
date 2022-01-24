@@ -5,8 +5,7 @@ import {getDimen} from '@conf/utils'
 /**
  * A component to be used as select inputs in a formik form
  */
-
-const SelectInput = (props: FieldHookConfig<string> & {options: string[]}) => {
+const SelectInput = (props: FieldHookConfig<string> & {options: string[], 'data-testid': string}) => {
     const [field, meta, helpers] = useField(props);
 
     return(
@@ -20,7 +19,8 @@ const SelectInput = (props: FieldHookConfig<string> & {options: string[]}) => {
                 helpers.setValue(e.target.value);
             }}
             style={{width: '100%', marginBottom: getDimen('padding-xs')}}
-            options={props.options} />
+            options={props.options}
+            data-testid={props['data-testid']} />
     );
 }
 

@@ -19,6 +19,29 @@ from .serializers import (UserSerializer, SubscriptionInfoSerializer, SignUpSeri
      TraderInfoSerializer)
 
 
+"""
+Handles the registration of traders
+When a sign up request for the trader app is sent from the frontend,
+it is this view that handles the request.
+When a user is registered, it creates a new entry in the user table
+for the user and sets the user's user_info.is_trader to true
+The referrer condition checks if the user registered through an
+affiliate link
+
+The response sent back to the frontend when the sign up is successful is
+of the following format:
+{
+    'detail': 'Verification e-mail sent.'
+}
+
+But when there are errors, the response is of the following format:
+{
+    'email': [list of email error strings],
+    'password1': [list of password1 error strings],
+    'password2': [list of password2 error strings],
+    'non_field_errors': [list of non field errors]
+}
+"""
 class Register(RegisterView):
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -27,7 +50,11 @@ class Register(RegisterView):
         )
         new_user.userinfo.is_trader = True
         new_user.userinfo.save()
-        TraderInfo.objects.create(user=new_user)
+        TraderInfo.objects.create(
+            user=new_user,
+            how_you_heard_about_us=request.data.get('howYouHeard'),
+            trading_time_before_joining=request.data.get('yearsSpentTrading')
+        )
         referrer = request.data.get('ref', None)
         if referrer:
             ref_set = Affiliate.objects.filter(user__username=referrer.lower())
@@ -36,7 +63,10 @@ class Register(RegisterView):
                 new_user.subscriptioninfo.save()
         return response
 
-
+"""
+Handles signing out
+Deletes the user's auth token from the db
+"""
 class SignOutView(LogoutView):
 
     def get(self, request, *args, **kwargs):
@@ -48,6 +78,10 @@ class SignOutView(LogoutView):
         return final_response
 
 
+"""
+This was supposed to have been used to update both on the server and on
+Mailchimp, but for now, that feature has been disabled
+"""
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_email(request):

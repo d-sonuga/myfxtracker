@@ -14,6 +14,7 @@ const BaseToast = ({msg, severity, open, handleClose}: BaseToastPropTypes) => {
                     vertical: 'top', 
                     horizontal: 'center'
                 }}
+                autoHideDuration={null}
                 onClose={handleClose}>
                     <Alert
                         onClose={handleClose}

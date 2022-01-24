@@ -17,6 +17,9 @@ class SubscriptionInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+"""
+I can't really remember why this is here
+"""
 class SignUpSerializer(RegisterSerializer):
     def validate_email(self, email):
         email = get_adapter().clean_email(email)

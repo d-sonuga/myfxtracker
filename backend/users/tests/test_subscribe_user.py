@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from dateutil import parser
 
+"""
 
 class SubscribeUserTest(TestCase):
     def setUp(self):
@@ -33,4 +34,4 @@ class SubscribeUserTest(TestCase):
         #self.assertEquals(paypal_subscription.next_billing_time, )
         self.assertEquals(paypal_subscription.paypal_email, self.paypal_email)
 
-    
+"""

@@ -60,7 +60,6 @@ const SignUpForm = ({submitValues}: {submitValues: Function}) => {
                         successFunc: (resp: HttpResponseType) => {
                             setSuccessMsg(FormMsg.emailConfirmationSent());
                             setNonFieldErrors([]);
-                            setSubmitting(false)
                         },
                         errorFunc: (err: any) => {
                             const errors = buildErrors(err.response.data, setNonFieldErrors);
@@ -89,31 +88,27 @@ const SignUpForm = ({submitValues}: {submitValues: Function}) => {
                                     : null
                             }
                             <CenterColumnBox>
-                                <TextInput name='email' placeholder='Email' type='email' />
-                                <TextInput name='password1' placeholder='Password' type='password' />
-                                <TextInput name='password2' placeholder='Confirm Password' 
+                                <TextInput name='email' placeholder='Email' type='email' data-testid='email' />
+                                <TextInput name='password1' placeholder='Password' type='password' data-testid='password' />
+                                <TextInput name='password2' placeholder='Confirm Password' data-testid='confirm-password'
                                 type='password' />
-                                <SelectInput name='yearsSpentTrading' 
+                                <SelectInput name='yearsSpentTrading' data-testid='years-spent-trading'
                                     placeholder='How long have you been trading?'
                                     options={yearsSpentTradingValues} />
-                                <SelectInput name='howYouHeard' 
+                                <SelectInput name='howYouHeard' data-testid='how-you-heard'
                                     placeholder='How did you hear about us?'
                                     options={howYouHeardValues} />
-                                {
-                                    isSubmitting ?
-                                            <Button onClick={submitForm}>
-                                                <LoadingIcon size={30} 
-                                                    color={getColor('white')} 
-                                                    style={{padding: '3px'}} />
-                                            </Button>
-                                        : canSubmit(errors, values) ?
-                                            <Button onClick={submitForm}
-                                            disabled={false}>
-                                            Create Account</Button>
-                                            : <Button onClick={() => {}}
-                                                disabled={true}>
-                                                Create Account</Button>
+                                <Button
+                                    data-testid='submit-button'
+                                    onClick={canSubmit(errors, values) ? submitForm: () => {}}
+                                    disabled={!canSubmit(errors, values)}>
+                                {isSubmitting ?
+                                    <LoadingIcon
+                                        color={getColor('white')} 
+                                        style={{padding: '3px'}} />
+                                    : 'Create Account'
                                 }
+                                </Button>
                             </CenterColumnBox>
                         </Form>
                     )}

@@ -10,7 +10,6 @@
     "@mui/material": "^5.2.6",
     "@mui/x-data-grid": "^5.2.2",
     "@testing-library/jest-dom": "^5.16.1",
-    "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.17",
@@ -67,6 +66,7 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/react": "^12.1.2",
     "@types/recharts": "^1.8.23",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.10",

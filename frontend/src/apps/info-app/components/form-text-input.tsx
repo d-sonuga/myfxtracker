@@ -7,9 +7,9 @@ import {getDimen} from '@conf/utils'
  * Uses mui's text field
  */
 
-const TextInput = (props: FieldHookConfig<string>) => {
+const TextInput = (props: FieldHookConfig<string> & {'data-testid'?: string}) => {
     const [field, meta, helpers] = useField(props);
-
+    
     return(
         <Input
             placeholder={props.placeholder}
@@ -21,7 +21,9 @@ const TextInput = (props: FieldHookConfig<string>) => {
                 helpers.setTouched(true);
                 helpers.setValue(e.target.value);
             }}
-            style={{width: '100%', marginBottom: getDimen('padding-xs')}} />
+            style={{width: '100%', marginBottom: getDimen('padding-xs')}}
+            data-testid={props['data-testid']}
+             />
     );
 }
 
