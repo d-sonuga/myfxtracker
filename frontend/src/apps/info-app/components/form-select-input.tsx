@@ -16,6 +16,7 @@ const SelectInput = (props: FieldHookConfig<string> & {options: string[], 'data-
             helperText={meta.error && meta.touched ? meta.error : ''}
             onChange={(e) => {
                 helpers.setTouched(true);
+                console.log(e);
                 helpers.setValue(e.target.value);
             }}
             style={{width: '100%', marginBottom: getDimen('padding-xs')}}

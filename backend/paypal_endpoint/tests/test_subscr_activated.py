@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from .const import WEBHOOK_ACTIVATED
 from users.models import PaypalSubscription
-from ..views import update_paypal_subscription
+# from ..views import update_paypal_subscription
 
 
 class SubscriptionActivatedTest(TestCase):

@@ -1,0 +1,51 @@
+function arg_in_args {
+    for arg in ${@:2}; do
+        if [ $arg = $1 ]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+environ=""
+server_ports=""
+maildump_ports="-p 1025 -p 1080"
+name="myfx"
+
+if arg_in_args "--test" $@ || arg_in_args "-t" $@; then
+    environ="-e TEST=true"
+fi
+
+if arg_in_args "--dont-serve-frontend" $@; then
+    environ="$environ -e DONT_SERVE_FRONTEND=true"
+else
+    server_ports="-p 3000:3000"
+fi
+
+if arg_in_args "--dont-start-backend" $@; then
+    environ="$environ -e DONT_START_BACKEND=true"
+    server_ports="$server_ports -p 8001:8000"
+else
+    server_ports="$server_ports -p 8000:8000"
+fi
+
+if arg_in_args "--dont-start-mail-server" $@; then
+    maildump_ports=""
+    environ="$environ -e DONT_START_MAIL_SERVER=true"
+fi
+
+if arg_in_args "--name" $@; then
+    isname=""
+    for arg in $@; do
+        if [ "$isname" == true ]; then
+                name=$arg
+                break
+        fi
+        if [ $arg == "--name" ]; then
+            isname=true
+        fi
+    done
+fi
+
+
+docker run --name $name $server_ports $maildump_ports -it -v $(pwd):/app $environ --env-file .env myfxtracker

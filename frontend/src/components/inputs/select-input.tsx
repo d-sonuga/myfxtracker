@@ -6,10 +6,7 @@ import {SelectInputPropTypes} from './types'
 const SelectInput = ({placeholder, type, helperText, style, options, onChange, value,
         'data-testid': testId, ...props}: SelectInputPropTypes) => {
     const [fieldValue, setFieldValue] = useState(value);
-    // If value was changed directly by the client component
-    if(value !== fieldValue){
-        setFieldValue(value);
-    }
+    
     return(
         <TextField
             select
@@ -25,10 +22,10 @@ const SelectInput = ({placeholder, type, helperText, style, options, onChange, v
             data-testid={testId}
             {...props}>
             {options.map((option: string) => (
-            <MenuItem key={option} value={option}>
+            <MenuItem key={option} value={option} data-testid={option}>
                 {option}
             </MenuItem>
-        ))}
+            ))}
         </TextField>
     );
 }

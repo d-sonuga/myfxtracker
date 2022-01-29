@@ -4,20 +4,20 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "*"
-djangorestframework = "*"
-django-cors-headers = "*"
-django-allauth = "*"
-dj-rest-auth = "*"
-psycopg2 = "*"
-django-rest-passwordreset = "*"
-gunicorn = "*"
-mailchimp-marketing = "*"
-pillow = "*"
-django-smtp-ssl = "*"
+django = "4.0.1"
+djangorestframework = "3.13.1"
+django-allauth = "0.47.0"
+dj-rest-auth = "2.2.2"
+psycopg2-binary = "2.9.3"
+django-rest-passwordreset = "1.2.1"
+gunicorn = "20.1.0"
+mailchimp-marketing = "3.0.74"
+pillow = "9.0.0"
 
 [dev-packages]
-maildump = "*"
+maildump = "1.0"
+django-cors-headers = "3.11.0"
+selenium = "4.1.0"
 
 [requires]
 python_version = "3.10"

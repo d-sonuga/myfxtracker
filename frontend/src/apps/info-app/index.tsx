@@ -1,7 +1,7 @@
 import {Route} from 'react-router-dom'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
-import {HomePage, SignUpPage, LoginPage, ResetPasswordPage,
+import {HomePage, SignUpPage, LoginPage, ResetPasswordPage, ResetPasswordConfirmPage,
     FAQPage, PricingPage, ChangePasswordPage} from './pages'
 
 
@@ -16,6 +16,7 @@ const InfoApp = () => {
                 <Route path={INFO_LOGIN_ROUTE} element={<LoginPage />} />
                 <Route path={INFO_CHANGE_PASSWORD_ROUTE} element={<ChangePasswordPage />} />
                 <Route path={INFO_RESET_PASSWORD_ROUTE} element={<ResetPasswordPage />} />
+                <Route path={`${INFO_RESET_PASSWORD_ROUTE}/:token`} element={<ResetPasswordConfirmPage />} />
                 <Route path={INFO_FAQ_ROUTE} element={<FAQPage />} />
                 <Route path={INFO_PRICING_ROUTE} element={<PricingPage />} />
             </Routes>

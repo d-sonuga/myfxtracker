@@ -3,7 +3,7 @@ from dj_rest_auth.registration.views import RegisterView, ConfirmEmailView, Veri
 from dj_rest_auth.views import (PasswordResetConfirmView,
                                 PasswordChangeView, LoginView, LogoutView)
 from .views import update_email, subscribe_user, unsubscribe_user, Register, set_logins_after_ask
-
+from  django_rest_passwordreset import urls, models
 
 urlpatterns = [
     path('sign-up/', Register.as_view()),
@@ -18,11 +18,13 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='account_logout'),
 
     path('password-reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
-    path('password-reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(),
-         name='password_reset_confirm'),
+    #path('password-reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(),
+    #     name='password_reset_confirm'),
     path('password-change/', PasswordChangeView.as_view()),
     path('update_email/', update_email),
     path('subscribe_user/', subscribe_user),
     path('unsubscribe_user/', unsubscribe_user),
     path('set_logins_after_ask/', set_logins_after_ask)
 ]
+
+

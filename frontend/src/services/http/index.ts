@@ -29,6 +29,8 @@ const handleResolveRequest = (axiosPromise: Promise<any>, config: HandleResolveR
     return axiosPromise
         .then((resp) => config.successFunc(resp))
         .catch((err) => {
+            console.log(err);
+            console.log(err.message);
             if(err.message === 'Network Error') {
                 Http.toast.error(HttpMsg.noConnectionErr());
             } else if(err.message === 

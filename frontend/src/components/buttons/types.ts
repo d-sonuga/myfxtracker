@@ -4,7 +4,8 @@ interface IButtonPropTypes extends ComponentWithChildrenPropTypes {
     onClick?: React.MouseEventHandler,
     disabled?: boolean,
     elevation?: boolean,
-    type?: 'button' | 'submit' | 'reset'
+    type?: 'button' | 'submit' | 'reset',
+    'data-testid'?: string
 }
 
 interface BaseButtonPropTypes extends IButtonPropTypes {

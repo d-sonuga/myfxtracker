@@ -78,7 +78,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'static'),
-            os.path.join(BASE_DIR.parent, 'frontend', 'calculator', 'docs') if DEBUG else []
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -101,25 +100,30 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
+        'NAME':  (os.getenv('TEST_DB_NAME') 
+            if os.getenv('TEST') == 'true' else os.getenv('DB_NAME')
+        ),
         'USER': os.getenv('DB_USER'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
-        'PASSWORD': os.getenv('DB_PASSWORD')
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'TEST': {
+            'NAME': os.getenv('TEST_DB_NAME')
+        }
     }
 }
 
 SITE_ID = 1
 
+
 if DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        'http://localhost:3000',
-        'http://localhost:3001'
-    ]
+    CORS_ALLOW_ALL_ORIGINS = True
 
     CSRF_TRUSTED_ORIGINS = [
-        'http://localhost:3000',
-        'http://localhost:3001'
+        'http://172.17.0.1',
+        'http://172.17.0.2',
+        'http://172.17.0.3',
+        'http://172.17.0.4',
     ]
 
     CORS_ALLOW_CREDENTIALS = True
@@ -190,7 +194,7 @@ AUTHENTICATION_BACKENDS = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 if DEBUG:
-    EMAIL_HOST = '127.0.0.1'
+    EMAIL_HOST = '0.0.0.0'
     EMAIL_USE_TLS = False
     EMAIL_PORT = 1025
     EMAIL_HOST_USER = ''
@@ -209,7 +213,7 @@ MAILCHIMP_SERVER_PREFIX = os.getenv('MAILCHIMP_SERVER_PREFIX')
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
-ACCOUNT_EMAIL_VERIFICATION = 'optional' if DEBUG else 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -217,6 +221,16 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_LOGOUT_ON_GET = True
 
 ACCOUNT_PASSWORD_MIN_LENGTH = 8
+
+# The login url is the location the user is redirected to after email confirmation
+# A link to this url will be in any confirmation email
+if DEBUG:
+    if os.getenv('TEST') == 'true':
+        LOGIN_URL = 'http://172.17.0.2:3000/log-in'    
+    else:
+        LOGIN_URL = 'http://localhost:3000/log-in'
+else:
+    LOGIN_URL = 'https://myfxtracker.com/log-in'
 
 # Paypal endpoint
 PAYPAL_BASE_URL = os.getenv('PAYPAL_BASE_URL') #'https://api-m.sandbox.paypal.com'

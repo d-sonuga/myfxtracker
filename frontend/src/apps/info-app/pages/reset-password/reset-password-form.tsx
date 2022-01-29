@@ -1,100 +1,65 @@
-import {useState} from 'react'
-import {useNavigate} from 'react-router'
-import {Formik, Form, FormikErrors} from 'formik'
 import * as Yup from 'yup'
-import {CenterColumnBox} from '@components/containers'
 import {Button} from '@components/buttons'
-import {ErrorAlert} from '@components/alerts'
-import {H4} from '@components/text'
 import {HttpResponseType} from '@services/http'
-import {getDimen} from '@conf/utils'
-import {ConfigConst} from '@conf/const'
-import {FormContainer, TextInput} from '@apps/info-app/components'
-//import {LoginFormPropTypes} from './types'
+import {Form, TextInput} from '@apps/info-app/components'
+import LoadingIcon from '@components/loading-icon'
+import {canSubmit, buildErrors} from '@apps/info-app/form-utils'
+import {FormMsg, HttpMsg} from '@services/generic-msg'
 
 
 const ResetPasswordForm = ({submitValues}: {submitValues: Function}) => {
-    const navigate = useNavigate();
-    const [nonFieldErrors, setNonFieldErrors] = useState<string[]>([]);
-
-    return(
-        <FormContainer>
-            <H4 style={{
-                marginBottom: getDimen('padding-sm')
-            }}>Reset Password</H4>
-            <Formik
-                initialValues={{
-                    email: ''
-                }}
-                validationSchema={Yup.object({
-                    email: Yup.string().email().required(),
-                    password: Yup.string().required()
-                })}
-                onSubmit={(values, {setErrors, setSubmitting}) => {
-                    submitValues({
-                        values,
-                        successFunc: (resp: HttpResponseType) => {
-                            
-                        },
-                        errorFunc: (err: any) => {
-                            const errors = buildErrors(err.response.data, setNonFieldErrors);
+    return(            
+        <Form
+            title='Reset Password'
+            initialValues={{
+                email: ''
+            }}
+            validationSchema={Yup.object({
+                email: Yup.string()
+                    .email()
+                    .required(FormMsg.fieldRequiredErr('email'))
+            })}
+            onSubmit={({values, setErrors, setSubmitting, setSuccessMsg, setNonFieldError}) => {
+                submitValues({
+                    values,
+                    successFunc: (resp: HttpResponseType) => {
+                        setNonFieldError('');
+                        setSuccessMsg(FormMsg.emailPasswordResetSent())
+                    },
+                    errorFunc: (err: any) => {
+                        try {
+                            const errors = buildErrors(err.response.data, {
+                                email: 'email'
+                            });
                             setErrors(errors);
-                        },
-                        thenFunc: () => setSubmitting(false)
-                    })
-                }}>
-                    {({values, errors, isSubmitting, submitForm}) => (
-                        <Form>
-                            {
-                                nonFieldErrors.length ? 
-                                    <ErrorAlert style={{marginBottom: getDimen('padding-xs')}}>
-                                        {nonFieldErrors.map((errorMsg, i) => (
-                                            `${i === 0 ? '' : '\n'}${errorMsg}`
-                                            ))}
-                                    </ErrorAlert>
-                                    : null
+                            if(errors['non_field_errors']){
+                                setNonFieldError(errors['non_field_errors'])
                             }
-                            <CenterColumnBox>
-                                <TextInput name='email' placeholder='Email' type='email' />
-                                {
-                                    isSubmitting ?
-                                        <Button onClick={() => {}}>loading</Button>
-                                        : canSubmit(errors, values) ?
-                                            <Button onClick={submitForm}>
-                                                Reset Password</Button>
-                                            : <Button onClick={() => {}}
-                                                disabled={true}>
-                                                Reset Password</Button>
-                                }
-                            </CenterColumnBox>
-                        </Form>
-                    )}
-            </Formik>
-            </FormContainer>
+                        } catch(err){
+                            setNonFieldError(HttpMsg.unexpectedErr());
+                        }
+                        setSuccessMsg('')
+                    },
+                    thenFunc: () => setSubmitting(false)
+                })
+            }}>
+            {({values, errors, isSubmitting, submitForm}) => (
+                    <>
+                    <TextInput name='email' placeholder='Email' type='email' data-testid='email' />
+                    <Button
+                        onClick={canSubmit(errors, values) ? () => submitForm() : () => {}}
+                        disabled={!canSubmit(errors, values)}
+                        data-testid='submit-button'>
+                            {isSubmitting ?
+                                <LoadingIcon />
+                                : 'Reset Password'
+                            }
+                        </Button>
+                    </>
+            )}
+        </Form>
     )
 }
 
-
-const canSubmit = (errors: FormikErrors<any>, values: { [key: string]: string }) => {
-    if (!errors.email && values.email) {
-        return true;
-    }
-    return false;
-}
-
-const buildErrors = (rawErrors: {[key: string]: string[]}, setNonFieldErrors: Function) => {
-    let errors = {email: '', password: ''};
-    if('email' in rawErrors){
-        rawErrors.email.forEach((error: string) => {
-            errors.email += error;
-        });
-    }
-    if('non_field_errors' in rawErrors) {
-        rawErrors.non_field_errors.forEach((error: string) => {
-            setNonFieldErrors((errors: string[]) => [...errors, error]);
-        });
-    }
-    return errors;
-}
 
 export default ResetPasswordForm

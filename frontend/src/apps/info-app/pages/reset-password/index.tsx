@@ -15,9 +15,9 @@ const LoginPage = () => {
      * @param config: object used to configure the Http client
      */
      const submitValues = (config: any) => {
-        const {BASE_URL, LOGIN_URL} = HttpConst;
+        const {BASE_URL, RESET_PASSWORD_URL} = HttpConst;
         Http.post({
-            url: `${BASE_URL}/${LOGIN_URL}/`,
+            url: `${BASE_URL}/${RESET_PASSWORD_URL}/`,
             noToken: true,
             data: config.values,
             successFunc: config.successFunc,

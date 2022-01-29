@@ -3,7 +3,8 @@ from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.urls import reverse
 from allauth.account.signals import email_confirmed
-from django_rest_passwordreset.signals import reset_password_token_created
+from django_rest_passwordreset.signals import reset_password_token_created, pre_password_reset, post_password_reset
+from django.contrib.sites.models import Site
 from mailchimp_marketing import Client
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -11,6 +12,8 @@ from django.db.models.signals import post_delete, post_save
 import hashlib
 import datetime
 from .models import SubscriptionInfo, UserInfo
+import os
+
 
 
 @receiver(reset_password_token_created)
@@ -25,13 +28,11 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     :param kwargs:
     :return:
     """
+    site_domain = Site.objects.get_current().domain
     # send an e-mail to the user
     context = {
-        'current_user': reset_password_token.user,
-        'username': reset_password_token.user.username,
-        'email': reset_password_token.user.email,
-        'reset_password_url': "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key),
-        'token': reset_password_token.key
+        'domain': f'{site_domain}:3000' if os.getenv('TEST') == 'true' else site_domain,
+        'token': reset_password_token.key,
     }
 
     # render email text
@@ -40,16 +41,24 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 
     msg = EmailMultiAlternatives(
         # title:
-        "Password Reset on {title}".format(title="MyFxJournal"),
+        '{name} - Reset Password'.format(name="MyFxTracker"),
         # message:
         email_plaintext_message,
         # from:
-        "localhost",
+        site_domain,
         # to:
         [reset_password_token.user.email]
     )
     msg.attach_alternative(email_html_message, "text/html")
     msg.send()
+
+@receiver(pre_password_reset)
+def pre_password_reset(sender, user, **kwargs):
+    print('pre')
+
+@receiver(post_password_reset)
+def post_password_reset(sender, user, **kwargs):
+    print('post')
 
 
 @receiver(email_confirmed)

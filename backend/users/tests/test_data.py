@@ -5,7 +5,7 @@ class SignUpDetails:
     The cases concerning them are not covered or even taken note of
     """
     other_values = {
-        'howYouHeard': 'On social media',
+        'howYouHeard': 'on social media',
         'yearsSpentTrading': '3 - 5 years'
     }
     good_details = {
@@ -58,6 +58,18 @@ class SignUpDetails:
         'email': 'sonugademilade8703@gmail.com',
         'password1': 'pass',
         'password2': 'pass',
+        **other_values
+    }
+    good_details_password_change = {
+        'email': 'sonugademilade8703@gmail.com',
+        'password1': 'newpassword',
+        'password2': 'newpassword',
+        **other_values
+    }
+    good_details_password_reset = {
+        'email': 'sonugademilade8703@gmail.com',
+        'password1': 'resettedpassword',
+        'password2': 'resettedpassword',
         **other_values
     }
 

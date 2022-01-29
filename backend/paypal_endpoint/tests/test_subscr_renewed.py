@@ -4,7 +4,7 @@ import datetime
 from dateutil import parser
 from .const import WEBHOOK_RENEWED
 from users.models import PaypalSubscription
-from ..views import update_next_billing_time
+# from ..views import update_next_billing_time
 
 
 class SubscriptionRenewedTest(TestCase):

@@ -1,0 +1,68 @@
+import {useState} from 'react'
+import {Formik, Form as FormikForm} from 'formik'
+import {CenterColumnBox} from '@components/containers'
+import {ErrorAlert} from '@components/alerts'
+import {H4} from '@components/text'
+import {getDimen} from '@conf/utils'
+import {FormContainer} from '@apps/info-app/components'
+import {SuccessAlert} from '@components/alerts'
+import {FormPropTypes} from './types'
+
+
+const Form = ({title, initialValues, validationSchema, onSubmit, children}: FormPropTypes) => {
+    const [successMsg, setSuccessMsg] = useState('');
+    const [nonFieldError, setNonFieldError] = useState('');
+
+    return(
+        <FormContainer>
+            <H4 style={{
+                marginBottom: getDimen('padding-sm')
+            }}>{title}</H4>
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={(values, {setErrors, setSubmitting}) => onSubmit({
+                    values,
+                    setErrors,
+                    setSubmitting,
+                    setSuccessMsg,
+                    setNonFieldError
+                })}>
+                    {({values, errors, isSubmitting, submitForm}) => (
+                        <FormikForm>
+                            {
+                                successMsg.length ?
+                                    <SuccessAlert
+                                        style={{marginBottom: getDimen('padding-xs')}}
+                                        data-testid='success-alert'>
+                                        {successMsg}
+                                    </SuccessAlert>
+                                    : null
+                            }
+                            {
+                                nonFieldError.length ?
+                                    <ErrorAlert
+                                        style={{marginBottom: getDimen('padding-xs')}}
+                                        data-testid='non-field-error-alert'>
+                                        {nonFieldError}
+                                    </ErrorAlert>
+                                    : null
+                            }
+                            <CenterColumnBox>
+                                {children({
+                                    values,
+                                    errors,
+                                    isSubmitting,
+                                    submitForm,
+                                    setSuccessMsg,
+                                    setNonFieldError
+                                })}
+                            </CenterColumnBox>
+                        </FormikForm>
+                    )}
+            </Formik>
+            </FormContainer>
+    )
+}
+
+export default Form

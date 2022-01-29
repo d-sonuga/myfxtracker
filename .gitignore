@@ -31,3 +31,4 @@ __pycache__
 db.sqlite3
 
 description.md
+geckodriver.log

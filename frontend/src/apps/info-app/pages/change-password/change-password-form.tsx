@@ -1,118 +1,90 @@
-import {useState} from 'react'
-import {Formik, Form, FormikErrors} from 'formik'
+import {useContext} from 'react'
 import * as Yup from 'yup'
-import {CenterColumnBox} from '@components/containers'
 import {Button} from '@components/buttons'
-import {ErrorAlert, SuccessAlert} from '@components/alerts'
-import {H4} from '@components/text'
 import {HttpResponseType} from '@services/http'
-import {FormMsg} from '@services/generic-msg'
-import {getDimen} from '@conf/utils'
-import {FormContainer, TextInput} from '@apps/info-app/components'
+import {FormMsg, HttpMsg} from '@services/generic-msg'
+import {TextInput} from '@apps/info-app/components'
 import {FormConst} from '@conf/const'
-//import {LoginFormPropTypes} from './types'
+import LoadingIcon from '@components/loading-icon'
+import {ToastContext} from '@components/toast'
+import {buildErrors, canSubmit} from '@apps/info-app/form-utils'
+import {Form} from '@apps/info-app/components'
 
 
 const ChangePasswordForm = ({submitValues}: {submitValues: Function}) => {
-    const [nonFieldErrors, setNonFieldErrors] = useState<string[]>([]);
-    const [successMsg, setSuccessMsg] = useState('');
-
+    const Toast = useContext(ToastContext);
     return(
-        <FormContainer>
-            <H4 style={{
-                marginBottom: getDimen('padding-sm')
-            }}>Change Password</H4>
-            <Formik
-                initialValues={{
-                    oldPassword: '',
-                    newPassword: ''
-                }}
-                validationSchema={Yup.object({
-                    oldPassword: Yup.string().required(FormMsg.fieldRequiredErr('password')),
-                    newPassword: Yup.string()
+        <Form
+            title='Change Password'
+            initialValues={{
+                newPassword1: '',
+                newPassword2: ''
+            }}
+            validationSchema={Yup.object({
+                newPassword1: Yup.string()
                     .min(FormConst.PASSWORD_MIN_LENGTH,
-                        FormMsg.minLengthErr('password', FormConst.PASSWORD_MIN_LENGTH)
+                        FormMsg.minLengthErr('new password', FormConst.PASSWORD_MIN_LENGTH)
                     )
-                    .required(FormMsg.fieldRequiredErr('password')),
-                })}
-                onSubmit={(values, {setErrors, setSubmitting}) => {
-                    submitValues({
-                        values,
-                        successFunc: (resp: HttpResponseType) => {
-                            setSuccessMsg('An email has been sent to you.');
-                        },
-                        errorFunc: (err: any) => {
-                            const errors = buildErrors(err.response.data, setNonFieldErrors);
+                    .max(FormConst.PASSWORD_MAX_LENGTH,
+                        FormMsg.maxLengthErr('new password', FormConst.PASSWORD_MAX_LENGTH)
+                    ) 
+                    .required(FormMsg.fieldRequiredErr('new password')),
+                newPassword2: Yup.string()
+                    .oneOf([Yup.ref('newPassword1')], FormMsg.passwordNotMatchErr())
+                    .required(FormMsg.fieldRequiredErr('confirm new password'))
+            })}
+            onSubmit={({values, setErrors, setSubmitting, setSuccessMsg, setNonFieldError}) => {
+                const valuesToSubmit = {
+                    new_password1: values.newPassword1,
+                    new_password2: values.newPassword2
+                }
+                submitValues({
+                    values: valuesToSubmit,
+                    successFunc: (resp: HttpResponseType) => {
+                        setSuccessMsg(FormMsg.passwordChangeSuccessful());
+                        setNonFieldError('');
+                    },
+                    errorFunc: (err: any) => {
+                        try {
+                            const errors = buildErrors(err.response.data, {
+                                'new_password1': 'newPassword1',
+                                'new_password2': 'newPassword2'
+                            })
                             setErrors(errors);
-                        },
-                        thenFunc: () => setSubmitting(false)
-                    })
-                }}>
-                    {({values, errors, isSubmitting, submitForm}) => (
-                        <Form>
-                            {
-                                successMsg ? 
-                                    <SuccessAlert style={{marginBottom: getDimen('padding-xs')}}>
-                                        {successMsg}
-                                    </SuccessAlert>
-                                    : null
+                            if(errors['non_field_error']){
+                                setNonFieldError(errors['non_field_error']);
                             }
-                            {
-                                nonFieldErrors.length ? 
-                                    <ErrorAlert style={{marginBottom: getDimen('padding-xs')}}>
-                                        {nonFieldErrors.map((errorMsg, i) => (
-                                            `${i === 0 ? '' : '\n'}${errorMsg}`
-                                            ))}
-                                    </ErrorAlert>
-                                    : null
-                            }
-                            <CenterColumnBox>
-                                <TextInput name='oldPassword' placeholder='Old Password' type='password' />
-                                <TextInput name='newPassword' placeholder='New Password' type='password' />
-                                {
-                                    isSubmitting ?
-                                        <Button onClick={() => {}}>loading</Button>
-                                        : canSubmit(errors, values) ?
-                                            <Button onClick={submitForm}>
-                                                Change Password</Button>
-                                            : <Button onClick={() => {}}
-                                                disabled={true}>
-                                                Change Password</Button>
-                                }
-                            </CenterColumnBox>
-                        </Form>
-                    )}
-            </Formik>
-            </FormContainer>
-    )
+                        } catch (err){
+                            // If the error response is not in json, buildErrors will
+                            // result in a type error, because it is expecting json data
+                            // This catch block handles the scenario where an unexpected error
+                            // in html, not json, is returned from the server
+                            setNonFieldError(HttpMsg.unexpectedErr());
+                        }
+                        setSuccessMsg('')
+                    },
+                    thenFunc: () => setSubmitting(false)
+                })
+            }}>
+               {({values, errors, isSubmitting, submitForm}) => (
+                   <>
+                    <TextInput name='newPassword1' placeholder='New Password'
+                        type='password' data-testid='new-password1' />
+                    <TextInput name='newPassword2' placeholder='Confirm New Password'
+                        type='password' data-testid='new-password2' />
+                    <Button
+                        onClick={canSubmit(errors, values) ? () => submitForm() : () => {}}
+                        disabled={!canSubmit(errors, values)}
+                        data-testid='submit-button'>
+                        {isSubmitting ?
+                            <LoadingIcon />
+                            : 'Change Password'
+                    }</Button>
+                    </>
+               )}
+            </Form>
+    );
 }
 
-
-const canSubmit = (errors: FormikErrors<any>, values: { [key: string]: string }) => {
-    if (!errors.oldPassword && values.oldPassword && !errors.newPassword && values.newPassword) {
-        return true;
-    }
-    return false;
-}
-
-const buildErrors = (rawErrors: {[key: string]: string[]}, setNonFieldErrors: Function) => {
-    let errors = {oldPassword: '', newPassword: ''};
-    if('oldPassword' in rawErrors){
-        rawErrors.email.forEach((error: string) => {
-            errors.oldPassword += error;
-        });
-    }
-    if('newPassword' in rawErrors){
-        rawErrors.email.forEach((error: string) => {
-            errors.newPassword += error;
-        });
-    }
-    if('non_field_errors' in rawErrors) {
-        rawErrors.non_field_errors.forEach((error: string) => {
-            setNonFieldErrors((errors: string[]) => [...errors, error]);
-        });
-    }
-    return errors;
-}
 
 export default ChangePasswordForm

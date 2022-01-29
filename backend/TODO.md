@@ -1,3 +1,5 @@
+1.  Finish the user peripherals
+
 # Authentication system
 1. Specify the formats for data interchange between the frontend and backend
 2. Specify the formats for data interchange between the backend and data source
@@ -5,4 +7,6 @@
 4. How should the metatrader terminals be authenticated
 
 
+## Formats for data interchange between the frontend and backend
+The apis app
 

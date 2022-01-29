@@ -51,95 +51,96 @@ const dummyRawData: RawData = {
     },
     trade_data: {
         no_of_trades: 4,
-        current_account_id: 2,
-        accounts: {
-            2: {
-                name: 'kot-demo',
-                trades: [
-                    {
-                        pair: 'USDGPY',
-                        action: 'buy',
-                        entry_date: '2021-03-21',
-                        exit_date: '2021-06-01',
-                        risk_reward_ratio: 3,
-                        profit_loss: 320,
-                        pips: 3,
-                        notes: 'A note',
-                        entry_image_link: '',
-                        exit_image_link: '',
-                        date_added: '12-04-21'
-                    }
-                ],
-                deposits: [
-                    {
-                        account: 2, 
-                        amount: 300, 
-                        date: '2021-02-30'
-                    },
-                    {
-                        account: 2, 
-                        amount: 300, 
-                        date: '2021-02-30'
-                    }
-                ],
-                withdrawals: [
-                    {
-                        account: 2,
-                        amount: 20, 
-                        date: '2021-02-30'
-                    },
-                    {
-                        account: 2,
-                        amount: 50, 
-                        date: '2021-02-30'
-                    }
-                ]
-            },
-            4: {
-                name: 'kot-live',
-                trades: [
-                    {
-                        pair: 'USDGPY',
-                        action: 'buy',
-                        entry_date: '2021-12-03',
-                        exit_date: '2022-05-02',
-                        risk_reward_ratio: 3,
-                        profit_loss: 320,
-                        pips: 3,
-                        notes: 'A note',
-                        entry_image_link: '',
-                        exit_image_link: '',
-                        date_added: '12-04-21'
-                    }
-                ],
-                deposits: [
-                    {
-                        account: 2, 
-                        amount: 300, 
-                        date: '2021-02-03'
-                    },
-                    {
-                        account: 2, 
-                        amount: 300, 
-                        date: '2021-02-03'
-                    }
-                ],
-                withdrawals: [
-                    {
-                        account: 2,
-                        amount: 20, 
-                        date: '2021-02-03'
-                    },
-                    {
-                        account: 2,
-                        amount: 50, 
-                        date: '2021-02-03'
-                    }
-                ]
-            }
-        }
+        current_account_id: -1,
+        accounts: {}
     }
 }
 
+const someAccounts = {
+    2: {
+        name: 'kot-demo',
+        trades: [
+            {
+                pair: 'USDGPY',
+                action: 'buy',
+                entry_date: '2021-03-21',
+                exit_date: '2021-06-01',
+                risk_reward_ratio: 3,
+                profit_loss: 320,
+                pips: 3,
+                notes: 'A note',
+                entry_image_link: '',
+                exit_image_link: '',
+                date_added: '12-04-21'
+            }
+        ],
+        deposits: [
+            {
+                account: 2, 
+                amount: 300, 
+                date: '2021-02-30'
+            },
+            {
+                account: 2, 
+                amount: 300, 
+                date: '2021-02-30'
+            }
+        ],
+        withdrawals: [
+            {
+                account: 2,
+                amount: 20, 
+                date: '2021-02-30'
+            },
+            {
+                account: 2,
+                amount: 50, 
+                date: '2021-02-30'
+            }
+        ]
+    },
+    4: {
+        name: 'kot-live',
+        trades: [
+            {
+                pair: 'USDGPY',
+                action: 'buy',
+                entry_date: '2021-12-03',
+                exit_date: '2022-05-02',
+                risk_reward_ratio: 3,
+                profit_loss: 320,
+                pips: 3,
+                notes: 'A note',
+                entry_image_link: '',
+                exit_image_link: '',
+                date_added: '12-04-21'
+            }
+        ],
+        deposits: [
+            {
+                account: 2, 
+                amount: 300, 
+                date: '2021-02-03'
+            },
+            {
+                account: 2, 
+                amount: 300, 
+                date: '2021-02-03'
+            }
+        ],
+        withdrawals: [
+            {
+                account: 2,
+                amount: 20, 
+                date: '2021-02-03'
+            },
+            {
+                account: 2,
+                amount: 50, 
+                date: '2021-02-03'
+            }
+        ]
+    }
+}
 
 export default useGlobalData
