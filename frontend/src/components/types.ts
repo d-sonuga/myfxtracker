@@ -6,7 +6,8 @@ interface ComponentPropTypes {
     style?: {
         [key: string]: any
     },
-    className?: string
+    className?: string,
+    'data-testid'?: string
 }
 
 interface ComponentWithChildrenPropTypes extends ComponentPropTypes {

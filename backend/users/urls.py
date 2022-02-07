@@ -6,7 +6,6 @@ from .views import update_email, subscribe_user, unsubscribe_user, Register, set
 from  django_rest_passwordreset import urls, models
 
 urlpatterns = [
-    path('sign-up/', Register.as_view()),
     re_path(
         r'^account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(),
         name='account_confirm_email',
@@ -14,7 +13,6 @@ urlpatterns = [
     path('sign-up/verify-email/', VerifyEmailView.as_view(), name='rest_verify_email'),
     path('account-confirm-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),
 
-    path('login/', LoginView.as_view(), name='account_login'),
     path('logout/', LogoutView.as_view(), name='account_logout'),
 
     path('password-reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),

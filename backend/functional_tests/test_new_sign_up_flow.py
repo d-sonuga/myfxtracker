@@ -1,9 +1,9 @@
 import string
-from django.contrib.auth.models import User
+from users.models import User
 from django.test import override_settings
 import requests
 from .base_functional_test import BaseFunctionalTest
-from users.tests.test_data import SignUpDetails
+from trader.tests.test_data import SignUpDetails
 
 """
 Tests the flow from when a user signs up to when he logs into the trader app
@@ -174,10 +174,10 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
         password2.send_keys(details['password2'])
 
     def assert_non_field_error_alert_is_showing(self):
-        self.assert_element_is_in_page('div', 'non-field-error-alert')
+        self.assert_element_is_in_page('non-field-error-alert')
 
     def assert_success_alert_is_showing(self):
-        self.assert_element_is_in_page('div', 'success-alert')
+        self.assert_element_is_in_page('success-alert')
 
     def assert_page_hasnt_changed(self, url):
         self.assertEquals(self.browser.current_url, url)
@@ -220,7 +220,7 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
         trading_time_before_joining = new_user.traderinfo.trading_time_before_joining
         self.assertEquals(how_you_heard_about_us, details['howYouHeard'])
         self.assertEquals(trading_time_before_joining, details['yearsSpentTrading'])
-        self.assertTrue(new_user.userinfo.is_trader)
+        self.assertTrue(new_user.is_trader)
     
     def get_sign_up_input_elements(self):
         email = self.find_by_testid('email')

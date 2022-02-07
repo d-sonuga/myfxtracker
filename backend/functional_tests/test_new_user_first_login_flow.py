@@ -1,8 +1,8 @@
 from django.test import override_settings, tag
-from django.contrib.auth.models import User
+from users.models import User
 from allauth.account.models import EmailAddress
 from .base_functional_test import BaseFunctionalTest
-from users.tests.test_data import LoginDetails
+from trader.tests.test_data import LoginDetails
 
 
 """
@@ -14,6 +14,7 @@ to the simulation of the following of the instructions.
 The following of the instructions has to be simulated because it requires
 the use of the mt terminal which can tbe automated right now
 """
+
 @override_settings(DEBUG=True)
 @tag('new-user-login-flow')
 class NewUserLoginFlow(BaseFunctionalTest):
@@ -29,7 +30,7 @@ class NewUserLoginFlow(BaseFunctionalTest):
 
     def test_flow(self):
         self.login_new_user()
-        self.assert_instructions_are_in_app_pages()
+        self.assert_instructions_are_in_app_pages_and_not_settings()
         self.simulate_follow_instructions()
 
     def login_new_user(self):
@@ -42,11 +43,11 @@ class NewUserLoginFlow(BaseFunctionalTest):
         self.wait_a_little()
         self.assert_is_current_url(f'{self.base_url}/app')
     
-    def assert_instructions_are_in_app_pages(self):
+    def assert_instructions_are_in_app_pages_and_not_settings(self):
         def navigate(url):
             self.navigate(f'{self.base_url}/app/{url}')
         def assert_instructions_are_in_page():
-            self.assert_element_is_in_page('div', 'data-source-setup-instructions')
+            self.assert_element_is_in_page('data-source-setup-instructions')
         navigate('journal')
         assert_instructions_are_in_page()
         navigate('cash-and-gains')
@@ -61,12 +62,16 @@ class NewUserLoginFlow(BaseFunctionalTest):
         assert_instructions_are_in_page()
         navigate('expenses')
         assert_instructions_are_in_page()
+        navigate('settings')
+        self.assert_element_is_not_in_page('data-source-setup-instructions')
 
     def simulate_follow_instructions(self):
         self.navigate(f'{self.base_url}/app')
         download_ea = self.find_by_testid('download-ea')
         self.do_until_max_wait(download_ea.click)
         self.fail()
+        # When a user has successfully followed all the instructions
+        # The database will have his trade account data
 
     def fill_login_form(self, details):
         email = self.find_by_testid('email')

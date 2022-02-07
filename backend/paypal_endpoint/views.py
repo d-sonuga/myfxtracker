@@ -11,7 +11,7 @@ import requests
 import json
 import datetime
 from dateutil import parser as dateparser
-from affiliate.models import Affiliate, FailedPayout
+from affiliate.models import Affiliate#, FailedPayout
 from users.models import PaypalSubscription
 
 

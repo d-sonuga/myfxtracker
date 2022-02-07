@@ -2,7 +2,7 @@ import BaseBox from './base-box'
 import {ContainerPropTypes} from './types'
 
 
-const ColumnBox = ({children, style, className}: ContainerPropTypes) => {
+const ColumnBox = ({children, style, className, ...props}: ContainerPropTypes) => {
     return(
         <BaseBox
             className={className}
@@ -10,7 +10,7 @@ const ColumnBox = ({children, style, className}: ContainerPropTypes) => {
                 display: 'flex',
                 flexDirection: 'column',
                 ...style
-            }}>{children}</BaseBox>
+            }} {...props}>{children}</BaseBox>
     );
 }
 

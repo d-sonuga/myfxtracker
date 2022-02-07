@@ -4,7 +4,7 @@ from .const import WEBHOOK_ACTIVATED
 from users.models import PaypalSubscription
 # from ..views import update_paypal_subscription
 
-
+"""
 class SubscriptionActivatedTest(TestCase):
     def setUp(self):
         self.user_details = {'username': 'the user name', 'password': 'the password'}
@@ -26,3 +26,4 @@ class SubscriptionActivatedTest(TestCase):
             user.subscriptioninfo.paypalsubscription.paypal_email,
             WEBHOOK_ACTIVATED['resource']['subscriber']['email_address']
         )
+"""

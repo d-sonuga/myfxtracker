@@ -12,8 +12,7 @@
 
 const useGlobalData: UseGlobalDataType = () => {
     const [globalData, setGlobalData] = useState<GlobalData>(new GlobalData(null));
-    const navigate = useNavigate();
-    
+
     useEffect(() => {
         /* The real thing to be used.
             Going to use dummy data just for development
@@ -34,11 +33,26 @@ const useGlobalData: UseGlobalDataType = () => {
             }
         })
         */
-       /** Fake globalData */
-       setGlobalData(new GlobalData(dummyRawData));
+        setGlobalData(new GlobalData(noAccountsRawData));
     }, [])
     return [globalData, setGlobalData];
 }
+
+const noAccountsRawData  = {
+    user_data: {
+        id: 1,
+        email: 'newuser@email.com',
+        is_subscribed: false,
+        on_free: true,
+        logins_after_ask: 2,
+        current_feedback_question: 1
+    },
+    trade_data: {
+        no_of_trades: 0,
+        current_account_id: -1,
+        accounts: {}
+    }
+};
 
 const dummyRawData: RawData = {
     user_data: {

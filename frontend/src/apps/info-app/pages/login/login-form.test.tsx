@@ -1,5 +1,4 @@
 import LoginForm from './login-form'
-import {act} from 'react-dom/test-utils'
 import {render, fireEvent, cleanup, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {waitFor} from '@testing-library/dom'

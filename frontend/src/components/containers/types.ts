@@ -1,7 +1,6 @@
 import {ComponentWithChildrenPropTypes} from '@components/types'
 
 interface ContainerPropTypes extends ComponentWithChildrenPropTypes {
-    onKeyPress?: Function
 }
 
 interface CenterBoxPropTypes extends ContainerPropTypes {

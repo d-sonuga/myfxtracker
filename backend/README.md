@@ -21,6 +21,7 @@ The apps for interacting with the frontend are:
         (not yet in op)
 6.  paypal_endpoint - For interacting with the paypal system and persisting all paypal related info
         (not yet in op)
+7.  datasource_endpoint - For interacting with the mt terminals
 
 # Overview breakdown
 Serving the frontend

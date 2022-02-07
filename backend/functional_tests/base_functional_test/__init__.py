@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 
 @tag('functional')
@@ -15,20 +16,21 @@ class BaseFunctionalTest(LiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.browser = webdriver.Remote(
-            command_executor='http://172.17.0.3:4444/wd/hub',
+            command_executor='http://172.17.0.4:4444/wd/hub',
             desired_capabilities=DesiredCapabilities.FIREFOX
         )
         cls.start_server()
-        cls.server_domain = '172.17.0.4'
+        cls.server_domain = '172.17.0.2'
         cls.live_server_url = f'http://{cls.server_domain}:8000'
         # For making requests from the browser
-        cls.base_url = f'http://{cls.server_domain}:3000'
+        cls.base_url = f'http://172.17.0.3:3000'
         # The maximum amount of sleep seconds to be used in the do_until_max_wait function
         cls.MAX_WAIT = 60
         cls.site_name = 'MyFxTracker'
         cls.maildump_server_address = 'http://localhost:1080'
         site = Site.objects.get(id=settings.SITE_ID)
-        site.domain = cls.server_domain
+        # The password related emails use this domain as the domain they show
+        site.domain = '172.17.0.3'
         site.save()
     
     @classmethod
@@ -77,13 +79,20 @@ class BaseFunctionalTest(LiveServerTestCase):
         return Select(el, self.browser, self.find_by_testid, self.do_until_max_wait)
 
     def find_by_testid(self, testid, el='input'):
-        return self.browser.find_element_by_css_selector(f'{el}[data-testid="{testid}"]')
+        return self.browser.find_element_by_css_selector(f'*[data-testid="{testid}"]')
 
-    def assert_element_is_in_page(self, el, testid):
+    def assert_element_is_in_page(self, testid):
         try:
-            self.find_by_testid(el, testid)
+            self.find_by_testid(testid)
         except Exception:
-            self.assertTrue(False, f'The element {el} with testid {testid} was not found in page')
+            self.assertTrue(False, f'The element with testid {testid} was not found in page')
+    
+    def assert_element_is_not_in_page(self, testid):
+        try:
+            self.find_by_testid(testid)
+            self.assertTrue(False, 'The element is in the page')
+        except NoSuchElementException:
+            pass
 
     def do_until_max_wait(self, func, func_args=(), initial_wait_time=0):
         try:

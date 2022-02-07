@@ -5,12 +5,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
 from dj_rest_auth.views import LogoutView
-from django.contrib.auth.models import User
+from users.models import User
 from mailchimp_marketing import Client
 from django.conf import settings
 import hashlib
 from dateutil import parser
-from apis.permissions import IsTrader
+from trader.permissions import IsTrader
 from paypal_endpoint.views import unsubscribe_user as unsubscribe_paypal_user
 from paystack_endpoint.views import unsubscribe_user as unsubscribe_paystack_user
 from affiliate.models import Affiliate

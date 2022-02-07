@@ -7,11 +7,11 @@ from django_rest_passwordreset.signals import reset_password_token_created, pre_
 from django.contrib.sites.models import Site
 from mailchimp_marketing import Client
 from django.conf import settings
-from django.contrib.auth.models import User
+from users.models import User
 from django.db.models.signals import post_delete, post_save
 import hashlib
 import datetime
-from .models import SubscriptionInfo, UserInfo
+from .models import SubscriptionInfo
 import os
 
 
@@ -52,15 +52,6 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     msg.attach_alternative(email_html_message, "text/html")
     msg.send()
 
-@receiver(pre_password_reset)
-def pre_password_reset(sender, user, **kwargs):
-    print('pre')
-
-@receiver(post_password_reset)
-def post_password_reset(sender, user, **kwargs):
-    print('post')
-
-
 @receiver(email_confirmed)
 def email_confirmed_(request, email_address, **kwargs):
     if not settings.DEBUG:
@@ -78,16 +69,6 @@ def email_confirmed_(request, email_address, **kwargs):
             'status': 'subscribed'
         }
         mailchimp.lists.add_list_member(AUDIENCE_ID, member_info)
-
-
-@receiver(post_save, sender=User)
-def user_account_created(sender, instance, using, **kwargs):
-    subscr_query = SubscriptionInfo.objects.filter(user=instance)
-    if subscr_query.count() == 0:
-        # Todo: handle referrer info
-        SubscriptionInfo.objects.create(user=instance, is_subscribed=False,
-            on_free=True, next_billing_time=datetime.datetime.today() + datetime.timedelta(days=35))
-        UserInfo.objects.create(user=instance, is_trader=False, is_affiliate=False)
 
 
 @receiver(post_delete, sender=User)

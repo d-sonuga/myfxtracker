@@ -105,6 +105,10 @@ class GlobalData {
          */
         return -1;
     }
+    /** Are there any accounts? */
+    noAccounts(){
+        return Object.keys(this.rawData.trade_data.accounts).length === 0
+    }
     getUserEmail(){
         return this.rawData.user_data.email
     }

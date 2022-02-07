@@ -6,13 +6,14 @@ const FormConst = {
 
 /** Urls for contacting the backend */
 const HttpConst = {
-    BASE_URL: 'http://localhost:8001',
-    SIGN_UP_URL: 'users/sign-up',
-    LOGIN_URL: 'users/login',
+    BASE_URL: 'http://172.17.0.2:8000',
+    SIGN_UP_URL: 'trader/sign-up',
+    LOGIN_URL: 'trader/login',
     CHANGE_PASSWORD_URL: 'users/password-change',
     RESET_PASSWORD_URL: 'users/password-reset',
     RESET_PASSWORD_CONFIRM_URL: 'users/password-reset/confirm',
-    GET_INIT_DATA_URL: 'apis/init_data',
+    GET_INIT_DATA_URL: 'trader/init_data',
+    DOWNLOAD_EA_URL: 'trader/download_ea',
     FEEDBACK_FORM_URL: 'https://forms.gle/SWAdgLtd64Vzmyso9'
 }
 

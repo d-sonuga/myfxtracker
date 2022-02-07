@@ -18,6 +18,7 @@ ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com'
 ]
 
+AUTH_USER_MODEL = 'users.User'
 
 # Application definition
 
@@ -26,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages',
+    #'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
@@ -36,22 +37,21 @@ INSTALLED_APPS = [
     'allauth.account',
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    'corsheaders',
     'django_rest_passwordreset',
     'mailchimp_marketing',
 
-    'apis',
     'users',
-    'serve',
-    # New for paypal
-    'paypal_endpoint',
-    # New for paypal.
-    'paystack_endpoint',
-    # New for affiliate
+    'trader',
     'affiliate',
-    # New for affiliate.
-    'admin'
+    'admin',
+    'serve',
+    'paypal_endpoint',
+    'paystack_endpoint',
+    'datasource_endpoint'
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ['corsheaders']
 
 if DEBUG:
     MIDDLEWARE = [
@@ -67,7 +67,8 @@ MIDDLEWARE += [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    # 'datasource_endpoint.middleware.DatasourceAuthenticationMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -123,6 +124,7 @@ if DEBUG:
         'http://172.17.0.1',
         'http://172.17.0.2',
         'http://172.17.0.3',
+        'http://172.17.0.3:3000',
         'http://172.17.0.4',
     ]
 
@@ -175,21 +177,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication'
+        'rest_framework.authentication.TokenAuthentication',
     ]
 }
 
-# I don't remember why I put this here before, but I may remember later,
-# so i'm leaving it here
-"""
+
+# For trader registration
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'users.serializers.SignUpSerializer'
+    'REGISTER_SERIALIZER': 'trader.serializers.SignUpSerializer'
 }
-"""
 
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -226,7 +226,7 @@ ACCOUNT_PASSWORD_MIN_LENGTH = 8
 # A link to this url will be in any confirmation email
 if DEBUG:
     if os.getenv('TEST') == 'true':
-        LOGIN_URL = 'http://172.17.0.2:3000/log-in'    
+        LOGIN_URL = 'http://172.17.0.3:3000/log-in'    
     else:
         LOGIN_URL = 'http://localhost:3000/log-in'
 else:

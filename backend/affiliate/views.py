@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from users.models import User
 from django.contrib.auth.hashers import check_password
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 import json
-from users.models import SubscriptionInfo, UserInfo
+from users.models import SubscriptionInfo
 from .models import Affiliate
 from .forms import SignUpForm, LogInForm
 from .permissions import IsAffiliate

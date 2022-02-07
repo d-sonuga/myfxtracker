@@ -23,13 +23,14 @@ def doc(request):
 urlpatterns = [
     path('exp/', e),
     path('docs/', doc),
-    path('apis/', include('apis.urls')),
+    path('trader/', include('trader.urls')),
     path('users/', include('users.urls')),
     path('app/', include('serve.urls')),
     path('aff/', include('affiliate.urls')),
     path('admin/', include('admin.urls')),
     path('pp/', include('paypal_endpoint.urls')),
     path('ps/', include('paystack_endpoint.urls')),
+    path('datasource/', include('datasource_endpoint.urls')),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
     path('', include('serve.urls'))
 ]
