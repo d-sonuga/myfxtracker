@@ -10,15 +10,16 @@ import {CashGraphItem} from '../types'
 
 describe('Verify cashGraphCalc works', () => {
     /** To create a new trade object without having to specify all trade attributes */
-    const newTrade = (attr: any) => {
+    const newTrade = (attr: any): Trade => {
         return {
-            profit_loss: randomNumber(-1000000, 1000000),
-            entry_date: attr.date !== undefined ? attr.date : '2021-10-18',
-            exit_date: attr.date !== undefined ? attr.date : '2021-10-18',
+            profitLoss: randomNumber(-1000000, 1000000),
+            openTime: attr.time !== undefined ? attr.time : '2021-10-18',
+            closeTime: attr.time !== undefined ? attr.time : '2021-10-18',
             pair: 'GBPUSD',
             action: 'buy',
-            risk_reward_ratio: 2,
-            date_added: attr.date !== undefined ? attr.date : '2021-10-18'
+            riskRewardRatio: 2,
+            takeProfit: 0,
+            stopLoss: 0
         }
     }
     const defaultCashGraphItem: CashGraphItem[] = [{tradeNo: 0, balance: 0}];
@@ -44,7 +45,7 @@ describe('Verify cashGraphCalc works', () => {
     })
     describe('When there are only withdrawals, but no trades', () => {
         const withdrawals: Withdrawal[] = [1, 2, 3, 4, 5].map((i) => (
-            {account: 3, amount: 500, date: '2022-12-02'}
+            {account: 3, amount: 500, time: '2022-12-02 18:34:00+00:00'}
         ))
         const accountData: AccountData = {
             name: 'dummy account',
@@ -67,7 +68,7 @@ describe('Verify cashGraphCalc works', () => {
     })
     describe('When there are only deposits, but no trades', () => {
         const deposits: Deposit[] = [1, 2, 3, 4, 5].map((i) => (
-            {account: 3, amount: 500, date: '2022-12-02'}
+            {account: 3, amount: 500, time: '2022-12-02'}
         ))
         const accountData: AccountData = {
             name: 'dummy account',
@@ -94,7 +95,7 @@ describe('Verify cashGraphCalc works', () => {
             const result: CashGraphItem[] = [];
             for(const i in trades){
                 const trade = trades[i];
-                cummulativeAddition += trade.profit_loss;
+                cummulativeAddition += trade.profitLoss;
                 result.push({tradeNo: parseInt(i) + 1, balance: cummulativeAddition});
             }
             return result
@@ -110,38 +111,38 @@ describe('Verify cashGraphCalc works', () => {
         const todayTrades: Trade[] = [];
         const thisWeekTrades: Trade[] = [
             {
-                profit_loss: randomNumber(-1000000, 1000000), entry_date: '2021-10-25',
-                exit_date: '2021-10-25', pair: 'GBPUSD', action: 'buy', risk_reward_ratio: 2,
-                date_added: '2021-10-25'
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-25 18:34:00+00:00',
+                closeTime: '2021-10-25', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                stopLoss: 0, takeProfit: 0
             },
             {
-                profit_loss: randomNumber(-1000000, 1000000), entry_date: '2021-10-29',
-                exit_date: '2021-10-29', pair: 'GBPUSD', action: 'buy', risk_reward_ratio: 2,
-                date_added: '2021-10-29'
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-29 18:34:00+00:00',
+                closeTime: '2021-10-29', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                takeProfit: 0, stopLoss: 0
             }
         ]
         const thisMonthTrades: Trade[] = [
             ...thisWeekTrades,
             {
-                profit_loss: randomNumber(-1000000, 1000000), entry_date: '2021-10-18',
-                exit_date: '2021-10-18', pair: 'GBPUSD', action: 'buy', risk_reward_ratio: 2,
-                date_added: '2021-10-18'
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-18',
+                closeTime: '2021-10-18', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                stopLoss: 0, takeProfit: 0
             }
         ]
         const thisYearTrades: Trade[] = [
             ...thisMonthTrades,
             {
-                profit_loss: randomNumber(-1000000, 1000000), entry_date: '2021-9-14',
-                exit_date: '2021-9-14', pair: 'GBPUSD', action: 'buy', risk_reward_ratio: 2,
-                date_added: '2021-9-14'
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-9-14',
+                closeTime: '2021-9-14', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                stopLoss: 0, takeProfit: 0
             }
         ]
         const allTimeTrades: Trade[] = [
             ...thisYearTrades,
             {
-                profit_loss: randomNumber(-1000000, 1000000), entry_date: '2020-9-12',
-                exit_date: '2020-9-12', pair: 'GBPUSD', action: 'buy', risk_reward_ratio: 2,
-                date_added: '2020-9-12'
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2020-9-12',
+                closeTime: '2020-9-12', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                stopLoss: 0, takeProfit: 0
             }
         ]
         const accountData: AccountData = {
@@ -186,10 +187,10 @@ describe('Verify cashGraphCalc works', () => {
          * depositsA are all deposits that took place before all the trades in tradesA
          */
         const depositsA: Deposit[] = [
-            {account: 2, amount: 200, date: '2021-02-15'}
+            {account: 2, amount: 200, time: '2021-02-15 18:34:00+00:00'}
         ]
         const tradesA: Trade[] = [
-            newTrade({date: '2021-02-17'})
+            newTrade({time: '2021-02-17 18:34:00+00:00'})
         ]
         const accountData: AccountData = {
             name: 'dummy account',
@@ -204,19 +205,19 @@ describe('Verify cashGraphCalc works', () => {
             ],
             thisWeekGraphCalc: [
                 ...defaultCashGraphItem,
-                {tradeNo: 1, balance: sumObjArray(tradesA, 'profit_loss') + sumObjArray(depositsA, 'amount')}
+                {tradeNo: 1, balance: sumObjArray(tradesA, 'profitLoss') + sumObjArray(depositsA, 'amount')}
             ],
             thisMonthGraphCalc: [
                 ...defaultCashGraphItem,
-                {tradeNo: 1, balance: sumObjArray(tradesA, 'profit_loss') + sumObjArray(depositsA, 'amount')}
+                {tradeNo: 1, balance: sumObjArray(tradesA, 'profitLoss') + sumObjArray(depositsA, 'amount')}
             ],
             thisYearGraphCalc: [
                 ...defaultCashGraphItem,
-                {tradeNo: 1, balance: sumObjArray(tradesA, 'profit_loss') + sumObjArray(depositsA, 'amount')}
+                {tradeNo: 1, balance: sumObjArray(tradesA, 'profitLoss') + sumObjArray(depositsA, 'amount')}
             ],
             allTimeGraphCalc: [
                 ...defaultCashGraphItem,
-                {tradeNo: 1, balance: sumObjArray(tradesA, 'profit_loss') + sumObjArray(depositsA, 'amount')}
+                {tradeNo: 1, balance: sumObjArray(tradesA, 'profitLoss') + sumObjArray(depositsA, 'amount')}
             ]
         }
         test('it outputs the expected result', () => {

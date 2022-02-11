@@ -37,4 +37,59 @@ describe('Verify that statsCalc is working', () => {
             expect(result).toEqual(expectedResult);
         })
     })
+    describe('When there are 2 trades', () => {
+        const accountData: AccountData = {
+            name: 'dummy account',
+            deposits: [],
+            withdrawals: [],
+            trades: [
+                {
+                    pair: 'USDNOK',
+                    profitLoss: 500,
+                    takeProfit: 0,
+                    stopLoss: 0,
+                    commission: 20,
+                    swap: 10,
+                    riskRewardRatio: 3,
+                    action: 'buy',
+                    openTime: '2022-10-23 12:09:00+00:00',
+                    closeTime: '2022-10-23 12:09:00+00:00'
+                },
+                {
+                    pair: 'USDNOK',
+                    profitLoss: -100,
+                    takeProfit: 0,
+                    stopLoss: 0,
+                    commission: 20,
+                    swap: 10,
+                    riskRewardRatio: 3,
+                    action: 'sell',
+                    openTime: '2022-10-23 12:09:00+00:00',
+                    closeTime: '2022-10-23 12:09:00+00:00'
+                }
+            ]
+        }
+        const result = statsCalc(accountData);
+        const expectedResult: OverviewStatsCalc = {
+            aveProfit: 500,
+            aveLoss: 100,
+            longsWonPercent: 100,
+            shortsWonPercent: 0,
+            noOfLongs: 1,
+            noOfLongsWon: 1,
+            noOfShorts: 1,
+            noOfShortsWon: 0,
+            aveRRR: 0,
+            bestTrade: 500,
+            worstTrade: -100,
+            profitFactor: 0,
+            highestBalance: 500,
+            expectancy: 20000,
+            lots: 0,
+            commissions: 60
+        }
+        test('it should output the correct result', () => {
+            expect(result).toEqual(expectedResult);
+        })
+    })
 })

@@ -30,29 +30,30 @@ describe('Verify that overviewCardsCalc is working', () => {
             const depositAmount = 300;
             const withdrawalAmount = 140;
             const tradeProfitLoss = 430
-            const dummyDateStr = '2022-12-03'
+            const dummyDateStr = '2022-12-03 18:34:00+00:00'
             const dummyDeposits: Deposit[] = [
-                {account: 1, amount: depositAmount, date: dummyDateStr}
+                {account: 1, amount: depositAmount, time: dummyDateStr}
             ];
             const dummyWithdrawals: Withdrawal[] = [
-                {account: 1, amount: withdrawalAmount, date: dummyDateStr}
+                {account: 1, amount: withdrawalAmount, time: dummyDateStr}
             ];
             const trades: Trade[] = [
                 {
                     pair: 'GBPJPY',
                     action: 'buy',
-                    entry_date: '2022-12-03',
-                    exit_date: '2022-12-03',
-                    risk_reward_ratio: 3.4,
-                    profit_loss: tradeProfitLoss,
+                    openTime: '2022-12-03 18:34:00+00:00',
+                    closeTime: '2022-12-03 18:34:00+00:00',
+                    riskRewardRatio: 3.4,
+                    profitLoss: tradeProfitLoss,
                     pips: 3,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-12-03',
+                    entryImageLink: '',
+                    exitImageLink: '',
                     lots: 3,
-                    commissions: 34,
-                    swap: 43
+                    commission: 34,
+                    swap: 43,
+                    stopLoss: 0,
+                    takeProfit: 0
                 }
             ];
             const dummyAccountData: AccountData = {
@@ -99,7 +100,7 @@ describe('Verify that overviewCardsCalc is working', () => {
                     }
                     amounts.push(randomAmount(magnitude, sign));
                 }
-                return amounts
+                return amounts;
             }
             const sum = (array: number[]) => {
                 let sum = 0;
@@ -113,30 +114,31 @@ describe('Verify that overviewCardsCalc is working', () => {
             const tradeProfitLosses = generateRandomAmounts();
             const noOfWinningTrades = tradeProfitLosses.filter((amount) => amount >= 0).length
             // the date is unimportant in this test
-            const dummyDateStr = '2022-12-03'
+            const dummyDateStr = '2022-12-03 18:34:00+00:00'
             // build the data set of deposits, withdrawals and trades
             const dummyDeposits: Deposit[] = depositAmounts.map((depositAmount) => (
-                {account: 1, amount: depositAmount, date: dummyDateStr}
+                {account: 1, amount: depositAmount, time: dummyDateStr}
             ));
             const dummyWithdrawals: Withdrawal[] = withdrawalAmounts.map((withdrawalAmount) => (
-                {account: 1, amount: withdrawalAmount, date: dummyDateStr}
+                {account: 1, amount: withdrawalAmount, time: dummyDateStr}
             ));
             const trades: Trade[] = tradeProfitLosses.map((tradeProfitLoss) => (
                 {
                     pair: 'GBPJPY',
                     action: 'buy',
-                    entry_date: '2022-12-03',
-                    exit_date: '2022-12-03',
-                    risk_reward_ratio: 3.4,
-                    profit_loss: tradeProfitLoss,
+                    openTime: '2022-12-03 18:34:00+00:00',
+                    closeTime: '2022-12-03 18:34:00+00:00',
+                    riskRewardRatio: 3.4,
+                    profitLoss: tradeProfitLoss,
                     pips: 3,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-12-03',
+                    entryImageLink: '',
+                    exitImageLink: '',
                     lots: 3,
-                    commissions: 34,
-                    swap: 43
+                    commission: 34,
+                    swap: 43,
+                    stopLoss: 0,
+                    takeProfit: 0
                 }
             ))
             const dummyAccountData: AccountData = {

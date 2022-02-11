@@ -18,30 +18,34 @@ type AccountData = {
 type Trade = {
     pair: string,
     action: string,
-    entry_date: string,
-    exit_date: string,
-    risk_reward_ratio: number,
-    profit_loss: number,
+    riskRewardRatio?: number,
+    profitLoss: number,
     pips?: number,
     notes?: string,
-    entry_image_link?: string,
-    exit_image_link?: string,
-    date_added: string,
+    entryImageLink?: string,
+    exitImageLink?: string,
     lots?: number,
-    commissions?: number,
-    swap?: number
+    commission?: number,
+    swap?: number,
+    openTime: string,
+    closeTime: string,
+    transactionId?: number,
+    stopLoss: number,
+    takeProfit: number,
+    comment?: string,
+    magicNumber?: number
 }
 
 type Deposit = {
     account: number,
     amount: number,
-    date: string
+    time: string
 }
 
 type Withdrawal = {
     account: number,
     amount: number,
-    date: string
+    time: string
 }
 
 /**

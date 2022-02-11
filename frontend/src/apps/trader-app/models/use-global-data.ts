@@ -33,7 +33,7 @@ const useGlobalData: UseGlobalDataType = () => {
             }
         })
         */
-        setGlobalData(new GlobalData(noAccountsRawData));
+        setGlobalData(new GlobalData(dummyRawData));
     }, [])
     return [globalData, setGlobalData];
 }
@@ -49,22 +49,6 @@ const noAccountsRawData  = {
     },
     trade_data: {
         no_of_trades: 0,
-        current_account_id: -1,
-        accounts: {}
-    }
-};
-
-const dummyRawData: RawData = {
-    user_data: {
-        id: 3,
-        email: 'sonugademilade8703@gmail.com',
-        is_subscribed: false,
-        on_free: true,
-        logins_after_ask: 2,
-        current_feedback_question: 1
-    },
-    trade_data: {
-        no_of_trades: 4,
         current_account_id: -1,
         accounts: {}
     }
@@ -154,6 +138,22 @@ const someAccounts = {
                 date: '2021-02-03'
             }
         ]
+    }
+}
+
+const dummyRawData: RawData = {
+    user_data: {
+        id: 3,
+        email: 'sonugademilade8703@gmail.com',
+        is_subscribed: false,
+        on_free: true,
+        logins_after_ask: 2,
+        current_feedback_question: 1
+    },
+    trade_data: {
+        no_of_trades: 2,
+        current_account_id: 2,
+        accounts: someAccounts
     }
 }
 

@@ -13,7 +13,7 @@ describe('Verify that longShortComparisonTableCalc is working', () => {
      */
     const deposits: Deposit[] = [];
     const withdrawals: Withdrawal[] = [];
-    const tradeDateStr = '2022-10-20';
+    const tradeDateStr = '2022-10-20 18:34:00+00:00';
     describe('When there are no trades in accountData', () => {
         const accountData: AccountData = {
             name: 'dummy account',
@@ -43,18 +43,19 @@ describe('Verify that longShortComparisonTableCalc is working', () => {
             {
                 pair: 'GBPJPY',
                 action: 'buy',
-                entry_date: tradeDateStr,
-                exit_date: tradeDateStr,
-                risk_reward_ratio: 3,
-                profit_loss: tradeProfitLoss,
+                openTime: tradeDateStr,
+                closeTime: tradeDateStr,
+                riskRewardRatio: 3,
+                profitLoss: tradeProfitLoss,
                 pips: 3,
                 notes: '',
-                entry_image_link: '',
-                exit_image_link: '',
-                date_added: tradeDateStr,
+                entryImageLink: '',
+                exitImageLink: '',
                 lots: 3,
-                commissions: 2.3,
-                swap: 3
+                commission: 2.3,
+                swap: 3,
+                stopLoss: 0,
+                takeProfit: 0
             }
         ];
         const accountData: AccountData = {
@@ -91,18 +92,19 @@ describe('Verify that longShortComparisonTableCalc is working', () => {
             {
                 pair: 'GBPJPY',
                 action: 'sell',
-                entry_date: tradeDateStr,
-                exit_date: tradeDateStr,
-                risk_reward_ratio: 3,
-                profit_loss: tradeProfitLoss,
+                openTime: tradeDateStr,
+                closeTime: tradeDateStr,
+                riskRewardRatio: 3,
+                profitLoss: tradeProfitLoss,
                 pips: 3,
                 notes: '',
-                entry_image_link: '',
-                exit_image_link: '',
-                date_added: tradeDateStr,
+                entryImageLink: '',
+                exitImageLink: '',
                 lots: 3,
-                commissions: 2.3,
-                swap: 3
+                commission: 2.3,
+                swap: 3,
+                stopLoss: 0,
+                takeProfit: 0
             }
         ];
         const accountData: AccountData = {

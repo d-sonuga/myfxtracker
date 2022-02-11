@@ -38,11 +38,17 @@ class AccountManager(models.Manager):
     def get_by_name_broker_login_no(self, name, broker, login_no):
         return self.get(name=name, broker=broker, login_number=login_no)
 
+def is_deposit(item):
+    return item['comment'] is not None and item['comment'].lower() == 'deposit' and item['pair'] is None
+
+def is_withdrawal(item):
+    return item['comment'] is not None and item['comment'].lower() == 'withdrawal' and item['pair'] is None
+
 def get_account_trades(transaction_data):
     return list(filter(
             lambda item:
-                item['comment'] is not None and item['comment'].lower() != 'deposit' and
-                item['comment'].lower() != 'withdrawal' and item['pair'] is not None and
+                not is_deposit(item) and
+                not is_withdrawal(item) and
                 len(item['pair']) != 0,
             transaction_data
         )
@@ -180,7 +186,7 @@ class Trade(models.Model):
     swap = models.DecimalField(decimal_places=2, max_digits=11)
     commission = models.DecimalField(decimal_places=2, max_digits=11)
     lots = models.DecimalField(decimal_places=2, max_digits=11)
-    comment = models.TextField()
+    comment = models.TextField(null=True)
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
     # order ticket id in mt4, position id in mt5

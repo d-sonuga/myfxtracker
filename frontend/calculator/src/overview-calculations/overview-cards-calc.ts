@@ -30,7 +30,7 @@ const overviewCardsCalc = (accountData: AccountData) => {
 const totalProfitLoss = (accountData: AccountData) => {
     let totalProfitLoss = 0;
     for(const trade of accountData.trades){
-        totalProfitLoss += trade.profit_loss;
+        totalProfitLoss += trade.profitLoss;
     }
     return totalProfitLoss;
 }

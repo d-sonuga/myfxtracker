@@ -36,22 +36,23 @@ describe('Verify accountReturnsGraphCalc is working', () => {
         describe('When the only trade taken is one from last year', () => {
             const today = new Date(2022, 0, 2);
             // No single trade taken in today's year
-            const trades = [
+            const trades: Trade[] = [
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    entry_date: '2021-01-02',
-                    exit_date: '2021-01-02',
-                    risk_reward_ratio: 2.3,
-                    profit_loss: 320,
+                    openTime: '2021-02-01 18:34:00+00:00',
+                    closeTime: '2021-02-01 18:43:00+00:00',
+                    riskRewardRatio: 2.3,
+                    profitLoss: 320,
                     pips: 2,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-01-02',
-                    lots: 2,
-                    commissions: 32,
-                    swap: 32
+                    entryImageLink: '',
+                    exitImageLink: '',
+                    commission: 32,
+                    swap: 32,
+                    stopLoss: 0,
+                    takeProfit: 0,
+
                 },
             ]
             const dummyAccountData: AccountData = {
@@ -67,7 +68,7 @@ describe('Verify accountReturnsGraphCalc is working', () => {
                 thisWeekGraphCalc: defaultCalc,
                 thisMonthGraphCalc: defaultCalc,
                 thisYearGraphCalc: defaultCalc,
-                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}]
+                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}]
             }
             test('all results should be default values, except allTime ' + 
                 'which should have the trade taken the year before today\'s year', () => {
@@ -78,22 +79,22 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             // 2nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 2);
             // Trade take on 2nd January, 2022
-            const trades = [
+            const trades: Trade[] = [
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    entry_date: '2022-01-02',
-                    exit_date: '2022-01-02',
-                    risk_reward_ratio: 2.3,
-                    profit_loss: 320,
+                    openTime: '2022-02-01 18:34:00+00:00',
+                    closeTime: '2022-02-01 18:34:00+00:00',
+                    riskRewardRatio: 2.3,
+                    profitLoss: 320,
                     pips: 2,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-01-02',
-                    lots: 2,
-                    commissions: 32,
-                    swap: 32
+                    entryImageLink: '',
+                    exitImageLink: '',
+                    commission: 32,
+                    swap: 32,
+                    stopLoss: 0,
+                    takeProfit: 0
                 },
             ]
             const dummyAccountData: AccountData = {
@@ -108,8 +109,8 @@ describe('Verify accountReturnsGraphCalc is working', () => {
                 todayGraphCalc: defaultCalc,
                 thisWeekGraphCalc: defaultCalc,
                 thisMonthGraphCalc: defaultCalc,
-                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}]
+                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}]
             }
             test('all results should be default values, except allTime and thisYear ', () => {
                     expect(result).toEqual(expectedResult);
@@ -118,23 +119,23 @@ describe('Verify accountReturnsGraphCalc is working', () => {
         describe('When the only trade taken is one this month, but not this week', () => {
             // 22nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 22);
-            // Trade take on 16th April, 2022
-            const trades = [
+            // Trade take on 15th April, 2022
+            const trades: Trade[] = [
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    entry_date: '2022-04-16',
-                    exit_date: '2022-04-16',
-                    risk_reward_ratio: 2.3,
-                    profit_loss: 320,
+                    openTime: '2022-04-15 18:34:00+00:00',
+                    closeTime: '2022-04-15 18:34:00+00:00',
+                    riskRewardRatio: 2.3,
+                    profitLoss: 320,
                     pips: 2,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-01-02',
-                    lots: 2,
-                    commissions: 32,
-                    swap: 32
+                    entryImageLink: '',
+                    exitImageLink: '',
+                    commission: 32,
+                    swap: 32,
+                    stopLoss: 0,
+                    takeProfit: 0
                 },
             ]
             const dummyAccountData: AccountData = {
@@ -148,9 +149,9 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             const expectedResult: OverviewAccountReturnsGraphCalc = {
                 todayGraphCalc: defaultCalc,
                 thisWeekGraphCalc: defaultCalc,
-                thisMonthGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}]
+                thisMonthGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}]
             }
             test('all results should be default values, except allTime, thisYear and thisMonth', () => {
                     expect(result).toEqual(expectedResult);
@@ -159,24 +160,25 @@ describe('Verify accountReturnsGraphCalc is working', () => {
         describe('When the only trade taken is one this week, but not today', () => {
             // 22nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 22);
-            // Trade take on 16th April, 2022
-            const tradeDateStr = '2022-04-19';
-            const trades = [
+            // Trade take on 19th April, 2022
+            const tradeDateStr = '2022-04-19 18:34:00+00:00';
+            const trades: Trade[] = [
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    entry_date: tradeDateStr,
-                    exit_date: tradeDateStr,
-                    risk_reward_ratio: 2.3,
-                    profit_loss: 320,
+                    openTime: tradeDateStr,
+                    closeTime: tradeDateStr,
+                    riskRewardRatio: 2.3,
+                    profitLoss: 320,
                     pips: 2,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-01-02',
+                    entryImageLink: '',
+                    exitImageLink: '',
                     lots: 2,
-                    commissions: 32,
-                    swap: 32
+                    commission: 32,
+                    swap: 32,
+                    takeProfit: 0,
+                    stopLoss: 0
                 },
             ]
             const dummyAccountData: AccountData = {
@@ -185,14 +187,14 @@ describe('Verify accountReturnsGraphCalc is working', () => {
                 withdrawals: dummyWithdrawals,
                 trades
             }
-            const result = accountReturnsGraphCalc(dummyAccountData, today);
             const defaultCalc = [{tradeNo: 0, result: 0}];
+            const result = accountReturnsGraphCalc(dummyAccountData, today);
             const expectedResult: OverviewAccountReturnsGraphCalc = {
                 todayGraphCalc: defaultCalc,
-                thisWeekGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                thisMonthGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}]
+                thisWeekGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                thisMonthGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}]
             }
             test('only today\'s results should be default values', () => {
                     expect(result).toEqual(expectedResult);
@@ -202,23 +204,24 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             // 22nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 22);
             // Trade take on 16th April, 2022
-            const tradeDateStr = '2022-04-22';
-            const trades = [
+            const tradeDateStr = '2022-04-22 18:34:00+00:00';
+            const trades: Trade[] = [
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    entry_date: tradeDateStr,
-                    exit_date: tradeDateStr,
-                    risk_reward_ratio: 2.3,
-                    profit_loss: 320,
+                    openTime: tradeDateStr,
+                    closeTime: tradeDateStr,
+                    riskRewardRatio: 2.3,
+                    profitLoss: 320,
                     pips: 2,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-01-02',
+                    entryImageLink: '',
+                    exitImageLink: '',
                     lots: 2,
-                    commissions: 32,
-                    swap: 32
+                    commission: 32,
+                    swap: 32,
+                    takeProfit: 0,
+                    stopLoss: 0
                 },
             ]
             const dummyAccountData: AccountData = {
@@ -230,11 +233,11 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             const result = accountReturnsGraphCalc(dummyAccountData, today);
             const defaultCalc = [{tradeNo: 0, result: 0}];
             const expectedResult: OverviewAccountReturnsGraphCalc = {
-                todayGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                thisWeekGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                thisMonthGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}],
-                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}]
+                todayGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                thisWeekGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                thisMonthGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                thisYearGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}],
+                allTimeGraphCalc: [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}]
             }
             test('all calcs should have the default values and the trade taken today', () => {
                     expect(result).toEqual(expectedResult);
@@ -245,45 +248,48 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             // 22nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 22);
             // Trade take on 16th April, 2022
-            const todayDateStr = '2022-04-22'
-            const thisWeekDateStr = '2022-04-20'
-            const thisMonthDateStr = '2022-04-06'
-            const thisYearDateStr = '2022-01-13'
-            const lastYearDateStr = '2021-06-27'
-            const baseTrade = {
+            const todayDateStr = '2022-04-22 18:34:00+00:00'
+            const thisWeekDateStr = '2022-04-20 18:34:00+00:00'
+            const thisMonthDateStr = '2022-04-06 18:34:00+00:00'
+            const thisYearDateStr = '2022-01-13 18:34:00+00:00'
+            const lastYearDateStr = '2021-06-27 18:34:00+00:00'
+            const baseTrade: Trade = {
                 pair: 'GBPUSD',
                 action: 'buy',
-                risk_reward_ratio: 2.3,
-                profit_loss: 320,
+                riskRewardRatio: 2.3,
+                profitLoss: 320,
                 pips: 2,
                 notes: '',
-                entry_image_link: '',
-                exit_image_link: '',
-                date_added: '2022-01-02',
+                entryImageLink: '',
+                exitImageLink: '',
                 lots: 2,
-                commissions: 32,
-                swap: 32
+                commission: 32,
+                swap: 32,
+                stopLoss: 0,
+                takeProfit: 0,
+                openTime: todayDateStr,
+                closeTime: todayDateStr
             }
             const trades: Trade[] = [
                 {
                     ...baseTrade,
-                    entry_date: todayDateStr, exit_date: todayDateStr
+                    openTime: todayDateStr, closeTime: todayDateStr
                 },
                 {
                     ...baseTrade,
-                    entry_date: thisWeekDateStr, exit_date: thisWeekDateStr
+                    openTime: thisWeekDateStr, closeTime: thisWeekDateStr
                 },
                 {
                     ...baseTrade,
-                    entry_date: thisMonthDateStr, exit_date: thisMonthDateStr
+                    openTime: thisMonthDateStr, closeTime: thisMonthDateStr
                 },
                 {
                     ...baseTrade,
-                    entry_date: thisYearDateStr, exit_date: thisYearDateStr
+                    openTime: thisYearDateStr, closeTime: thisYearDateStr
                 },
                 {
                     ...baseTrade,
-                    entry_date: lastYearDateStr, exit_date: lastYearDateStr
+                    openTime: lastYearDateStr, closeTime: lastYearDateStr
                 }
             ]
             const dummyAccountData: AccountData = {
@@ -294,11 +300,11 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             }
             const result = accountReturnsGraphCalc(dummyAccountData, today);
             const defaultCalc = [{tradeNo: 0, result: 0}];
-            const expectedTodayCalc = [...defaultCalc, {tradeNo: 1, result: trades[0].profit_loss}];
-            const expectedThisWeekCalc = [...expectedTodayCalc, {tradeNo: 2, result: trades[1].profit_loss}]
-            const expectedThisMonthCalc = [...expectedThisWeekCalc, {tradeNo: 3, result: trades[2].profit_loss}];
-            const expectedThisYearCalc = [...expectedThisMonthCalc, {tradeNo: 4, result: trades[3].profit_loss}]
-            const expectedAllTimeCalc = [...expectedThisYearCalc, {tradeNo: 5, result: trades[4].profit_loss}];
+            const expectedTodayCalc = [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}];
+            const expectedThisWeekCalc = [...expectedTodayCalc, {tradeNo: 2, result: trades[1].profitLoss}]
+            const expectedThisMonthCalc = [...expectedThisWeekCalc, {tradeNo: 3, result: trades[2].profitLoss}];
+            const expectedThisYearCalc = [...expectedThisMonthCalc, {tradeNo: 4, result: trades[3].profitLoss}]
+            const expectedAllTimeCalc = [...expectedThisYearCalc, {tradeNo: 5, result: trades[4].profitLoss}];
 
             const expectedResult: OverviewAccountReturnsGraphCalc = {
                 todayGraphCalc: expectedTodayCalc,

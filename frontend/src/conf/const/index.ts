@@ -6,7 +6,7 @@ const FormConst = {
 
 /** Urls for contacting the backend */
 const HttpConst = {
-    BASE_URL: 'http://172.17.0.2:8000',
+    BASE_URL: 'http://localhost:8001',
     SIGN_UP_URL: 'trader/sign-up',
     LOGIN_URL: 'trader/login',
     CHANGE_PASSWORD_URL: 'users/password-change',

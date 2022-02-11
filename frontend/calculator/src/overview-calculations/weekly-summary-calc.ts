@@ -21,13 +21,13 @@ const weeklySummaryCalc = (accountData: AccountData, today: Date = new Date()) =
     }
     for(const trade of accountData.trades){
         for(const date of dates){
-            if(trade.exit_date === dateToTradeDateFormat(date)){
+            if(extractDateStr(trade.closeTime) === dateToTradeDateFormat(date)){
                 const strDate: string = dateToString(date);
                 calculations[strDate]['trades'] += 1;
                 if(trade.lots){
                     calculations[strDate]['lots'] += trade.lots;
                 }
-                calculations[strDate]['result'] += trade.profit_loss;
+                calculations[strDate]['result'] += trade.profitLoss;
             }
         }
     }
@@ -88,6 +88,13 @@ const dateToTradeDateFormat = (date: Date) => {
     let month = date.getMonth() + 1;
     let monthStr = month < 10 ? `0${month}` : `${month}`;
     return `${date.getFullYear()}-${monthStr}-${date.getDate()}`
+}
+
+/**
+* Takes date string of the format 2022-04-22 18:34:00+00:00 and returns 2022-04-22
+*/
+const extractDateStr = (dateStr: string) => {
+    return dateStr.split(' ')[0]
 }
 
 const SUNDAY = 0;

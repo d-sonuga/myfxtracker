@@ -18,3 +18,4 @@ const overviewCalculations = (accountData: AccountData) => {
 
 
 export default overviewCalculations
+export {aveRRR} from './overview-stats-calc'

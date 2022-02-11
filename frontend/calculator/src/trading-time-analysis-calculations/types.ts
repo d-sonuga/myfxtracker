@@ -17,7 +17,7 @@ type TradeDurationTableCalcItem = {
 type OpenHourTableCalc = Array<OpenHourTableCalcItem>
 
 type OpenHourTableCalcItem = {
-    duration: string,
+    hour: string,
     noOfTrades: number,
     result: number
 }
@@ -25,13 +25,16 @@ type OpenHourTableCalcItem = {
 type TimeAnalysisGraphCalc = PeriodGraph<TimeAnalysisGraphCalcItem>
 
 type TimeAnalysisGraphCalcItem = {
-    time: string,
+    openHour: string,
     result: number
 }
 
 export type {
     TradingTimeAnalysisCalculations,
     TradeDurationTableCalc,
+    TradeDurationTableCalcItem,
     OpenHourTableCalc,
-    TimeAnalysisGraphCalc
+    OpenHourTableCalcItem,
+    TimeAnalysisGraphCalc,
+    TimeAnalysisGraphCalcItem
 }

@@ -1,9 +1,10 @@
 from django.test import override_settings, tag
+from trader.models import Account
 from users.models import User
 from allauth.account.models import EmailAddress
 from .base_functional_test import BaseFunctionalTest
 from trader.tests.test_data import LoginDetails
-
+from datasource_endpoint.tests.test_data import DatasourceInitialInfoData
 
 """
 When a user first logs in, there ought to be instructions telling him / her
@@ -22,9 +23,9 @@ class NewUserLoginFlow(BaseFunctionalTest):
     def setUpClass(cls):
         super().setUpClass()
         # Create a new and verified user for the test
-        details = LoginDetails.good_details
-        cls.new_user = User.objects.create(email=details['email'])
-        cls.new_user.set_password(details['password'])
+        cls.details = LoginDetails.good_details
+        cls.new_user = User.objects.create(email=cls.details['email'])
+        cls.new_user.set_password(cls.details['password'])
         cls.new_user.save()
         EmailAddress.objects.create(user=cls.new_user, email=cls.new_user.email, verified=True, primary=True)
 
@@ -67,11 +68,18 @@ class NewUserLoginFlow(BaseFunctionalTest):
 
     def simulate_follow_instructions(self):
         self.navigate(f'{self.base_url}/app')
-        download_ea = self.find_by_testid('download-ea')
-        self.do_until_max_wait(download_ea.click)
-        self.fail()
+        download_ea_mt4 = self.find_by_testid('download-ea-mt4')
+        download_ea_mt5 = self.find_by_testid('download-ea-mt5')
+        self.do_until_max_wait(download_ea_mt4.click)
+        self.do_until_max_wait(download_ea_mt5.click)
         # When a user has successfully followed all the instructions
         # The database will have his trade account data
+        trader = User.objects.get(email=self.details['email'])
+        Account.objects.create_account(
+            trader,
+            DatasourceInitialInfoData.good_details_with_transactions['data']
+        )
+        self.fail()
 
     def fill_login_form(self, details):
         email = self.find_by_testid('email')

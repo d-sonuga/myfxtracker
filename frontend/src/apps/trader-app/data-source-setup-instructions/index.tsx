@@ -4,7 +4,7 @@ import {H5, H6, P} from '@components/text'
 import {getColor} from '@conf/utils'
 
 
-const DataSourceSetupInstructions = ({eaDownloadUrl}: {eaDownloadUrl: string}) => {
+const DataSourceSetupInstructions = ({eaDownloadUrls}: {eaDownloadUrls: {'mt4': string, 'mt5': string}}) => {
     return(
         <ColumnBox
             style={{width: '100%', height: '75vh', justifyContent: 'center', alignItems: 'center'}}
@@ -15,16 +15,26 @@ const DataSourceSetupInstructions = ({eaDownloadUrl}: {eaDownloadUrl: string}) =
             <ol>
                 <li>
                     <RowBox style={{alignItems: 'baseline'}}>
-                        <P>Download the MyFxTracker EA from &nbsp;</P>
+                        <P>Download the &nbsp;</P>
                         <a
-                            href={eaDownloadUrl}
-                            download='MyFxTrackerEA.txt'
+                            href={eaDownloadUrls['mt4']}
+                            download='MyFxTracker.ex4'
                             style={{
                                 color: getColor('light-blue'),
                                 textDecoration: 'underline',
                                 cursor: 'pointer'
                             }}
-                            data-testid='download-ea'>here</a>
+                            data-testid='download-ea-mt4'>EA for MT4</a>
+                        <P>&nbsp; or the &nbsp;</P>
+                        <a
+                            href={eaDownloadUrls['mt5']}
+                            download='MyFxTrackerEA.ex5'
+                            style={{
+                                color: getColor('light-blue'),
+                                textDecoration: 'underline',
+                                cursor: 'pointer'
+                            }}
+                            data-testid='download-ea-mt5'>EA for MT5</a>
                     </RowBox>
                 </li>
                 <li><P>Open your Metatrader terminal</P></li>

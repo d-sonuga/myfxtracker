@@ -1,15 +1,11 @@
 import {noOfTrades, totalNoOfLongs, totalNoOfShorts, winRate, totalNoOfWinningTrades} from '@root/common-calc'
 import {AccountData, Trade} from '@root/types'
+import {groupTradesByPair} from './utils'
 import {PairsAnalysisTableCalc} from './types'
 
 
-const pairsAnalysisTableCalc = (accountData: AccountData) => {
-    const tradesPerPair: TradesPerPair = groupPairsByTrades(accountData);
-    const calculations: PairsAnalysisTableCalc = calcTableData(tradesPerPair);
-    return calculations;
-}
-
-const calcTableData = (tradesPerPair: TradesPerPair) => {
+const pairsAnalysisTableCalc = (accountData: AccountData): PairsAnalysisTableCalc => {
+    const tradesPerPair: TradesPerPair = groupTradesByPair(accountData);
     return Object.keys(tradesPerPair).map((pair) => {
         const trades = tradesPerPair[pair];
         return {
@@ -23,12 +19,12 @@ const calcTableData = (tradesPerPair: TradesPerPair) => {
             shortsOnPairPercent: shortsOnPairPercent(trades),
             noOfLongsOnPair: totalNoOfLongs(trades),
             longsOnPairPercent: longsOnPairPercent(trades),
-            noOfTpOnPair: 0,
-            tpOnPairPercent: 0,
-            noOfSlOnPair: 0,
-            slOnPairPercent: 0
+            noOfTpOnPair: noOfTpOnPair(trades),
+            tpOnPairPercent: tpOnPairPercent(trades),
+            noOfSlOnPair: noOfSlOnPair(trades),
+            slOnPairPercent: slOnPairPercent(trades)
         }
-    })
+    });
 }
 
 const longsOnPairPercent = (trades: Trade[]) => {
@@ -46,7 +42,7 @@ const shortsOnPairPercent = (trades: Trade[]) => {
 }
 
 const noOfLosingTrades = (trades: Trade[]) => {
-    const lossTrades = trades.filter((trade) => trade.profit_loss < 0);
+    const lossTrades = trades.filter((trade) => trade.profitLoss < 0);
     return lossTrades.length
 }
 
@@ -57,15 +53,40 @@ const loseRate = (trades: Trade[]) => {
     return (lossTrades / totalNoOfTrades) * 100
 }
 
-const groupPairsByTrades = (accountData: AccountData) => {
-    const tradesPerPair: TradesPerPair = {};
-    for(const trade of accountData.trades){
-        if(!(trade.pair in tradesPerPair)){
-            tradesPerPair[trade.pair] = [];
-        }
-        tradesPerPair[trade.pair].push(trade);
-    }
-    return tradesPerPair
+const noOfTpOnPair = (trades: Trade[]) => {
+    let tpOnPair = 0;
+    trades.forEach((trade) => {
+        tpOnPair += trade.takeProfit;
+    })
+    return tpOnPair;
+}
+
+const noOfSlOnPair = (trades: Trade[]) => {
+    let slOnPair = 0;
+    trades.forEach((trade) => {
+        slOnPair += trade.stopLoss;
+    })
+    return slOnPair;
+}
+
+const tpOnPairPercent = (trades: Trade[]) => {
+    let tpOnPair = 0;
+    let count = 0;
+    trades.forEach((trade) => {
+        tpOnPair += trade.takeProfit;
+        count++;
+    })
+    return tpOnPair / count;
+}
+
+const slOnPairPercent = (trades: Trade[]) => {
+    let slOnPair = 0;
+    let count = 0;
+    trades.forEach((trade) => {
+        slOnPair += trade.stopLoss;
+        count++;
+    })
+    return slOnPair / count;
 }
 
 type TradesPerPair = {[key: string]: Trade[]}

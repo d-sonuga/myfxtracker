@@ -1,13 +1,15 @@
 import {AccountData} from '@root/types'
+import {ExpensesTableCalcItem} from '..'
 import {ExpensesTableCalc} from './types'
 
 
 const expensesTableCalc = (accountData: AccountData) => {
     const expensesPerPair: ExpensesPerPair = calcExpensesPerPair(accountData);
-    const calculations: ExpensesTableCalc = Object.keys(expensesPerPair).map((pair) => ({
-        pair,
-        commissions: expensesPerPair[pair].commissions,
-        swap: expensesPerPair[pair].swap
+    const calculations: ExpensesTableCalc = Object.keys(expensesPerPair)
+        .map((pair): ExpensesTableCalcItem => ({
+            pair,
+            commission: expensesPerPair[pair].commissions,
+            swap: expensesPerPair[pair].swap
    }))
     return calculations
 }
@@ -19,7 +21,7 @@ const calcExpensesPerPair = (accountData: AccountData) => {
             expensesPerPair[trade.pair] = {commissions: 0, swap: 0}
         }
         expensesPerPair[trade.pair].commissions += 
-            trade.commissions !== undefined ? trade.commissions : 0;
+            trade.commission !== undefined ? trade.commission : 0;
         expensesPerPair[trade.pair].swap += 
             trade.swap !== undefined ? trade.swap : 0;
     }

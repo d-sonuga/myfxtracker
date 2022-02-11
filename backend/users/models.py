@@ -12,7 +12,6 @@ class UserManager(DjangoUserManager):
             username=kwargs.get('username', kwargs['email'])
         )
         new_trader.set_password(kwargs['password'])
-        new_trader.save()
         TraderInfo.objects.create(
             user=new_trader,
             how_you_heard_about_us=kwargs.get('how_you_heard_about_us', ''),
@@ -51,6 +50,11 @@ class User(AbstractUser):
                 except AttributeError:
                     return getattr(self.subscriptioninfo, __name)
             raise e
+    
+    def set_password(self, raw_password, save=True):
+        super().set_password(raw_password)
+        if save:
+            self.save()
 
 
 class TraderInfoManager(models.Manager):
@@ -66,7 +70,7 @@ class TraderInfoManager(models.Manager):
                 traderinfo.save()
         except IntegrityError:
             # retry to generate another username
-            self.create_datasource_username()
+            self.create_datasource_username(traderinfo, save)
 
 
 class TraderInfo(models.Model):
@@ -87,6 +91,7 @@ class TraderInfo(models.Model):
     
     def get_datasource_username(self):
         return self.datasource_username
+
     
 def datasource_username_is_invalid(username):
     return TraderInfo.objects.filter(datasource_username=username).count() == 0

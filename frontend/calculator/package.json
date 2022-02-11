@@ -28,5 +28,8 @@
     "moduleNameMapper": {
       "^@root/(.*)$": "<rootDir>/src/$1"
     }
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }

@@ -8,7 +8,7 @@ import {AccountData} from '..'
     let totalProfitLoss = 0;
     for(const trade of accountData.trades){
         if(trade.action === 'buy'){
-            totalProfitLoss += trade.profit_loss
+            totalProfitLoss += trade.profitLoss
         }
     }
     return totalProfitLoss
@@ -22,7 +22,7 @@ import {AccountData} from '..'
     let totalProfitLoss = 0;
     for(const trade of accountData.trades){
         if(trade.action === 'sell'){
-            totalProfitLoss += trade.profit_loss
+            totalProfitLoss += trade.profitLoss
         }
     }
     return totalProfitLoss

@@ -9,13 +9,14 @@ describe('Verify gainsGraphCalc is working', () => {
     /** To create a new trade object without having to specify all trade attributes */
     const newTrade = (attr: any) => {
         return {
-            profit_loss: randomNumber(-1000000, 1000000),
-            entry_date: attr.date !== undefined ? attr.date : '2021-10-18',
-            exit_date: attr.date !== undefined ? attr.date : '2021-10-18',
+            profitLoss: randomNumber(-1000000, 1000000),
+            openTime: attr.date !== undefined ? attr.date : '2021-10-18 18:34:00+00:00',
+            closeTime: attr.date !== undefined ? attr.date : '2021-10-18 18:34:00+00:00',
             pair: 'GBPUSD',
             action: 'buy',
-            risk_reward_ratio: 2,
-            date_added: attr.date !== undefined ? attr.date : '2021-10-18'
+            riskRewardRatio: 2,
+            stopLoss: 0,
+            takeProfit: 0
         }
     }
     describe('When there are no trades or deposits', () => {
@@ -46,7 +47,7 @@ describe('Verify gainsGraphCalc is working', () => {
                     {
                         account: 2,
                         amount: randomNumber(-1000000, 1000000),
-                        date: '2021-10-12'
+                        time: '2021-10-12 18:34:00+00:00'
                     }
                 )
             }
@@ -79,7 +80,7 @@ describe('Verify gainsGraphCalc is working', () => {
                     {
                         account: 2,
                         amount: randomNumber(-1000000, 1000000),
-                        date: '2021-10-12'
+                        time: '2021-10-12 18:34:00+00:00'
                     }
                 )
             }
@@ -105,7 +106,7 @@ describe('Verify gainsGraphCalc is working', () => {
         })
     })
     describe('When there are trades and deposits', () => {
-        const tradeDateStr = '2021-10-13';
+        const tradeDateStr = '2021-10-13 18:34:00+00:00';
         const today = new Date(tradeDateStr);
         const noOfTrades = 20;
         // All deposits happen on 12th October, 2021
@@ -113,7 +114,7 @@ describe('Verify gainsGraphCalc is working', () => {
             const deposits: Deposit[] = [];
             for(let i=numberOfDeposits; i>0; i--){
                 deposits.push(
-                    {account: 2, amount: randomNumber(-10000000, 100000000), date: '2021-10-12'}
+                    {account: 2, amount: randomNumber(-10000000, 100000000), time: '2021-10-12 18:34:00+00:00'}
                 )
             }
             return deposits
@@ -137,7 +138,7 @@ describe('Verify gainsGraphCalc is working', () => {
             {tradeNo: 0, gainsPercent: 0},
             ...trades.map((trade, i) => ({
                 tradeNo: i + 1,
-                gainsPercent: (trade.profit_loss / totalDeposits) * 100
+                gainsPercent: (trade.profitLoss / totalDeposits) * 100
             }))
         ];
         const result = gainsGraphCalc(accountData, today);

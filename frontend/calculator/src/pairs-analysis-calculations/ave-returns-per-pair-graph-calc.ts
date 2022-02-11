@@ -34,7 +34,7 @@ const calcPerPairData = (accountData: AccountData) => {
             perPairData[trade.pair] = {tradeNo: 0, profitLoss: 0}
         }
         perPairData[trade.pair].tradeNo += 1;
-        perPairData[trade.pair].profitLoss += trade.profit_loss;
+        perPairData[trade.pair].profitLoss += trade.profitLoss;
     }
     return perPairData
 }

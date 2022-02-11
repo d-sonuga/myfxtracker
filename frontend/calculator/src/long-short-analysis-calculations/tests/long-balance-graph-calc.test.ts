@@ -35,18 +35,19 @@
                 {
                     pair: 'GBPJPY',
                     action: 'buy',
-                    entry_date: tradeDateStr,
-                    exit_date: tradeDateStr,
-                    risk_reward_ratio: 3,
-                    profit_loss: tradeProfitLoss,
+                    openTime: tradeDateStr,
+                    closeTime: tradeDateStr,
+                    riskRewardRatio: 3,
+                    profitLoss: tradeProfitLoss,
                     pips: 3,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: tradeDateStr,
+                    entryImageLink: '',
+                    exitImageLink: '',
                     lots: 3,
-                    commissions: 2.3,
-                    swap: 3
+                    commission: 2.3,
+                    swap: 3,
+                    takeProfit: 0,
+                    stopLoss: 0
                 }
             ];
             const accountData: AccountData = {
@@ -70,18 +71,19 @@
                 {
                     pair: 'GBPJPY',
                     action: 'sell',
-                    entry_date: tradeDateStr,
-                    exit_date: tradeDateStr,
-                    risk_reward_ratio: 3,
-                    profit_loss: tradeProfitLoss,
+                    openTime: tradeDateStr,
+                    closeTime: tradeDateStr,
+                    riskRewardRatio: 3,
+                    profitLoss: tradeProfitLoss,
                     pips: 3,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: tradeDateStr,
+                    entryImageLink: '',
+                    exitImageLink: '',
                     lots: 3,
-                    commissions: 2.3,
-                    swap: 3
+                    commission: 2.3,
+                    swap: 3,
+                    takeProfit: 0,
+                    stopLoss: 0
                 }
             ];
             const accountData: AccountData = {

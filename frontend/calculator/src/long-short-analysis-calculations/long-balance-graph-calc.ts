@@ -12,7 +12,7 @@ const longBalanceGraphCalc = (accountData: AccountData) => {
         ...accountData.trades
             .filter((trade) => trade.action === 'buy')
             .map((trade, i) => (
-                {tradeNo: i + 1, result: trade.profit_loss}
+                {tradeNo: i + 1, result: trade.profitLoss}
             ))
     ]
     return calculations

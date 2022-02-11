@@ -20,4 +20,33 @@ describe('Verify aveReturnsPerPairGraphCalc is working', () => {
             expect(result).toEqual(expectedResult);
         })
     })
+    describe('When there is 1 trade', () => {
+        const pair = 'GBPUSD';
+        const profitLoss = 200;
+        const accountData: AccountData = {
+            name: 'dummy account',
+            deposits: [],
+            withdrawals: [],
+            trades: [
+                {
+                    pair,
+                    profitLoss,
+                    takeProfit: 0,
+                    stopLoss: 0,
+                    commission: 20,
+                    swap: 12,
+                    action: 'buy',
+                    openTime: '2022-03-23 14:03:00+00:00',
+                    closeTime: '2022-03-23 14:03:00+00:00'
+                }
+            ]
+        }
+        const result = aveReturnsPerPairGraphCalc(accountData);
+        const expectedResult: AveReturnsPerPairGraphCalc = [
+            {pair, result: profitLoss}
+        ];
+        test('it outputs the correct result', () => {
+            expect(result).toEqual(expectedResult);
+        })
+    })
 })

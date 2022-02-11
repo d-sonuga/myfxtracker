@@ -20,6 +20,7 @@ from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader, IsF
 import datetime as dt
 import os
 import mimetypes
+from .renderers import BinaryRenderer
 
 
 class DeleteTrade(DestroyAPIView):
@@ -272,14 +273,16 @@ def update_user_subscription_info(request):
 
 class DownloadEA(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
+    renderer_classes = [BinaryRenderer]
     
     def get(self, request):
-        filename = 'ea.txt'
-        ea_location = os.path.join(settings.BASE_DIR, 'trader', 'ea', filename)
-        file = open(ea_location)
-        mime_type, _ = mimetypes.guess_type(ea_location)
-        print(mime_type)
-        response = HttpResponse(file, content_type=mime_type)
+        filename = 'MyFxTracker'
+        extension = ('ex4'
+            if request.query_params['variant'] == 'mt4' else 'ex5'
+        )
+        ea_location = os.path.join(settings.BASE_DIR, 'trader', 'expert_advisors', f'{filename}.{extension}')
+        file = open(ea_location, 'rb')
+        response = Response(file)
         response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
 

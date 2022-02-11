@@ -18,7 +18,7 @@ const gainsGraphCalc = (accountData: AccountData, today: Date = new Date()) => {
 const todayGainsPercent = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameDay(trade.exit_date, today)
+        sameDay(trade.openTime, today)
     ));
     return gainsPercent(accData);
 }
@@ -26,7 +26,7 @@ const todayGainsPercent = (accountData: AccountData, today: Date) => {
 const thisWeekGainsPercent = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameWeek(trade.exit_date, today)
+        sameWeek(trade.closeTime, today)
     ));
     return gainsPercent(accData);
 }
@@ -34,7 +34,7 @@ const thisWeekGainsPercent = (accountData: AccountData, today: Date) => {
 const thisMonthGainsPercent = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameMonth(trade.exit_date, today)
+        sameMonth(trade.closeTime, today)
     ));
     return gainsPercent(accData);
 }
@@ -42,7 +42,7 @@ const thisMonthGainsPercent = (accountData: AccountData, today: Date) => {
 const thisYearGainsPercent = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameYear(trade.exit_date, today)
+        sameYear(trade.closeTime, today)
     ));
     return gainsPercent(accData);
 }
@@ -56,7 +56,7 @@ const gainsPercent = (accountData: AccountData) => {
     const totalDeposits = sumObjArray(accountData.deposits, 'amount');
     for(const i in accountData.trades){
         const trade = accountData.trades[i];
-        const gain = totalDeposits !== 0 ? trade.profit_loss / totalDeposits : 0;
+        const gain = totalDeposits !== 0 ? trade.profitLoss / totalDeposits : 0;
         const gainsPercent = gain * 100;
         calc.push({tradeNo: parseInt(i) + 1, gainsPercent})
     }

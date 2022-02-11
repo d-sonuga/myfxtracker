@@ -65,7 +65,7 @@ const totalNoOfLongsWon = (accountData: AccountData) => {
     let noOfLongsWon = 0;
     for(const trade of accountData.trades){
         if(trade.action === 'buy'){
-            if(trade.profit_loss > 0){
+            if(trade.profitLoss > 0){
                 noOfLongsWon += 1;
             }
         }
@@ -84,7 +84,7 @@ const totalNoOfShortsWon = (accountData: AccountData) => {
     let noOfShortsWon = 0;
     for(const trade of accountData.trades){
         if(trade.action === 'sell'){
-            if(trade.profit_loss > 0){
+            if(trade.profitLoss > 0){
                 noOfShortsWon += 1;
             }
         }
@@ -114,7 +114,7 @@ const totalNoOfWinningTrades = (data: AccountData | Trade[]) => {
 const totalNoOfWinningTradesFromAccountData = (accountData: AccountData) => {
     let totalNoOfWinningTrades = 0;
     for(const trade of accountData.trades){
-        if(trade.profit_loss > 0){
+        if(trade.profitLoss > 0){
             totalNoOfWinningTrades += 1;
         }
     }
@@ -124,7 +124,7 @@ const totalNoOfWinningTradesFromAccountData = (accountData: AccountData) => {
 const totalNoOfWinningTradesFromTradesArray = (trades: Trade[]) => {
     let totalNoOfWinningTrades = 0;
     for(const trade of trades){
-        if(trade.profit_loss > 0){
+        if(trade.profitLoss > 0){
             totalNoOfWinningTrades += 1;
         }
     }

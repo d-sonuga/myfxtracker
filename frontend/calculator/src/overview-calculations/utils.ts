@@ -1,12 +1,4 @@
 /**
- * A year to be used in date sentinels to represent dates whose values
- * are to far in the future for real date to be ahead of the same way 
- * infinity is used in number sentinels to represent 
- * "a number no other number is larger than"
- * */
-const FAR_IN_THE_FUTURE_YEAR = 200000;
-
-/**
  * Does the date in @param dateStr fall in the same day as @param otherDate
  */
  const sameDay = (dateStr: string, otherDate: Date): boolean => {
@@ -19,8 +11,8 @@ const FAR_IN_THE_FUTURE_YEAR = 200000;
 /**
  * Does the date in @param dateStr fall in the same week as @param otherDate
  */
-const sameWeek = (dateStr: string | Date, otherDate: Date) => {
-    const date = typeof(dateStr) === 'object' ? dateStr : new Date(dateStr);
+const sameWeek = (dateStr: string, otherDate: Date) => {
+    const date = new Date(dateStr);
     /**
      * Upper bound is Sunday 12 am and lower bound is Saturday 11:59 pm
      * If today is Sunday, then date will have to be subtracted 0 times (it's date index: 0)
@@ -92,6 +84,5 @@ export {
     sameDay,
     sameWeek,
     sameMonth,
-    sameYear,
-    FAR_IN_THE_FUTURE_YEAR
+    sameYear
 }

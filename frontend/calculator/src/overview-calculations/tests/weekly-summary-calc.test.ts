@@ -1,5 +1,5 @@
 import weeklySummaryCalc, {getWeekDates} from '../weekly-summary-calc'
-import {AccountData, Deposit, Withdrawal} from '@root/types'
+import {AccountData, Deposit, Withdrawal, Trade} from '@root/types'
 
 /**
  * Note: the tests are far from complete
@@ -112,7 +112,9 @@ describe('Verify that weeklySummaryCalc is working', () => {
     const sumArrayObj = (array: {[key: string]: any}[], field: string) => {
         let sum = 0;
         for(const obj of array){
-            sum += obj[field];
+            if(obj[field] !== undefined){
+                sum += obj[field];
+            }
         }
         return sum
     }
@@ -121,22 +123,23 @@ describe('Verify that weeklySummaryCalc is working', () => {
         const today = new Date(2022, 3, 21);
         // 2nd January, 2021
         const tradeDateStr = '2021-01-02'
-        const trades = [
+        const trades: Trade[] = [
             {
                 pair: 'GBPUSD',
                 action: 'buy',
-                entry_date: tradeDateStr,
-                exit_date: tradeDateStr,
-                risk_reward_ratio: 2.3,
-                profit_loss: 320,
+                openTime: tradeDateStr,
+                closeTime: tradeDateStr,
+                riskRewardRatio: 2.3,
+                profitLoss: 320,
                 pips: 2,
                 notes: '',
-                entry_image_link: '',
-                exit_image_link: '',
-                date_added: '2022-01-02',
+                entryImageLink: '',
+                exitImageLink: '',
                 lots: 2,
-                commissions: 32,
-                swap: 32
+                commission: 32,
+                swap: 32,
+                stopLoss: 0,
+                takeProfit: 0
             },
         ]
         const dummyAccountData: AccountData = {
@@ -165,23 +168,23 @@ describe('Verify that weeklySummaryCalc is working', () => {
          * @returns: accountData with noOfTrades trades all done on dateStr
          */
         const accountDataWithTradesOnDate = (dateStr: string, noOfTrades: number) => {
-            const trades = [];
+            const trades: Trade[] = [];
             for(let i=noOfTrades; i>0; i--){
                 trades.push({
                     pair: 'GBPUSD',
                     action: 'buy',
-                    entry_date: dateStr,
-                    exit_date: dateStr,
-                    risk_reward_ratio: 2.3,
-                    profit_loss: 320,
+                    openTime: dateStr,
+                    closeTime: dateStr,
+                    riskRewardRatio: 2.3,
+                    profitLoss: 320,
                     pips: 2,
                     notes: '',
-                    entry_image_link: '',
-                    exit_image_link: '',
-                    date_added: '2022-01-02',
-                    lots: 2,
-                    commissions: 32,
-                    swap: 32
+                    entryImageLink: '',
+                    exitImageLink: '',
+                    commission: 32,
+                    swap: 32,
+                    stopLoss: 0,
+                    takeProfit: 0
                 })
             }
             return {
@@ -195,7 +198,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Monday 18th April, 2022
-            const tradeDateStr = '2022-04-18'
+            const tradeDateStr = '2022-04-18 18:34:00+00:00'
             // Using the 1st trade set
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             // Using the 2nd trade set
@@ -214,19 +217,19 @@ describe('Verify that weeklySummaryCalc is working', () => {
             const expectedResult1 = {
                 '18 Apr': {trades: dummyAccountData1.trades.length,
                     lots: sumArrayObj(dummyAccountData1.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData1.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData1.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult2 = {
                 '18 Apr': {trades: dummyAccountData2.trades.length,
                     lots: sumArrayObj(dummyAccountData2.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData2.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData2.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult3 = {
                 '18 Apr': {trades: dummyAccountData3.trades.length,
                     lots: sumArrayObj(dummyAccountData3.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData3.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData3.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             test('all days of the week have the default summary result except Monday', () => {
@@ -239,7 +242,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Tuesday 19th April, 2022
-            const tradeDateStr = '2022-04-19'
+            const tradeDateStr = '2022-04-19 18:34:00+00:00'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);
@@ -256,19 +259,19 @@ describe('Verify that weeklySummaryCalc is working', () => {
             const expectedResult1 = {
                 '19 Apr': {trades: dummyAccountData1.trades.length,
                     lots: sumArrayObj(dummyAccountData1.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData1.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData1.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult2 = {
                 '19 Apr': {trades: dummyAccountData2.trades.length,
                     lots: sumArrayObj(dummyAccountData2.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData2.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData2.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult3 = {
                 '19 Apr': {trades: dummyAccountData3.trades.length,
                     lots: sumArrayObj(dummyAccountData3.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData3.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData3.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             test('all days of the week have the default summary result except Tuesday', () => {
@@ -281,7 +284,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Monday 18th April, 2022, not in today's week
-            const tradeDateStr = '2022-04-20'
+            const tradeDateStr = '2022-04-20 18:34:00+00:00'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);
@@ -298,19 +301,19 @@ describe('Verify that weeklySummaryCalc is working', () => {
             const expectedResult1 = {
                 '20 Apr': {trades: dummyAccountData1.trades.length,
                     lots: sumArrayObj(dummyAccountData1.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData1.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData1.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult2 = {
                 '20 Apr': {trades: dummyAccountData2.trades.length,
                     lots: sumArrayObj(dummyAccountData2.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData2.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData2.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult3 = {
                 '20 Apr': {trades: dummyAccountData3.trades.length,
                     lots: sumArrayObj(dummyAccountData3.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData3.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData3.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             test('all days of the week have the default summary result except Wednesday', () => {
@@ -323,7 +326,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Thursday 21st April, 2022
-            const tradeDateStr = '2022-04-21'
+            const tradeDateStr = '2022-04-21 18:34:00+00:00'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);
@@ -340,19 +343,19 @@ describe('Verify that weeklySummaryCalc is working', () => {
             const expectedResult1 = {
                 '21 Apr': {trades: dummyAccountData1.trades.length,
                     lots: sumArrayObj(dummyAccountData1.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData1.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData1.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult2 = {
                 '21 Apr': {trades: dummyAccountData2.trades.length,
                     lots: sumArrayObj(dummyAccountData2.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData2.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData2.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult3 = {
                 '21 Apr': {trades: dummyAccountData3.trades.length,
                     lots: sumArrayObj(dummyAccountData3.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData3.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData3.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             test('all days of the week have the default summary result except Thursday', () => {
@@ -365,7 +368,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Friday 22nd April, 2022
-            const tradeDateStr = '2022-04-22'
+            const tradeDateStr = '2022-04-22 18:34:00+00:00'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);
@@ -382,19 +385,19 @@ describe('Verify that weeklySummaryCalc is working', () => {
             const expectedResult1 = {
                 '22 Apr': {trades: dummyAccountData1.trades.length,
                     lots: sumArrayObj(dummyAccountData1.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData1.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData1.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult2 = {
                 '22 Apr': {trades: dummyAccountData2.trades.length,
                     lots: sumArrayObj(dummyAccountData2.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData2.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData2.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             const expectedResult3 = {
                 '22 Apr': {trades: dummyAccountData3.trades.length,
                     lots: sumArrayObj(dummyAccountData3.trades, 'lots'),
-                    result: sumArrayObj(dummyAccountData3.trades, 'profit_loss')},
+                    result: sumArrayObj(dummyAccountData3.trades, 'profitLoss')},
                 ...baseExpectedResult
             }
             test('all days of the week have the default summary result except Friday', () => {

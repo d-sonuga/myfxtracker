@@ -13,3 +13,4 @@ const cashAndGainsCalculations = (accountData: AccountData) => {
 }
 
 export default cashAndGainsCalculations
+export {graphCalc} from './cash-graph-calc'

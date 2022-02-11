@@ -2,6 +2,10 @@ const randomNumber = (min: number, max: number) => {
     return (Math.random() * (max - min)) + min
 }
 
+const randomInt = (min: number, max: number) => {
+    return Math.round(randomNumber(min, max));
+}
+
 const mergeArrays = (...arrays: Array<Array<any>>) => {
     let newArray: any[] = [];
     for(const array of arrays){
@@ -33,7 +37,8 @@ export {
     mergeArrays,
     sum,
     sumObjArray,
-    cloneObj
+    cloneObj,
+    randomInt
 }
 
 export * from './date-utils'

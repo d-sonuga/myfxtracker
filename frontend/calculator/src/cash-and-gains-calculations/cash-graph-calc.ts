@@ -21,7 +21,7 @@ const cashGraphCalc = (accountData: AccountData, today: Date = new Date()) => {
 const todayGraphCalc = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameDay(trade.exit_date, today)
+        sameDay(trade.closeTime, today)
     ));
     return graphCalc(accData);
 }
@@ -29,7 +29,7 @@ const todayGraphCalc = (accountData: AccountData, today: Date) => {
 const thisWeekGraphCalc = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameWeek(trade.exit_date, today)
+        sameWeek(trade.closeTime, today)
     ));
     return graphCalc(accData);
 }
@@ -37,7 +37,7 @@ const thisWeekGraphCalc = (accountData: AccountData, today: Date) => {
 const thisMonthGraphCalc = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameMonth(trade.exit_date, today)
+        sameMonth(trade.closeTime, today)
     ));
     return graphCalc(accData);
 }
@@ -45,7 +45,7 @@ const thisMonthGraphCalc = (accountData: AccountData, today: Date) => {
 const thisYearGraphCalc = (accountData: AccountData, today: Date) => {
     const accData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameYear(trade.exit_date, today)
+        sameYear(trade.closeTime, today)
     ));
     return graphCalc(accData);
 }
@@ -70,7 +70,7 @@ const allTimeGraphCalc = (accountData: AccountData, today: Date) => {
  *      Else If the withdrawal's date comes before the trade's date,
  *          subtract the withdrawal from the running balance and continue to the next iteration
  */
-const graphCalc = (accountData: AccountData) => {
+const graphCalc = (accountData: AccountData): CashGraphItem[] => {
     let tradesIndex = 0;
     let withdrawalsIndex = 0;
     let depositsIndex = 0;
@@ -88,7 +88,7 @@ const graphCalc = (accountData: AccountData) => {
         const depositIsEarliest = () => depositPos === 1;
         const depositIsSecond = () => depositPos === 2;
         const addTradeToBalance = () => {
-            currentBalance += currentTrade.profit_loss;
+            currentBalance += currentTrade.profitLoss;
             tradesIndex += 1;
         }
         const decreaseWithdrawalFromBalance = () => {
@@ -143,10 +143,10 @@ const graphCalc = (accountData: AccountData) => {
  * */
 const getDatePos = (deposit: Deposit, withdrawal: Withdrawal, trade: Trade) => {
     const depositDate = deposit === undefined ? new Date(FAR_IN_THE_FUTURE_YEAR, 11, 31)
-        : new Date(deposit.date);
+        : new Date(deposit.time);
     const withdrawalDate = withdrawal === undefined ? new Date(FAR_IN_THE_FUTURE_YEAR, 10, 30) 
-        : new Date(withdrawal.date);
-    const tradeDate = new Date(trade.exit_date);
+        : new Date(withdrawal.time);
+    const tradeDate = new Date(trade.closeTime);
     const posTriple = [-1, -1, -1];
     // Their indexes in the posTriple
     const DEPOSIT = 0;
@@ -250,4 +250,7 @@ const getDatePos = (deposit: Deposit, withdrawal: Withdrawal, trade: Trade) => {
     return posTriple
 }
 
-export default cashGraphCalc;
+export default cashGraphCalc
+export {
+    graphCalc
+}
