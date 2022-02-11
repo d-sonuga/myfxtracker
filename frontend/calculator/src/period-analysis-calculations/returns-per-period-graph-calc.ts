@@ -18,9 +18,9 @@ const dailyReturnsPerPeriod = (trades: Trade[]) => {
     };
     const calculateReturnsPerPeriod = () => {
         for(const trade of trades){
-            const date = new Date(trade.exit_date);
+            const date = new Date(trade.closeTime);
             const day = date.getDay();
-            returnsPerPeriod[day] += trade.profit_loss;
+            returnsPerPeriod[day] += trade.profitLoss;
         }
     }
     const formatReturnsPerPeriod = () => {
@@ -40,9 +40,9 @@ const monthlyReturnsPerPeriod = (trades: Trade[]) => {
     };
     const calculateReturnsPerPeriod = () => {
         for(const trade of trades){
-            const date = new Date(trade.exit_date);
+            const date = new Date(trade.closeTime);
             const month = date.getMonth();
-            returnsPerPeriod[month] += trade.profit_loss;
+            returnsPerPeriod[month] += trade.profitLoss;
         }
     }
     const formatReturnsPerPeriod = () => {
@@ -58,11 +58,11 @@ const yearlyReturnsPerPeriodGraphCalc = (trades: Trade[]) => {
     const returnsPerPeriod: {[key: number]: number} = {}
     const calculateReturnsPerPeriod = () => {
         for(const trade of trades){
-            const year = new Date(trade.exit_date).getFullYear();
+            const year = new Date(trade.closeTime).getFullYear();
             if(!(year in returnsPerPeriod)){
                 returnsPerPeriod[year] = 0;
             }
-            returnsPerPeriod[year] += trade.profit_loss;
+            returnsPerPeriod[year] += trade.profitLoss;
         }
     }
     const formatReturnsPerPeriod = () => {

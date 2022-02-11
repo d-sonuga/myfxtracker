@@ -1,6 +1,6 @@
-import { AveReturnsPerPairGraphCalc, AveRrrPerPairGraphCalc } from '@root/index'
-import { aveRRR } from '@root/overview-calculations'
-import { AccountData } from '@root/types'
+import {AveReturnsPerPairGraphCalc, AveRrrPerPairGraphCalc } from '@root/index'
+import {aveRRR} from '@root/overview-calculations'
+import {AccountData} from '@root/types'
 import aveRrrPerPairGraphCalc from '../ave-rrr-per-pair-graph-calc'
 
 
