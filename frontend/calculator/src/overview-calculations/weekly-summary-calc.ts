@@ -11,18 +11,18 @@ import {AccountData} from '../types'
 
 const weeklySummaryCalc = (accountData: AccountData, today: Date = new Date()) => {
     let calculations: OverviewWeeklySummaryCalc = {};
-    const dates = getWeekDates(today);
-    for(const date of dates){
-        calculations[dateToString(date)] = {
+    const weekDates = getWeekDates(today);
+    for(const weekDate of weekDates){
+        calculations[dateToString(weekDate)] = {
             trades: 0,
             lots: 0,
             result: 0
         }
     }
     for(const trade of accountData.trades){
-        for(const date of dates){
-            if(extractDateStr(trade.closeTime) === dateToTradeDateFormat(date)){
-                const strDate: string = dateToString(date);
+        for(const weekDate of weekDates){
+            if(extractDateStr(trade.closeTime) === dateToTradeDateFormat(weekDate)){
+                const strDate: string = dateToString(weekDate);
                 calculations[strDate]['trades'] += 1;
                 if(trade.lots){
                     calculations[strDate]['lots'] += trade.lots;
@@ -87,14 +87,16 @@ const dateToTradeDateFormat = (date: Date) => {
     // Add one because JS's months are 0-indexed
     let month = date.getMonth() + 1;
     let monthStr = month < 10 ? `0${month}` : `${month}`;
-    return `${date.getFullYear()}-${monthStr}-${date.getDate()}`
+    let day = date.getDate();
+    let dayStr = day < 10 ? `0${day}` : `${day}`
+    return `${date.getFullYear()}-${monthStr}-${dayStr}`
 }
 
 /**
 * Takes date string of the format 2022-04-22 18:34:00+00:00 and returns 2022-04-22
 */
 const extractDateStr = (dateStr: string) => {
-    return dateStr.split(' ')[0]
+    return dateStr.split('T')[0]
 }
 
 const SUNDAY = 0;

@@ -13,7 +13,7 @@ describe('Verify that longShortComparisonTableCalc is working', () => {
      */
     const deposits: Deposit[] = [];
     const withdrawals: Withdrawal[] = [];
-    const tradeDateStr = '2022-10-20 18:34:00+00:00';
+    const tradeDateStr = '2022-10-20T18:34:00Z';
     describe('When there are no trades in accountData', () => {
         const accountData: AccountData = {
             name: 'dummy account',

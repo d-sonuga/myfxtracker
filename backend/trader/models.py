@@ -1,7 +1,8 @@
 from datetime import datetime
 from django.db import IntegrityError, models
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
-from users.models import User
+from users.models import Trader, User
 
 
 class AccountManager(models.Manager):
@@ -268,9 +269,26 @@ class Withdrawal(models.Model):
         ]
 
 
+class NoteManager(models.Manager):
+    def create(self, **kwargs):
+        if kwargs.get('lastEdited'):
+            kwargs['last_edited'] = kwargs['lastEdited']
+            del kwargs['lastEdited']
+        return super().create(**kwargs)
+
+
+class Note(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    title = models.CharField(max_length=10000)
+    content = models.JSONField(encoder=DjangoJSONEncoder)
+    last_edited = models.DateTimeField()
+
+    objects = NoteManager()
+
+
 class Preferences(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    current_account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    user = models.OneToOneField(Trader, on_delete=models.CASCADE)
+    current_account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
 
 
 class DeletedImages(models.Model):

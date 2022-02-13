@@ -27,7 +27,7 @@ Note: The cases concerning howYouHeard and yearsSpentTrading fields in user inpu
 from datetime import date, timedelta
 from django.test import TestCase, tag
 from django.core import mail
-from users.models import User
+from users.models import Trader
 from allauth.account.models import EmailAddress
 from .test_data import SignUpDetails
 
@@ -36,10 +36,10 @@ class SignUpTests(TestCase):
     # Case 1
     def test_sign_up_good_details(self):
         # Does the user exist already
-        self.assertEquals(User.objects.filter(email=SignUpDetails.good_details['email']).count(), 0)
+        self.assertEquals(Trader.objects.filter(email=SignUpDetails.good_details['email']).count(), 0)
         resp = self.client.post('/trader/sign-up/', SignUpDetails.good_details)
         self.assertEquals(resp.status_code, 201)
-        user_set = User.objects.filter(email=SignUpDetails.good_details['email'])
+        user_set = Trader.objects.filter(email=SignUpDetails.good_details['email'])
         # The user should exist now
         self.assertEquals(user_set.count(), 1)
         # The verification email should have been sent
@@ -120,8 +120,9 @@ class SignUpTests(TestCase):
     def test_email_already_used(self):
         email = SignUpDetails.good_details.get('email')
         # The user already signed up with the email
-        first_user_with_email = User.objects.create(email=email)
-        first_user_with_email.set_password(SignUpDetails.good_details.get('password1'))
+        first_user_with_email = Trader.objects.create(
+            email=email, password=SignUpDetails.good_details.get('password1')
+        )
         # Verify the user
         EmailAddress.objects.create(
             user=first_user_with_email,

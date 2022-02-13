@@ -40,8 +40,8 @@ describe('Verify accountReturnsGraphCalc is working', () => {
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    openTime: '2021-02-01 18:34:00+00:00',
-                    closeTime: '2021-02-01 18:43:00+00:00',
+                    openTime: '2021-02-01T18:34:00Z',
+                    closeTime: '2021-02-01T18:43:00Z',
                     riskRewardRatio: 2.3,
                     profitLoss: 320,
                     pips: 2,
@@ -83,8 +83,8 @@ describe('Verify accountReturnsGraphCalc is working', () => {
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    openTime: '2022-02-01 18:34:00+00:00',
-                    closeTime: '2022-02-01 18:34:00+00:00',
+                    openTime: '2022-02-01T18:34:00Z',
+                    closeTime: '2022-02-01T18:34:00Z',
                     riskRewardRatio: 2.3,
                     profitLoss: 320,
                     pips: 2,
@@ -124,8 +124,8 @@ describe('Verify accountReturnsGraphCalc is working', () => {
                 {
                     pair: 'GBPUSD',
                     action: 'buy',
-                    openTime: '2022-04-15 18:34:00+00:00',
-                    closeTime: '2022-04-15 18:34:00+00:00',
+                    openTime: '2022-04-15T18:34:00Z',
+                    closeTime: '2022-04-15T18:34:00Z',
                     riskRewardRatio: 2.3,
                     profitLoss: 320,
                     pips: 2,
@@ -161,7 +161,7 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             // 22nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 22);
             // Trade take on 19th April, 2022
-            const tradeDateStr = '2022-04-19 18:34:00+00:00';
+            const tradeDateStr = '2022-04-19T18:34:00Z';
             const trades: Trade[] = [
                 {
                     pair: 'GBPUSD',
@@ -204,7 +204,7 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             // 22nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 22);
             // Trade take on 16th April, 2022
-            const tradeDateStr = '2022-04-22 18:34:00+00:00';
+            const tradeDateStr = '2022-04-22T18:34:00Z';
             const trades: Trade[] = [
                 {
                     pair: 'GBPUSD',
@@ -248,11 +248,11 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             // 22nd April, 2022 (TS month field in constructor is 0-based)
             const today = new Date(2022, 3, 22);
             // Trade take on 16th April, 2022
-            const todayDateStr = '2022-04-22 18:34:00+00:00'
-            const thisWeekDateStr = '2022-04-20 18:34:00+00:00'
-            const thisMonthDateStr = '2022-04-06 18:34:00+00:00'
-            const thisYearDateStr = '2022-01-13 18:34:00+00:00'
-            const lastYearDateStr = '2021-06-27 18:34:00+00:00'
+            const todayDateStr = '2022-04-22T18:34:00Z'
+            const thisWeekDateStr = '2022-04-20T18:34:00Z'
+            const thisMonthDateStr = '2022-04-06T18:34:00Z'
+            const thisYearDateStr = '2022-01-13T18:34:00Z'
+            const lastYearDateStr = '2021-06-27T18:34:00Z'
             const baseTrade: Trade = {
                 pair: 'GBPUSD',
                 action: 'buy',

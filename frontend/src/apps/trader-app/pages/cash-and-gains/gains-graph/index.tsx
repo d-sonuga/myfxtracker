@@ -1,6 +1,6 @@
 import {GainsGraphCalc} from 'calculator'
 import {Graph} from '@apps/trader-app/components'
-import formatData from './formatData'
+import formatData from './format-data'
 
 
 const GainsGraph = ({data}: {data: GainsGraphCalc}) => {
@@ -18,7 +18,7 @@ const GainsGraph = ({data}: {data: GainsGraphCalc}) => {
             selectorOptions={options}
             xAxisKey='tradeNo'
             yAxisKey='gainsPercent'
-            tooltipName='Gains %    '
+            tooltipName='Gains %'
             outline={true}
             />
     )

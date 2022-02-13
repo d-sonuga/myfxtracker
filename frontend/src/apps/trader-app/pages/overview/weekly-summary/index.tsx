@@ -1,6 +1,6 @@
 import {ReactNode} from 'react'
 import {OverviewWeeklySummaryCalc} from 'calculator'
-import {getColor, getDimen} from '@conf/utils'
+import {getColor} from '@conf/utils'
 import {Table} from '@apps/trader-app/components'
 import createRows from './create-rows'
 

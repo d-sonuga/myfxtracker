@@ -13,7 +13,7 @@ describe('Verify that longBalanceGraphCalc is working', () => {
      */
     const deposits: Deposit[] = [];
     const withdrawals: Withdrawal[] = [];
-    const tradeDateStr = '2022-10-20';
+    const tradeDateStr = '2022-10-20T12:09:00Z';
     describe('When there are no trades in accountData', () => {
         const accountData: AccountData = {
             name: 'dummy account',

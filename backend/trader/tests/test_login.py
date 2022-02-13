@@ -27,7 +27,7 @@ Return should be an error
 
 from django.test import TestCase
 from django.core import mail
-from users.models import User
+from users.models import Trader
 from allauth.account.models import EmailAddress
 from .test_data import LoginDetails, SignUpDetails
 
@@ -36,7 +36,7 @@ class LoginTests(TestCase):
     def setUp(self) -> None:
         # Usernames where added just to prevent django from complaining of duplicates usernames
         # User with the good details should exist and be verified to be able to log in
-        good_user = User.objects.create_trader(
+        good_user = Trader.objects.create(
             **LoginDetails.good_details,
             how_you_heard_about_us=SignUpDetails.other_values['howYouHeard'],
             trading_time_before_joining=SignUpDetails.other_values['yearsSpentTrading']
@@ -44,7 +44,7 @@ class LoginTests(TestCase):
         EmailAddress.objects.create(user=good_user, email=good_user.email, verified=True, primary=True)
 
         # User with unverified email
-        unverified_user = User.objects.create_trader(
+        unverified_user = Trader.objects.create(
             **LoginDetails.bad_details_email_not_verified,
             how_you_heard_about_us=SignUpDetails.other_values['howYouHeard'],
             trading_time_before_joining=SignUpDetails.other_values['yearsSpentTrading']

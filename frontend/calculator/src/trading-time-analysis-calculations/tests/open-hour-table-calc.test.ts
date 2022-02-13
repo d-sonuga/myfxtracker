@@ -10,7 +10,7 @@ const generateTrades = (min: number = 2, max: number = 10000) => {
     const trades: Trade[] = [];
     const noOfTrades = randomInt(min, max);
     const newTrade = (): Trade => {
-        const time = `${randomDate()} ${randomTime()}`;
+        const time = `${randomDate()}T${randomTime()}`;
         return {
             pair: 'USDNOK',
             action: 'buy',
@@ -50,8 +50,8 @@ describe('Verify openHourTableCalc is working', () => {
             trades: [
                 {
                     pair: 'GBPUSD',
-                    openTime: '2022-02-08 13:04:00+00:00',
-                    closeTime: '2022-02-08 13:04:00+00:00',
+                    openTime: '2022-02-08T13:04:00Z',
+                    closeTime: '2022-02-08T13:04:00Z',
                     profitLoss: 300,
                     takeProfit: 0,
                     stopLoss: 0,
@@ -84,74 +84,74 @@ describe('Verify openHourTableCalc is working', () => {
         const trades: Trade[] = [
             {   
                 ...baseTrade,
-                openTime: '2021-03-10 12:04:00+00:00',
-                closeTime: '2021-03-11 12:04:00+00:00',
+                openTime: '2021-03-10T12:04:00Z',
+                closeTime: '2021-03-11T12:04:00Z',
                 profitLoss: profitLoss12[0]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-23 12:20:00+00:00',
-                closeTime: '2022-02-24 13:12:00+00:00',
+                openTime: '2022-02-23T12:20:00Z',
+                closeTime: '2022-02-24T13:12:00Z',
                 profitLoss: profitLoss12[1]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 12:34:00+00:00',
-                closeTime: '2022-02-08 12:34:00+00:00',
+                openTime: '2022-02-08T12:34:00Z',
+                closeTime: '2022-02-08T12:34:00Z',
                 profitLoss: profitLoss12[2]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 12:04:00+00:00',
-                closeTime: '2022-02-08 12:04:00+00:00',
+                openTime: '2022-02-08T12:04:00Z',
+                closeTime: '2022-02-08T12:04:00Z',
                 profitLoss: profitLoss12[3]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 13:04:00+00:00',
-                closeTime: '2022-02-08 13:04:00+00:00',
+                openTime: '2022-02-08T13:04:00Z',
+                closeTime: '2022-02-08T13:04:00Z',
                 profitLoss: profitLoss13[0]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 13:04:00+00:00',
-                closeTime: '2022-02-08 13:04:00+00:00',
+                openTime: '2022-02-08T13:04:00Z',
+                closeTime: '2022-02-08T13:04:00Z',
                 profitLoss: profitLoss13[1]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 13:04:00+00:00',
-                closeTime: '2022-02-08 13:04:00+00:00',
+                openTime: '2022-02-08T13:04:00Z',
+                closeTime: '2022-02-08T13:04:00Z',
                 profitLoss: profitLoss13[2]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 08:04:00+00:00',
-                closeTime: '2022-02-08 13:04:00+00:00',
+                openTime: '2022-02-08T08:04:00Z',
+                closeTime: '2022-02-08T13:04:00Z',
                 profitLoss: profitLoss8[0]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 08:04:00+00:00',
-                closeTime: '2022-02-08 08:04:00+00:00',
+                openTime: '2022-02-08T08:04:00Z',
+                closeTime: '2022-02-08T08:04:00Z',
                 profitLoss: profitLoss8[1]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 15:04:00+00:00',
-                closeTime: '2022-02-08 15:04:00+00:00',
+                openTime: '2022-02-08T15:04:00Z',
+                closeTime: '2022-02-08T15:04:00Z',
                 profitLoss: profitLoss15[0]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 15:04:00+00:00',
-                closeTime: '2022-02-08 15:04:00+00:00',
+                openTime: '2022-02-08T15:04:00Z',
+                closeTime: '2022-02-08T15:04:00Z',
                 profitLoss: profitLoss15[1]
             },
             {   
                 ...baseTrade,
-                openTime: '2022-02-08 15:04:00+00:00',
-                closeTime: '2022-02-08 15:04:00+00:00',
+                openTime: '2022-02-08T15:04:00Z',
+                closeTime: '2022-02-08T15:04:00Z',
                 profitLoss: profitLoss15[2]
             },
         ]
@@ -184,7 +184,7 @@ describe('Verify openHourTableCalc is working', () => {
         const expectedResult: OpenHourTableCalc = (() => {
             const hourMap: {[key: string]: Omit<OpenHourTableCalcItem, 'hour'>} = {};
             const format = (openTime: string): string => {
-                const hour = openTime.split(' ')[1].split(':')[0];
+                const hour = openTime.split('T')[1].split(':')[0];
                 return `${hour}:00 - ${hour}:59`;
             }
             for(const trade of trades){

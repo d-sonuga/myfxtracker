@@ -198,7 +198,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Monday 18th April, 2022
-            const tradeDateStr = '2022-04-18 18:34:00+00:00'
+            const tradeDateStr = '2022-04-18T18:34:00Z'
             // Using the 1st trade set
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             // Using the 2nd trade set
@@ -242,7 +242,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Tuesday 19th April, 2022
-            const tradeDateStr = '2022-04-19 18:34:00+00:00'
+            const tradeDateStr = '2022-04-19T18:34:00Z'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);
@@ -284,7 +284,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Monday 18th April, 2022, not in today's week
-            const tradeDateStr = '2022-04-20 18:34:00+00:00'
+            const tradeDateStr = '2022-04-20T18:34:00Z'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);
@@ -326,7 +326,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Thursday 21st April, 2022
-            const tradeDateStr = '2022-04-21 18:34:00+00:00'
+            const tradeDateStr = '2022-04-21T18:34:00Z'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);
@@ -368,7 +368,7 @@ describe('Verify that weeklySummaryCalc is working', () => {
             // Thursday 21st April, 2022
             const today = new Date(2022, 3, 21);
             // Friday 22nd April, 2022
-            const tradeDateStr = '2022-04-22 18:34:00+00:00'
+            const tradeDateStr = '2022-04-22T18:34:00Z'
             const dummyAccountData1: AccountData = accountDataWithTradesOnDate(tradeDateStr, 1);
             const dummyAccountData2: AccountData = accountDataWithTradesOnDate(tradeDateStr, 17);
             const dummyAccountData3: AccountData = accountDataWithTradesOnDate(tradeDateStr, 232);

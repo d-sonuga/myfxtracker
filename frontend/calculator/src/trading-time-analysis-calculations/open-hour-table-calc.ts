@@ -19,8 +19,8 @@ const openHourTableCalc = (accountData: AccountData): OpenHourTableCalc => {
 
 const formatTime = (rawTimeStr: string): string => {
     // In the general sense
-    // extract the 18 in '2022-04-12 18:09:00+00:00' and return '18:00-18:59'
-    const hour = rawTimeStr.split(' ')[1].split(':')[0];
+    // extract the 18 in '2022-04-12T18:09:00+00:00' and return '18:00-18:59'
+    const hour = rawTimeStr.split('T')[1].split(':')[0];
     return `${hour}:00 - ${hour}:59`
 }
 

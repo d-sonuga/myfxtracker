@@ -45,7 +45,7 @@ describe('Verify returnsPerPeriodGraphCalc is working', () => {
     })
     describe('When there is 1 trade', () => {
         // Friday 7th January, 2022
-        const tradeTime = '2022-01-07 16:03:00+00:00';
+        const tradeTime = '2022-01-07T16:03:00Z';
         const accountData: AccountData = {
             name: 'dummy account',
             deposits: [],

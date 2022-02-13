@@ -12,12 +12,11 @@ type UserData = {
     email: string,
     is_subscribed: boolean,
     on_free: boolean,
-    logins_after_ask: number,
-    current_feedback_question: number
+    logins_after_ask?: number,
+    current_feedback_question?: number
 }
 
 type TradeData = {
-    no_of_trades: number,
     current_account_id: number,
     accounts: {
         [key: number]: AccountData

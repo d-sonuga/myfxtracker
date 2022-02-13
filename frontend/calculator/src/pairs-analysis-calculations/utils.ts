@@ -1,3 +1,7 @@
+import {AccountData, Trade} from '@root/types'
+import {TradesPerPair} from './types'
+
+
 const groupTradesByPair = (accountData: AccountData) => {
     const tradesPerPair: TradesPerPair = {};
     for(const trade of accountData.trades){
@@ -8,7 +12,6 @@ const groupTradesByPair = (accountData: AccountData) => {
     }
     return tradesPerPair
 }
-
 
 export {
     groupTradesByPair

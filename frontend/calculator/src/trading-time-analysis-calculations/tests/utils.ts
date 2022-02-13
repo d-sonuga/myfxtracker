@@ -8,16 +8,21 @@ const openHours = [
 ]
 
 const randomTime = () => {
-    const randomMinutes = () => randomInt(1, 59).toString();
+    const randomMinutes = () => {
+        const min = randomInt(1, 59);
+        return min < 10 ? `0${min.toString()}` : min.toString();
+    };
     const randomHour = () => openHours[randomInt(0, 12)].split(':')[0];
-    return randomHour() + ':' + randomMinutes() + ':00+00:00';
+    return randomHour() + ':' + randomMinutes() + ':00Z';
 }
 
 const randomDate = () => {
     const randomYear = randomInt(1970, 3000);
     const randomMonth = randomInt(1, 12);
     const randomDay = randomInt(1, 28);
-    return `${randomYear}-${randomMonth}-${randomDay}`
+    const randomMonthStr = randomMonth < 10 ? `0${randomMonth}` : randomMonth.toString();
+    const randomDayStr = randomDay < 10 ? `0${randomDay}` : randomDay.toString();
+    return `${randomYear}-${randomMonthStr}-${randomDayStr}`
 }
 
 /**
@@ -39,7 +44,6 @@ const putInSameOrder = <T>(arrayToOrder: T[], orderedArray: T[], anchorKey: keyo
         }
     });
     if(result.length !== 0){
-        console.log(result);
         throw Error('They are not the same');
     }
     return newlyOrderedArray;

@@ -1,13 +1,12 @@
 import {useState} from 'react'
-import {periodAnalysisCalculations} from 'calculator'
+import {PeriodAnalysisCalculations, periodAnalysisCalculations} from 'calculator'
 import {Graph, PageContainer, PageHeading, useRecalc} from '@apps/trader-app/components'
 import defaultPeriodAnalysisCalc from './const'
 
 
 const PeriodAnalysis = () => {
-    const [periodAnalysisCalc, setPeriodAnalysisCalc] = useState(defaultPeriodAnalysisCalc);
+    const [periodAnalysisCalc, setPeriodAnalysisCalc] = useState<PeriodAnalysisCalculations>(defaultPeriodAnalysisCalc);
     useRecalc(periodAnalysisCalculations, setPeriodAnalysisCalc);
-    console.log(periodAnalysisCalc);
     return(
         <PageContainer>
             <PageHeading heading='Period Analysis' />

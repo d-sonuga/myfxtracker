@@ -1,8 +1,8 @@
 from django.test import TestCase
 from datetime import date, timedelta
 import nanoid
-from users.models import User
-from trader.models import Account, Trade
+from users.models import Trader
+from trader.models import Account
 from ..models import DatasourceErrors
 from .test_data import SaveErrorTestData
 
@@ -10,7 +10,7 @@ from .test_data import SaveErrorTestData
 class TestSaveError(TestCase):
     def setUp(self):
         self.test_data = SaveErrorTestData
-        trader = User.objects.create_trader(
+        trader = Trader.objects.create(
             username='1',
             **self.test_data.trader_details
         )
@@ -20,7 +20,7 @@ class TestSaveError(TestCase):
         )
         self.valid_ds_username = trader.get_datasource_username()
         self.invalid_ds_username = nanoid.generate()
-        trader_with_expired_username = User.objects.create_trader(
+        trader_with_expired_username = Trader.objects.create(
             username='2',
             **self.test_data.trader_details
         )

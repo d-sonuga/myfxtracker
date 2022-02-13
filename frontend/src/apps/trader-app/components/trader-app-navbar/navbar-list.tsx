@@ -1,31 +1,20 @@
 import {useState} from 'react'
-import {useLocation, useNavigate, Location} from 'react-router'
-import {Drawer, List, Divider, SwipeableDrawer, Collapse} from '@mui/material'
+import {useLocation, useNavigate} from 'react-router'
+import {List, Divider} from '@mui/material'
 import Logo from '@components/logo'
-import {getDimen, useScreenIsSmall} from '@conf/utils'
-import HouseIcon from '@visuals/svgs/house-icon'
-import CalendarIcon from '@visuals/svgs/calendar-icon'
-import NotesIcon from '@visuals/svgs/notes-icon'
-import GalleryIcon from '@visuals/svgs/gallery-icon'
-import AnalyticsChartIcon from '@visuals/svgs/analytics-chart-icon'
+import {getDimen} from '@conf/utils'
 import NavbarItem from './navbar-item'
-import SettingsIcon from '@visuals/svgs/settings-icon'
-import LogOutIcon from '@visuals/svgs/log-out-icon'
-import Navbar from '@components/navbar'
-import {RouteConst} from '@conf/const'
-import {NAVBAR_WIDTH} from '@apps/trader-app/const'
 import menuItems from './const'
 import getIntialNavbarListStateValues from './utils'
-import {MenuItemObject} from './types'
 
 
-const NavbarList = ({setMenuIsOpen}: {setMenuIsOpen: Function}) => {
+const NavbarList = ({setMenuIsOpen, logout}: {setMenuIsOpen: Function, logout: Function}) => {
     const location = useLocation();
 
-    const {mainMenuItems, bottomMenuItems} = menuItems;
+    const {mainMenuItems, bottomMenuItems} = menuItems(logout);
     const {initialMainMenuItemIndex, initialSubMenuItemSelected, initialSubMenuName,
         initialSelectedSubMenuItemIndex, initialSubMenuIsOpen
-    } = getIntialNavbarListStateValues(location, menuItems);
+    } = getIntialNavbarListStateValues(location, menuItems(logout));
     /** Menu index of currently selected menu item */
     const [selectedMainMenuItemIndex, setSelectedMainMenuItemIndex] = useState(initialMainMenuItemIndex);
     /** Has a sub menu item being selected */

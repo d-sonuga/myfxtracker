@@ -1,7 +1,8 @@
 import {Graph} from '@apps/trader-app/components'
+import {ShortBalanceGraphCalc} from 'calculator/dist'
 
 
-const ShortBalanceGraph = ({data}: {data: Array<{[key: string]: number}>}) => {
+const ShortBalanceGraph = ({data}: {data: ShortBalanceGraphCalc}) => {
     return(
         <Graph
             title='Short Balance'

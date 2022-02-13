@@ -3,7 +3,6 @@ import {OverviewAccountReturnsGraphCalc} from 'calculator'
 
 
 const AccountReturnsGraph = ({data}: {data: OverviewAccountReturnsGraphCalc}) => {
-    console.log(data);
     const options = {
         'Today': data.todayGraphCalc,
         'This Week': data.thisWeekGraphCalc,

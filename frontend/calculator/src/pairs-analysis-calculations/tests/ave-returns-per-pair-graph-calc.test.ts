@@ -36,8 +36,8 @@ describe('Verify aveReturnsPerPairGraphCalc is working', () => {
                     commission: 20,
                     swap: 12,
                     action: 'buy',
-                    openTime: '2022-03-23 14:03:00+00:00',
-                    closeTime: '2022-03-23 14:03:00+00:00'
+                    openTime: '2022-03-23T14:03:00Z',
+                    closeTime: '2022-03-23T14:03:00Z'
                 }
             ]
         }

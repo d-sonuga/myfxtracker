@@ -12,8 +12,13 @@ const HttpConst = {
     CHANGE_PASSWORD_URL: 'users/password-change',
     RESET_PASSWORD_URL: 'users/password-reset',
     RESET_PASSWORD_CONFIRM_URL: 'users/password-reset/confirm',
-    GET_INIT_DATA_URL: 'trader/init_data',
+    GET_INIT_DATA_URL: 'trader/get-init-data',
     DOWNLOAD_EA_URL: 'trader/download_ea',
+    LOGOUT_URL: 'trader/logout',
+    SAVE_NOTE_URL: 'trader/save-note',
+    UPDATE_NOTE_URL: 'trader/update-note',
+    DELETE_NOTE_URL: 'trader/delete-note',
+    GET_ALL_NOTES_URL: 'trader/get-all-notes',
     FEEDBACK_FORM_URL: 'https://forms.gle/SWAdgLtd64Vzmyso9'
 }
 

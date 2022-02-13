@@ -98,8 +98,7 @@ const initialXAxisKeyStateValue = (xAxisKey: GraphXAxisKey, selectorOptions?: Se
         const nameOfFirstOption = Object.keys(selectorOptions)[0];
         return xAxisKey[nameOfFirstOption];
     }
-    // This statement can never be reached
-    // But... the Typescript compiler
+    
     return ''
 }
 

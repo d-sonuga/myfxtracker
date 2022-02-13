@@ -30,7 +30,7 @@ describe('Verify that overviewCardsCalc is working', () => {
             const depositAmount = 300;
             const withdrawalAmount = 140;
             const tradeProfitLoss = 430
-            const dummyDateStr = '2022-12-03 18:34:00+00:00'
+            const dummyDateStr = '2022-12-03T18:34:00Z'
             const dummyDeposits: Deposit[] = [
                 {account: 1, amount: depositAmount, time: dummyDateStr}
             ];
@@ -41,8 +41,8 @@ describe('Verify that overviewCardsCalc is working', () => {
                 {
                     pair: 'GBPJPY',
                     action: 'buy',
-                    openTime: '2022-12-03 18:34:00+00:00',
-                    closeTime: '2022-12-03 18:34:00+00:00',
+                    openTime: '2022-12-03T18:34:00Z',
+                    closeTime: '2022-12-03T18:34:00Z',
                     riskRewardRatio: 3.4,
                     profitLoss: tradeProfitLoss,
                     pips: 3,
@@ -114,7 +114,7 @@ describe('Verify that overviewCardsCalc is working', () => {
             const tradeProfitLosses = generateRandomAmounts();
             const noOfWinningTrades = tradeProfitLosses.filter((amount) => amount >= 0).length
             // the date is unimportant in this test
-            const dummyDateStr = '2022-12-03 18:34:00+00:00'
+            const dummyDateStr = '2022-12-03T18:34:00Z'
             // build the data set of deposits, withdrawals and trades
             const dummyDeposits: Deposit[] = depositAmounts.map((depositAmount) => (
                 {account: 1, amount: depositAmount, time: dummyDateStr}
@@ -126,8 +126,8 @@ describe('Verify that overviewCardsCalc is working', () => {
                 {
                     pair: 'GBPJPY',
                     action: 'buy',
-                    openTime: '2022-12-03 18:34:00+00:00',
-                    closeTime: '2022-12-03 18:34:00+00:00',
+                    openTime: '2022-12-03T18:34:00Z',
+                    closeTime: '2022-12-03T18:34:00Z',
                     riskRewardRatio: 3.4,
                     profitLoss: tradeProfitLoss,
                     pips: 3,

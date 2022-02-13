@@ -1,8 +1,8 @@
 import {Graph} from '@apps/trader-app/components'
+import {LongShortComparisonGraphCalc} from 'calculator/dist'
 
 
-const LongShortBarGraph = ({data}: {data: Array<{label: string, result: number}>}) => {
-    console.log(data);
+const LongShortBarGraph = ({data}: {data: LongShortComparisonGraphCalc}) => {
     return(
         <div>
             <Graph

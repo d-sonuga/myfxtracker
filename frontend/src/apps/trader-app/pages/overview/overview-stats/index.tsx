@@ -1,8 +1,6 @@
 import {ReactNode} from 'react'
-import {getColor, getDimen} from '@conf/utils'
+import {getColor} from '@conf/utils'
 import {OverviewStatsCalc} from 'calculator/dist'
-import {H6} from '@components/text'
-//import Table from './table'
 import {Table} from '@apps/trader-app/components'
 import createRows from './create-rows'
 

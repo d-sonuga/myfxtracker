@@ -7,11 +7,12 @@ from django_rest_passwordreset.signals import reset_password_token_created, pre_
 from django.contrib.sites.models import Site
 from mailchimp_marketing import Client
 from django.conf import settings
+from trader.models import Preferences
 from users.models import User
 from django.db.models.signals import post_delete, post_save
 import hashlib
 import datetime
-from .models import SubscriptionInfo
+from .models import SubscriptionInfo, Trader
 import os
 
 
@@ -69,6 +70,13 @@ def email_confirmed_(request, email_address, **kwargs):
             'status': 'subscribed'
         }
         mailchimp.lists.add_list_member(AUDIENCE_ID, member_info)
+
+
+@receiver(post_save, sender=Trader)
+def user_account_saved(sender, instance, using, **kwargs):
+    if instance.is_trader:
+        if Preferences.objects.filter(user=instance).count() == 0:
+            Preferences.objects.create(user=instance, current_account=None)
 
 
 @receiver(post_delete, sender=User)

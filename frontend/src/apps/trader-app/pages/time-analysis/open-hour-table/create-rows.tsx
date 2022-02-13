@@ -1,9 +1,9 @@
 import {P, BP} from '@components/text'
-import {OpenHourCalc} from './types'
+import {OpenHourTableCalc} from 'calculator'
 
-const createRows = (calcs: Array<OpenHourCalc>) => {
+const createRows = (calcs: OpenHourTableCalc) => {
     const rows = calcs.map((calc) => ([
-        <BP>{calc.duration}</BP>,
+        <BP>{calc.hour}</BP>,
         <P>{calc.noOfTrades.toString()}</P>,
         <P>{`$${calc.result}`}</P>
     ]))

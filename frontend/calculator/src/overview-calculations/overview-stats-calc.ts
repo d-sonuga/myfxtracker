@@ -5,7 +5,7 @@ import {totalNoOfLongs, totalNoOfShorts, longsWonPercent,
     shortsWonPercent, totalNoOfLongsWon, totalNoOfShortsWon} from '../common-calc'
 import {OverviewStatsCalc} from './types'
 import {AccountData} from '../types'
-import { Trade } from '..'
+import {Trade} from '..'
 
 
 const statsCalc = (accountData: AccountData) => {

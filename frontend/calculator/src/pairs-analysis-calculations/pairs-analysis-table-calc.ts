@@ -1,7 +1,7 @@
 import {noOfTrades, totalNoOfLongs, totalNoOfShorts, winRate, totalNoOfWinningTrades} from '@root/common-calc'
 import {AccountData, Trade} from '@root/types'
 import {groupTradesByPair} from './utils'
-import {PairsAnalysisTableCalc} from './types'
+import {PairsAnalysisTableCalc, TradesPerPair} from './types'
 
 
 const pairsAnalysisTableCalc = (accountData: AccountData): PairsAnalysisTableCalc => {
@@ -88,7 +88,5 @@ const slOnPairPercent = (trades: Trade[]) => {
     })
     return slOnPair / count;
 }
-
-type TradesPerPair = {[key: string]: Trade[]}
 
 export default pairsAnalysisTableCalc

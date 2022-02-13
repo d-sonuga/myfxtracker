@@ -1,10 +1,9 @@
 import email
 from django.db.models.fields import DateField
 from dj_rest_auth.registration.serializers import RegisterSerializer as RestAuthRegisterSerializer
-from flask import request
 from rest_framework import serializers
-from .models import Trade, Deposit, Withdrawal, Account, Preferences
-from users.models import User
+from .models import Note, Trade, Deposit, Withdrawal, Account, Preferences
+from users.models import Trader
 from allauth.account.utils import setup_user_email
 import datetime 
 from enum import Enum
@@ -117,7 +116,7 @@ class SignUpSerializer(RestAuthRegisterSerializer):
         """
         Todo: Check if the referrer is valid
         """
-        new_trader = User.objects.create_trader(
+        new_trader = Trader.objects.create(
             email=self.validated_data['email'],
             password=self.validated_data['password1'],
             how_you_heard_about_us=self.validated_data['howYouHeard'],
@@ -137,3 +136,10 @@ def switch_db_str(item, field, direction):
         if item == choice[1 - n]:
             return choice[n]
     return item
+
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = '__all__'

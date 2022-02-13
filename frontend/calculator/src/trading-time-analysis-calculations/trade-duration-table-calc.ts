@@ -25,11 +25,11 @@ const tradeDurationTableCalc = (accountData: AccountData): TradeDurationTableCal
  * 2 mins, 1 hour.
  */
 const durationStr = (openTimeStr: string, closeTimeStr: string): string => {
-    const [openTimeDateStr, openTimeTimeStr] = openTimeStr.split(' ');
+    const [openTimeDateStr, openTimeTimeStr] = openTimeStr.split('T');
     const [openTimeYearStr, openTimeMonthStr, openTimeDayStr] = openTimeDateStr.split('-');
     const [openTimeHourStr, openTimeMinutesStr] = openTimeTimeStr.split(':');
 
-    const [closeTimeDateStr, closeTimeTimeStr] = closeTimeStr.split(' ');
+    const [closeTimeDateStr, closeTimeTimeStr] = closeTimeStr.split('T');
     const [closeTimeYearStr, closeTimeMonthStr, closeTimeDayStr] = closeTimeDateStr.split('-');
     const [closeTimeHourStr, closeTimeMinutesStr] = closeTimeTimeStr.split(':');
     

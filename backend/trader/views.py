@@ -1,20 +1,22 @@
-from affiliate.models import Affiliate
 import datetime
+from re import L
+from itsdangerous import Serializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, renderer_classes, parser_classes
 from rest_framework.response import Response
 from rest_framework.generics import DestroyAPIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
-from django.http.response import HttpResponse
 from rest_framework.views import APIView
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView
-from users.models import TraderInfo, User
+from users.models import Trader, User
+from trader.models import Note
 from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
-                          WithdrawalSerializer, switch_db_str, Choice)
+                          WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
 from .models import Trade, Deposit, Withdrawal, Account, Preferences
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader, IsFromSite
 import datetime as dt
@@ -123,7 +125,7 @@ def set_account_pref(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsTraderOrAdmin])
-def get_init_data(request):
+def old_get_init_data(request):
     """
     Returns a user's accounts and related info
     Format of init data
@@ -269,7 +271,23 @@ def update_user_subscription_info(request):
         if not request.user.subscriptioninfo.is_subscribed:
             request.user.subscriptioninfo.is_subscribed = True
             request.user.subscriptioninfo.save()
-            
+
+
+class Logout(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+
+    def delete(self, request):
+        request.user.auth_token.delete()
+        return Response()
+
+
+class DeleteAccountView(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+
+    def delete(self, request):
+        request.user.delete()
+        return Response()
+
 
 class DownloadEA(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
@@ -285,6 +303,104 @@ class DownloadEA(APIView):
         response = Response(file)
         response['Content-Disposition'] = f'attachment; filename={filename}'
         return response
+
+
+class NoteViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated, IsTrader]
+    serializer_class = NoteSerializer
+
+    def get_queryset(self):
+        return self.request.user.note_set
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data={
+            'user': request.user.pk, 'title': request.data.get('title'),
+            'content': request.data.get('content'),
+            'last_edited': request.data.get('lastEdited')
+        })
+        if serializer.is_valid():
+            new_note = serializer.save()
+            return Response({'id': new_note.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get_object(self):
+        return Note.objects.get(id=self.kwargs.get('pk'))
+
+
+"""
+    Returns a user's accounts and related info
+    Format of init data
+    {
+        'user_data': {
+            'id': id-of-current-user,
+            'email': 'email-of-current-user',
+            'is_subscribed': true | false,
+            'on_free': true | false
+        },
+        'trade_data': {
+            'current_account_id': id-of-currently-selected-account,
+            'accounts': {
+                'Account Id': {
+                    'name': 'Name of the account',
+                    'trades': 'Trades associated with the account',
+                    'deposits': 'Deposits in account',
+                    'withdrawals': 'withdrawals from the account'
+                },
+                ...
+            }
+        }
+    }
+"""
+class GetInitData(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+
+    def get(self, request, *args, **kwargs):
+        accounts = Account.objects.filter(user=request.user)
+        trader_pref = Preferences.objects.get(user=request.user)
+        current_account_id = (
+            trader_pref.current_account.id
+            if trader_pref.current_account is not None
+            else -1
+        )
+        init_data = {
+            'user_data': {
+                'id': request.user.id,
+                'email': request.user.email,
+                'is_subscribed': request.user.subscriptioninfo.is_subscribed,
+                'on_free': request.user.subscriptioninfo.on_free
+            },
+            'trade_data': {
+                'current_account_id': current_account_id,
+                'accounts': {
+                    account.id: {
+                        'name': account.name,
+                        'trades': [{
+                            'pair': trade.pair,
+                            'action': trade.action,
+                            'profitLoss': trade.profit_loss,
+                            'commission': trade.commission,
+                            'swap': trade.swap,
+                            'openTime': trade.open_time,
+                            'closeTime': trade.close_time,
+                            'takeProfit': trade.take_profit,
+                            'stopLoss': trade.stop_loss,
+                        } for trade in account.get_all_trades()],
+                        'deposits': [{
+                            'account': account.id,
+                            'amount': deposit.amount,
+                            'time': deposit.time
+                        } for deposit in account.get_all_deposits()],
+                        'withdrawals': [{
+                            'account': account.id,
+                            'amount': withdrawal.amount,
+                            'time': withdrawal.time
+                        } for withdrawal in account.get_all_withdrawals()]
+                    } for account in accounts
+                }
+            }
+        }
+        return Response(init_data, status=status.HTTP_200_OK)
+
 
 """
 Handles the registration of traders
@@ -313,3 +429,10 @@ But when there are errors, the response is of the following format:
 download_ea = DownloadEA.as_view()
 login = LoginView.as_view()
 sign_up = RegisterView.as_view()
+logout = Logout.as_view()
+delete_account = DeleteAccountView.as_view()
+get_all_notes = NoteViewSet.as_view({'get': 'list'})
+save_note = NoteViewSet.as_view({'post': 'create'})
+update_note = NoteViewSet.as_view({'put': 'partial_update'})
+delete_note = NoteViewSet.as_view({'delete': 'destroy'})
+get_init_data = GetInitData.as_view()

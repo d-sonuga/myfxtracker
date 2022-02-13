@@ -1,19 +1,19 @@
 import {useState} from 'react'
-import {PlateEditor} from '@udecode/plate-core'
-import {ColumnBox} from '@components/containers'
-import {H6} from '@components/text'
-import {getDimen} from '@conf/utils'
-import NoOfColumnsInput from './no-of-columns-input'
-import NoOfRowsInput from './no-of-rows-input'
-import Buttons from './buttons'
-import createTableNode from './create-table-node'
-import {ELEMENT_PARAGRAPH} from '@udecode/plate-paragraph'
 import {Transforms} from 'slate'
+import {getPluginType, PlateEditor} from '@udecode/plate'
+import {ToolbarButton} from '@udecode/plate-ui-toolbar'
+import {ELEMENT_PARAGRAPH} from '@udecode/plate-paragraph'
+import {TableView} from '@mui/icons-material'
+import Dialog from '@components/dialog'
+import createTableNode from './create-table-node'
+import NoOfRowsInput from './no-of-rows-input'
+import NoOfColumnsInput from './no-of-columns-input'
 
 
-const InsertTableDialogContent = ({closeDialog, editor}: {closeDialog: Function, editor: PlateEditor}) => {
+const InsertTableButton = ({editor}: {editor: PlateEditor}) => {
     const [rows, setRows] = useState(1);
     const [columns, setColumns] = useState(2);
+    const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const setNewValueIfValidNumber = (newValue: string, setValue: Function) => {
         // No negative numbers or numbers greater than 10 are allowed
         const validNumber = (num: number) => !isNaN(num) && num > 0 && num < 11
@@ -27,33 +27,39 @@ const InsertTableDialogContent = ({closeDialog, editor}: {closeDialog: Function,
         // Adding a paragraph to make it easy to continue editing after inserting the table
         const newParagraphNode = {type: ELEMENT_PARAGRAPH, children: [{text: ''}]};
         Transforms.insertNodes(editor, [tableNode, newParagraphNode]);
-        closeDialog();
+        setDialogIsOpen(false);
     }
+
     return(
-        <div onKeyPress={(e: any) => {
-            if(e.key === 'Enter'){
-                onOkClick();
-            }
-        }}>
-            <ColumnBox
-                style={{
-                    margin: getDimen('padding-md')
-                }}>
-                <H6 style={{textAlign: 'center'}}>Insert Table</H6>
+        <>
+        {dialogIsOpen ?
+            <Dialog
+                title='Insert Table'
+                open={true}
+                onClose={() => setDialogIsOpen(false)}
+                onOkClick={onOkClick}
+                onCancelClick={() => setDialogIsOpen(false)}>
                 <NoOfRowsInput
                     rows={rows}
                     setRows={(newValue: string) => setNewValueIfValidNumber(newValue, setRows)}
-                    />
+                />
                 <NoOfColumnsInput
                     columns={columns}
                     setColumns={(newValue: string) => setNewValueIfValidNumber(newValue, setColumns)}
                     />
-                <Buttons
-                    onOkClick={() => onOkClick()}
-                    closeDialog={closeDialog} />
-            </ColumnBox>
-        </div>
+            </Dialog>
+            : null
+        }
+        <ToolbarButton
+            type={getPluginType(editor, 'table')}
+            icon={<TableView />}
+            tooltip={{content: 'Insert Table'}}
+            onMouseDown={() => {
+                setDialogIsOpen(true);
+            }}
+            />
+        </>
     )
 }
 
-export default InsertTableDialogContent
+export default InsertTableButton

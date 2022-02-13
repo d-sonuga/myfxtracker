@@ -1,3 +1,8 @@
+from datetime import timedelta
+from django.utils import timezone
+import json
+
+
 class SignUpDetails:
     """
     The howYouHeard and yearsSpentTrading fields were added long after the
@@ -97,3 +102,54 @@ class LoginDetails:
         'email': 'sonugademilade8703@gmail.com'
     }
     bad_details_no_email_or_password = {}
+
+
+class NoteData:
+    existent_note = {
+        'title': 'An Existent Note',
+        'content': json.dumps([{'type': 'p', 'children': [{'text': 'An existent note'}]}]),
+        'lastEdited': timezone.now().isoformat()
+    }
+    existent_note_to_delete = {
+        'title': 'An Existent Note To Delete',
+        'content': json.dumps([{'type': 'p', 'children': [{'text': 'An existent note'}]}]),
+        'lastEdited': timezone.now().isoformat()
+    }
+    updated_existent_note = {
+        'title': 'The title',
+        'content': json.dumps([{'type': 'p', 'children': [{'text': 'An updated existent note'}]}]),
+        'lastEdited': (timezone.now() - timedelta(days=1)).isoformat()
+    }
+    unsaved_note = {
+        'title': 'Unsaved Note',
+        'content': json.dumps([{'type': 'p', 'children': [{'text': 'An unsaved note'}]}, {'type': 'p', 'children': [{'text': 'An unsaved note'}]}]),
+        'lastEdited': timezone.now().isoformat()
+    }
+    some_existent_notes = [
+        {
+            'title': 'An Existent Note 1',
+            'content': json.dumps([{'type': 'p', 'children': [{'text': 'An existent note'}]}]),
+            'last_edited': timezone.now().isoformat()
+        },
+        {
+            'title': 'An Existent Note 2',
+            'content': json.dumps([{'type': 'p', 'children': [{'text': 'An existent note'}]}]),
+            'last_edited': timezone.now().isoformat()
+        },
+        {
+            'title': 'An Existent Note 3',
+            'content': json.dumps([{'type': 'p', 'children': [{'text': 'An existent note'}]}]),
+            'last_edited': timezone.now().isoformat()
+        }
+    ]
+
+
+class InitDataTestData:
+    trader_with_no_data = {
+        'email': 'withnodata@gmail.com',
+        'password': 'password'
+    }
+    trader_with_data = {
+        'email': 'withdata@gmail.com',
+        'password': 'password'
+    }

@@ -5,7 +5,7 @@ from rest_framework import status
 
 class DatasourceUsernameNotExpired(BasePermission):
     def has_permission(self, request, view):
-        if request.user.datasource_username_has_expired():
+        if request.user.traderinfo.datasource_username_has_expired():
             raise DatasourceUsernameExpiredError()
         else:
             return True

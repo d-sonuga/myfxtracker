@@ -50,8 +50,13 @@ const generateTrades = (today: Date, min: number = 2, max: number = 10000) => {
     let thisMonthTrades: Trade[] = [];
     let thisYearTrades: Trade[] = [];
     let allTimeTrades: Trade[] = [];
+    const toTimeStr = (day: Date) => {
+        const month = day.getMonth() + 1 < 10 ? `0${day.getMonth() + 1}` : `${day.getMonth() + 1}`;
+        const dayStr = day.getDate() < 10 ? `0${day.getDate()}` : `${day.getDate()}`;
+        return `${day.getFullYear()}-${month}-${dayStr}T${randomTime()}`
+    }
     for(let i=0; i<noOfTradesToday; i++){
-        const time = () => `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()} ${randomTime()}`
+        const time = () => toTimeStr(today)
         todayTrades.push({
             openTime: time(),
             closeTime: time(),
@@ -69,7 +74,7 @@ const generateTrades = (today: Date, min: number = 2, max: number = 10000) => {
             if(day.getDate() >= today.getDate()){
                 return tradeTime();
             }
-            return `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()} ${randomTime()}`;
+            return toTimeStr(day);
         };
         thisWeekTrades.push({
             openTime: tradeTime(),
@@ -94,7 +99,7 @@ const generateTrades = (today: Date, min: number = 2, max: number = 10000) => {
         }
         const tradeTime = (() => {
             const day = getRandomDayInMonth();
-            return `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()} ${randomTime()}`
+            return toTimeStr(day);
         })();
         thisMonthTrades.push({
             openTime: tradeTime,
@@ -120,7 +125,7 @@ const generateTrades = (today: Date, min: number = 2, max: number = 10000) => {
         }
         const tradeTime = (() => {
             const day = getRandomDayInYear();
-            return `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()} ${randomTime()}`
+            return toTimeStr(day);
         })();
         thisYearTrades.push({
             openTime: tradeTime,
@@ -146,7 +151,7 @@ const generateTrades = (today: Date, min: number = 2, max: number = 10000) => {
         }
         const tradeTime = (() => {
             const day = getRandomDay();
-            return `${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()} ${randomTime()}`
+            return toTimeStr(day);
         })();
         allTimeTrades.push({
             openTime: tradeTime,
@@ -160,8 +165,8 @@ const generateTrades = (today: Date, min: number = 2, max: number = 10000) => {
 const graphCalc = (trades: Trade[]) => {
     const tradeHourToResultMap: {[key: string]: number} = {};
     for(const trade of trades){
-        // extract the '18' in '2022-10-3 18:30:00+00:00'
-        const hour = trade.openTime.split(' ')[1].split(':')[0];
+        // extract the '18' in '2022-10-3T18:30:00Z'
+        const hour = trade.openTime.split('T')[1].split(':')[0];
         if(!(hour in tradeHourToResultMap)){
             tradeHourToResultMap[hour] = 0;
         }
@@ -198,8 +203,8 @@ describe('Verify timeAnalysisGraphCalc is working', () => {
         const hour18 = '18:34';
         const trades: Trade[] = [
             {
-                openTime: `2022-02-01 ${hour18}:00+00:00`,
-                closeTime: `2022-02-01 ${hour18}:00+00:00`,
+                openTime: `2022-02-01T${hour18}:00Z`,
+                closeTime: `2022-02-01T${hour18}:00Z`,
                 ...baseTrade()
             }
         ]
@@ -236,80 +241,80 @@ describe('Verify timeAnalysisGraphCalc is working', () => {
             trades: [
                 {
                     ...baseTrade(),
-                    openTime: '2022-02-08 12:03:00+00:00',
-                    closeTime: '2022-02-08 12:03:00+00:00',
+                    openTime: '2022-02-08T12:03:00Z',
+                    closeTime: '2022-02-08T12:03:00Z',
                     profitLoss: todayProfitLoss[0]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2022-02-08 14:03:00+00:00',
-                    closeTime: '2022-02-08 14:03:00+00:00',
+                    openTime: '2022-02-08T14:03:00Z',
+                    closeTime: '2022-02-08T14:03:00Z',
                     profitLoss: todayProfitLoss[1]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2022-02-07 14:33:00+00:00',
-                    closeTime: '2022-02-07 14:33:00+00:00',
+                    openTime: '2022-02-07T14:33:00Z',
+                    closeTime: '2022-02-07T14:33:00Z',
                     profitLoss: thisWeekProfitLoss[0]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2022-02-07 16:27:00+00:00',
-                    closeTime: '2022-02-07 16:27:00+00:00',
+                    openTime: '2022-02-07T16:27:00Z',
+                    closeTime: '2022-02-07T16:27:00Z',
                     profitLoss: thisWeekProfitLoss[1]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2022-02-01 14:33:00+00:00',
-                    closeTime: '2022-02-01 14:33:00+00:00',
+                    openTime: '2022-02-01T14:33:00Z',
+                    closeTime: '2022-02-01T14:33:00Z',
                     profitLoss: thisMonthProfitLoss[0]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2022-02-01 16:27:00+00:00',
-                    closeTime: '2022-02-01 16:27:00+00:00',
+                    openTime: '2022-02-01T16:27:00Z',
+                    closeTime: '2022-02-01T16:27:00Z',
                     profitLoss: thisMonthProfitLoss[1]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2022-01-07 08:33:00+00:00',
-                    closeTime: '2022-01-07 08:33:00+00:00',
+                    openTime: '2022-01-07T08:33:00Z',
+                    closeTime: '2022-01-07T08:33:00Z',
                     profitLoss: thisYearProfitLoss[0]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2022-01-07 10:27:00+00:00',
-                    closeTime: '2022-01-07 10:27:00+00:00',
+                    openTime: '2022-01-07T10:27:00Z',
+                    closeTime: '2022-01-07T10:27:00Z',
                     profitLoss: thisYearProfitLoss[1]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2021-02-07 17:33:00+00:00',
-                    closeTime: '2021-02-07 17:33:00+00:00',
+                    openTime: '2021-02-07T17:33:00Z',
+                    closeTime: '2021-02-07T17:33:00Z',
                     profitLoss: allTimeProfitLoss[0]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2020-02-07 16:27:00+00:00',
-                    closeTime: '2020-02-07 16:27:00+00:00',
+                    openTime: '2020-02-07T16:27:00Z',
+                    closeTime: '2020-02-07T16:27:00Z',
                     profitLoss: allTimeProfitLoss[1]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2019-02-07 13:33:00+00:00',
-                    closeTime: '2019-02-07 13:33:00+00:00',
+                    openTime: '2019-02-07T13:33:00Z',
+                    closeTime: '2019-02-07T13:33:00Z',
                     profitLoss: allTimeProfitLoss[2]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2010-02-07 11:27:00+00:00',
-                    closeTime: '2010-02-07 11:27:00+00:00',
+                    openTime: '2010-02-07T11:27:00Z',
+                    closeTime: '2010-02-07T11:27:00Z',
                     profitLoss: allTimeProfitLoss[3]
                 },
                 {
                     ...baseTrade(),
-                    openTime: '2011-02-07 11:33:00+00:00',
-                    closeTime: '2011-02-07 11:33:00+00:00',
+                    openTime: '2011-02-07T11:33:00Z',
+                    closeTime: '2011-02-07T11:33:00Z',
                     profitLoss: allTimeProfitLoss[4]
                 }
             ]

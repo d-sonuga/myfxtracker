@@ -3,9 +3,10 @@ import {ColumnBox} from '@components/containers'
 import { Divider, Drawer, List, Slide, Tab, Tabs } from '@mui/material'
 import { useRef, useState } from 'react'
 import NoteListItem from './note-list-item'
+import Note from '../models'
 
 
-const NoteList = ({noteItems, onNoteSelect, isEditing, deleteNote}: {noteItems: any, onNoteSelect: Function, isEditing: boolean, deleteNote: Function}) => {
+const NoteList = ({noteItems, onNoteSelect, isEditing, removeNoteFromList}: {noteItems: Note[], onNoteSelect: Function, isEditing: boolean, removeNoteFromList: Function}) => {
     const listContainerRef = useRef<HTMLDivElement>(null);
     return(
         <div ref={listContainerRef}>
@@ -21,7 +22,7 @@ const NoteList = ({noteItems, onNoteSelect, isEditing, deleteNote}: {noteItems: 
                                 onClick={() => {
                                     onNoteSelect(i);
                                 }}
-                                deleteNote={deleteNote} />
+                                removeNoteFromList={removeNoteFromList} />
                             <Divider />
                         </>
                     ))}

@@ -2,7 +2,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 
 @csrf_exempt
@@ -18,6 +18,8 @@ def e(request):
         
 def doc(request):
     return HttpResponse('index.html')
+def f(request):
+    return JsonResponse()
 
 
 urlpatterns = [
@@ -32,6 +34,7 @@ urlpatterns = [
     path('ps/', include('paystack_endpoint.urls')),
     path('datasource/', include('datasource_endpoint.urls')),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    path('f', f),
     path('', include('serve.urls'))
 ]
 

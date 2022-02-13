@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.test import TestCase
 from importlib_metadata import os
-from users.models import User
+from users.models import Trader
 from .test_data import SignUpDetails
 from allauth.account.models import EmailAddress
 from rest_framework.authtoken.models import Token
@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 class EADownload(TestCase):
     def setUp(self):
         self.test_data = SignUpDetails.good_details
-        trader = User.objects.create_trader(**self.test_data, password=self.test_data['password1'])
+        trader = Trader.objects.create(**self.test_data, password=self.test_data['password1'])
         EmailAddress.objects.create(user=trader, email=self.test_data['email'], verified=True, primary=True)
         self.headers = {
             'Content-Type': 'application/json',

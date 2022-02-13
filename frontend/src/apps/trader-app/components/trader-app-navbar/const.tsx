@@ -32,13 +32,17 @@ const mainMenuItems: MenuItemObject[] = [
     {icon: NotesIcon, name: 'Notes', route: TRADER_NOTES_ROUTE}
 ];
 
-const bottomMenuItems: MenuItemObject[] =  [
-    {icon: SettingsIcon, name: 'Settings', route: TRADER_SETTINGS_ROUTE},
-    {icon: LogOutIcon, name: 'Log Out', action: () => {}},
-];
+const bottomMenuItems = (logout: Function): MenuItemObject[] => {
+    return [
+        {icon: SettingsIcon, name: 'Settings', route: TRADER_SETTINGS_ROUTE},
+        {icon: LogOutIcon, name: 'Log Out', action: () => logout()},
+    ];
+}
 
-const menuItems = {
-    mainMenuItems,
-    bottomMenuItems
+const menuItems = (logout: Function) => {
+    return {
+        mainMenuItems,
+        bottomMenuItems: bottomMenuItems(logout)
+    }
 }
 export default menuItems

@@ -19,6 +19,7 @@ type HttpClientType = {
      * @param data: the data to be posted
     */
     post: (config: HttpPostConfigType) => Promise<void>,
+    delete: (config: HttpDeleteConfigType) => Promise<void>,
     /**
      * Toast for error messages
      */
@@ -44,6 +45,8 @@ interface HttpRequestConfigType {
 }
 
 type HttpGetConfigType = HttpRequestConfigType;
+
+type HttpDeleteConfigType = HttpRequestConfigType;
 
 /**
  * Type of the config object for the Http client's post function
@@ -76,5 +79,6 @@ export type {
     HttpClientType,
     HttpGetConfigType,
     HttpPostConfigType,
+    HttpDeleteConfigType,
     HandleResolveRequestConfig
 }

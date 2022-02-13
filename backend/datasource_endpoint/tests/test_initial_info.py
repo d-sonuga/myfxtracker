@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 import nanoid
 from trader.models import Account
-from users.models import User
+from users.models import Trader
 from .base_test import BaseTest
 from .test_data import DatasourceInitialInfoData
 
@@ -11,11 +11,11 @@ class TestInitialInfo(BaseTest):
         self.test_data = DatasourceInitialInfoData
         details_no_transactions = self.test_data.good_details_with_no_transactions['data']
         details_transactions = self.test_data.good_details_with_transactions['data']
-        trader_with_no_transactions = User.objects.create_trader(
+        trader_with_no_transactions = Trader.objects.create(
             username='1',
             **self.test_data.trader_with_no_transaction_details
         )
-        trader_with_transactions = User.objects.create_trader(
+        trader_with_transactions = Trader.objects.create(
             username='2',
             **self.test_data.trader_with_transactions_details
         )
@@ -27,7 +27,7 @@ class TestInitialInfo(BaseTest):
         self.valid_datasource_username_with_transactions = trader_with_transactions.datasource_username
         # It's not saved in the db, so it's invalid
         self.invalid_datasource_username = nanoid.generate()
-        trader_with_expired_ds_username = User.objects.create_trader(
+        trader_with_expired_ds_username = Trader.objects.create(
             **self.test_data.trader_with_expired_ds_username_details,
             username='3'
         )

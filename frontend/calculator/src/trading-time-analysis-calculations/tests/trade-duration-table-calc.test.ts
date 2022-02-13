@@ -28,8 +28,8 @@ describe('Verify tradeDurationTableCalc is working', () => {
                 {
                     pair: 'USDSEK',
                     action: 'sell',
-                    openTime: '2022-10-03 12:43:00+00:00',
-                    closeTime: '2022-10-03 12:53:00+00:00',
+                    openTime: '2022-10-03T12:43:00Z',
+                    closeTime: '2022-10-03T12:53:00Z',
                     takeProfit: 0,
                     stopLoss: 0,
                     riskRewardRatio: 0,
@@ -79,230 +79,230 @@ describe('Verify tradeDurationTableCalc is working', () => {
             trades: [
                 {
                     ...baseTrade,
-                    openTime: '2022-10-03 12:43:00+00:00',
-                    closeTime: '2022-10-03 12:53:00+00:00',
+                    openTime: '2022-10-03T12:43:00Z',
+                    closeTime: '2022-10-03T12:53:00Z',
                     profitLoss: profitLoss10mins[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2021-10-04 13:14:00+00:00',
-                    closeTime: '2021-10-04 13:24:00+00:00',
+                    openTime: '2021-10-04T13:14:00Z',
+                    closeTime: '2021-10-04T13:24:00Z',
                     profitLoss: profitLoss10mins[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2020-01-23 14:27:00+00:00',
-                    closeTime: '2020-01-23 14:37:00+00:00',
+                    openTime: '2020-01-23T14:27:00Z',
+                    closeTime: '2020-01-23T14:37:00Z',
                     profitLoss: profitLoss10mins[2]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2019-01-23 12:17:00+00:00',
-                    closeTime: '2019-01-23 12:51:00+00:00',
+                    openTime: '2019-01-23T12:17:00Z',
+                    closeTime: '2019-01-23T12:51:00Z',
                     profitLoss: profitLoss34mins[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2019-12-03 12:17:00+00:00',
-                    closeTime: '2019-12-03 12:18:00+00:00',
+                    openTime: '2019-12-03T12:17:00Z',
+                    closeTime: '2019-12-03T12:18:00Z',
                     profitLoss: profitLoss1min[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2019-12-03 13:27:00+00:00',
-                    closeTime: '2019-12-03 13:28:00+00:00',
+                    openTime: '2019-12-03T13:27:00Z',
+                    closeTime: '2019-12-03T13:28:00Z',
                     profitLoss: profitLoss1min[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2019-12-03 12:59:00+00:00',
-                    closeTime: '2019-12-03 01:00:00+00:00',
+                    openTime: '2019-12-03T12:59:00Z',
+                    closeTime: '2019-12-03T01:00:00Z',
                     profitLoss: profitLoss1min[2]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2019-12-03 12:00:00+00:00',
-                    closeTime: '2019-12-03 12:51:00+00:00',
+                    openTime: '2019-12-03T12:00:00Z',
+                    closeTime: '2019-12-03T12:51:00Z',
                     profitLoss: profitLoss51mins[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2019-12-03 12:00:00+00:00',
-                    closeTime: '2019-12-03 12:59:00+00:00',
+                    openTime: '2019-12-03T12:00:00Z',
+                    closeTime: '2019-12-03T12:59:00Z',
                     profitLoss: profitLoss59mins[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2017-12-03 12:01:00+00:00',
-                    closeTime: '2017-12-03 13:00:00+00:00',
+                    openTime: '2017-12-03T12:01:00Z',
+                    closeTime: '2017-12-03T13:00:00Z',
                     profitLoss: profitLoss59mins[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2000-12-03 12:00:00+00:00',
-                    closeTime: '2000-12-03 12:59:00+00:00',
+                    openTime: '2000-12-03T12:00:00Z',
+                    closeTime: '2000-12-03T12:59:00Z',
                     profitLoss: profitLoss59mins[2]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2019-12-03 12:00:00+00:00',
-                    closeTime: '2019-12-03 13:00:00+00:00',
+                    openTime: '2019-12-03T12:00:00Z',
+                    closeTime: '2019-12-03T13:00:00Z',
                     profitLoss: profitLoss1hour[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2010-12-03 12:00:00+00:00',
-                    closeTime: '2010-12-03 13:20:00+00:00',
+                    openTime: '2010-12-03T12:00:00Z',
+                    closeTime: '2010-12-03T13:20:00Z',
                     profitLoss: profitLoss1hour[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2010-12-03 11:00:00+00:00',
-                    closeTime: '2010-12-03 12:00:00+00:00',
+                    openTime: '2010-12-03T11:00:00Z',
+                    closeTime: '2010-12-03T12:00:00Z',
                     profitLoss: profitLoss1hour[2]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2010-12-03 09:09:00+00:00',
-                    closeTime: '2010-12-03 18:00:00+00:00',
+                    openTime: '2010-12-03T09:09:00Z',
+                    closeTime: '2010-12-03T18:00:00Z',
                     profitLoss: profitLoss9hours[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2010-12-03 10:00:00+00:00',
-                    closeTime: '2010-12-03 19:00:00+00:00',
+                    openTime: '2010-12-03T10:00:00Z',
+                    closeTime: '2010-12-03T19:00:00Z',
                     profitLoss: profitLoss9hours[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2010-12-03 11:00:00+00:00',
-                    closeTime: '2010-12-04 16:00:00+00:00',
+                    openTime: '2010-12-03T11:00:00Z',
+                    closeTime: '2010-12-04T16:00:00Z',
                     profitLoss: profitLoss1day[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2011-11-03 11:12:00+00:00',
-                    closeTime: '2011-11-04 08:10:00+00:00',
+                    openTime: '2011-11-03T11:12:00Z',
+                    closeTime: '2011-11-04T08:10:00Z',
                     profitLoss: profitLoss1day[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2011-01-31 11:12:00+00:00',
-                    closeTime: '2011-02-01 08:10:00+00:00',
+                    openTime: '2011-01-31T11:12:00Z',
+                    closeTime: '2011-02-01T08:10:00Z',
                     profitLoss: profitLoss1day[2]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2011-11-03 11:12:00+00:00',
-                    closeTime: '2011-11-07 08:10:00+00:00',
+                    openTime: '2011-11-03T11:12:00Z',
+                    closeTime: '2011-11-07T08:10:00Z',
                     profitLoss: profitLoss4days[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-11-03 11:12:00+00:00',
-                    closeTime: '2013-11-07 08:10:00+00:00',
+                    openTime: '2013-11-03T11:12:00Z',
+                    closeTime: '2013-11-07T08:10:00Z',
                     profitLoss: profitLoss4days[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2015-11-03 11:12:00+00:00',
-                    closeTime: '2015-11-07 08:10:00+00:00',
+                    openTime: '2015-11-03T11:12:00Z',
+                    closeTime: '2015-11-07T08:10:00Z',
                     profitLoss: profitLoss4days[2]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2011-11-03 11:12:00+00:00',
-                    closeTime: '2011-11-10 08:10:00+00:00',
+                    openTime: '2011-11-03T11:12:00Z',
+                    closeTime: '2011-11-10T08:10:00Z',
                     profitLoss: profitLoss1week[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2011-03-23 11:12:00+00:00',
-                    closeTime: '2011-03-30 08:10:00+00:00',
+                    openTime: '2011-03-23T11:12:00Z',
+                    closeTime: '2011-03-30T08:10:00Z',
                     profitLoss: profitLoss1week[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2011-02-02 11:12:00+00:00',
-                    closeTime: '2011-02-23 08:10:00+00:00',
+                    openTime: '2011-02-02T11:12:00Z',
+                    closeTime: '2011-02-23T08:10:00Z',
                     profitLoss: profitLoss3weeks[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2012-07-25 11:12:00+00:00',
-                    closeTime: '2012-08-17 08:10:00+00:00',
+                    openTime: '2012-07-25T11:12:00Z',
+                    closeTime: '2012-08-17T08:10:00Z',
                     profitLoss: profitLoss3weeks[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-02-02 11:12:00+00:00',
-                    closeTime: '2013-02-27 08:10:00+00:00',
+                    openTime: '2013-02-02T11:12:00Z',
+                    closeTime: '2013-02-27T08:10:00Z',
                     profitLoss: profitLoss3weeks4days[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-02-02 11:12:00+00:00',
-                    closeTime: '2013-03-02 08:10:00+00:00',
+                    openTime: '2013-02-02T11:12:00Z',
+                    closeTime: '2013-03-02T08:10:00Z',
                     profitLoss: profitLoss1month[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-03-02 11:12:00+00:00',
-                    closeTime: '2013-04-12 08:10:00+00:00',
+                    openTime: '2013-03-02T11:12:00Z',
+                    closeTime: '2013-04-12T08:10:00Z',
                     profitLoss: profitLoss1month[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-02-02 11:12:00+00:00',
-                    closeTime: '2013-05-02 08:10:00+00:00',
+                    openTime: '2013-02-02T11:12:00Z',
+                    closeTime: '2013-05-02T08:10:00Z',
                     profitLoss: profitLoss3months[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-05-12 11:12:00+00:00',
-                    closeTime: '2013-08-13 08:10:00+00:00',
+                    openTime: '2013-05-12T11:12:00Z',
+                    closeTime: '2013-08-13T08:10:00Z',
                     profitLoss: profitLoss3months[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-05-12 08:10:00+00:00',
-                    closeTime: '2014-04-09 08:10:00+00:00',
+                    openTime: '2013-05-12T08:10:00Z',
+                    closeTime: '2014-04-09T08:10:00Z',
                     profitLoss: profitLoss11months[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-05-12 11:12:00+00:00',
-                    closeTime: '2014-05-03 08:10:00+00:00',
+                    openTime: '2013-05-12T11:12:00Z',
+                    closeTime: '2014-05-03T08:10:00Z',
                     profitLoss: profitLoss11months3weeks[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-05-12 11:12:00+00:00',
-                    closeTime: '2014-04-11 08:10:00+00:00',
+                    openTime: '2013-05-12T11:12:00Z',
+                    closeTime: '2014-04-11T08:10:00Z',
                     profitLoss: profitLoss11months3weeks4days[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-02-02 11:12:00+00:00',
-                    closeTime: '2014-05-02 08:10:00+00:00',
+                    openTime: '2013-02-02T11:12:00Z',
+                    closeTime: '2014-05-02T08:10:00Z',
                     profitLoss: profitLoss1year[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2010-02-03 11:12:00+00:00',
-                    closeTime: '2011-05-05 08:10:00+00:00',
+                    openTime: '2010-02-03T11:12:00Z',
+                    closeTime: '2011-05-05T08:10:00Z',
                     profitLoss: profitLoss1year[1]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2013-02-02 11:12:00+00:00',
-                    closeTime: '2016-05-02 08:10:00+00:00',
+                    openTime: '2013-02-02T11:12:00Z',
+                    closeTime: '2016-05-02T08:10:00Z',
                     profitLoss: profitLoss3years[0]
                 },
                 {
                     ...baseTrade,
-                    openTime: '2011-02-02 11:12:00+00:00',
-                    closeTime: '2014-05-02 08:10:00+00:00',
+                    openTime: '2011-02-02T11:12:00Z',
+                    closeTime: '2014-05-02T08:10:00Z',
                     profitLoss: profitLoss3years[1]
                 },
             ]

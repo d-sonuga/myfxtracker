@@ -10,8 +10,8 @@ describe('Verify gainsGraphCalc is working', () => {
     const newTrade = (attr: any) => {
         return {
             profitLoss: randomNumber(-1000000, 1000000),
-            openTime: attr.date !== undefined ? attr.date : '2021-10-18 18:34:00+00:00',
-            closeTime: attr.date !== undefined ? attr.date : '2021-10-18 18:34:00+00:00',
+            openTime: attr.date !== undefined ? attr.date : '2021-10-18T18:34:00Z',
+            closeTime: attr.date !== undefined ? attr.date : '2021-10-18T18:34:00Z',
             pair: 'GBPUSD',
             action: 'buy',
             riskRewardRatio: 2,
@@ -47,7 +47,7 @@ describe('Verify gainsGraphCalc is working', () => {
                     {
                         account: 2,
                         amount: randomNumber(-1000000, 1000000),
-                        time: '2021-10-12 18:34:00+00:00'
+                        time: '2021-10-12T18:34:00Z'
                     }
                 )
             }
@@ -80,7 +80,7 @@ describe('Verify gainsGraphCalc is working', () => {
                     {
                         account: 2,
                         amount: randomNumber(-1000000, 1000000),
-                        time: '2021-10-12 18:34:00+00:00'
+                        time: '2021-10-12T18:34:00Z'
                     }
                 )
             }
@@ -106,7 +106,7 @@ describe('Verify gainsGraphCalc is working', () => {
         })
     })
     describe('When there are trades and deposits', () => {
-        const tradeDateStr = '2021-10-13 18:34:00+00:00';
+        const tradeDateStr = '2021-10-13T18:34:00Z';
         const today = new Date(tradeDateStr);
         const noOfTrades = 20;
         // All deposits happen on 12th October, 2021
@@ -114,7 +114,7 @@ describe('Verify gainsGraphCalc is working', () => {
             const deposits: Deposit[] = [];
             for(let i=numberOfDeposits; i>0; i--){
                 deposits.push(
-                    {account: 2, amount: randomNumber(-10000000, 100000000), time: '2021-10-12 18:34:00+00:00'}
+                    {account: 2, amount: randomNumber(-10000000, 100000000), time: '2021-10-12T18:34:00Z'}
                 )
             }
             return deposits

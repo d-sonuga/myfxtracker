@@ -1,5 +1,4 @@
 import {ColumnBox, RowBox} from '@components/containers'
-import LoadingIcon from '@components/loading-icon'
 import {H5, H6, P} from '@components/text'
 import {getColor} from '@conf/utils'
 
@@ -7,7 +6,12 @@ import {getColor} from '@conf/utils'
 const DataSourceSetupInstructions = ({eaDownloadUrls}: {eaDownloadUrls: {'mt4': string, 'mt5': string}}) => {
     return(
         <ColumnBox
-            style={{width: '100%', height: '75vh', justifyContent: 'center', alignItems: 'center'}}
+            style={{
+                width: '100%',
+                height: '100vh',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}
             data-testid='data-source-setup-instructions'>
             <H5>No Accounts Found</H5>
             <P>Your stats will appear once you set up the MyFxTracker EA</P>

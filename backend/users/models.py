@@ -4,9 +4,9 @@ from datetime import datetime, date, timedelta
 import nanoid
 
 
-class UserManager(DjangoUserManager):
-    def create_trader(self, **kwargs):
-        new_trader = self.create(
+class TraderManager(DjangoUserManager):
+    def create(self, **kwargs):
+        new_trader = super().create(
             email=kwargs['email'],
             is_trader=True,
             username=kwargs.get('username', kwargs['email'])
@@ -27,10 +27,20 @@ class UserManager(DjangoUserManager):
         SubscriptionInfo.objects.create(user=new_trader, is_subscribed=False,
             on_free=True, next_billing_time=datetime.today() + timedelta(days=35))
         return new_trader
+
+    def all(self):
+        return super().filter(is_trader=True)
     
+    def filter(self, *args, **kwargs):
+        return super().filter(is_trader=True, *args, **kwargs)
+
     def get_by_datasource_username(self, ds_username):
         traderinfo = TraderInfo.objects.get(datasource_username=ds_username)
         return traderinfo.user
+
+
+class UserManager(DjangoUserManager):
+    pass
 
 
 class User(AbstractUser):
@@ -39,22 +49,29 @@ class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
-
-    def __getattr__(self, __name):
-        try:
-            return super().__getattr__(__name)
-        except AttributeError as e:
-            if self.is_trader:
-                try:
-                    return getattr(self.traderinfo, __name)
-                except AttributeError:
-                    return getattr(self.subscriptioninfo, __name)
-            raise e
     
     def set_password(self, raw_password, save=True):
         super().set_password(raw_password)
         if save:
             self.save()
+
+
+class Trader(User):
+    objects = TraderManager()
+
+    def __getattribute__(self, __name):
+        try:
+            return super().__getattribute__(__name)
+        except AttributeError as e:
+            traderinfo = super().__getattribute__('traderinfo')
+            subscriptioninfo = super().__getattribute__('subscriptioninfo')
+            try:
+                return getattr(traderinfo, __name)
+            except AttributeError:
+                return getattr(subscriptioninfo, __name)
+
+    class Meta:
+        proxy = True
 
 
 class TraderInfoManager(models.Manager):

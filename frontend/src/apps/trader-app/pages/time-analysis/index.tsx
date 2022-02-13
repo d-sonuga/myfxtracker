@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {PageContainer, PageHeading, useRecalc} from '@apps/trader-app/components'
-import {tradingTimeAnalysisCalculations} from 'calculator'
+import {TradingTimeAnalysisCalculations, tradingTimeAnalysisCalculations} from 'calculator'
 import TimeAnalysisGraph from './time-analysis-graph'
 import TradeDurationTable from './trade-duration-table'
 import OpenHourTable from './open-hour-table'
@@ -9,7 +9,10 @@ import './style.css'
 
 
 const TimeAnalysis = () => {
-    const [tradingTimeAnalysisCalc, setTradingTimeAnalysisCalc] = useState(defaultTradingTimeAnalysisCalc);
+    const [
+        tradingTimeAnalysisCalc,
+        setTradingTimeAnalysisCalc
+    ] = useState<TradingTimeAnalysisCalculations>(defaultTradingTimeAnalysisCalc);
     useRecalc(tradingTimeAnalysisCalculations, setTradingTimeAnalysisCalc);
 
     return(

@@ -9,6 +9,8 @@ import {GlobalData, useGlobalData} from '@apps/trader-app/models'
 import LoadingIcon from '@components/loading-icon'
 import DataSourceSetupInstructions from './data-source-setup-instructions'
 import useEaDownloadUrl from './ea-download-url'
+import getNoteData from './get-note-data'
+import {getColor} from '@conf/utils'
 
 
 const TraderApp = () => {
@@ -21,6 +23,7 @@ const TraderApp = () => {
         setGlobalData(newGlobalData);
     }
     const eaDownloadUrls = useEaDownloadUrl();
+    const noteData = getNoteData();
 
     const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
         TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE,
@@ -34,30 +37,30 @@ const TraderApp = () => {
                 <GlobalDataContext.Provider value={globalData}>
                     <CurrentAccountChangerContext.Provider value={onCurrentAccountChange}>
                         {(() => {
-                            if(!globalData.hasLoaded()){
-                                return <LoadingIcon />
-                            }
-                            if(globalData.noAccounts()){
-                                if(location.pathname.endsWith(TRADER_SETTINGS_ROUTE)){
-                                    return <Settings />
+                            if(globalData.hasLoaded()){
+                                if(globalData.noAccounts()){
+                                    if(location.pathname.endsWith(TRADER_SETTINGS_ROUTE)){
+                                        return <Settings />
+                                    }
+                                    return <DataSourceSetupInstructions eaDownloadUrls={eaDownloadUrls} />
+                                } else {
+                                    return (
+                                        <Routes>
+                                            <Route path={TRADER_OVERVIEW_ROUTE} element={<Overview />} />
+                                            <Route path={TRADER_JOURNAL_ROUTE} element={<Journal />} />
+                                            <Route path={TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE} element={<LongShortAnalysis />} />
+                                            <Route path={TRADER_CASH_AND_GAINS_ROUTE} element={<CashAndGains />} />
+                                            <Route path={TRADER_PAIRS_ANALYSIS_ROUTE} element={<PairsAnalysis />} />
+                                            <Route path={TRADER_TIME_ANALYSIS_ROUTE} element={<TimeAnalysis />} />
+                                            <Route path={TRADER_PERIOD_ANALYSIS_ROUTE} element={<PeriodAnalysis />} />
+                                            <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
+                                            <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
+                                            <Route path={TRADER_SETTINGS_ROUTE} element={<Settings />} />
+                                        </Routes>
+                                    );
                                 }
-                                return <DataSourceSetupInstructions eaDownloadUrls={eaDownloadUrls} />
-                            } else {
-                                return (
-                                    <Routes>
-                                        <Route path={TRADER_OVERVIEW_ROUTE} element={<Overview />} />
-                                        <Route path={TRADER_JOURNAL_ROUTE} element={<Journal />} />
-                                        <Route path={TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE} element={<LongShortAnalysis />} />
-                                        <Route path={TRADER_CASH_AND_GAINS_ROUTE} element={<CashAndGains />} />
-                                        <Route path={TRADER_PAIRS_ANALYSIS_ROUTE} element={<PairsAnalysis />} />
-                                        <Route path={TRADER_TIME_ANALYSIS_ROUTE} element={<TimeAnalysis />} />
-                                        <Route path={TRADER_PERIOD_ANALYSIS_ROUTE} element={<PeriodAnalysis />} />
-                                        <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
-                                        <Route path={TRADER_NOTES_ROUTE} element={<Notebook />} />
-                                        <Route path={TRADER_SETTINGS_ROUTE} element={<Settings />} />
-                                    </Routes>
-                                );
                             }
+                            return <LoadingIcon color={getColor('dark-gray')} size={50} />
                         })()}
                     </CurrentAccountChangerContext.Provider>
                 </GlobalDataContext.Provider>

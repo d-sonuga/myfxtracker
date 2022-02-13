@@ -1,11 +1,11 @@
 import {Table} from '@apps/trader-app/components'
 import {getColor} from '@conf/utils'
 import createRows from './create-rows'
-import {OpenHourCalc} from './types'
+import {OpenHourTableCalc} from 'calculator'
 
 
-const OpenHourTable = ({calc}: {calc: Array<OpenHourCalc>}) => {
-    const headers = ['Duration', 'Num. of Trades', 'Result'];
+const OpenHourTable = ({calc}: {calc: OpenHourTableCalc}) => {
+    const headers = ['Open Hour', 'Num. of Trades', 'Result'];
     const rows = createRows(calc);
     return(
         <Table

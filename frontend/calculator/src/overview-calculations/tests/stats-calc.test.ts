@@ -52,8 +52,8 @@ describe('Verify that statsCalc is working', () => {
                     swap: 10,
                     riskRewardRatio: 3,
                     action: 'buy',
-                    openTime: '2022-10-23 12:09:00+00:00',
-                    closeTime: '2022-10-23 12:09:00+00:00'
+                    openTime: '2022-10-23T12:09:00Z',
+                    closeTime: '2022-10-23T12:09:00Z'
                 },
                 {
                     pair: 'USDNOK',
@@ -64,8 +64,8 @@ describe('Verify that statsCalc is working', () => {
                     swap: 10,
                     riskRewardRatio: 3,
                     action: 'sell',
-                    openTime: '2022-10-23 12:09:00+00:00',
-                    closeTime: '2022-10-23 12:09:00+00:00'
+                    openTime: '2022-10-23T12:09:00Z',
+                    closeTime: '2022-10-23T12:09:00Z'
                 }
             ]
         }

@@ -1,3 +1,5 @@
+import {Trade} from '@root/types'
+
 type PairsAnalysisCalculations = {
     aveReturnsPerPairGraphCalc: AveReturnsPerPairGraphCalc,
     aveRrrPerPairGraphCalc: AveRrrPerPairGraphCalc,
@@ -26,9 +28,14 @@ type PairsAnalysisTableCalcItem = {
     slOnPairPercent: number
 }
 
+type TradesPerPair = {
+    [key: string]: Trade[]
+}
+
 export type {
     PairsAnalysisCalculations,
     AveReturnsPerPairGraphCalc,
     AveRrrPerPairGraphCalc,
-    PairsAnalysisTableCalc
+    PairsAnalysisTableCalc,
+    TradesPerPair
 }

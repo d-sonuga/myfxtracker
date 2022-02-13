@@ -1,6 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios'
 import {HttpMsg} from '@services/generic-msg'
-import {HttpClientType, HttpPostConfigType, HandleResolveRequestConfig, HttpGetConfigType} from './types'
+import {HttpClientType, HttpPostConfigType, HttpDeleteConfigType,
+    HandleResolveRequestConfig, HttpGetConfigType} from './types'
 
 const getDefaultHeaders = (noToken: boolean | undefined) => {
     let headers = {
@@ -29,21 +30,20 @@ const handleResolveRequest = (axiosPromise: Promise<any>, config: HandleResolveR
     return axiosPromise
         .then((resp) => config.successFunc(resp))
         .catch((err) => {
-            console.log(err);
-            console.log(err.message);
             if(err.message === 'Network Error') {
                 Http.toast.error(HttpMsg.noConnectionErr());
             } else if(err.message === 
                 `timeout of ${config.timeout ? config.timeout : defaultConfig.timeout}ms exceeded`) {
                     Http.toast.error(HttpMsg.connectionTimeOutErr())
             } else {
-                config.errorFunc(err);
+                return config.errorFunc(err);
             }
         })
-        .then(() => {
+        .then((data) => {
             if(config.thenFunc){
-                config.thenFunc()
+                return config.thenFunc(data);
             }
+            return Promise.resolve(data);
         })
 }
 
@@ -70,9 +70,21 @@ const post = (config: HttpPostConfigType) => {
     ), config);
 }
 
+const httpDelete = (config: HttpDeleteConfigType) => {
+    return handleResolveRequest(axios.delete(
+        config.url,
+        {
+            headers: getDefaultHeaders(config.noToken),
+            ...defaultConfig,
+            timeout: config.timeout ? config.timeout : defaultConfig.timeout
+        }
+    ), config);
+}
+
 const Http: HttpClientType = {
     get,
     post,
+    delete: httpDelete,
     toast: {
         error: (msg: any) => console.log('Toast is null')
     },

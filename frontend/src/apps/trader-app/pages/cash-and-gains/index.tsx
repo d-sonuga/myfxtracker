@@ -10,7 +10,6 @@ import './style.css'
 const CashAndGains = () => {
     const [cashAndGainsCalc, setCashAndGainsCalc] = useState(defaultCashAndGainsCalc);
     useRecalc(cashAndGainsCalculations, setCashAndGainsCalc);
-    console.log(cashAndGainsCalc);
     return(
         <PageContainer className='apps-trader-app-pages-cash-and-gains-container'>
             <PageHeading heading='Cash and Gains' />

@@ -15,8 +15,8 @@ const newTrade = (pair: string, commission: number, swap: number): Trade => {
         stopLoss: 0,
         action: 'buy',
         riskRewardRatio: 0,
-        openTime: '2022-10-23 13:23:00+00:00',
-        closeTime: '2022-10-23 13:23:00+00:00'
+        openTime: '2022-10-23T13:23:00Z',
+        closeTime: '2022-10-23T13:23:00Z'
     }
 }
 

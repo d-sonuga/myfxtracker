@@ -49,8 +49,8 @@ const allTimeGraphCalc = (accountData: AccountData, today: Date) => {
 const graphCalc = (trades: Trade[]): TimeAnalysisGraphCalcItem[] => {
     const tradeHourToResultMap: {[key: string]: number} = {};
     for(const trade of trades){
-        // extract the 06 in '2022-10-23 06:03:00+00:00'
-        const hour = trade.openTime.split(' ')[1].split(':')[0];
+        // extract the 06 in '2022-10-23T06:03:00Z'
+        const hour = trade.openTime.split('T')[1].split(':')[0];
         if(!(hour in tradeHourToResultMap)){
             tradeHourToResultMap[hour] = 0;
         }

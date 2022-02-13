@@ -1,13 +1,13 @@
-import { ColumnBox } from '@components/containers'
-import { P, SP } from '@components/text'
-import { getColor, getDimen } from '@conf/utils'
-import { Delete } from '@mui/icons-material'
-import { IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, CircularProgress } from '@mui/material'
-import { useState } from 'react'
+import {ToastContext} from '@components/toast'
+import {Delete} from '@mui/icons-material'
+import {IconButton, ListItem, ListItemButton, ListItemText, CircularProgress} from '@mui/material'
+import {useContext, useState} from 'react'
+import Note from '../models';
 
 
-const NoteListItem = ({noteItem, active, onClick, deleteNote, noteIndex}: {noteItem: any, active: boolean, onClick: Function, deleteNote: Function, noteIndex: number}) => {
+const NoteListItem = ({noteItem, active, onClick, removeNoteFromList, noteIndex}: {noteItem: Note, active: boolean, onClick: Function, removeNoteFromList: Function, noteIndex: number}) => {
     const [isDeleting, setIsDeleting] = useState(false);
+    const Toast = useContext(ToastContext);
     return(
         <ListItem>
             <ListItemButton
@@ -23,11 +23,12 @@ const NoteListItem = ({noteItem, active, onClick, deleteNote, noteIndex}: {noteI
                 <CircularProgress />
                 : <IconButton onClick={() => {
                         setIsDeleting(true);
-                        deleteNote(noteIndex)
+                        noteItem.delete()
+                            .then(() => removeNoteFromList())
+                            .catch(() => (
+                                Toast.error('Sorry. Something went wrong when trying to delete your note.')
+                            ))
                             .then(() => setIsDeleting(false))
-                            .catch(() => {
-                                setIsDeleting(false);
-                            })
                     }}><Delete /></IconButton>
                 }
         </ListItem>

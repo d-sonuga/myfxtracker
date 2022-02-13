@@ -13,8 +13,8 @@ describe('Verify cashGraphCalc works', () => {
     const newTrade = (attr: any): Trade => {
         return {
             profitLoss: randomNumber(-1000000, 1000000),
-            openTime: attr.time !== undefined ? attr.time : '2021-10-18',
-            closeTime: attr.time !== undefined ? attr.time : '2021-10-18',
+            openTime: attr.time !== undefined ? attr.time : '2021-10-18T12:09:00Z',
+            closeTime: attr.time !== undefined ? attr.time : '2021-10-18T12:09:00Z',
             pair: 'GBPUSD',
             action: 'buy',
             riskRewardRatio: 2,
@@ -45,7 +45,7 @@ describe('Verify cashGraphCalc works', () => {
     })
     describe('When there are only withdrawals, but no trades', () => {
         const withdrawals: Withdrawal[] = [1, 2, 3, 4, 5].map((i) => (
-            {account: 3, amount: 500, time: '2022-12-02 18:34:00+00:00'}
+            {account: 3, amount: 500, time: '2022-12-02T18:34:00Z'}
         ))
         const accountData: AccountData = {
             name: 'dummy account',
@@ -68,7 +68,7 @@ describe('Verify cashGraphCalc works', () => {
     })
     describe('When there are only deposits, but no trades', () => {
         const deposits: Deposit[] = [1, 2, 3, 4, 5].map((i) => (
-            {account: 3, amount: 500, time: '2022-12-02'}
+            {account: 3, amount: 500, time: '2022-12-02T12:09:00Z'}
         ))
         const accountData: AccountData = {
             name: 'dummy account',
@@ -111,37 +111,37 @@ describe('Verify cashGraphCalc works', () => {
         const todayTrades: Trade[] = [];
         const thisWeekTrades: Trade[] = [
             {
-                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-25 18:34:00+00:00',
-                closeTime: '2021-10-25', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-25T18:34:00Z',
+                closeTime: '2021-10-25T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
                 stopLoss: 0, takeProfit: 0
             },
             {
-                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-29 18:34:00+00:00',
-                closeTime: '2021-10-29', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-29T18:34:00Z',
+                closeTime: '2021-10-29T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
                 takeProfit: 0, stopLoss: 0
             }
         ]
         const thisMonthTrades: Trade[] = [
             ...thisWeekTrades,
             {
-                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-18',
-                closeTime: '2021-10-18', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-18T12:09:00Z',
+                closeTime: '2021-10-18T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
                 stopLoss: 0, takeProfit: 0
             }
         ]
         const thisYearTrades: Trade[] = [
             ...thisMonthTrades,
             {
-                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-9-14',
-                closeTime: '2021-9-14', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-09-14T12:09:00Z',
+                closeTime: '2021-09-14T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
                 stopLoss: 0, takeProfit: 0
             }
         ]
         const allTimeTrades: Trade[] = [
             ...thisYearTrades,
             {
-                profitLoss: randomNumber(-1000000, 1000000), openTime: '2020-9-12',
-                closeTime: '2020-9-12', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
+                profitLoss: randomNumber(-1000000, 1000000), openTime: '2020-09-12T12:09:00Z',
+                closeTime: '2020-09-12T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
                 stopLoss: 0, takeProfit: 0
             }
         ]
@@ -187,10 +187,10 @@ describe('Verify cashGraphCalc works', () => {
          * depositsA are all deposits that took place before all the trades in tradesA
          */
         const depositsA: Deposit[] = [
-            {account: 2, amount: 200, time: '2021-02-15 18:34:00+00:00'}
+            {account: 2, amount: 200, time: '2021-02-15T18:34:00Z'}
         ]
         const tradesA: Trade[] = [
-            newTrade({time: '2021-02-17 18:34:00+00:00'})
+            newTrade({time: '2021-02-17T18:34:00Z'})
         ]
         const accountData: AccountData = {
             name: 'dummy account',

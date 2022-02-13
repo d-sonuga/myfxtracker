@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 import nanoid
-from trader.models import Account, Deposit, Trade, Withdrawal, format_time
-from users.models import User
+from trader.models import Account, Deposit, Trade, Withdrawal
+from users.models import Trader
 from .base_test import BaseTest
 from .test_data import SaveInitialDataTestData
 
@@ -9,14 +9,14 @@ from .test_data import SaveInitialDataTestData
 class TestSaveInitialData(BaseTest):
     def setUp(self):
         self.test_data = SaveInitialDataTestData
-        trader = User.objects.create_trader(
+        trader = Trader.objects.create(
             username='1',
             **self.test_data.trader_details
         )
         self.valid_ds_username = trader.get_datasource_username()
         # Unsaved in the database - invalid
         self.invalid_ds_username = nanoid.generate()
-        trader_with_expired_ds_username = User.objects.create_trader(
+        trader_with_expired_ds_username = Trader.objects.create(
             username='2',
             **self.test_data.trader_details
         )

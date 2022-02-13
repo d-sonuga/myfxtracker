@@ -5,10 +5,7 @@ import { getDimen } from '@conf/utils'
 
 const EmailSection = ({email}: {email: string}) => {
     return(
-        <ColumnBox
-            style={{
-                marginBottom: getDimen('padding-md')
-            }}>
+        <ColumnBox>
             <H6>Your Email</H6>
             <P>{email}</P>
         </ColumnBox>

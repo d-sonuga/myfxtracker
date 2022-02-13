@@ -20,10 +20,6 @@ const formatData = (rawData: GainsGraphCalc) => {
     return refinedData
 }
 
-type GainsGraphCalcKey = 'todayGraphCalc' |
-'thisWeekGraphCalc' |
-'thisMonthGraphCalc' |
-'thisYearGraphCalc' |
-'allTimeGraphCalc'
+type GainsGraphCalcKey = keyof(GainsGraphCalc);
 
 export default formatData

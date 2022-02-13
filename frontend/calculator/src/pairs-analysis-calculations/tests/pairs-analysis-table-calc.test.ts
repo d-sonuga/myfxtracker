@@ -1,4 +1,4 @@
-import { AccountData } from '@root/types'
+import {AccountData} from '@root/types'
 import pairsAnalysisTableCalc from '../pairs-analysis-table-calc'
 import {PairsAnalysisTableCalc} from '../types'
 
@@ -32,8 +32,8 @@ describe('Verify that pairsAnalysisTableCalc is working', () => {
                     takeProfit: 20,
                     stopLoss: 15,
                     profitLoss: 200,
-                    openTime: '2022-12-02 13:04:00+00:00',
-                    closeTime: '2022-12-02 13:04:00+00:00',
+                    openTime: '2022-12-02T13:04:00Z',
+                    closeTime: '2022-12-02T13:04:00Z',
                     commission: 20,
                     swap: 12
                 },
@@ -43,8 +43,8 @@ describe('Verify that pairsAnalysisTableCalc is working', () => {
                     takeProfit: 10,
                     stopLoss: 5,
                     profitLoss: -500,
-                    openTime: '2022-12-02 13:04:00+00:00',
-                    closeTime: '2022-12-02 13:04:00+00:00',
+                    openTime: '2022-12-02T13:04:00Z',
+                    closeTime: '2022-12-02T13:04:00Z',
                     commission: 10,
                     swap: 2
                 },
@@ -54,8 +54,8 @@ describe('Verify that pairsAnalysisTableCalc is working', () => {
                     takeProfit: 10,
                     stopLoss: 5,
                     profitLoss: -500,
-                    openTime: '2022-12-02 13:04:00+00:00',
-                    closeTime: '2022-12-02 13:04:00+00:00',
+                    openTime: '2022-12-02T13:04:00Z',
+                    closeTime: '2022-12-02T13:04:00Z',
                     commission: 10,
                     swap: 2
                 }

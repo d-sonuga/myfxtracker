@@ -56,13 +56,17 @@ class GlobalData {
     }
     /** What is the id of the currently selected trading account */
     getCurrentTradeAccountId(){
-        return this.rawData.trade_data.current_account_id;
+        let accountId = this.rawData.trade_data.current_account_id;
+        if(accountId === -1){
+            return parseInt(Object.keys(this.rawData.trade_data.accounts)[0]);
+        }
+        return accountId;
     }
     /** What is the account name of the currently selected trading account */
     getCurrentTradeAccountName(){
         if(this.hasLoaded()){
-            const x = this.getCurrentTradeAccountId();
-            return this.rawData.trade_data.accounts[x].name;
+            let accountId = this.getCurrentTradeAccountId();
+            return this.rawData.trade_data.accounts[accountId].name;
         } else {
             return 'None';
         }
@@ -107,7 +111,7 @@ class GlobalData {
     }
     /** Are there any accounts? */
     noAccounts(){
-        return Object.keys(this.rawData.trade_data.accounts).length === 0
+        return Object.keys(this.rawData.trade_data.accounts).length === 0;
     }
     getUserEmail(){
         return this.rawData.user_data.email

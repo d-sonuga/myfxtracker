@@ -1,7 +1,8 @@
 import {Graph} from '@apps/trader-app/components'
+import {LongBalanceGraphCalc} from 'calculator/dist'
 
 
-const LongBalanceGraph = ({data}: {data: Array<{[key: string]: number}>}) => {
+const LongBalanceGraph = ({data}: {data: LongBalanceGraphCalc}) => {
     return(
         <Graph
             title='Long Balance'
