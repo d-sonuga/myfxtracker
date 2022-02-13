@@ -113,6 +113,9 @@ class GlobalData {
     noAccounts(){
         return Object.keys(this.rawData.trade_data.accounts).length === 0;
     }
+    getUserId(): number {
+        return this.rawData.user_data.id
+    }
     getUserEmail(){
         return this.rawData.user_data.email
     }

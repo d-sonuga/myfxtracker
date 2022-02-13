@@ -28,7 +28,7 @@ const mainMenuItems: MenuItemObject[] = [
     {icon: HouseIcon, name: 'Overview', route: TRADER_OVERVIEW_ROUTE},
     {icon: CalendarIcon, name: 'Journal', route: TRADER_JOURNAL_ROUTE},
     {icon: AnalyticsChartIcon, name: 'Analytics', subMenu: analyticsMenuItems},
-    {icon: GalleryIcon, name: 'Gallery'},
+    //{icon: GalleryIcon, name: 'Gallery'},
     {icon: NotesIcon, name: 'Notes', route: TRADER_NOTES_ROUTE}
 ];
 

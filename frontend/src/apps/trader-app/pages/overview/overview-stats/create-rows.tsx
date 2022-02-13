@@ -6,7 +6,11 @@ import {OverviewStatsCalc} from 'calculator'
 const createRows = (stats: OverviewStatsCalc) => {
     const rows = [
         [   
-            createCell('Average Profit', `$${stats.aveProfit}`, getColor('light-blue')),
+            createCell(
+                'Average Profit',
+                stats.aveProfit < 0 ? `-$${-1 *stats.aveProfit}` : `$${stats.aveProfit}`,
+                getColor('light-blue')
+            ),
             createCell('Average Loss', `$${stats.aveLoss}`, getColor('red'))
         ],
         [   
@@ -14,20 +18,35 @@ const createRows = (stats: OverviewStatsCalc) => {
             createCell('Shorts Won', `${stats.shortsWonPercent}% (${stats.noOfShortsWon}/${stats.noOfShorts})`)
         ],
         [
-            createCell('Best Trade', `$${stats.bestTrade}`),
-            createCell('Worst Trade', `$${stats.worstTrade}`)
+            createCell(
+                'Best Trade',
+                stats.bestTrade < 0 ? `-$${-1 * stats.bestTrade}` : `$${stats.bestTrade}`
+            ),
+            createCell(
+                'Worst Trade',
+                stats.worstTrade < 0 ? `-$${-1 * stats.worstTrade}` : `$${stats.worstTrade}`
+            )
         ],
         [
-            createCell('Highest Balance', `$${stats.highestBalance}`),
+            createCell(
+                'Highest Balance',
+                stats.highestBalance < 0 ? `-$${-1 * stats.highestBalance}` : `$${stats.highestBalance}`
+            ),
             createCell('Average RRR', `${stats.aveRRR}`)
         ],
         [
             createCell('Profit Factor', `${stats.profitFactor}`),
-            createCell('Expectancy', `$${stats.expectancy}`)
+            createCell(
+                'Expectancy',
+                stats.expectancy < 0 ? `-$${-1 * stats.expectancy}` : `$${stats.expectancy}`
+            )
         ],
         [
             createCell('Lots', `${stats.lots}`),
-            createCell('Commission', `$${stats.commissions}`)
+            createCell(
+                'Commission',
+                stats.commissions < 0 ? `-$${-1 * stats.commissions}` : `$${stats.commissions}`
+            )
         ]
     ]
     return rows;

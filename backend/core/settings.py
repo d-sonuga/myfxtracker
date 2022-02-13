@@ -127,6 +127,8 @@ if DEBUG:
         'http://172.17.0.3',
         'http://172.17.0.3:3000',
         'http://172.17.0.4',
+        'http://localhost',
+        'http://localhost:3000',
     ]
 
     CORS_ALLOW_CREDENTIALS = True

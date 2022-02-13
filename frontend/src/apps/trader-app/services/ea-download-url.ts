@@ -9,7 +9,7 @@ const useEaDownloadUrl = () => {
     const {BASE_URL, DOWNLOAD_EA_URL} = HttpConst
     useEffect(() => {
         Http.get({
-            url: `${BASE_URL}/${DOWNLOAD_EA_URL}/?variant=mt4`,
+            url: `${BASE_URL}/${DOWNLOAD_EA_URL}/?variant=mt4/`,
             successFunc: (resp: HttpResponseType) => {
                 const file = new Blob([resp.data], {type: 'plain/txt'});
                 const fileDownloadUrl = URL.createObjectURL(file);
@@ -20,7 +20,7 @@ const useEaDownloadUrl = () => {
             }
         })
         Http.get({
-            url: `${BASE_URL}/${DOWNLOAD_EA_URL}/?variant=mt5`,
+            url: `${BASE_URL}/${DOWNLOAD_EA_URL}/?variant=mt5/`,
             successFunc: (resp: HttpResponseType) => {
                 const file = new Blob([resp.data], {type: 'plain/txt'});
                 const fileDownloadUrl = URL.createObjectURL(file);

@@ -5,15 +5,14 @@
 import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {GlobalData} from '@apps/trader-app/models'
-import Http, {HttpErrorType, HttpResponseType} from '@services/http'
-import {HttpConst, RouteConst, ConfigConst} from '@conf/const'
+import {Http, HttpErrorType, HttpResponseType} from '@apps/trader-app/services'
+import {HttpConst} from '@conf/const'
 import {RawData, UseGlobalDataType} from './types'
 import {AccountData} from 'calculator/dist'
 
 
 const useGlobalData: UseGlobalDataType = () => {
     const [globalData, setGlobalData] = useState<GlobalData>(new GlobalData(null));
-    const navigate = useNavigate();
     useEffect(() => {
         /* The real thing to be used.
             Going to use dummy data just for development*/
@@ -22,17 +21,9 @@ const useGlobalData: UseGlobalDataType = () => {
         Http.get({
             url: `${BASE_URL}/${GET_INIT_DATA_URL}/`,
             successFunc: (resp: HttpResponseType) => {
-                console.log('ddddd', resp.data);
                 setGlobalData(new GlobalData(resp.data));
             },
-            errorFunc: (err: HttpErrorType) => {
-                if(err.response && (err.response.status === 401 || err.response.status === 403)){
-                    const {TOKEN_KEY} = ConfigConst;
-                    localStorage.removeItem(TOKEN_KEY);
-                    const {INFO_LOGIN_ROUTE} = RouteConst;
-                    navigate(INFO_LOGIN_ROUTE);
-                }
-            }
+            errorFunc: (err: HttpErrorType) => {}
         })
     }, [])
     return [globalData, setGlobalData];

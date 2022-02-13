@@ -1,16 +1,14 @@
-import {createContext} from 'react'
-import {Route, useLocation} from 'react-router-dom'
-import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
+import {createContext, useEffect} from 'react'
+import {Route, useLocation, useNavigate} from 'react-router-dom'
+import {PageStillLoading, TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
 import {Overview, Journal, CashAndGains, Expenses, Settings, LongShortAnalysis,
     PeriodAnalysis, TimeAnalysis, PairsAnalysis, Notebook} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
-import LoadingIcon from '@components/loading-icon'
 import DataSourceSetupInstructions from './data-source-setup-instructions'
-import useEaDownloadUrl from './ea-download-url'
-import getNoteData from './get-note-data'
-import {getColor} from '@conf/utils'
+import useEaDownloadUrl from './services/ea-download-url'
+import {Http, getNoteData} from '@apps/trader-app/services'
 
 
 const TraderApp = () => {
@@ -22,6 +20,10 @@ const TraderApp = () => {
         const newGlobalData = globalData.changeCurrentTradeAccountId(newCurrentAccountId);
         setGlobalData(newGlobalData);
     }
+    const navigate = useNavigate();
+    useEffect(() => {
+        Http.initNavigate(navigate);
+    }, [])
     const eaDownloadUrls = useEaDownloadUrl();
     const noteData = getNoteData();
 
@@ -60,7 +62,7 @@ const TraderApp = () => {
                                     );
                                 }
                             }
-                            return <LoadingIcon color={getColor('dark-gray')} size={50} />
+                            return <PageStillLoading />
                         })()}
                     </CurrentAccountChangerContext.Provider>
                 </GlobalDataContext.Provider>

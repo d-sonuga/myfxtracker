@@ -1,7 +1,5 @@
-import {useEffect} from 'react'
-import {ColumnBox} from '@components/containers'
-import { Divider, Drawer, List, Slide, Tab, Tabs } from '@mui/material'
-import { useRef, useState } from 'react'
+import {Divider, List, Slide,} from '@mui/material'
+import {useRef} from 'react'
 import NoteListItem from './note-list-item'
 import Note from '../models'
 

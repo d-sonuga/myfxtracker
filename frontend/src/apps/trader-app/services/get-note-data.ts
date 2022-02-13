@@ -7,7 +7,7 @@ const getNoteData = (): Promise<any> => {
     return Http.get({
         url: `${BASE_URL}/${GET_ALL_NOTES_URL}/`,
         successFunc: (resp: HttpResponseType) => {
-            return Promise.resolve(resp);
+            return Promise.resolve(resp.data);
         },
         errorFunc: (err: HttpErrorType) => {
             return Promise.resolve(err);

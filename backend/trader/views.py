@@ -312,6 +312,9 @@ class NoteViewSet(ModelViewSet):
     def get_queryset(self):
         return self.request.user.note_set
 
+    def get_object(self):
+        return Note.objects.get(id=self.kwargs.get('pk'))
+
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data={
             'user': request.user.pk, 'title': request.data.get('title'),
@@ -322,10 +325,6 @@ class NoteViewSet(ModelViewSet):
             new_note = serializer.save()
             return Response({'id': new_note.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def get_object(self):
-        return Note.objects.get(id=self.kwargs.get('pk'))
-
 
 """
     Returns a user's accounts and related info

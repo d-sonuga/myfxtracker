@@ -16,9 +16,10 @@ const HttpConst = {
     DOWNLOAD_EA_URL: 'trader/download_ea',
     LOGOUT_URL: 'trader/logout',
     SAVE_NOTE_URL: 'trader/save-note',
-    UPDATE_NOTE_URL: 'trader/update-note',
+    UPDATE_NOTE_URL: 'trader/save-note',
     DELETE_NOTE_URL: 'trader/delete-note',
     GET_ALL_NOTES_URL: 'trader/get-all-notes',
+    DELETE_ACCOUNT_URL: 'trader/delete-account',
     FEEDBACK_FORM_URL: 'https://forms.gle/SWAdgLtd64Vzmyso9'
 }
 

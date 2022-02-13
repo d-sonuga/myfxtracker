@@ -1,3 +1,5 @@
+import {AxiosError, AxiosResponse} from 'axios'
+
 /**
  * Type of the Http client used throughout the app
  */
@@ -15,11 +17,12 @@ type HttpClientType = {
      * @param timeout: how long is too long
     */
     get: (config: HttpGetConfigType) => Promise<any>,
+    delete: (config: HttpDeleteConfigType) => Promise<void>,
     /** The same config params as get, but with data 
      * @param data: the data to be posted
     */
     post: (config: HttpPostConfigType) => Promise<void>,
-    delete: (config: HttpDeleteConfigType) => Promise<void>,
+    put: (config: HttpPostConfigType) => Promise<void>,
     /**
      * Toast for error messages
      */
@@ -45,6 +48,8 @@ interface HttpRequestConfigType {
 }
 
 type HttpGetConfigType = HttpRequestConfigType;
+
+type HttpPutConfigType = HttpPostConfigType;
 
 type HttpDeleteConfigType = HttpRequestConfigType;
 
@@ -75,10 +80,18 @@ type HandleResolveRequestConfig = {
     thenFunc?: Function
 }
 
+type HttpResponseType = AxiosResponse;
+type HttpErrorType = Exclude<AxiosError, 'response'> & {
+    response: any
+}
+
 export type {
     HttpClientType,
     HttpGetConfigType,
     HttpPostConfigType,
+    HttpPutConfigType,
     HttpDeleteConfigType,
-    HandleResolveRequestConfig
+    HandleResolveRequestConfig,
+    HttpResponseType,
+    HttpErrorType
 }

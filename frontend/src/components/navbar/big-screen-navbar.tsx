@@ -1,8 +1,8 @@
 import {Link} from 'react-router-dom'
-import { RowBox, Row } from '@components/containers'
-import {P, BP, H6} from '@components/text'
+import {RowBox} from '@components/containers'
+import {BP} from '@components/text'
 import Logo from '@components/logo'
-import { getColor, getDimen } from '@conf/utils'
+import {getColor, getDimen} from '@conf/utils'
 import {BigScreenNavbarPropTypes} from './types'
 
 

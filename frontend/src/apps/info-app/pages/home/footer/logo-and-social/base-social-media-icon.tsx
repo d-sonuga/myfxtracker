@@ -4,7 +4,9 @@ const SocialMediaIcon = ({icon, link}: {link: string, icon: ReactNode}) => {
     return( 
         <a 
             href={link}
-            style={{color: 'black'}}>
+            style={{color: 'black'}}
+            rel='noreferrer'
+            target='_blank'>
                 {icon}
         </a>
     )

@@ -1,6 +1,6 @@
-import axios, {AxiosError, AxiosResponse} from 'axios'
+import axios from 'axios'
 import {HttpMsg} from '@services/generic-msg'
-import {HttpClientType, HttpPostConfigType, HttpDeleteConfigType,
+import {HttpClientType, HttpPostConfigType, HttpDeleteConfigType, HttpPutConfigType,
     HandleResolveRequestConfig, HttpGetConfigType} from './types'
 
 const getDefaultHeaders = (noToken: boolean | undefined) => {
@@ -70,6 +70,18 @@ const post = (config: HttpPostConfigType) => {
     ), config);
 }
 
+const put = (config: HttpPutConfigType) => {
+    return handleResolveRequest(axios.put(
+        config.url,
+        config.data,
+        {
+            headers: getDefaultHeaders(config.noToken),
+            ...defaultConfig,
+            timeout: config.timeout ? config.timeout : defaultConfig.timeout
+        }
+    ), config);
+}
+
 const httpDelete = (config: HttpDeleteConfigType) => {
     return handleResolveRequest(axios.delete(
         config.url,
@@ -84,6 +96,7 @@ const httpDelete = (config: HttpDeleteConfigType) => {
 const Http: HttpClientType = {
     get,
     post,
+    put,
     delete: httpDelete,
     toast: {
         error: (msg: any) => console.log('Toast is null')
@@ -93,11 +106,5 @@ const Http: HttpClientType = {
     }
 }
 
-type HttpResponseType = AxiosResponse;
-type HttpErrorType = AxiosError;
-
 export default Http
-export type {
-    HttpResponseType,
-    HttpErrorType
-}
+export * from './types'

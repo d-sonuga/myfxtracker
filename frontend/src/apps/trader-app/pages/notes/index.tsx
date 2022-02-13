@@ -8,7 +8,7 @@ import NoteEditor from './note-editor'
 import MainToolbar from './main-toolbar'
 import NoNotesFound from './no-notes-found'
 import {NoteData} from './models'
-import PageStillLoading from './page-still-loading'
+import {PageStillLoading} from '@apps/trader-app/components'
 
 
 const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
@@ -23,7 +23,7 @@ const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
             setNoteItems(Note.fromRawData(rawNoteData));
             setNotesHasLoaded(true);
         })
-    })
+    }, [])
     const createNewNote = () => {
         const newNote = new Note();
         const newNoteItems = [...noteItems, newNote];
@@ -33,10 +33,12 @@ const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
         setIsEditing(true);
     }
     const setCurrentNoteTitle = (title: string) => {
-        const newNoteItems = [...noteItems];
-        newNoteItems[currentNoteIndex].title = title;
-        setNoteItems(newNoteItems);
-        newNoteItems[currentNoteIndex].save();
+        if(title.length <= 10000){
+            const newNoteItems = [...noteItems];
+            newNoteItems[currentNoteIndex].title = title;
+            setNoteItems(newNoteItems);
+            newNoteItems[currentNoteIndex].save();
+        }
     }
     const setCurrentNoteContent = (content: any) => {
         const newNoteItems = [...noteItems];

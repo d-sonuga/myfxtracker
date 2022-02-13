@@ -16,7 +16,7 @@ const NoteListItem = ({noteItem, active, onClick, removeNoteFromList, noteIndex}
                 selected={active}>
                 <ListItemText
                     primary={noteItem.title ? noteItem.title : 'Untitled'}
-                    secondary={noteItem.lastEdited}
+                    secondary={noteItem.lastEditedToString()}
                     />
             </ListItemButton>
             {isDeleting ? 
@@ -24,7 +24,7 @@ const NoteListItem = ({noteItem, active, onClick, removeNoteFromList, noteIndex}
                 : <IconButton onClick={() => {
                         setIsDeleting(true);
                         noteItem.delete()
-                            .then(() => removeNoteFromList())
+                            .then(() => removeNoteFromList(noteIndex))
                             .catch(() => (
                                 Toast.error('Sorry. Something went wrong when trying to delete your note.')
                             ))

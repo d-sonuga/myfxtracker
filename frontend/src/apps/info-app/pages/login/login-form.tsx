@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 import {Button} from '@components/buttons'
-import {HttpResponseType} from '@services/http'
+import {HttpErrorType, HttpResponseType} from '@services/http'
 import {ConfigConst} from '@conf/const'
 import {TextInput} from '@apps/info-app/components'
 import {LoginFormPropTypes} from './types'
@@ -30,7 +30,7 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                         navigate('/app');
                         setNonFieldError('');
                     },
-                    errorFunc: (err: any) => {
+                    errorFunc: (err: HttpErrorType) => {
                         try {
                             const errors: {[key: string]: string} = buildErrors(err.response.data, {
                                 'email': 'email', 'password': 'password'

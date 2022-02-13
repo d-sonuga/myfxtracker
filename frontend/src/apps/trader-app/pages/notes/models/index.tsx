@@ -1,4 +1,4 @@
-import Http, {HttpErrorType, HttpResponseType} from '@services/http'
+import {Http, HttpErrorType, HttpResponseType} from '@apps/trader-app/services'
 import {HttpConst} from '@conf/const'
 
 
@@ -11,12 +11,16 @@ class Note {
     // If the note is already being saved, append the current state
     private isSaving;
     private saveQueue: NoteData[];
-    constructor(noteData?: NoteData){
+    constructor(noteData?: NoteData | RawNoteData){
         if(noteData){
             this.id = noteData.id;
             this.title = noteData.title;
             this.content = noteData.content;
-            this.lastEdited = new Date(noteData.lastEdited);
+            if('lastEdited' in noteData){
+                this.lastEdited = new Date(noteData.lastEdited);
+            } else {
+                this.lastEdited = new Date(noteData.last_edited);
+            }
         } else {
             this.id = -1;
             this.title = '';
@@ -30,13 +34,15 @@ class Note {
     private _save(data: NoteData){
         const {BASE_URL, SAVE_NOTE_URL, UPDATE_NOTE_URL} = HttpConst;
         let url;
-        // unsaved
+        let httpMethod;
         if(this.id === -1){
-            url = `${BASE_URL}/${SAVE_NOTE_URL}/`
+            url = `${BASE_URL}/${SAVE_NOTE_URL}/`;
+            httpMethod = Http.post;
         } else {
-            url = `${BASE_URL}/${UPDATE_NOTE_URL}/`
+            url = `${BASE_URL}/${UPDATE_NOTE_URL}/${this.id}/`;
+            httpMethod = Http.put;
         }
-        Http.post({
+        httpMethod({
             url,
             data,
             successFunc: (resp: HttpResponseType) => {
@@ -51,6 +57,7 @@ class Note {
                 }
             },
             errorFunc: (err: HttpErrorType) => {
+                console.log(err);
                 Http.toast.error('Sorry. Something went wrong while trying to save your note.');
             }
         })
@@ -77,7 +84,7 @@ class Note {
         } else {
             const {BASE_URL, DELETE_NOTE_URL} = HttpConst
             return Http.delete({
-                url: `${BASE_URL}/${DELETE_NOTE_URL}/`,
+                url: `${BASE_URL}/${DELETE_NOTE_URL}/${this.id}/`,
                 successFunc: () => {
                     return Promise.resolve()
                 },
@@ -90,6 +97,10 @@ class Note {
 
     static fromRawData(noteData: NoteData[]): Note[]{
         return noteData.map((data) => new Note(data))
+    }
+
+    lastEditedToString(): String {
+        return this.lastEdited.toDateString();
     }
 
     private toNoteData(){
@@ -107,6 +118,14 @@ type NoteData = {
     title: string,
     content: any,
     lastEdited: string
+}
+
+// From the backend
+type RawNoteData = {
+    id: number,
+    title: string,
+    content: any,
+    last_edited: string
 }
 
 export default Note
