@@ -123,10 +123,13 @@ if DEBUG:
 
     CSRF_TRUSTED_ORIGINS = [
         'http://172.17.0.1',
+        'http://172.17.0.1:3000',
         'http://172.17.0.2',
+        'http://172.17.0.2:3000',
         'http://172.17.0.3',
         'http://172.17.0.3:3000',
         'http://172.17.0.4',
+        'http://172.17.0.4:3000',
         'http://localhost',
         'http://localhost:3000',
     ]
@@ -229,7 +232,7 @@ ACCOUNT_PASSWORD_MIN_LENGTH = 8
 # A link to this url will be in any confirmation email
 if DEBUG:
     if os.getenv('TEST') == 'true':
-        LOGIN_URL = 'http://172.17.0.3:3000/log-in'    
+        LOGIN_URL = 'http://172.17.0.2:3000/log-in'
     else:
         LOGIN_URL = 'http://localhost:3000/log-in'
 else:

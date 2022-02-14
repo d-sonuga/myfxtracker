@@ -16,8 +16,8 @@ def main():
                 run_all_tests = ['manage.py', 'test']
                 execute_from_command_line(run_all_tests)
             else:
-                run_specific_unit_tests = ['manage.py', 'test', '--exclude-tag=functional', *sys.argv[2:]]
-                execute_from_command_line(run_specific_unit_tests)
+                run_specific_tests = ['manage.py', 'test', *sys.argv[2:]]
+                execute_from_command_line(run_specific_tests)
         else:
             run_only_unit_tests = ['manage.py', 'test', '--exclude-tag=functional', *sys.argv[2:]]
             execute_from_command_line(run_only_unit_tests)

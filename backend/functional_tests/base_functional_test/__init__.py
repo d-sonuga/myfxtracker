@@ -16,21 +16,21 @@ class BaseFunctionalTest(LiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.browser = webdriver.Remote(
-            command_executor='http://172.17.0.4:4444/wd/hub',
+            command_executor='http://172.17.0.3:4444/wd/hub',
             desired_capabilities=DesiredCapabilities.FIREFOX
         )
         cls.start_server()
-        cls.server_domain = '172.17.0.2'
+        cls.server_domain = '172.17.0.4'
         cls.live_server_url = f'http://{cls.server_domain}:8000'
         # For making requests from the browser
-        cls.base_url = f'http://172.17.0.3:3000'
+        cls.base_url = f'http://172.17.0.2:3000'
         # The maximum amount of sleep seconds to be used in the do_until_max_wait function
         cls.MAX_WAIT = 60
         cls.site_name = 'MyFxTracker'
         cls.maildump_server_address = 'http://localhost:1080'
         site = Site.objects.get(id=settings.SITE_ID)
         # The password related emails use this domain as the domain they show
-        site.domain = '172.17.0.3'
+        site.domain = '172.17.0.4'
         site.save()
     
     @classmethod

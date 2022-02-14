@@ -1,6 +1,6 @@
 from django.test import override_settings, tag
 from trader.models import Account
-from users.models import User
+from users.models import Trader
 from allauth.account.models import EmailAddress
 from .base_functional_test import BaseFunctionalTest
 from trader.tests.test_data import LoginDetails
@@ -18,13 +18,16 @@ the use of the mt terminal which can tbe automated right now
 
 @override_settings(DEBUG=True)
 @tag('new-user-login-flow')
-class NewUserLoginFlow(BaseFunctionalTest):
+class NewTraderLoginFlow(BaseFunctionalTest):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         # Create a new and verified user for the test
         cls.details = LoginDetails.good_details
-        cls.new_user = User.objects.create(email=cls.details['email'])
+        cls.new_user = Trader.objects.create(
+            email=cls.details['email'],
+            password=cls.details['password']
+        )
         cls.new_user.set_password(cls.details['password'])
         cls.new_user.save()
         EmailAddress.objects.create(user=cls.new_user, email=cls.new_user.email, verified=True, primary=True)
@@ -74,7 +77,7 @@ class NewUserLoginFlow(BaseFunctionalTest):
         self.do_until_max_wait(download_ea_mt5.click)
         # When a user has successfully followed all the instructions
         # The database will have his trade account data
-        trader = User.objects.get(email=self.details['email'])
+        trader = Trader.objects.get(email=self.details['email'])
         Account.objects.create_account(
             trader,
             DatasourceInitialInfoData.good_details_with_transactions['data']
