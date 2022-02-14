@@ -1,4 +1,3 @@
-
 class BaseErrors {
     public:
         int URL_NOT_ALLOWED_CODE;
@@ -18,11 +17,11 @@ class BaseErrors {
             this.NO_DATASOURCE_USERNAME_CODE = -2;
             this.NO_DATASOURCE_USERNAME_MSG = "Please restart the EA with your MT username";
             this.INVALID_USERNAME_CODE = -3;
-            this.INVALID_USERNAME_MSG = "Please restart the EA with a valid username";
+            this.INVALID_USERNAME_MSG = "Please input a valid username and restart the EA";
             this.SUBSCRIPTION_EXPIRED_CODE = -4;
-            this.SUBSCRIPTION_EXPIRED_MSG = "Your subscription has expired. You need to pay for continued usage.";
+            this.SUBSCRIPTION_EXPIRED_MSG = "Your subscription has expired. Please for subscribe for continued service and restart the EA";
             this.UNKNOWN_ERR_MSG = "Unknown Error";
-            this.URL_NOT_ALLOWED_MSG = "The url isnt in the allowed urls list";
+            this.URL_NOT_ALLOWED_MSG = "Please add https://myfxtracker.com to the list of allowed urls and restart the EA";
         }
         string getErrorMessage(int errorCode){
             if(errorCode == this.URL_NOT_ALLOWED_CODE){

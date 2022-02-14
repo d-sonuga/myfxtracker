@@ -79,7 +79,7 @@ class Account(models.Model):
     )
     account_types = (
         ('d', 'demo'),
-        ('c', 'competition'),
+        ('c', 'contest'),
         ('r', 'real')
     )
     name = models.CharField(max_length=50)

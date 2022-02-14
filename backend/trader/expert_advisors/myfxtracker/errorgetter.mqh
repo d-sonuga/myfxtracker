@@ -19,8 +19,13 @@ class ErrorGetter: public BaseErrorGetter {
 };
 
 class TestErrorGetter: public BaseErrorGetter {
+   private:
+      int errorCode;
    public:
+      TestErrorGetter(int errorCode){
+         this.errorCode = errorCode;
+      }
       int getError(){
-         return 0;
+         return this.errorCode;
       }
 };

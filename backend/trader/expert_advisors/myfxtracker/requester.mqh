@@ -120,3 +120,37 @@ class Requester: public BaseRequester {
          }
       }
 };
+
+// Unfinished test executor
+class TestRequesterExecutorInit: public BaseRequester {
+   private:
+      int noOfRequests;
+   public:
+      TestRequesterExecutorInit(){
+         this.noOfRequests = 0;
+      }
+      Response sendRequest(
+         string url,
+         string DSUsername,
+         CJAVal &data,
+         BaseAlerter *alerter,
+         BaseErrorGetter *errorGetter,
+         BaseErrors *errors,
+         BaseHttp *http 
+      ){
+         if(this.noOfRequests == 1){
+            this.noOfRequests += 1;
+            CJAVal respForGetInitialInfo;
+            respForGetInitialInfo["account-data-has-been-saved"] = false;
+            respForGetInitialInfo["no-of-transactions"] = 0;
+            Response resp(RESP_CODE_SUCCESS, respForGetInitialInfo.Serialize());
+            return resp;
+         } else {
+            CJAVal respForSaveInitialData;
+            respForSaveInitialData["account-data-has-been-saved"] = true;
+            //respForSaveInitialData["no-of-transactions"] = ArraySize(data["account-transactions"]);
+            Response resp(RESP_CODE_SUCCESS, respForSaveInitialData.Serialize());
+            return resp;
+         }
+      }
+};

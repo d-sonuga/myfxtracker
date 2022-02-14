@@ -8,6 +8,24 @@ interface BaseDataAssembler {
         CJAVal getUnsavedTransactionsInJson(int noOfActualTransactions, int noOfSavedTransactions);
 };
 
+string accountTradeModeToString(int accountTradeMode){
+    if(accountTradeMode == ACCOUNT_TRADE_MODE_DEMO){
+        return "demo";
+    } else if(accountTradeMode == ACCOUNT_TRADE_MODE_CONTEST) {
+        return "contest";
+    } else {
+        return "real";
+    }
+}
+
+string accountStopoutModeInString(int accountStopoutMode){
+    if(accountStopoutMode == ACCOUNT_STOPOUT_MODE_PERCENT){
+        return "percentage";
+    } else {
+        return "money";
+    }
+}
+
 #ifdef __MQL4__
 
 class DataAssembler: public BaseDataAssembler {
@@ -54,9 +72,9 @@ class DataAssembler: public BaseDataAssembler {
             allData["account-margin-stopout-level"] = AccountInfoDouble(ACCOUNT_MARGIN_SO_SO);
             allData["account-login-number"] = AccountInfoInteger(ACCOUNT_LOGIN);
             allData["account-leverage"] = AccountLeverage();
-            allData["account-trade-mode"] = AccountInfoInteger(ACCOUNT_TRADE_MODE);
+            allData["account-trade-mode"] = accountTradeModeToString(AccountInfoInteger(ACCOUNT_TRADE_MODE));
             allData["account-stopout-level"] = AccountStopoutLevel();
-            allData["account-stopout-level-format"] = AccountStopoutMode();
+            allData["account-stopout-level-format"] = accountStopoutModeInString(AccountStopoutMode());
             int noOfActualTransactions = OrdersHistoryTotal();
             for(int i=0; i<noOfActualTransactions; i++){
                 OrderSelect(i, SELECT_BY_POS, MODE_HISTORY);
@@ -241,12 +259,10 @@ class DataAssembler: public BaseDataAssembler {
             return accountInfo;
         }
         CJAVal assembleAllDataInJson(){
-            CJAVal allData;
+            CJAVal allData = this.assembleAccountInfo();
             Transaction transactions[];
             this.assembleTransactionDataInTransactions(transactions);
             allData["account-currency"] = AccountInfoString(ACCOUNT_CURRENCY);
-            allData["account-company"] = AccountInfoString(ACCOUNT_COMPANY);
-            allData["account-name"] = AccountInfoString(ACCOUNT_NAME);
             allData["account-server"] = AccountInfoString(ACCOUNT_SERVER);
             allData["account-credit"] = AccountInfoDouble(ACCOUNT_CREDIT);
             allData["account-profit"] = AccountInfoDouble(ACCOUNT_PROFIT);
@@ -256,10 +272,11 @@ class DataAssembler: public BaseDataAssembler {
             allData["account-margin-level"] = AccountInfoDouble(ACCOUNT_MARGIN_LEVEL);
             allData["account-margin-call-level"] = AccountInfoDouble(ACCOUNT_MARGIN_SO_CALL);
             allData["account-margin-stopout-level"] = AccountInfoDouble(ACCOUNT_MARGIN_SO_SO);
-            allData["account-login-number"] = AccountInfoInteger(ACCOUNT_LOGIN);
             allData["account-leverage"] = AccountInfoInteger(ACCOUNT_LEVERAGE);
-            allData["account-trade-mode"] = AccountInfoInteger(ACCOUNT_TRADE_MODE);
-            allData["account-stopout-level-format"] = AccountInfoInteger(ACCOUNT_MARGIN_SO_MODE);
+            allData["account-trade-mode"] = accountTradeModeToString(AccountInfoInteger(ACCOUNT_TRADE_MODE));
+            allData["account-stopout-level-format"] = accountStopoutModeInString(
+                AccountInfoInteger(ACCOUNT_MARGIN_SO_MODE)
+            );
             for(int i=0; i<ArraySize(transactions); i++){
                 allData["account-transactions"][i].Set(transactions[i].intoJson());
             }
@@ -283,3 +300,41 @@ class DataAssembler: public BaseDataAssembler {
 };
 
 #endif
+
+// Unfinished DataAssembler
+class TestDataAssembler: public BaseDataAssembler {
+    public:
+        CJAVal assembleAccountInfo(){
+            CJAVal accountInfo;
+            accountInfo["account-name"] = "dummy account name";
+            accountInfo["account-company"] = "dummy account company";
+            accountInfo["account-login-number"] = 000000002343;
+            return accountInfo;
+        }
+        CJAVal assembleAllDataInJson(){
+            CJAVal allData = this.assembleAccountInfo();
+            allData["account-currency"] = "USD";
+            allData["account-server"] = "dummy server";
+            allData["account-credit"] = 0.5;
+            allData["account-profit"] = 10000;
+            allData["account-equity"] = 20000;
+            allData["account-margin"] = 20;
+            allData["account-free-margin"] = 15;
+            allData["account-margin-level"] = 23;
+            allData["account-margin-call-level"] = 34;
+            allData["account-margin-stopout-level"] = 34;
+            allData["account-leverage"] = 32;
+            allData["account-trade-mode"] = "demo";
+            allData["account-stopout-level-format"] ="money";
+            //allData["account-transactions"] = [];
+            return allData;
+        }
+
+        int getNoOfActualTransactions(){
+            return 0;
+        }
+        CJAVal getUnsavedTransactionsInJson(int noOfActualTransactions, int noOfSavedTransactions){
+            CJAVal unsavedTransactions;
+            return unsavedTransactions;
+        }
+};
