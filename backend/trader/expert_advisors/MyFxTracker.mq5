@@ -125,8 +125,8 @@ void OnTimer(){
    int noOfActualTransactions = ArraySize(transactions);
    if(noOfSavedTransactions != noOfActualTransactions){
       
-   MessageBox(noOfSavedTransactions);
-   MessageBox(noOfActualTransactions);
+      MessageBox(noOfSavedTransactions);
+      MessageBox(noOfActualTransactions);
       int noOfTransactionsNotYetSaved = noOfActualTransactions - noOfSavedTransactions;
       CJAVal dataToSave;
       for(int i=noOfSavedTransactions; i<noOfActualTransactions; i++){         
