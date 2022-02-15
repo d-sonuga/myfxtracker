@@ -119,6 +119,7 @@ class Transaction {
       Transaction(ulong firstDealTicket, ulong secondDealTicket){
          ulong dealType;
          this.profit = 0.0;
+         long posid;
          HistoryDealGetString(firstDealTicket, DEAL_SYMBOL, this.pair);
          HistoryDealGetDouble(firstDealTicket, DEAL_PRICE, this.openPrice);
          HistoryDealGetDouble(secondDealTicket, DEAL_PRICE, this.closePrice);
@@ -126,6 +127,8 @@ class Transaction {
          HistoryDealGetInteger(firstDealTicket, DEAL_TIME, this.openTime);
          HistoryDealGetInteger(secondDealTicket, DEAL_TIME, this.closeTime);
          HistoryDealGetInteger(firstDealTicket, DEAL_POSITION_ID, this.transactionId);
+         //HistoryDealGetInteger(firstDealTicket, DEAL_POSITION_ID, posid);
+         //MessageBox(posid);
          HistoryDealGetInteger(firstDealTicket, DEAL_TYPE, dealType);
          HistoryDealGetDouble(secondDealTicket, DEAL_SWAP, this.swap);
          HistoryDealGetDouble(secondDealTicket, DEAL_COMMISSION, this.commission);

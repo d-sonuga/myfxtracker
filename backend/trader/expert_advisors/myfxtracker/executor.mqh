@@ -82,7 +82,8 @@ class Executor {
                 this.currentAccountDataHasBeenSaved = savedDataInfo["account-data-has-been-saved"].ToBool();
                 this.noOfSavedTransactions = savedDataInfo["no-of-saved-transactions"].ToInt();
                 if(!currentAccountDataHasBeenSaved){
-                    CJAVal initialData = this.dataAssembler.assembleAllDataInJson();
+                    CJAVal initialData = this.dataAssembler.assembleAllDataInJson();\
+                    MessageBox(initialData.Serialize());
                     Response resp = this.saveInitialData(initialData);
                     if(resp.respCode == RESP_CODE_SUCCESS){
                         CJAVal initDataResp = resp.data();

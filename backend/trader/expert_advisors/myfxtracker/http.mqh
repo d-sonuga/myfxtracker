@@ -1,3 +1,5 @@
+#include <JAson.mqh>
+
 interface BaseHttp {
     public:
         int request(
@@ -24,7 +26,7 @@ class Http: public BaseHttp {
                + DSUsername + "\r\n";
             int respCode = WebRequest(
                     "POST",
-                    "http://localhost/" + url,
+                    "http://localhost/datasource/" + url,
                     reqHeaders,
                     10000,
                     reqDataArray,
