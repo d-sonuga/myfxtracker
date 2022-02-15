@@ -4,7 +4,7 @@ import AveReturnPerPairGraph from './ave-return-per-pair-graph'
 import AveRrrPerPairGraph from './ave-rrr-per-pair-graph'
 import PairsTable from './pairs-table'
 import {useRecalc} from '@apps/trader-app/components'
-import {pairsAnalysisCalculations, PairsAnalysisCalculations} from 'calculator/dist'
+import {pairsAnalysisCalculations, PairsAnalysisCalculations} from 'calculator'
 import {defaultPairsAnalysisCalc} from './const'
 
 

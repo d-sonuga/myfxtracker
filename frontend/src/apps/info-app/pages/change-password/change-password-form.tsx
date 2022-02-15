@@ -1,5 +1,5 @@
 import {useContext} from 'react'
-import * as Yup from 'yup'
+import {Yup} from '@apps/info-app/components'
 import {Button} from '@components/buttons'
 import {HttpResponseType} from '@services/http'
 import {FormMsg, HttpMsg} from '@services/generic-msg'

@@ -1,4 +1,4 @@
-import * as Yup from 'yup'
+import {Yup} from '@apps/info-app/components'
 import {useParams} from 'react-router'
 import {Button} from '@components/buttons'
 import {HttpResponseType} from '@services/http'

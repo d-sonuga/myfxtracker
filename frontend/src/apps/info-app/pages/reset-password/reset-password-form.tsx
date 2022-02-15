@@ -1,4 +1,4 @@
-import * as Yup from 'yup'
+import {Yup} from '@apps/info-app/components'
 import {Button} from '@components/buttons'
 import {HttpResponseType} from '@services/http'
 import {Form, TextInput} from '@apps/info-app/components'

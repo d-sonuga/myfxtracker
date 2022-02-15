@@ -8,11 +8,8 @@ import { useEffect } from 'react'
 
 
 const Dialog = ({children, onOkClick, onCancelClick, title, onClose, open}: DialogPropTypes) => {
-    useEffect(() => {
-        console.log(children);
-    })
     return(
-        <MuiDialog onClose={() => {return; onClose()}} open={open}>
+        <MuiDialog onClose={() => onClose()} open={open}>
             <div onKeyPress={(e: any) => {
                 if(e.key === 'Enter'){
                     onOkClick();

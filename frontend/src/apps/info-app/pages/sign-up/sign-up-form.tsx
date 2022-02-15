@@ -1,18 +1,13 @@
-import {useState} from 'react'
-import {Formik, FormikErrors} from 'formik'
-import * as Yup from 'yup'
-import {CenterColumnBox} from '@components/containers'
+import {Yup} from '@apps/info-app/components'
 import {Button} from '@components/buttons'
-import {H4, P} from '@components/text'
-import {getColor, getDimen} from '@conf/utils'
+import {getColor} from '@conf/utils'
 import {FormConst} from '@conf/const'
 import {FormMsg, HttpMsg} from '@services/generic-msg'
-import {FormContainer, SelectInput, TextInput} from '@apps/info-app/components'
-import {ErrorAlert, SuccessAlert} from '@components/alerts'
+import {SelectInput, TextInput} from '@apps/info-app/components'
 import LoadingIcon from '@components/loading-icon'
 import {HttpResponseType} from '@services/http'
 import {Form} from '@apps/info-app/components'
-import { buildErrors, canSubmit } from '@apps/info-app/form-utils'
+import {buildErrors, canSubmit} from '@apps/info-app/form-utils'
 
 
 /**

@@ -3,10 +3,9 @@ import {RowBox} from '@components/containers'
 import {SP} from '@components/text'
 import Http from '@services/http'
 import {getColor, getDimen} from '@conf/utils'
-import {HttpConst} from '@conf/const'
+import {HttpConst, RouteConst} from '@conf/const'
 import {FormPageContainer} from '@apps/info-app/components'
 import ResetPasswordForm from './reset-password-form'
-//import {SubmitValuesTypes} from './types'
 
 
 const LoginPage = () => {
@@ -25,14 +24,14 @@ const LoginPage = () => {
             thenFunc: config.thenFunc
         });
     }
-
+    const {INFO_SIGN_UP_ROUTE} = RouteConst;
     return(
         <FormPageContainer
             form={<ResetPasswordForm submitValues={submitValues} />}
             bottomText={
                 <RowBox>
                     <SP>Don't have an account? &nbsp;</SP>
-                    <Link to='/sign-up' style={{marginBottom: getDimen('padding-big')}}>
+                    <Link to={`/${INFO_SIGN_UP_ROUTE}`} style={{marginBottom: getDimen('padding-big')}}>
                         <SP style={{color: getColor('light-blue')}}>Sign Up</SP>
                     </Link>
                 </RowBox>

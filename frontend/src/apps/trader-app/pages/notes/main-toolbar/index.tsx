@@ -1,7 +1,6 @@
 import {Button} from '@components/buttons'
-import {getDimen } from '@conf/utils'
-import { Add, Create } from '@mui/icons-material'
-import { List, ListItemButton, ListItemIcon } from '@mui/material'
+import {getDimen} from '@conf/utils'
+import {List} from '@mui/material'
 
 const MainToolbar = ({isEditing, setIsEditing, createNewNote}: {isEditing: boolean, setIsEditing: Function, createNewNote: Function}) => {
     return(

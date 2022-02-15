@@ -1,14 +1,18 @@
-import {createContext, useEffect} from 'react'
+import {createContext, useEffect, Suspense, lazy} from 'react'
 import {Route, useLocation, useNavigate} from 'react-router-dom'
-import {PageStillLoading, TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
+import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
-import {Overview, Journal, CashAndGains, Expenses, Settings, LongShortAnalysis,
-    PeriodAnalysis, TimeAnalysis, PairsAnalysis, Notebook} from '@apps/trader-app/pages'
+import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis,
+    PeriodAnalysis, TimeAnalysis, PairsAnalysis} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
+import {Http, getNoteData} from '@apps/trader-app/services'
+import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
 import DataSourceSetupInstructions from './data-source-setup-instructions'
 import useEaDownloadUrl from './services/ea-download-url'
-import {Http, getNoteData} from '@apps/trader-app/services'
+
+const Notebook = lazy(() => import('@apps/trader-app/pages/notes'));
+const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
 
 
 const TraderApp = () => {
@@ -47,18 +51,22 @@ const TraderApp = () => {
                                     return <DataSourceSetupInstructions eaDownloadUrls={eaDownloadUrls} />
                                 } else {
                                     return (
-                                        <Routes>
-                                            <Route path={TRADER_OVERVIEW_ROUTE} element={<Overview />} />
-                                            <Route path={TRADER_JOURNAL_ROUTE} element={<Journal />} />
-                                            <Route path={TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE} element={<LongShortAnalysis />} />
-                                            <Route path={TRADER_CASH_AND_GAINS_ROUTE} element={<CashAndGains />} />
-                                            <Route path={TRADER_PAIRS_ANALYSIS_ROUTE} element={<PairsAnalysis />} />
-                                            <Route path={TRADER_TIME_ANALYSIS_ROUTE} element={<TimeAnalysis />} />
-                                            <Route path={TRADER_PERIOD_ANALYSIS_ROUTE} element={<PeriodAnalysis />} />
-                                            <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
-                                            <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
-                                            <Route path={TRADER_SETTINGS_ROUTE} element={<Settings />} />
-                                        </Routes>
+                                        <PageLoadingErrorBoundary>
+                                            <Suspense fallback={<PageStillLoading />}>
+                                                <Routes>
+                                                    <Route path={TRADER_OVERVIEW_ROUTE} element={<Overview />} />
+                                                    <Route path={TRADER_JOURNAL_ROUTE} element={<Journal />} />
+                                                    <Route path={TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE} element={<LongShortAnalysis />} />
+                                                    <Route path={TRADER_CASH_AND_GAINS_ROUTE} element={<CashAndGains />} />
+                                                    <Route path={TRADER_PAIRS_ANALYSIS_ROUTE} element={<PairsAnalysis />} />
+                                                    <Route path={TRADER_TIME_ANALYSIS_ROUTE} element={<TimeAnalysis />} />
+                                                    <Route path={TRADER_PERIOD_ANALYSIS_ROUTE} element={<PeriodAnalysis />} />
+                                                    <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
+                                                    <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
+                                                    <Route path={TRADER_SETTINGS_ROUTE} element={<Settings />} />
+                                                </Routes>
+                                            </Suspense>
+                                        </PageLoadingErrorBoundary>
                                     );
                                 }
                             }

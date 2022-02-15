@@ -1,5 +1,5 @@
-import _ from 'lodash'
 import {OpenHourTableCalc, OpenHourTableCalcItem} from '@root/index'
+import {sum} from '@root/utils'
 import {AccountData, Trade} from '@root/types'
 import {randomInt, randomNumber} from '@root/utils'
 import openHourTableCalc from '../open-hour-table-calc'
@@ -163,10 +163,10 @@ describe('Verify openHourTableCalc is working', () => {
         }
         const result = openHourTableCalc(accountData);
         const expectedResult: OpenHourTableCalc = [
-            {hour: '12:00 - 12:59', noOfTrades: profitLoss12.length, result: _.sum(profitLoss12)},
-            {hour: '13:00 - 13:59', noOfTrades: profitLoss13.length, result: _.sum(profitLoss13)},
-            {hour: '08:00 - 08:59', noOfTrades: profitLoss8.length, result: _.sum(profitLoss8)},
-            {hour: '15:00 - 15:59', noOfTrades: profitLoss15.length, result: _.sum(profitLoss15)},
+            {hour: '12:00 - 12:59', noOfTrades: profitLoss12.length, result: sum(profitLoss12)},
+            {hour: '13:00 - 13:59', noOfTrades: profitLoss13.length, result: sum(profitLoss13)},
+            {hour: '08:00 - 08:59', noOfTrades: profitLoss8.length, result: sum(profitLoss8)},
+            {hour: '15:00 - 15:59', noOfTrades: profitLoss15.length, result: sum(profitLoss15)},
         ]
         test('it should output the correct result', () => {
             expect(result).toEqual(expectedResult);

@@ -1,6 +1,6 @@
 import {CashGraphCalc} from '@root/index'
 import {AccountData, Deposit, Withdrawal, Trade} from '@root/types'
-import {mergeArrays, randomNumber, sumObjArray} from '@root/utils'
+import {randomNumber, sumObjArray} from '@root/utils'
 import cashGraphCalc from '../cash-graph-calc'
 import {CashGraphItem} from '../types'
 

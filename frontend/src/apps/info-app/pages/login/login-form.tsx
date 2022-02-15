@@ -1,7 +1,7 @@
-import * as Yup from 'yup'
+import {Yup} from '@apps/info-app/components'
 import {Button} from '@components/buttons'
 import {HttpErrorType, HttpResponseType} from '@services/http'
-import {ConfigConst} from '@conf/const'
+import {ConfigConst, RouteConst} from '@conf/const'
 import {TextInput} from '@apps/info-app/components'
 import {LoginFormPropTypes} from './types'
 import LoadingIcon from '@components/loading-icon'
@@ -27,7 +27,7 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                     values,
                     successFunc: (resp: HttpResponseType) => {
                         storageService.setItem(ConfigConst.TOKEN_KEY, resp.data.key);
-                        navigate('/app');
+                        navigate(RouteConst.TRADER_APP_ROUTE);
                         setNonFieldError('');
                     },
                     errorFunc: (err: HttpErrorType) => {

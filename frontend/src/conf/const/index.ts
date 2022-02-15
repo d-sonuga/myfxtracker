@@ -26,8 +26,8 @@ const HttpConst = {
 
 /** Routes for client side navigation */
 const RouteConst = {
-    INFO_APP_ROUTE: '/*',
-    TRADER_APP_ROUTE: `app/*`,
+    INFO_APP_ROUTE: '',
+    TRADER_APP_ROUTE: `app`,
     /** 
      * All info routes are prefixed by '/'
      * So a trading route of 'faq/' should be read as '/faq/'

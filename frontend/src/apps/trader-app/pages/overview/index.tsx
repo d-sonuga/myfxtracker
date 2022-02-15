@@ -1,6 +1,5 @@
-import {useState, useContext, useEffect} from 'react'
+import {useState} from 'react'
 import {PageContainer, PageHeading, useRecalc} from '@apps/trader-app/components'
-import {GlobalDataContext} from '@apps/trader-app'
 import {overviewCalculations, OverviewCalculations} from 'calculator'
 import {defaultOverviewCalc} from './const'
 import OverviewCards from './overview-cards'
