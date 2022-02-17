@@ -99,6 +99,9 @@ class DataAssembler: public BaseDataAssembler {
 
 #else
 
+// A trade consists of 2 deals with the same position id
+// A deposit consists of only 1 deal
+
 class Transaction {
    public:
       string pair;
@@ -190,31 +193,33 @@ class Transaction {
 };
 
 class Mapper {
+    // Maps position ids to tickets so they can be used
+    // to remember the first deal in a trade when the second key is encountered
    private:
-      int keys[];
-      int values[];
+      ulong keys[];
+      ulong values[];
       int noOfItems;
    public:
       Mapper(){
          this.noOfItems = 0;
       }
-      bool containsKey(int key){
+      bool containsKey(ulong key){
          int index = ArrayBsearch(this.keys, key);
          if(index != -1 && this.keys[index] == key){
             return true;
          }
          return false;
       }
-      int getValue(int key){
+      ulong getValue(ulong key){
          int index = ArrayBsearch(this.keys, key);
          return this.values[index];
       }
-      void deleteValue(int key){
+      void deleteValue(ulong key){
          int index = ArrayBsearch(this.keys, key);
-         this.keys[index] = 0;
-         this.values[index] = 0;
+         this.keys[index] = -1;
+         this.values[index] = -1;
       }
-      void set(int key, int value){
+      void set(ulong key, ulong value){
          this.noOfItems += 1;
          ArrayResize(this.keys, this.noOfItems);
          ArrayResize(this.values, this.noOfItems);
