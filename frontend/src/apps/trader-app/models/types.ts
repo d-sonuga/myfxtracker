@@ -10,6 +10,7 @@ type RawData = {
 type UserData = {
     id: number,
     email: string,
+    ds_username: string,
     is_subscribed: boolean,
     on_free: boolean,
     logins_after_ask?: number,

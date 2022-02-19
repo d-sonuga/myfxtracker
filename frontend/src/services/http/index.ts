@@ -52,7 +52,8 @@ const get = (config: HttpGetConfigType) => {
         config.url, {
             headers: getDefaultHeaders(config.noToken),
             ...defaultConfig,
-            timeout: config.timeout ? config.timeout : defaultConfig.timeout
+            timeout: config.timeout ? config.timeout : defaultConfig.timeout,
+            ...Object.assign({}, config.extras ? config.extras : {})
         }
     ), config);
         
@@ -65,7 +66,8 @@ const post = (config: HttpPostConfigType) => {
         {
             headers: getDefaultHeaders(config.noToken),
             ...defaultConfig,
-            timeout: config.timeout ? config.timeout : defaultConfig.timeout
+            timeout: config.timeout ? config.timeout : defaultConfig.timeout,
+            ...Object.assign({}, config.extras ? config.extras : {})
         }
     ), config);
 }
@@ -77,7 +79,8 @@ const put = (config: HttpPutConfigType) => {
         {
             headers: getDefaultHeaders(config.noToken),
             ...defaultConfig,
-            timeout: config.timeout ? config.timeout : defaultConfig.timeout
+            timeout: config.timeout ? config.timeout : defaultConfig.timeout,
+            ...Object.assign({}, config.extras ? config.extras : {})
         }
     ), config);
 }
@@ -88,7 +91,8 @@ const httpDelete = (config: HttpDeleteConfigType) => {
         {
             headers: getDefaultHeaders(config.noToken),
             ...defaultConfig,
-            timeout: config.timeout ? config.timeout : defaultConfig.timeout
+            timeout: config.timeout ? config.timeout : defaultConfig.timeout,
+            ...Object.assign({}, config.extras ? config.extras : {})
         }
     ), config);
 }

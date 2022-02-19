@@ -102,7 +102,10 @@ class Note {
     lastEditedToString(): String {
         return this.lastEdited.toDateString();
     }
-
+    hasBeenSaved(){
+        // If the id is -1, then it has never been saved on the backend
+        return this.id != -1;
+    }
     private toNoteData(){
         return {
             id: this.id,

@@ -47,6 +47,14 @@ const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
         newNoteItems[currentNoteIndex].save();
 
     }
+    const showAllNotes = () => {
+        const currentNote = noteItems[currentNoteIndex];
+        if(!currentNote.hasBeenSaved()){
+            const newNoteItems = noteItems.filter((note, i) => i !== currentNoteIndex);
+            setNoteItems(newNoteItems);
+        }
+        setIsEditing(false);
+    }
     if(!notesHasLoaded){
         return <PageStillLoading />
     }
@@ -56,7 +64,7 @@ const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
             <ColumnBox>
                 <MainToolbar 
                     isEditing={isEditing}
-                    setIsEditing={setIsEditing}
+                    showAllNotes={showAllNotes}
                     createNewNote={createNewNote}
                     />
                 {noteItems.length === 0 ?

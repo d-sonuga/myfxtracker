@@ -80,7 +80,7 @@ class NewTraderLoginFlow(BaseFunctionalTest):
         trader = Trader.objects.get(email=self.details['email'])
         Account.objects.create_account(
             trader,
-            DatasourceInitialInfoData.good_details_with_transactions['data']
+            DatasourceInitialInfoData.good_details_with_transactions1['data']
         )
         self.fail()
 

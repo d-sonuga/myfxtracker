@@ -27,7 +27,7 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                     values,
                     successFunc: (resp: HttpResponseType) => {
                         storageService.setItem(ConfigConst.TOKEN_KEY, resp.data.key);
-                        navigate(RouteConst.TRADER_APP_ROUTE);
+                        navigate(`/${RouteConst.TRADER_APP_ROUTE}`);
                         setNonFieldError('');
                     },
                     errorFunc: (err: HttpErrorType) => {

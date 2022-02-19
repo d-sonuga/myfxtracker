@@ -119,6 +119,9 @@ class GlobalData {
     getUserEmail(){
         return this.rawData.user_data.email
     }
+    getUserDsUsername(){
+        return this.rawData.user_data.ds_username;
+    }
     userIsSubscribed(){
         return this.rawData.user_data.is_subscribed
     }
@@ -131,6 +134,7 @@ const initialEmptyRawData = {
     user_data: {
         id: -1,
         email: '',
+        ds_username: '',
         is_subscribed: false,
         on_free: false,
         logins_after_ask: -1,

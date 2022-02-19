@@ -12,21 +12,21 @@ class TestSaveError(TestCase):
         self.test_data = SaveErrorTestData
         trader = Trader.objects.create(
             username='1',
-            **self.test_data.trader_details
+            **self.test_data.trader_details1
         )
         self.valid_trader_account = Account.objects.create_account(
             trader,
-            self.test_data.account_transaction_data
+            self.test_data.account_transaction_data1
         )
         self.valid_ds_username = trader.get_datasource_username()
         self.invalid_ds_username = nanoid.generate()
         trader_with_expired_username = Trader.objects.create(
             username='2',
-            **self.test_data.trader_details
+            **self.test_data.trader_details2
         )
         self.expired_trader_account = Account.objects.create_account(
             trader_with_expired_username,
-            self.test_data.account_transaction_data
+            self.test_data.account_transaction_data2
         )
         expired_date = date.today() - timedelta(days=35)
         trader_with_expired_username.set_next_billing_time(expired_date)

@@ -27,6 +27,7 @@ Note: The cases concerning howYouHeard and yearsSpentTrading fields in user inpu
 from datetime import date, timedelta
 from django.test import TestCase, tag
 from django.core import mail
+from trader.models import Preferences
 from users.models import Trader
 from allauth.account.models import EmailAddress
 from .test_data import SignUpDetails
@@ -53,6 +54,7 @@ class SignUpTests(TestCase):
         current_date = date.today()
         next_35_days = current_date + timedelta(days=35)
         self.assertEquals(user.subscriptioninfo.next_billing_time, next_35_days)
+        self.assertEquals(Preferences.objects.filter(user=user).count(), 1)
 
     # Cases 2 and 3
     def test_sign_up_bad_details_only_email(self):

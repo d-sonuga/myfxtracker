@@ -9,7 +9,7 @@ from .test_data import DatasourceInitialInfoData
 class TestInitialInfo(BaseTest):
     def setUp(self):
         self.test_data = DatasourceInitialInfoData
-        details_no_transactions = self.test_data.good_details_with_no_transactions['data']
+        details_no_transactions = self.test_data.good_details_with_no_transactions1['data']
         details_transactions = self.test_data.good_details_with_transactions['data']
         trader_with_no_transactions = Trader.objects.create(
             username='1',
@@ -58,15 +58,10 @@ class TestInitialInfo(BaseTest):
         })
 
     def test_good_data_valid_datasource_username_trader_has_transaction(self):
-        no_of_trades = self.no_of_trades(
-            self.test_data.good_details_with_transactions['data']['account-transactions']
-        )
-        no_of_deposits = self.no_of_deposits(
-            self.test_data.good_details_with_transactions['data']['account-transactions']
-        )
-        no_of_withdrawals = self.no_of_withdrawals(
-            self.test_data.good_details_with_transactions['data']['account-transactions']
-        )
+        details = self.test_data.good_details_with_transactions
+        no_of_trades = self.no_of_trades(details['data']['account-transactions'])
+        no_of_deposits = self.no_of_deposits(details['data']['account-transactions'])
+        no_of_withdrawals = self.no_of_withdrawals(details['data']['account-transactions'])
         resp = self.client.post(
             '/datasource/get-initial-info/',
             self.trader_with_transactions_request_body,
@@ -78,7 +73,9 @@ class TestInitialInfo(BaseTest):
             'no-of-transactions': no_of_trades + no_of_deposits + no_of_withdrawals,
             'account-data-has-been-saved': True
         })
-
+        self.assertEquals(no_of_trades, details['no-of-trades'])
+        self.assertEquals(no_of_withdrawals, details['no-of-withdrawals'])
+        self.assertEquals(no_of_deposits, details['no-of-deposits'])
 
     def test_bad_data_datasource_username_not_valid(self):
         resp = self.client.post('/datasource/get-initial-info/',
@@ -92,3 +89,63 @@ class TestInitialInfo(BaseTest):
         self.assertEquals(resp.status_code, 403)
         self.assertDictEqual(resp.json(), {'detail': 'expired username'})
     
+    def test_trader_with_a_saved_account_current_account_not_saved(self):
+        trader_with_saved_account = Trader.objects.create(
+            **self.test_data.trader_with_a_saved_account_details
+        )
+        Account.objects.create_account(
+            trader_with_saved_account,
+            self.test_data.saved_account_details_trader_with_a_saved_account['data']
+        )
+        unsaved_details = self.test_data.unsaved_account_details_trader_with_a_saved_account['data']
+        unsaved_details_request_body = {
+            'account-name': unsaved_details['account-name'],
+            'account-company': unsaved_details['account-company'],
+            'account-login-number': unsaved_details['account-login-number']
+        }
+
+        resp = self.client.post(
+            '/datasource/get-initial-info/',
+            unsaved_details_request_body,
+            headers={'Datasource-Username': trader_with_saved_account.datasource_username}
+        )
+
+        self.assertEquals(resp.status_code, 200)
+        self.assertDictEqual(resp.json(), {
+            'no-of-transactions': 0,
+            'account-data-has-been-saved': False
+        })
+    
+    def test_trader_with_2_saved_accounts_current_account_saved(self):
+        trader_with_saved_account = Trader.objects.create(
+            **self.test_data.trader_with_2_saved_accounts_details
+        )
+        Account.objects.create_account(
+            trader_with_saved_account,
+            self.test_data.saved_account_details_trader_with_2_saved_accounts1['data']
+        )
+        Account.objects.create_account(
+            trader_with_saved_account,
+            self.test_data.saved_account_details_trader_with_2_saved_accounts2['data']
+        )
+        self.assertEquals(Account.objects.filter(user=trader_with_saved_account).count(), 2)
+        saved_details2 = self.test_data.saved_account_details_trader_with_2_saved_accounts2
+        saved_details_request_body = {
+            'account-name': saved_details2['data']['account-name'],
+            'account-company': saved_details2['data']['account-company'],
+            'account-login-number': saved_details2['data']['account-login-number']
+        }
+
+        resp = self.client.post(
+            '/datasource/get-initial-info/',
+            saved_details_request_body,
+            headers={'Datasource-Username': trader_with_saved_account.datasource_username}
+        )
+
+        self.assertEquals(resp.status_code, 200)
+        self.assertDictEqual(resp.json(), {
+            'no-of-transactions': saved_details2['no-of-trades'] +
+                + saved_details2['no-of-deposits']
+                + saved_details2['no-of-withdrawals'],
+            'account-data-has-been-saved': True
+        })

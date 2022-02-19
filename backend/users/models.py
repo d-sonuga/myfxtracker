@@ -108,11 +108,18 @@ class TraderInfo(models.Model):
     
     def get_datasource_username(self):
         return self.datasource_username
+    
+    def __getattribute__(self, __name):
+        if __name == 'ds_username':
+            return super().__getattribute__('datasource_username')
+        return super().__getattribute__(__name)
 
     
 def datasource_username_is_invalid(username):
     return TraderInfo.objects.filter(datasource_username=username).count() == 0
 
+def datasource_username_is_valid(username):
+    return TraderInfo.objects.filter(datasource_username=username).count() != 0
 
 class Affiliate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

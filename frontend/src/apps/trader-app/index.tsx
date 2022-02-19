@@ -48,7 +48,10 @@ const TraderApp = () => {
                                     if(location.pathname.endsWith(TRADER_SETTINGS_ROUTE)){
                                         return <Settings />
                                     }
-                                    return <DataSourceSetupInstructions eaDownloadUrls={eaDownloadUrls} />
+                                    return <DataSourceSetupInstructions
+                                                dsUsername={globalData.getUserDsUsername()}
+                                                eaDownloadUrls={eaDownloadUrls}
+                                                />
                                 } else {
                                     return (
                                         <PageLoadingErrorBoundary>

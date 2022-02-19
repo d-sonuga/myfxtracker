@@ -1,9 +1,11 @@
 import {ColumnBox, RowBox} from '@components/containers'
 import {H5, H6, P} from '@components/text'
+import {HttpConst} from '@conf/const'
 import {getColor} from '@conf/utils'
 
 
-const DataSourceSetupInstructions = ({eaDownloadUrls}: {eaDownloadUrls: {'mt4': string, 'mt5': string}}) => {
+const DataSourceSetupInstructions = ({dsUsername, eaDownloadUrls}: {dsUsername: string, eaDownloadUrls: {'mt4': string, 'mt5': string}}) => {
+    const {BASE_URL, DOWNLOAD_EA_URL} = HttpConst;
     return(
         <ColumnBox
             style={{
@@ -32,7 +34,7 @@ const DataSourceSetupInstructions = ({eaDownloadUrls}: {eaDownloadUrls: {'mt4': 
                         <P>&nbsp; or the &nbsp;</P>
                         <a
                             href={eaDownloadUrls['mt5']}
-                            download='MyFxTrackerEA.ex5'
+                            download='MyFxTracker.ex5'
                             style={{
                                 color: getColor('light-blue'),
                                 textDecoration: 'underline',
@@ -44,7 +46,7 @@ const DataSourceSetupInstructions = ({eaDownloadUrls}: {eaDownloadUrls: {'mt4': 
                 <li><P>Open your Metatrader terminal</P></li>
                 <li><P>Press Ctrl + O </P></li>
                 <li><P>Tick allow WebRequest for listed url and enter https://myfxtracker.com</P></li>
-                <li><P>Launch the EA</P></li>
+                <li><P>Launch the EA and input your MT username:</P><P>{dsUsername}</P></li>
                 <li><P>Check back in a minute and reload the page</P></li>
             </ol>
         </ColumnBox>

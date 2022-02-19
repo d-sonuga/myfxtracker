@@ -1,3 +1,4 @@
+from itsdangerous import exc
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datasource_endpoint.models import DatasourceErrors
@@ -56,7 +57,7 @@ class SaveInitialData(APIView):
 class SaveData(APIView):
     authentication_classes = [DatasourceUsernameAuth]
     permission_classes = [IsAuthenticated, DatasourceUsernameNotExpired]
-    
+
     def post(self, request, *args, **kwargs):
         account = Account.objects.get_by_name_broker_login_no(
             request.data['account-name'],

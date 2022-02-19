@@ -30,6 +30,16 @@ string accountStopoutModeInString(int accountStopoutMode){
 
 class DataAssembler: public BaseDataAssembler {
     private:
+        string getTransactionAction(int orderType){
+            switch(orderType){
+                case OP_BUY:
+                    return "buy";
+                case OP_SELL:
+                    return "sell";
+                default:
+                    return IntegerToString(orderType);
+            }
+        }
         CJAVal assembleTransaction(){
             CJAVal transaction;
             transaction["pair"] = OrderSymbol();
@@ -39,7 +49,7 @@ class DataAssembler: public BaseDataAssembler {
             transaction["open-time"] = TimeToString(OrderOpenTime());
             transaction["close-time"] = TimeToString(OrderCloseTime());
             transaction["transaction-id"] = OrderTicket();
-            transaction["action"] = OrderType() == OP_BUY ? "buy" : "sell";
+            transaction["action"] = this.getTransactionAction(OrderType());
             transaction["swap"] = OrderSwap();
             transaction["commission"] = OrderCommission();
             transaction["stop-loss"] = OrderStopLoss();
@@ -57,10 +67,8 @@ class DataAssembler: public BaseDataAssembler {
             return accountInfo;
         }
         CJAVal assembleAllDataInJson(){
-            CJAVal allData;
+            CJAVal allData = this.assembleAccountInfo();
             allData["account-currency"] = AccountCurrency();
-            allData["account-company"] = AccountCompany();
-            allData["account-name"] = AccountName();
             allData["account-server"] = AccountServer();
             allData["account-credit"] = AccountCredit();
             allData["account-profit"] = AccountProfit();
@@ -70,7 +78,6 @@ class DataAssembler: public BaseDataAssembler {
             allData["account-margin-level"] = AccountInfoDouble(ACCOUNT_MARGIN_LEVEL);
             allData["account-margin-call-level"] = AccountInfoDouble(ACCOUNT_MARGIN_SO_CALL);
             allData["account-margin-stopout-level"] = AccountInfoDouble(ACCOUNT_MARGIN_SO_SO);
-            allData["account-login-number"] = AccountInfoInteger(ACCOUNT_LOGIN);
             allData["account-leverage"] = AccountLeverage();
             allData["account-trade-mode"] = accountTradeModeToString(AccountInfoInteger(ACCOUNT_TRADE_MODE));
             allData["account-stopout-level"] = AccountStopoutLevel();
@@ -130,8 +137,6 @@ class Transaction {
          HistoryDealGetInteger(firstDealTicket, DEAL_TIME, this.openTime);
          HistoryDealGetInteger(secondDealTicket, DEAL_TIME, this.closeTime);
          HistoryDealGetInteger(firstDealTicket, DEAL_POSITION_ID, this.transactionId);
-         //HistoryDealGetInteger(firstDealTicket, DEAL_POSITION_ID, posid);
-         //MessageBox(posid);
          HistoryDealGetInteger(firstDealTicket, DEAL_TYPE, dealType);
          HistoryDealGetDouble(secondDealTicket, DEAL_SWAP, this.swap);
          HistoryDealGetDouble(secondDealTicket, DEAL_COMMISSION, this.commission);
@@ -169,7 +174,7 @@ class Transaction {
             case DEAL_TYPE_BALANCE:
                 return "deposit";
             default:
-                return "undetermined for now";
+                return DoubleToString(dealType);
         }
         }
       CJAVal intoJson(){
@@ -195,27 +200,42 @@ class Transaction {
 class Mapper {
     // Maps position ids to tickets so they can be used
     // to remember the first deal in a trade when the second key is encountered
+    // It works by keeping the position id as the key and the deal id as the value
+    // with corresponding indexes
    private:
+      
+      
+      int noOfItems;
+      int findKeyIndex(ulong key){
+        int keyIndex = 0;
+        while(keyIndex < ArraySize(this.keys)){
+            if(this.keys[keyIndex] == key){
+                return keyIndex;
+            }
+            keyIndex += 1;
+        }
+        return -1;
+      }
+   public:
       ulong keys[];
       ulong values[];
-      int noOfItems;
-   public:
       Mapper(){
          this.noOfItems = 0;
       }
       bool containsKey(ulong key){
-         int index = ArrayBsearch(this.keys, key);
-         if(index != -1 && this.keys[index] == key){
-            return true;
+         int keyIndex = this.findKeyIndex(key);
+         if(keyIndex != -1){
+             return true;
          }
+         //////MessageBox("posMap doesnt contain key: " + key);
          return false;
       }
-      ulong getValue(ulong key){
-         int index = ArrayBsearch(this.keys, key);
-         return this.values[index];
+      ulong getValue(ulong key){ 
+        int index = this.findKeyIndex(key);
+        return this.values[index];
       }
       void deleteValue(ulong key){
-         int index = ArrayBsearch(this.keys, key);
+         int index = this.findKeyIndex(key);
          this.keys[index] = -1;
          this.values[index] = -1;
       }
@@ -225,6 +245,11 @@ class Mapper {
          ArrayResize(this.values, this.noOfItems);
          this.keys[this.noOfItems - 1] = key;
          this.values[this.noOfItems - 1] = value;
+         //////MessageBox("posMap set key " + key + " at index " + (this.noOfItems - 1));
+         //////MessageBox("posMap keys now holds key " + this.keys[this.noOfItems - 1]);
+      }
+      int getNoOfItems(){
+          return this.noOfItems;
       }
 };
 
@@ -346,3 +371,4 @@ class TestDataAssembler: public BaseDataAssembler {
             return unsavedTransactions;
         }
 };
+

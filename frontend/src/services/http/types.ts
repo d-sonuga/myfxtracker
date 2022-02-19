@@ -1,4 +1,4 @@
-import {AxiosError, AxiosResponse} from 'axios'
+import {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios'
 
 /**
  * Type of the Http client used throughout the app
@@ -44,7 +44,8 @@ interface HttpRequestConfigType {
     errorFunc: Function, 
     thenFunc?: Function,
     noToken?: boolean, 
-    timeout?: number
+    timeout?: number,
+    extras?: Partial<AxiosRequestConfig>
 }
 
 type HttpGetConfigType = HttpRequestConfigType;

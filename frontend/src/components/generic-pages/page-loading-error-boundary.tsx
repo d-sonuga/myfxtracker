@@ -1,5 +1,5 @@
-import { ColumnBox } from '@components/containers';
-import {H3, H5} from '@components/text'
+import {ColumnBox} from '@components/containers'
+import {H6} from '@components/text'
 import {Component} from 'react'
 
 
@@ -25,9 +25,10 @@ class PageLoadingErrorBoundary extends Component {
                 <ColumnBox
                     style={{
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
+                        height: '100%'
                     }}>
-                    <H5>Sorry. Something went wrong</H5>
+                    <H6>Sorry. Something went wrong</H6>
                 </ColumnBox>
             )
         }

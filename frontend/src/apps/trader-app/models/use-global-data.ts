@@ -3,7 +3,6 @@
  */
 
 import {useState, useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
 import {GlobalData} from '@apps/trader-app/models'
 import {Http, HttpErrorType, HttpResponseType} from '@apps/trader-app/services'
 import {HttpConst} from '@conf/const'
@@ -33,6 +32,7 @@ const noAccountsRawData  = {
     user_data: {
         id: 1,
         email: 'newuser@email.com',
+        ds_username: 'dsusername',
         is_subscribed: false,
         on_free: true,
         logins_after_ask: 2,
@@ -130,6 +130,7 @@ const dummyRawData: RawData = {
     user_data: {
         id: 3,
         email: 'sonugademilade8703@gmail.com',
+        ds_username: 'dsusername',
         is_subscribed: false,
         on_free: true,
         logins_after_ask: 2,

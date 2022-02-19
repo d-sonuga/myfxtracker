@@ -1,5 +1,5 @@
 import {ColumnBox} from '@components/containers'
-import {getDimenInNo, useScreenIsSmall} from '@conf/utils'
+import {getDimen, getDimenInNo, useScreenIsSmall} from '@conf/utils'
 import {NAVBAR_WIDTH} from '@apps/trader-app/const'
 import {ReactNode} from 'react'
 
@@ -21,7 +21,9 @@ const TraderAppContainer = ({children}: {children: ReactNode}) => {
         <div 
             style={{
                 marginTop: screenIsSmall ? `${getDimenInNo('navbar-height') + 32}px` : 0,
-                marginLeft: !screenIsSmall ? `${NAVBAR_WIDTH}px` : 0
+                marginLeft: !screenIsSmall ? `${NAVBAR_WIDTH}px` : 0,
+                height: '100vh',
+                overflowY: 'scroll'
             }}>
                 {children}
         </div>

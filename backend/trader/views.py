@@ -365,6 +365,7 @@ class GetInitData(APIView):
             'user_data': {
                 'id': request.user.id,
                 'email': request.user.email,
+                'ds_username': request.user.get_datasource_username(),
                 'is_subscribed': request.user.subscriptioninfo.is_subscribed,
                 'on_free': request.user.subscriptioninfo.on_free
             },

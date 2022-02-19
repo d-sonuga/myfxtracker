@@ -20,12 +20,16 @@ class EADownload(TestCase):
     def test_mt4_ea_download(self):
         resp = self.client.get('/trader/download_ea/?variant=mt4', **self.headers)
         mt4 = self.openfile('MyFxTracker.ex4')
+        mt5 = self.openfile('MyFxTracker.ex5')
         self.assertEquals(resp.content, mt4)
+        self.assertNotEquals(resp.content, mt5)
 
     def test_mt5_ea_download(self):
         resp = self.client.get('/trader/download_ea/?variant=mt5', **self.headers)
         mt5 = self.openfile('MyFxTracker.ex5')
+        mt4 = self.openfile('MyFxTracker.ex4')
         self.assertEquals(resp.content, mt5)
+        self.assertNotEquals(resp.content, mt4)
         
     
     def openfile(self, name):

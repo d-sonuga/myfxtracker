@@ -30,6 +30,7 @@ class InitDataTest(TestCase):
                 'user_data': {
                     'id': self.trader_with_no_data.id,
                     'email': self.trader_with_no_data.email,
+                    'ds_username': self.trader_with_no_data.get_datasource_username(),
                     'is_subscribed': self.trader_with_no_data.is_subscribed,
                     'on_free': self.trader_with_no_data.on_free
                 },
@@ -58,6 +59,7 @@ class InitDataTest(TestCase):
                 'user_data': {
                     'id': self.trader_with_data.id,
                     'email': self.trader_with_data.email,
+                    'ds_username': self.trader_with_data.get_datasource_username(),
                     'is_subscribed': self.trader_with_data.is_subscribed,
                     'on_free': self.trader_with_data.on_free
                 },

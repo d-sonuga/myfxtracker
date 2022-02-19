@@ -2,13 +2,13 @@ import {Button} from '@components/buttons'
 import {getDimen} from '@conf/utils'
 import {List} from '@mui/material'
 
-const MainToolbar = ({isEditing, setIsEditing, createNewNote}: {isEditing: boolean, setIsEditing: Function, createNewNote: Function}) => {
+const MainToolbar = ({isEditing, showAllNotes, createNewNote}: {isEditing: boolean, showAllNotes: Function, createNewNote: Function}) => {
     return(
         <List>
             {isEditing ? 
                 <Button
                     onClick={
-                        () => setIsEditing(false)
+                        () => showAllNotes()
                     }>All Notes</Button>
                 : 
                 <Button

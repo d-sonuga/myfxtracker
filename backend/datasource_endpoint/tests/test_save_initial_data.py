@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 import nanoid
-from trader.models import Account, Deposit, Trade, Withdrawal
+from trader.models import Account, Deposit, Trade, Withdrawal, UnknownTransaction
 from users.models import Trader
 from .base_test import BaseTest
 from .test_data import SaveInitialDataTestData
@@ -64,6 +64,38 @@ class TestSaveInitialData(BaseTest):
         self.assertDictEqual(resp.json(), {'detail': 'expired username'})
         self.assertEquals(Account.objects.all().count(), 0)
     
+    def test_trader_already_has_an_existing_account(self):
+        trader = Trader.objects.create(**self.test_data.trader_with_a_saved_account_details)
+        Account.objects.create_account(
+            trader,
+            self.test_data.saved_account_details_trader_with_a_saved_account['data']
+        )
+        unsaved_details = self.test_data.unsaved_account_details_trader_with_a_saved_account
+        request_body = unsaved_details['data']
+        
+        resp = self.make_request(trader.ds_username, request_body)
+
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {
+            'no-of-transactions': unsaved_details['no-of-deposits']
+                + unsaved_details['no-of-trades']
+                + unsaved_details['no-of-withdrawals']
+        })
+    
+    def test_save_transaction_with_unknown_type(self):
+        trader = Trader.objects.create(**self.test_data.trader_with_unknown_transaction_details)
+        unsaved_details = self.test_data.account_details_with_unknown_transaction_type
+        request_body = unsaved_details['data']
+
+        resp = self.make_request(trader.ds_username, request_body)
+        
+        account = trader.account_set.all()[0]
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(
+            UnknownTransaction.objects.filter(account=account).count(),
+            unsaved_details['no-of-unknown']
+        )
+
     def make_request(self, ds_username, data):
         return self.client.post('/datasource/save-initial-data/',
             data,

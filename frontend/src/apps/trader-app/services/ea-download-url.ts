@@ -10,24 +10,30 @@ const useEaDownloadUrl = () => {
     useEffect(() => {
         Http.get({
             url: `${BASE_URL}/${DOWNLOAD_EA_URL}/?variant=mt4/`,
-            successFunc: (resp: HttpResponseType) => {
-                const file = new Blob([resp.data], {type: 'plain/txt'});
+            successFunc: (resp: any) => {
+                const file = new Blob([resp.data], {type: 'application/ex4'});
                 const fileDownloadUrl = URL.createObjectURL(file);
                 setMt4EaDownloadUrl(fileDownloadUrl)
             },
             errorFunc: (err: HttpErrorType) => {
                 console.log('ea error', err);
+            },
+            extras: {
+                responseType: 'blob'
             }
         })
         Http.get({
             url: `${BASE_URL}/${DOWNLOAD_EA_URL}/?variant=mt5/`,
             successFunc: (resp: HttpResponseType) => {
-                const file = new Blob([resp.data], {type: 'plain/txt'});
+                const file = new Blob([resp.data], {type: 'application/ex5'});
                 const fileDownloadUrl = URL.createObjectURL(file);
                 setMt5EaDownloadUrl(fileDownloadUrl);
             },
             errorFunc: (err: HttpErrorType) => {
                 console.log('ea error', err);
+            },
+            extras: {
+                responseType: 'blob'
             }
         })
     }, [])

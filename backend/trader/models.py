@@ -5,6 +5,36 @@ from django.utils import timezone
 from users.models import Trader, User
 
 
+class IntegerFromCharField(models.CharField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        value_in_str = super().to_python(value).split('.')[0]
+        return int(value_in_str)
+    
+    def get_prep_value(self, value):
+        return str(value)
+
+
+class TransactionIdField(IntegerFromCharField):
+    """
+    To store transaction ids for trades, deposits and withdrawals.
+    Stores them as characters, loads them as integers
+    """
+    def __init__(self, unique=False, *args, **kwargs):
+        super().__init__(unique=unique, max_length=100)
+
+
+class MagicNumberField(IntegerFromCharField):
+    """
+    To store transaction magic numbers for transactions
+    Stores them as characters, loads them as integers
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(max_length=100)
+
+
 class AccountManager(models.Manager):
     def create_account(self, user, rawdata):
         new_account = self.create(
@@ -24,9 +54,7 @@ class AccountManager(models.Manager):
             login_number=rawdata['account-login-number'],
             leverage=rawdata['account-leverage'],
             type=rawdata['account-trade-mode'],
-            stopout_level=rawdata['account-stopout-level'],
-            stopout_level_format=rawdata['account-stopout-level-format'],
-
+            stopout_level_format=rawdata['account-stopout-level-format']
         )
         for trade_data in get_account_trades(rawdata['account-transactions']):
             Trade.objects.create_trade(new_account, trade_data)
@@ -34,6 +62,8 @@ class AccountManager(models.Manager):
             Deposit.objects.create_deposit(new_account, deposit_data)
         for withdrawal_data in get_account_withdrawals(rawdata['account-transactions']):
             Withdrawal.objects.create_withdrawal(new_account, withdrawal_data)
+        for unknown_transaction_data in get_account_unknown_transactions(rawdata['account-transactions']):
+            UnknownTransaction.objects.create_unknown_transaction(new_account, unknown_transaction_data)
         return new_account
     
     def get_by_name_broker_login_no(self, name, broker, login_no):
@@ -50,7 +80,7 @@ def get_account_trades(transaction_data):
             lambda item:
                 not is_deposit(item) and
                 not is_withdrawal(item) and
-                len(item['pair']) != 0,
+                item['pair'] is not None and len(item['pair']) != 0,
             transaction_data
         )
     )
@@ -58,7 +88,8 @@ def get_account_trades(transaction_data):
 def get_account_deposits(transaction_data):
     return list(filter(
             lambda item:
-                item['comment'] and item['comment'].lower() == 'deposit',
+                (item['pair'] is None and item['action'] == 'deposit') or
+                (item['comment'] and item['comment'].lower() == 'deposit'),
             transaction_data
         )
     )
@@ -66,10 +97,24 @@ def get_account_deposits(transaction_data):
 def get_account_withdrawals(transaction_data):
     return list(filter(
             lambda item:
-                item['comment'] and item['comment'].lower() == 'withdrawal',
+                (item['pair'] is None and item['action'] == 'withdrawal') or
+                (item['comment'] and item['comment'].lower() == 'withdrawal'),
             transaction_data
         )
     )
+
+
+def get_account_unknown_transactions(transaction_data):
+    account_trades = get_account_trades(transaction_data)
+    non_trades = filter(
+        lambda item:
+            item not in account_trades,
+            transaction_data
+    )
+    return ((
+        transaction for transaction in non_trades
+        if not is_deposit(transaction) and not is_withdrawal(transaction)
+    ))
 
 
 class Account(models.Model):
@@ -82,23 +127,22 @@ class Account(models.Model):
         ('c', 'contest'),
         ('r', 'real')
     )
-    name = models.CharField(max_length=50)
+    name = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    login_number = models.IntegerField()
+    login_number = TransactionIdField()
     currency = models.TextField()
     broker = models.TextField()
     trade_server = models.TextField()
-    balance = models.DecimalField(decimal_places=2, max_digits=11, default=0)
-    credit = models.DecimalField(decimal_places=2, max_digits=11)
-    profit_loss = models.DecimalField(decimal_places=2, max_digits=11)
-    equity = models.DecimalField(decimal_places=2, max_digits=11)
-    margin = models.DecimalField(decimal_places=2, max_digits=11)
-    margin_level = models.DecimalField(decimal_places=2, max_digits=11)
-    free_margin = models.DecimalField(decimal_places=2, max_digits=11)
-    margin_call_level = models.DecimalField(decimal_places=2, max_digits=11)
-    margin_stopout_level = models.DecimalField(decimal_places=2, max_digits=11)
-    leverage = models.DecimalField(decimal_places=2, max_digits=11)
-    stopout_level = models.DecimalField(decimal_places=2, max_digits=11)
+    balance = models.DecimalField(decimal_places=2, max_digits=19, default=0)
+    credit = models.DecimalField(decimal_places=2, max_digits=19)
+    profit_loss = models.DecimalField(decimal_places=2, max_digits=19)
+    equity = models.DecimalField(decimal_places=2, max_digits=19)
+    margin = models.DecimalField(decimal_places=2, max_digits=19)
+    margin_level = models.DecimalField(decimal_places=2, max_digits=19)
+    free_margin = models.DecimalField(decimal_places=2, max_digits=19)
+    margin_call_level = models.DecimalField(decimal_places=2, max_digits=19)
+    margin_stopout_level = models.DecimalField(decimal_places=2, max_digits=19)
+    leverage = models.DecimalField(decimal_places=2, max_digits=19)
     stopout_level_format = models.CharField(choices=stopout_level_formats, max_length=10)
     type = models.CharField(choices=account_types, max_length=10)
 
@@ -145,6 +189,11 @@ class Account(models.Model):
 
     def __str__(self):
         return f'{self.user.username}\'s account'
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['login_number', 'user'], name='trader_no_duplicate_account')
+        ]
 
 
 class TradeManager(models.Manager):
@@ -160,7 +209,6 @@ class TradeManager(models.Manager):
             trade_id=int(rawdata['transaction-id']),
             action=rawdata['action'],
             swap=float(rawdata['swap']),
-            lots=float(rawdata['lots']),
             commission=float(rawdata['commission']),
             stop_loss=float(rawdata['stop-loss']),
             take_profit=float(rawdata['take-profit']),
@@ -178,22 +226,21 @@ class Trade(models.Model):
     action = models.CharField(choices=action_choices, max_length=4)
     entry_date = models.DateField(null=True)
     exit_date = models.DateField(blank=True, null=True)
-    risk_reward_ratio = models.DecimalField(decimal_places=2, max_digits=9, null=True)
-    profit_loss = models.DecimalField(decimal_places=2, max_digits=11)
-    open_price = models.DecimalField(decimal_places=2, max_digits=11)
-    close_price = models.DecimalField(decimal_places=2, max_digits=11)
-    take_profit = models.DecimalField(decimal_places=2, max_digits=11)
-    stop_loss = models.DecimalField(decimal_places=2, max_digits=11)
-    swap = models.DecimalField(decimal_places=2, max_digits=11)
-    commission = models.DecimalField(decimal_places=2, max_digits=11)
-    lots = models.DecimalField(decimal_places=2, max_digits=11)
+    risk_reward_ratio = models.DecimalField(decimal_places=2, max_digits=19, null=True)
+    profit_loss = models.DecimalField(decimal_places=2, max_digits=19)
+    open_price = models.DecimalField(decimal_places=2, max_digits=19)
+    close_price = models.DecimalField(decimal_places=2, max_digits=19)
+    take_profit = models.DecimalField(decimal_places=2, max_digits=19)
+    stop_loss = models.DecimalField(decimal_places=2, max_digits=19)
+    swap = models.DecimalField(decimal_places=2, max_digits=19)
+    commission = models.DecimalField(decimal_places=2, max_digits=19)
     comment = models.TextField(null=True)
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
     # order ticket id in mt4, position id in mt5
-    trade_id = models.IntegerField(unique=True)
-    magic_number = models.IntegerField()
-    pips = models.DecimalField(decimal_places=2, max_digits=7, null=True)
+    trade_id = TransactionIdField()
+    magic_number = MagicNumberField()
+    pips = models.DecimalField(decimal_places=2, max_digits=19, null=True)
     notes = models.TextField(blank=True, null=True)
     entry_image_link = models.URLField(blank=True, null=True)
     exit_image_link = models.URLField(blank=True, null=True)
@@ -227,9 +274,9 @@ class DepositManager(models.Manager):
 
 class Deposit(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=2, max_digits=11)
+    amount = models.DecimalField(decimal_places=2, max_digits=19)
     time = models.DateTimeField()
-    deposit_id = models.IntegerField()
+    deposit_id = TransactionIdField()
 
     objects = DepositManager()
 
@@ -257,15 +304,40 @@ class WithdrawalManager(models.Manager):
 
 class Withdrawal(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=2, max_digits=11)
+    amount = models.DecimalField(decimal_places=2, max_digits=19)
     time = models.DateTimeField()
-    withdrawal_id = models.IntegerField()
+    withdrawal_id = TransactionIdField()
 
     objects = WithdrawalManager()
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['account', 'withdrawal_id'], name='trader_no_duplicate_withdrawal')
+        ]
+
+
+class UnknownTransactionManager(models.Manager):
+    def create_unknown_transaction(self, account, rawdata):
+        self.create(
+            account=account,
+            transaction_id=rawdata['transaction-id'],
+            data=rawdata
+        )
+
+
+class UnknownTransaction(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    transaction_id = TransactionIdField()
+    data = models.JSONField(encoder=DjangoJSONEncoder)
+
+    objects = UnknownTransactionManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['account', 'transaction_id'],
+                name='trader_no_duplicate_unknown_transaction'
+            )
         ]
 
 
