@@ -27,6 +27,7 @@ const LongShortComparisonTable = ({data}: {data: LongShortComparisonTableCalc}) 
                         style: {background: getColor('light-red')}
                     }
                 ]}
+                data-testid='long-short-comparison-table'
             />
         </div>
     )

@@ -7,7 +7,7 @@ import createRows from './create-rows'
 
 const WeeklySummary = ({summary}: {summary: OverviewWeeklySummaryCalc}) => {
     const rows: Array<Array<ReactNode>> = createRows(summary);
-    const headers: string[] = ['Date', 'Trades', 'Lots', 'Result'];
+    const headers: string[] = ['Date', 'Trades', 'Result'];
     return(
         <div>
             <Table
@@ -19,6 +19,7 @@ const WeeklySummary = ({summary}: {summary: OverviewWeeklySummaryCalc}) => {
                     condition: (columnIndex) => columnIndex % 2 !== 0 ? true : false,
                     style: {backgroundColor: getColor('light-gray')}
                 }}
+                data-testid='weekly-summary'
                 />
         </div>
     );

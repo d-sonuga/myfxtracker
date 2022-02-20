@@ -16,11 +16,11 @@ class BaseFunctionalTest(LiveServerTestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.browser = webdriver.Remote(
-            command_executor='http://172.17.0.3:4444/wd/hub',
+            command_executor='http://172.17.0.4:4444/wd/hub',
             desired_capabilities=DesiredCapabilities.FIREFOX
         )
         cls.start_server()
-        cls.server_domain = '172.17.0.4'
+        cls.server_domain = '172.17.0.3'
         cls.live_server_url = f'http://{cls.server_domain}:8000'
         # For making requests from the browser
         cls.base_url = f'http://172.17.0.2:3000'
@@ -30,7 +30,7 @@ class BaseFunctionalTest(LiveServerTestCase):
         cls.maildump_server_address = 'http://localhost:1080'
         site = Site.objects.get(id=settings.SITE_ID)
         # The password related emails use this domain as the domain they show
-        site.domain = '172.17.0.4'
+        site.domain = '172.17.0.2'
         site.save()
     
     @classmethod
@@ -49,8 +49,11 @@ class BaseFunctionalTest(LiveServerTestCase):
         cls.stop_server()
         super().tearDownClass()
     
-    def navigate(self, url):
+    def open_url(self, url):
         self.browser.get(url)
+
+    def navigate(self, url):
+        self.open_url(f'{self.base_url}/{url}')
     
     def close_current_tab_and_open_new_tab(self):
         body = self.browser.find_element(By.TAG_NAME, 'body')
@@ -60,7 +63,15 @@ class BaseFunctionalTest(LiveServerTestCase):
         self.assertEquals(self.browser.title, self.site_name)
     
     def assert_is_current_url(self, url):
-        self.assertEquals(self.browser.current_url, url)
+        browser_url = (self.browser.current_url
+            if not self.browser.current_url.endswith('/')
+            else self.browser.current_url[:-1]
+        )
+        url_to_compare = (url
+            if not url.endswith('/')
+            else url[:-1]
+        )
+        self.assertEquals(browser_url, url_to_compare)
 
     def create_select_el(self, el):
         # All select options have their test id as their value
@@ -97,13 +108,13 @@ class BaseFunctionalTest(LiveServerTestCase):
     def do_until_max_wait(self, func, func_args=(), initial_wait_time=0):
         try:
             print('executing')
-            func(*func_args)
+            return func(*func_args)
         except Exception as e:
             if initial_wait_time >= self.MAX_WAIT:
                 raise e
             else:
                 self.wait(1)
-                self.do_until_max_wait(func, func_args, initial_wait_time + 1)
+                return self.do_until_max_wait(func, func_args, initial_wait_time + 1)
 
     def wait(self, secs):
         time.sleep(secs)
@@ -114,7 +125,7 @@ class BaseFunctionalTest(LiveServerTestCase):
     def wait_a_lot(self):
         self.wait(10)
 
-    def fail(self):
+    def intentional_fail(self):
         self.assertTrue(False, 'Finish the test')
 
     def get_submit_button(self):

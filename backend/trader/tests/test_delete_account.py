@@ -7,11 +7,11 @@ from users.models import Trader
 @override_settings(DEBUG=True)
 class DeleteAccountTest(TestCase):
     def setUp(self) -> None:
-        trader = Trader.objects.create(
+        self.trader = Trader.objects.create(
             email='sonugademilade8703@gmail.com',
             password='password'
         )
-        trader_token = Token.objects.create(user=trader).key
+        trader_token = Token.objects.create(user=self.trader).key
         self.valid_headers = {
             'Content-Type': 'application/json',
             'HTTP_AUTHORIZATION': f'Token {trader_token}'
@@ -22,3 +22,11 @@ class DeleteAccountTest(TestCase):
         resp = self.client.delete('/trader/delete-account/', **self.valid_headers)
         self.assertEquals(resp.status_code, 200)
         self.assertEquals(Trader.objects.all().count(), 0)
+    
+    def test_ds_username_invalid_after_deleting_account(self):
+        ds_username = self.trader.traderinfo.ds_username
+        self.client.delete('/trader/delete-account/', **self.valid_headers)
+        self.assertFalse(ds_username.is_valid())
+    
+    
+    

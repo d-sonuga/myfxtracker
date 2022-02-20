@@ -20,6 +20,7 @@ const GainsGraph = ({data}: {data: GainsGraphCalc}) => {
             yAxisKey='gainsPercent'
             tooltipName='Gains %'
             outline={true}
+            data-testid='gains-graph'
             />
     )
 }

@@ -18,6 +18,7 @@ const AccountReturnsGraph = ({data}: {data: OverviewAccountReturnsGraphCalc}) =>
                 xAxisKey='tradeNo'
                 yAxisKey='result'
                 selectorOptions={options}
+                data-testid='account-returns-graph'
                 />
         </div>
     )

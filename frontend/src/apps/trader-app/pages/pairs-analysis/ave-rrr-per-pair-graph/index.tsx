@@ -14,6 +14,7 @@ const AveRrrPerPairGraph = ({data}: {data: AveRrrPerPairGraphCalc}) => {
             yAxisKey='rrr'
             outline={true}
             headerIsOutside={true}
+            data-testid='ave-rrr-per-pair-graph'
             />
     )
 }

@@ -1,6 +1,5 @@
 import {ColumnBox} from '@components/containers'
 import {H6, P} from '@components/text'
-import { getDimen } from '@conf/utils'
 
 
 const EmailSection = ({email}: {email: string}) => {

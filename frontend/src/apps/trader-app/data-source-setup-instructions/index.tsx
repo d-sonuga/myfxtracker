@@ -5,7 +5,6 @@ import {getColor} from '@conf/utils'
 
 
 const DataSourceSetupInstructions = ({dsUsername, eaDownloadUrls}: {dsUsername: string, eaDownloadUrls: {'mt4': string, 'mt5': string}}) => {
-    const {BASE_URL, DOWNLOAD_EA_URL} = HttpConst;
     return(
         <ColumnBox
             style={{

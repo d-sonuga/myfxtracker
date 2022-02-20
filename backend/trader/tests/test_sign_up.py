@@ -47,7 +47,7 @@ class SignUpTests(TestCase):
         self.assertEquals(len(mail.outbox), 1)
         user = user_set[0]
         # The user should have a datasource_username
-        self.assertTrue(len(user.traderinfo.datasource_username) >= 10)
+        self.assertTrue(len(user.traderinfo.datasourceusername.username) >= 10)
         # The user's subscription should not be expired
         self.assertFalse(user.subscriptioninfo.subscription_has_expired())
         # The user's next_billing_time should be the next 35 days

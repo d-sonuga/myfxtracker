@@ -1,10 +1,10 @@
 import {RowBox} from '@components/containers'
 import {Button} from '@components/buttons'
-import {getColor, getDimen} from '@conf/utils'
+import {getDimen} from '@conf/utils'
 import {DialogButtonsPropTypes} from './types'
 
 
-const Buttons = ({onOkClick, onCancelClick}: DialogButtonsPropTypes) => {
+const Buttons = ({onOkClick, onCancelClick, okButtonColor, okButtonText, okButtonProps}: DialogButtonsPropTypes) => {
     return(
         <RowBox style={{
             justifyContent: 'right',
@@ -12,11 +12,16 @@ const Buttons = ({onOkClick, onCancelClick}: DialogButtonsPropTypes) => {
             }}>
             <Button
                 style={{
-                    backgroundColor: getColor('dark-gray'),
                     marginRight: getDimen('padding-xs')
                 }}
-                onClick={() => onCancelClick()}>Cancel</Button>
-            <Button onClick={(e) => onOkClick()}>Ok</Button>
+                onClick={() => onCancelClick()}
+                color='neutral'>Cancel</Button>
+            <Button
+                color={okButtonColor}
+                onClick={(e) => onOkClick()}
+                {...okButtonProps}>
+                {okButtonText ? okButtonText : 'ok'}
+            </Button>
         </RowBox>
     )
 }

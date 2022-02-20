@@ -73,10 +73,9 @@ def email_confirmed_(request, email_address, **kwargs):
 
 
 @receiver(post_save, sender=Trader)
-def user_account_saved(sender, instance, using, **kwargs):
-    if instance.is_trader:
-        if Preferences.objects.filter(user=instance).count() == 0:
-            Preferences.objects.create(user=instance, current_account=None)
+def user_account_saved(sender, instance, created, using, **kwargs):
+    if created:
+        Preferences.objects.create(user=instance, current_account=None)
 
 
 @receiver(post_delete, sender=User)

@@ -33,7 +33,7 @@ if arg_in_args "--dont-start-mail-server" $@; then
     maildump_ports=""
     environ="$environ -e DONT_START_MAIL_SERVER=true"
 fi
-# ds_usernmae: sL4-jOq98mTmtgW51szgU
+
 if arg_in_args "--name" $@; then
     isname=""
     for arg in $@; do

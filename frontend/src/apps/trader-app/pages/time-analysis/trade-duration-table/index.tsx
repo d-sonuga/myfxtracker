@@ -1,5 +1,5 @@
 import {Table} from '@apps/trader-app/components'
-import { getColor } from '@conf/utils';
+import {getColor} from '@conf/utils'
 import createRows from './create-rows'
 import {TradeDurationCalc} from './types'
 
@@ -16,6 +16,7 @@ const TradeDurationTable = ({calc}: {calc: Array<TradeDurationCalc>}) => {
                 condition: (i) => i === 1,
                 style: {background: getColor('light-gray')}
             }}
+            data-testid='trade-duration-table'
             />
     )
 }

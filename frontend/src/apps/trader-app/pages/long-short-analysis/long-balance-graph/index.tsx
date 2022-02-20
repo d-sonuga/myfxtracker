@@ -11,6 +11,7 @@ const LongBalanceGraph = ({data}: {data: LongBalanceGraphCalc}) => {
             yAxisKey='result'
             outline={true}
             headerIsOutside={true}
+            data-testid='long-balance-graph'
             />
     );
 }

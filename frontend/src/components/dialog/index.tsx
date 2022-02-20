@@ -7,7 +7,7 @@ import {DialogPropTypes} from './types'
 import { useEffect } from 'react'
 
 
-const Dialog = ({children, onOkClick, onCancelClick, title, onClose, open}: DialogPropTypes) => {
+const Dialog = ({children, onOkClick, title, onClose, open, ...props}: DialogPropTypes) => {
     return(
         <MuiDialog onClose={() => onClose()} open={open}>
             <div onKeyPress={(e: any) => {
@@ -21,9 +21,9 @@ const Dialog = ({children, onOkClick, onCancelClick, title, onClose, open}: Dial
                     }}>
                     <H6 style={{textAlign: 'center'}}>{title}</H6>
                     {children}
-                    <Buttons
-                        onOkClick={() => onOkClick()}
-                        onCancelClick={() => onCancelClick()} />
+                    <Buttons 
+                        onOkClick={onOkClick}
+                        {...props} />
                 </ColumnBox>
             </div>
         </MuiDialog>

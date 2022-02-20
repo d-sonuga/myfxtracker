@@ -13,9 +13,9 @@
     --color-light-green: #a5fdb4;
     --color-xlight-green: rgba(13, 110, 253, 0.1);
     --color-light-purple: #d5c7f0;
-    --color-red: red;
+    --color-red: #d32f2f;
     --color-light-red: rgba(253, 13, 13, 0.1);
-
+    
     --dimen-padding-xs: 10px;
     --dimen-padding-sm: 15px;
     --dimen-padding-sm: 20px;

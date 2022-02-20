@@ -12,11 +12,12 @@ class TraderManager(DjangoUserManager):
             username=kwargs.get('username', kwargs['email'])
         )
         new_trader.set_password(kwargs['password'])
-        TraderInfo.objects.create(
+        traderinfo = TraderInfo.objects.create(
             user=new_trader,
             how_you_heard_about_us=kwargs.get('how_you_heard_about_us', ''),
             trading_time_before_joining=kwargs.get('trading_time_before_joining', '')
         )
+        DatasourceUsername.objects.create(traderinfo=traderinfo)
         referrer = kwargs.get('referrer')
         if referrer:
             ref = Affiliate.objects.get(user__username=referrer.lower())
@@ -35,7 +36,7 @@ class TraderManager(DjangoUserManager):
         return super().filter(is_trader=True, *args, **kwargs)
 
     def get_by_datasource_username(self, ds_username):
-        traderinfo = TraderInfo.objects.get(datasource_username=ds_username)
+        traderinfo = TraderInfo.objects.get(datasourceusername__username=ds_username)
         return traderinfo.user
 
 
@@ -64,62 +65,78 @@ class Trader(User):
             return super().__getattribute__(__name)
         except AttributeError as e:
             traderinfo = super().__getattribute__('traderinfo')
+            if __name in ('ds_username', 'datasource_username'):
+                return traderinfo.datasourceusername.username
             subscriptioninfo = super().__getattribute__('subscriptioninfo')
             try:
                 return getattr(traderinfo, __name)
             except AttributeError:
                 return getattr(subscriptioninfo, __name)
+    
+    def delete(self):
+        ds_username = self.traderinfo.datasourceusername
+        ds_username.traderinfo = None
+        ds_username.save()
+        super().delete()
 
     class Meta:
         proxy = True
 
+    
+def datasource_username_is_invalid(username):
+    ds_username_set = DatasourceUsername.objects.filter(username=username)
+    if ds_username_set.count() == 0:
+        return True
+    return ds_username_set[0].username is None
 
-class TraderInfoManager(models.Manager):
-    def create(self, *args, **kwargs):
-        new_traderinfo = super().create(*args, **kwargs)
-        self.create_datasource_username(new_traderinfo)
-        return new_traderinfo
-
-    def create_datasource_username(self, traderinfo, save=True):
-        try:
-            traderinfo.datasource_username = nanoid.generate()
-            if save:
-                traderinfo.save()
-        except IntegrityError:
-            # retry to generate another username
-            self.create_datasource_username(traderinfo, save)
+def datasource_username_is_valid(username):
+    return not datasource_username_is_invalid(username)
 
 
 class TraderInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     current_feedback_question = models.SmallIntegerField(default=0)
     logins_after_ask = models.SmallIntegerField(null=True)
-    # new fields not yet added in database
     # The answer to the question 'How did you hear about us?' asked on sign up
     how_you_heard_about_us = models.TextField()
     # The answer to the question 'How long have you been trading' asked on sign up
     trading_time_before_joining = models.TextField()
-    datasource_username = models.CharField(max_length=25, unique=True)
-
-    objects = TraderInfoManager()
 
     def datasource_username_has_expired(self):
-        return self.user.subscriptioninfo.subscription_has_expired()
+        return self.datasourceusername.has_expired()
     
     def get_datasource_username(self):
-        return self.datasource_username
+        return self.datasourceusername.username
     
     def __getattribute__(self, __name):
-        if __name == 'ds_username':
-            return super().__getattribute__('datasource_username')
+        if __name in ('ds_username', 'datasource_username'):
+            return super().__getattribute__('datasourceusername')
         return super().__getattribute__(__name)
 
-    
-def datasource_username_is_invalid(username):
-    return TraderInfo.objects.filter(datasource_username=username).count() == 0
 
-def datasource_username_is_valid(username):
-    return TraderInfo.objects.filter(datasource_username=username).count() != 0
+class DatasourceUsernameManager(models.Manager):
+    def create(self, traderinfo):
+        username = nanoid.generate()
+        try:
+            return super().create(username=username, traderinfo=traderinfo)
+        except IntegrityError:
+            # Integrity errors are thrown for duplicate ds_username
+            # just retry until a unique one is generated
+            return self.create(traderinfo=traderinfo)
+
+
+class DatasourceUsername(models.Model):
+    traderinfo = models.OneToOneField(TraderInfo, on_delete=models.DO_NOTHING, null=True)
+    username = models.CharField(max_length=25, unique=True)
+
+    objects = DatasourceUsernameManager()
+
+    def is_valid(self):
+        return self.traderinfo is None
+    
+    def has_expired(self):
+        return self.traderinfo.user.subscriptioninfo.subscription_has_expired()
+
 
 class Affiliate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

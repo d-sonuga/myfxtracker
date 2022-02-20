@@ -23,6 +23,7 @@ const PeriodAnalysis = () => {
                 yAxisKey='result'
                 selectorOptions={returnsPerPeriodGraphCalc}
                 outline={true}
+                data-testid='returns-per-period-graph'
                 />
         </PageContainer>
     )

@@ -7,7 +7,7 @@ import {GraphPropTypes, GraphData, GraphXAxisKey, SelectorOptions} from './types
 
 
 const Graph = ({data, variant, title, selectorOptions, outline, headerIsOutside, headerPaddingTop,
-        xAxisKey, ...props}
+        xAxisKey, 'data-testid': testId, ...props}
     : GraphPropTypes) => {
     const graphVariant = variant === undefined ? 'line' : variant;
     const [graphData, setGraphData] = useState(initialGraphDataStateValues(data, selectorOptions));
@@ -38,7 +38,7 @@ const Graph = ({data, variant, title, selectorOptions, outline, headerIsOutside,
     }, [selectorOptions])
 
     return(
-        <div>
+        <div data-testid={testId}>
         {headerIsOutside ? 
             <GraphHeading 
                 title={title}

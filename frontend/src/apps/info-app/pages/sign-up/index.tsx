@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom'
 import {RowBox} from '@components/containers'
-import {SP, P} from '@components/text'
+import {SP} from '@components/text'
 import Http from '@services/http'
 import {getColor, getDimen} from '@conf/utils'
 import {HttpConst, RouteConst} from '@conf/const'

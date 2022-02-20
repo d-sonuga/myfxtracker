@@ -61,7 +61,7 @@ const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
     return(
         <PageContainer>
             <PageHeading heading='Notes' />
-            <ColumnBox>
+            <ColumnBox data-testid='notebook'>
                 <MainToolbar 
                     isEditing={isEditing}
                     showAllNotes={showAllNotes}

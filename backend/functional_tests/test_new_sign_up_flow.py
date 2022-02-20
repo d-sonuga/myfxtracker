@@ -27,7 +27,7 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
         self.reattempt_login_after_resetting_password()
 
     def sign_up_new_user(self):
-        sign_up_url = f'{self.base_url}/sign-up'
+        sign_up_url = 'sign-up'
         self.assert_user_about_to_be_created_doesnt_exist_yet()
         self.navigate(sign_up_url)
         self.assert_title_is_site_name()
@@ -35,14 +35,13 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
         details = SignUpDetails.good_details
         self.fill_sign_up_form(details)
         self.do_until_max_wait(submit_button.click)
-        self.wait_a_little()
-        self.assert_success_alert_is_showing()
+        self.do_until_max_wait(self.assert_success_alert_is_showing)
         self.assert_user_has_been_saved(details)
-        # Settings the self.user, now that user has been saved
+        # setting the self.user, now that user has been saved
         self.user = User.objects.get(email=details['email'])
     
     def attempt_to_login_without_verifying_email(self):
-        login_url = f'{self.base_url}/log-in'
+        login_url = 'log-in'
         self.close_current_tab_and_open_new_tab()
         self.navigate(login_url)
         self.assert_title_is_site_name()
@@ -53,15 +52,14 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
         self.wait_a_little()
         # After a successful login, page redirects to the app dashboard
         # This login shouldnt be successful, so it shouldnt redirect
-        self.assert_page_hasnt_changed(login_url)
+        self.assert_page_hasnt_changed(f'{self.base_url}/{login_url}')
         self.assert_non_field_error_alert_is_showing()
     
     def verify_email(self):
         self.close_current_tab_and_open_new_tab()
         self.wait_a_little()
-        verify_email_link = self.get_email_verification_link()
-        print(verify_email_link, 'vvvfrff')
-        self.navigate(verify_email_link)
+        verify_email_link = self.get_email_verification_link()  
+        self.open_url(verify_email_link)
     
     def attempt_to_login_after_verifying_email(self):
         app_dashboard_url = f'{self.base_url}/app'
@@ -72,7 +70,7 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
     
     def change_password(self):
         details = SignUpDetails.good_details_password_change
-        self.navigate(f'{self.base_url}/change-password')
+        self.navigate('change-password')
         self.assert_user_password_is_not_yet_changed(details)
         self.fill_change_password_form(details)
         submit_button = self.get_submit_button()
@@ -86,7 +84,7 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
 
     def reset_password(self):
         self.close_current_tab_and_open_new_tab()
-        self.navigate(f'{self.base_url}/reset-password')
+        self.navigate('reset-password')
         details = SignUpDetails.good_details_password_reset
         self.fill_reset_password_form(details)
         submit_button = self.get_submit_button()
@@ -99,7 +97,7 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
         confirm_password_reset_url = self.get_reset_password_confirmation_link()
         user = User.objects.get(id=self.user.id)
         self.close_current_tab_and_open_new_tab()
-        self.navigate(confirm_password_reset_url)
+        self.open_url(confirm_password_reset_url)
         self.assertFalse(user.check_password(details['password1']))
         self.fill_reset_password_confirm_form(details)
         submit_button = self.get_submit_button()
@@ -122,7 +120,7 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
         return url
 
     def attempt_login(self, details):
-        login_url = f'{self.base_url}/log-in'
+        login_url = 'log-in'
         self.close_current_tab_and_open_new_tab()
         self.navigate(login_url)
         self.assert_title_is_site_name()

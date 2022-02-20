@@ -11,6 +11,7 @@ const ShortBalanceGraph = ({data}: {data: ShortBalanceGraphCalc}) => {
             yAxisKey='result'
             outline={true}
             headerIsOutside={true}
+            data-testid='short-balance-graph'
             />
     );
 }

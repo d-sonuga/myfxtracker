@@ -16,6 +16,7 @@ const OpenHourTable = ({calc}: {calc: OpenHourTableCalc}) => {
                 condition: (i) => i === 1,
                 style: {background: getColor('light-gray')}
             }}
+            data-testid='open-hour-table'
             />
     )
 }

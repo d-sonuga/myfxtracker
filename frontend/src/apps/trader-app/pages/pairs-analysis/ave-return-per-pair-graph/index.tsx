@@ -14,6 +14,7 @@ const AveReturnPerPairGraph = ({data}: {data: AveReturnsPerPairGraphCalc}) => {
             yAxisKey='result'
             outline={true}
             headerIsOutside={true}
+            data-testid='ave-returns-per-pair-graph'
             />
     )
 }

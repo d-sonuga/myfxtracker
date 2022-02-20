@@ -6,7 +6,7 @@ const FormConst = {
 
 /** Urls for contacting the backend */
 const HttpConst = {
-    BASE_URL: 'http://localhost:80',
+    BASE_URL: 'http://172.17.0.3:8000',
     SIGN_UP_URL: 'trader/sign-up',
     LOGIN_URL: 'trader/login',
     CHANGE_PASSWORD_URL: 'users/password-change',
@@ -48,7 +48,7 @@ const RouteConst = {
     TRADER_CASH_AND_GAINS_ROUTE: 'cash-and-gains',
     TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE: 'long-short-analysis',
     TRADER_PAIRS_ANALYSIS_ROUTE: 'pairs-analysis',
-    TRADER_TIME_ANALYSIS_ROUTE: 'trader-time-analysis',
+    TRADER_TIME_ANALYSIS_ROUTE: 'time-analysis',
     TRADER_PERIOD_ANALYSIS_ROUTE: 'period-analysis',
     TRADER_EXPENSES_ROUTE: 'expenses',
     TRADER_SETTINGS_ROUTE: 'settings',

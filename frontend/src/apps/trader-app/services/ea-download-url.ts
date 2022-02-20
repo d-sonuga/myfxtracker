@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
 import Http, {HttpErrorType, HttpResponseType} from '@services/http'
-import {HttpConst} from '@conf/const';
+import {HttpConst} from '@conf/const'
 
 
 const useEaDownloadUrl = () => {

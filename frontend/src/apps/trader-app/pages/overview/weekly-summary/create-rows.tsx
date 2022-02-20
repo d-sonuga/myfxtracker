@@ -11,7 +11,6 @@ const createRows = (summary: OverviewWeeklySummaryCalc): Array<Array<ReactNode>>
             [
                 <P>{date}</P>,
                 <P>{summary[date].trades.toString()}</P>,
-                <P>{summary[date].lots.toString()}</P>,
                 resultInColor(summary[date].result),
             ]
         ));

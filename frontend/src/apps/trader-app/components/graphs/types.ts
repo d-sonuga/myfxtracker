@@ -48,6 +48,7 @@ type GraphPropTypes = Omit<BaseGraphPropTypes, 'data' | 'xAxisKey'> &
     outline?: boolean,
     headerIsOutside?: boolean,
     headerPaddingTop?: number | string,
+    'data-testid'?: string,
     /**
      * When there is only 1 x-axis key, a string will be passed
      * But when there are many, like in the case of a graph with

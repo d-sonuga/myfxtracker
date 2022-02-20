@@ -17,6 +17,7 @@ const CashGraph = ({data}: {data: CashGraphCalc}) => {
             xAxisKey='tradeNo'
             yAxisKey='balance'
             outline={true}
+            data-testid='cash-graph'
             />
     )
 }

@@ -35,7 +35,7 @@ const Journal = () => {
 
     return(
         <PageContainer>
-            <div style={{height: '75vh'}}>
+            <div style={{height: '75vh'}} data-testid='journal-table'>
                 <DataGrid
                     sx={{marginTop: '100px'}}
                     columns={columns}

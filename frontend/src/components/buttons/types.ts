@@ -1,6 +1,23 @@
 import {ComponentWithChildrenPropTypes} from '@components/types'
+import {ButtonProps} from '@mui/material'
 
-interface IButtonPropTypes extends ComponentWithChildrenPropTypes {
+
+declare module '@mui/material/Button' {
+    interface ButtonPropsColorOverrides {
+        neutral: true
+    }
+}
+
+declare module '@mui/material/styles' {
+    interface Palette {
+        neutral: Palette['primary']
+    }
+    interface PaletteOptions {
+        neutral: PaletteOptions['primary']
+    }
+}
+
+type IButtonPropTypes = ComponentWithChildrenPropTypes  & Pick<ButtonProps, 'color'> & {
     onClick?: React.MouseEventHandler,
     disabled?: boolean,
     elevation?: boolean,
@@ -8,15 +25,16 @@ interface IButtonPropTypes extends ComponentWithChildrenPropTypes {
     'data-testid'?: string
 }
 
-interface BaseButtonPropTypes extends IButtonPropTypes {
+type BaseButtonPropTypes = IButtonPropTypes & {
     variant: 'text' | 'contained' | 'outlined'
 }
 
-interface ButtonPropTypes extends IButtonPropTypes {}
+type ButtonPropTypes = IButtonPropTypes
 
-interface OutlinedButtonPropTypes extends IButtonPropTypes {}
+type OutlinedButtonPropTypes = IButtonPropTypes
 
 export type {
+    IButtonPropTypes,
     BaseButtonPropTypes,
     ButtonPropTypes,
     OutlinedButtonPropTypes

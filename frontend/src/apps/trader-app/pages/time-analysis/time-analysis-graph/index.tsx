@@ -24,6 +24,7 @@ const TimeAnalysisGraph = ({data}: {data: TimeAnalysisGraphCalc}) => {
             yAxisKey='result'
             selectorOptions={options}
             outline={true}
+            data-testid='open-hour-graph'
             />
     )
 }

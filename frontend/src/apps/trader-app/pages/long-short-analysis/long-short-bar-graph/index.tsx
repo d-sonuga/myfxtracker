@@ -15,6 +15,7 @@ const LongShortBarGraph = ({data}: {data: LongShortComparisonGraphCalc}) => {
                 headerIsOutside={true}
                 headerPaddingTop={0}
                 height={270}
+                data-testid='long-short-bar-graph'
                 />
         </div>
     )

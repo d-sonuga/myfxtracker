@@ -28,6 +28,7 @@ const PairsTable = ({calc}: PairsTablePropTypes) => {
                 {condition: (i) => i === 2 || i === 6, style: {background: getColor('xlight-green')}},
                 {condition: (i) => i === 3 || i === 7, style: {background: getColor('light-red')}}
             ]}
+            data-testid='pairs-table'
             />
     );
 }

@@ -7,11 +7,10 @@ import {TablePropTypes, ConditionalStyle, HeaderItem, HeaderItemObject} from './
 
 const Table = ({title, headers, rows, style, bodyColumnConditionalStyle, headerStyle,
         headerRowConditionalStyle, headerColumnConditionalStyle, headerColumnTextConditionalStyle,
-        headerTextStyle, headerRowTextConditionalStyle, bodyStyle, bodyTextStyle,
-        bodyRowConditionalStyle, bodyRowTextConditionalStyle, bodyColumnTextConditionalStyle}
+        headerTextStyle, headerRowTextConditionalStyle, bodyStyle, bodyRowConditionalStyle, 'data-testid': testId}
     : TablePropTypes) => {
     return(
-        <div>
+        <div data-testid={testId}>
         {title ? 
             <H6 style={{marginBottom: getDimen('padding-xs')}}>{title}</H6>
             : null
@@ -69,13 +68,11 @@ const Table = ({title, headers, rows, style, bodyColumnConditionalStyle, headerS
                 </TableHead>
                 <TableBody>
                     {rows.map((row, rowi) => {
-                        let rowStyles = getConditionalStyles(rowi, bodyRowConditionalStyle);
+                        let conditionalRowStyles = getConditionalStyles(rowi, bodyRowConditionalStyle);
                         return(
-                            <TableRow 
-                                key={rowi}
-                                sx={rowStyles}>
+                            <TableRow key={rowi}>
                                 {row.map((cell, coli) => {
-                                    const columnStyles = getConditionalStyles(coli, bodyColumnConditionalStyle);
+                                    const conditionalColumnStyles = getConditionalStyles(coli, bodyColumnConditionalStyle);
                                     const bodyCellStyle = bodyStyle ? bodyStyle : {};
                                     const globalStyle = style ? style : {};
                                     return(
@@ -85,7 +82,8 @@ const Table = ({title, headers, rows, style, bodyColumnConditionalStyle, headerS
                                             sx={{
                                                 ...globalStyle,
                                                 ...bodyCellStyle,
-                                                ...columnStyles
+                                                ...conditionalColumnStyles,
+                                                ...conditionalRowStyles
                                             }}>
                                             {cell}
                                         </TableCell>
@@ -93,7 +91,7 @@ const Table = ({title, headers, rows, style, bodyColumnConditionalStyle, headerS
                                 })}
                             </TableRow>
                         )
-                        })}
+                    })}
                 </TableBody>
             </MuiTable>
         </TableContainer>

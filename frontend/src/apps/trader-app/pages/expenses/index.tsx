@@ -24,6 +24,7 @@ const Expenses = () => {
                     condition: (i) => i === 1,
                     style: {background: getColor('light-gray')}
                 }}
+                data-testid='expenses-table'
                 />
         </PageContainer>
     )

@@ -4,19 +4,20 @@
 *   All dimensions in the css variables are prefixed with --dimen
 */
 import useScreenIsSmall from './use-screen-is-small'
+import {Color, Dimen} from './types'
 
 const colorPrefix = '--color';
 const dimenPrefix = '--dimen';
 
-const getColor = (name: string) => {
+const getColor = (name: Color) => {
     return _getAttr(`${colorPrefix}-${name}`) ? _getAttr(`${colorPrefix}-${name}`) : '';
 }
 
-const getDimen = (name: string) => {
+const getDimen = (name: Dimen) => {
     return _getAttr(`${dimenPrefix}-${name}`) ? _getAttr(`${dimenPrefix}-${name}`) : '';
 }
 
-const getDimenInNo = (name: string) => {
+const getDimenInNo = (name: Dimen) => {
     let dimen = _getAttr(`${dimenPrefix}-${name}`) ? _getAttr(`${dimenPrefix}-${name}`) : '';
     return _extractNo(dimen);
 }

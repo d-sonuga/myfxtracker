@@ -15,7 +15,8 @@ const OverviewCards = ({calc}: {calc: OverviewCardsCalc}) => {
     const absGain = `${to2dpString(calc.absGain)}`;
 
     return(
-        <div className='apps-trader-app-pages-overview-overview-cards-container'>
+        <div className='apps-trader-app-pages-overview-overview-cards-container'
+            data-testid='overview-cards'>
             <BalanceCard balance={balance} />
             <NoOfTradesCard noOfTrades={noOfTrades} />
             <WinRateCard winRate={winRate} />

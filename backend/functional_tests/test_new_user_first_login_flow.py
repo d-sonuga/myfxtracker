@@ -13,11 +13,10 @@ the data source EA
 This tests the flow from that first login to the presence of the instructions
 to the simulation of the following of the instructions.
 The following of the instructions has to be simulated because it requires
-the use of the mt terminal which can tbe automated right now
+the use of the mt terminal which can't be automated right now
 """
 
 @override_settings(DEBUG=True)
-@tag('new-user-login-flow')
 class NewTraderLoginFlow(BaseFunctionalTest):
     @classmethod
     def setUpClass(cls):
@@ -36,10 +35,11 @@ class NewTraderLoginFlow(BaseFunctionalTest):
         self.login_new_user()
         self.assert_instructions_are_in_app_pages_and_not_settings()
         self.simulate_follow_instructions()
+        self.assert_stats_are_showing()
 
     def login_new_user(self):
         details = LoginDetails.good_details
-        self.navigate(f'{self.base_url}/log-in')
+        self.navigate('log-in')
         self.assert_title_is_site_name()
         self.fill_login_form(details)
         submit_button = self.get_submit_button()
@@ -49,9 +49,11 @@ class NewTraderLoginFlow(BaseFunctionalTest):
     
     def assert_instructions_are_in_app_pages_and_not_settings(self):
         def navigate(url):
-            self.navigate(f'{self.base_url}/app/{url}')
+            self.navigate(f'app/{url}')
         def assert_instructions_are_in_page():
-            self.assert_element_is_in_page('data-source-setup-instructions')
+            def _assert_instructions_are_in_page():
+                self.assert_element_is_in_page('data-source-setup-instructions')
+            self.do_until_max_wait(_assert_instructions_are_in_page)
         navigate('journal')
         assert_instructions_are_in_page()
         navigate('cash-and-gains')
@@ -70,9 +72,13 @@ class NewTraderLoginFlow(BaseFunctionalTest):
         self.assert_element_is_not_in_page('data-source-setup-instructions')
 
     def simulate_follow_instructions(self):
-        self.navigate(f'{self.base_url}/app')
-        download_ea_mt4 = self.find_by_testid('download-ea-mt4')
-        download_ea_mt5 = self.find_by_testid('download-ea-mt5')
+        self.navigate('app')
+        def find_mt4_ea():
+            return self.find_by_testid('download-ea-mt4')
+        def find_mt5_ea():
+            return self.find_by_testid('download-ea-mt5')
+        download_ea_mt4 = self.do_until_max_wait(find_mt4_ea)
+        download_ea_mt5 = self.do_until_max_wait(find_mt5_ea)
         self.do_until_max_wait(download_ea_mt4.click)
         self.do_until_max_wait(download_ea_mt5.click)
         # When a user has successfully followed all the instructions
@@ -80,12 +86,55 @@ class NewTraderLoginFlow(BaseFunctionalTest):
         trader = Trader.objects.get(email=self.details['email'])
         Account.objects.create_account(
             trader,
-            DatasourceInitialInfoData.good_details_with_transactions1['data']
+            DatasourceInitialInfoData.good_details_with_transactions['data']
         )
-        self.fail()
 
     def fill_login_form(self, details):
         email = self.find_by_testid('email')
         password = self.find_by_testid('password')
         email.send_keys(details['email'])
         password.send_keys(details['password'])
+
+    def assert_stats_are_showing(self):
+        self.navigate('app')
+        def assert_elements_are_in_page(test_ids):
+            for test_id in test_ids:
+                self.do_until_max_wait(lambda: self.assert_element_is_in_page(test_id))
+        assert_elements_are_in_page((
+            'overview-cards',
+            'overview-stats',
+            'weekly-summary',
+            'account-returns-graph'
+        ))
+        self.navigate('app/journal')
+        assert_elements_are_in_page(('journal-table',))
+        self.navigate('app/long-short-analysis')
+        assert_elements_are_in_page((
+            'short-balance-graph',
+            'long-short-comparison-table',
+            'long-short-bar-graph',
+            'long-balance-graph'
+        ))
+        self.navigate('app/cash-and-gains')
+        assert_elements_are_in_page((
+            'gains-graph',
+            'cash-graph'
+        ))
+        self.navigate('app/pairs-analysis')
+        assert_elements_are_in_page((
+            'ave-returns-per-pair-graph',
+            'ave-rrr-per-pair-graph',
+            'pairs-table'
+        ))
+        self.navigate('app/time-analysis')
+        assert_elements_are_in_page((
+            'open-hour-table',
+            'open-hour-graph',
+            'trade-duration-table'
+        ))
+        self.navigate('app/period-analysis')
+        assert_elements_are_in_page(('returns-per-period-graph',))
+        self.navigate('app/notes')
+        assert_elements_are_in_page(('notebook',))
+        self.navigate('app/expenses')
+        assert_elements_are_in_page(('expenses-table',))

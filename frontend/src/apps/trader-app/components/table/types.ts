@@ -61,6 +61,7 @@ type TablePropTypes = {
      * i is the 0-based index of the column
      * */
     bodyColumnTextConditionalStyle?: ConditionalStyle | Array<ConditionalStyle>,
+    'data-testid'?: string
 }
 
 type InlineCssStyle = {[key: string]: any}

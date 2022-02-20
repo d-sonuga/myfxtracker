@@ -17,7 +17,8 @@ const OverviewStats = ({stats}: {stats: OverviewStatsCalc}) => {
                 bodyColumnConditionalStyle={{
                     condition: (columnIndex) => columnIndex % 2 !== 0,
                     style: {background: getColor('light-gray')}
-                }} />
+                }}
+                data-testid='overview-stats' />
         </div>
     );
 }

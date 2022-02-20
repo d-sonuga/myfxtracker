@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {HttpMsg} from '@services/generic-msg'
+import {ConfigConst} from '@conf/const'
 import {HttpClientType, HttpPostConfigType, HttpDeleteConfigType, HttpPutConfigType,
     HandleResolveRequestConfig, HttpGetConfigType} from './types'
 
@@ -12,7 +13,7 @@ const getDefaultHeaders = (noToken: boolean | undefined) => {
     }
     return {
         ...headers,
-        'Authorization': `Token ${localStorage.getItem('KEY')}`
+        'Authorization': `Token ${localStorage.getItem(ConfigConst.TOKEN_KEY)}`
     }
 }
 
