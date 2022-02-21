@@ -1,0 +1,22 @@
+# For development only
+version: "3.3"
+services:
+  frontend:
+    build: frontend/
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/:/frontend
+  backend:
+    build: backend/
+    ports:
+      - "8000:8000"
+      - "1080:1080"
+    volumes:
+      - ./backend/:/backend
+    env_file:
+      - backend/.env
+  firefox:
+    image: selenium/standalone-firefox:96.0
+    ports:
+      - "7900:7900"
