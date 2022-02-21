@@ -15,7 +15,8 @@ SECRET_KEY = 'idcc2=#3@bp2$yasc2e23@tra!^)z=##wb4ml*1$2y!bfiouek'
 DEBUG = os.getenv('DEBUG') == 'true'
 
 ALLOWED_HOSTS = ['*'] if DEBUG else [
-    'myfxtracker.com'
+    'myfxtracker.com',
+    'myfxtracker.herokuapp.com'
 ]
 
 AUTH_USER_MODEL = 'users.User'

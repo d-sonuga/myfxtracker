@@ -4,7 +4,6 @@ import {RouteConst} from '@conf/const'
 import {HomePage, SignUpPage, LoginPage, ResetPasswordPage, ResetPasswordConfirmPage,
     FAQPage, PricingPage, ChangePasswordPage} from './pages'
 
-
 const InfoApp = () => {
     const {INFO_HOME_ROUTE, INFO_SIGN_UP_ROUTE, INFO_CHANGE_PASSWORD_ROUTE, INFO_RESET_PASSWORD_ROUTE,
         INFO_LOGIN_ROUTE, INFO_FAQ_ROUTE, INFO_PRICING_ROUTE} = RouteConst;

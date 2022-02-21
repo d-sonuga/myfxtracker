@@ -17,6 +17,9 @@ class SignUpChangePasswordFlowTests(BaseFunctionalTest):
     def test_flow(self):
         # After signing up, user will no longer be None
         self.user = None
+        from django.contrib.sites.models import Site
+        s=Site.objects.get(id=1)
+        print(s.name, s.domain)
         self.sign_up_new_user()
         self.attempt_to_login_without_verifying_email()
         self.verify_email()

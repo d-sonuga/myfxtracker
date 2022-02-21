@@ -30,7 +30,7 @@ class BaseFunctionalTest(LiveServerTestCase):
         cls.maildump_server_address = 'http://localhost:1080'
         site = Site.objects.get(id=settings.SITE_ID)
         # The password related emails use this domain as the domain they show
-        site.domain = 'backend'
+        site.domain = 'frontend'
         site.save()
     
     @classmethod

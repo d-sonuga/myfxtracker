@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../src/period-analysis-calculations/index.ts"],"names":[],"mappings":";;;;;AACA,kGAAuE;AAGvE,IAAM,0BAA0B,GAAG,UAAC,WAAwB;IACxD,IAAM,YAAY,GAA+B;QAC7C,yBAAyB,EAAE,IAAA,uCAAyB,EAAC,WAAW,CAAC;KACpE,CAAA;IACD,OAAO,YAAY,CAAA;AACvB,CAAC,CAAA;AAED,kBAAe,0BAA0B,CAAA"}

@@ -1,3 +1,5 @@
+//import env
+
 const FormConst = {
     PASSWORD_MIN_LENGTH: 8,
     PASSWORD_MAX_LENGTH: 128
@@ -6,7 +8,9 @@ const FormConst = {
 
 /** Urls for contacting the backend */
 const HttpConst = {
-    BASE_URL: 'http://172.19.0.2:8000',
+    BASE_URL: process.env.NODE_ENV !== 'production' ? 
+        process.env.REACT_APP_DEV_BASE_URL
+        : process.env.REACT_APP_PROD_BASE_URL,
     SIGN_UP_URL: 'trader/sign-up',
     LOGIN_URL: 'trader/login',
     CHANGE_PASSWORD_URL: 'users/password-change',
