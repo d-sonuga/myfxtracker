@@ -11,8 +11,7 @@ from trader.models import Preferences
 from users.models import User
 from django.db.models.signals import post_delete, post_save
 import hashlib
-import datetime
-from .models import SubscriptionInfo, Trader
+from .models import SubscriptionInfo, Trader, MailChimpError
 import os
 
 
@@ -69,7 +68,10 @@ def email_confirmed_(request, email_address, **kwargs):
             'email_address': email_address.email,
             'status': 'subscribed'
         }
-        mailchimp.lists.add_list_member(AUDIENCE_ID, member_info)
+        try:
+            mailchimp.lists.add_list_member(AUDIENCE_ID, member_info)
+        except Exception:
+            MailChimpError.objects.create(email=email_address.email, action='add_list_member')
 
 
 @receiver(post_save, sender=Trader)
@@ -90,6 +92,9 @@ def user_account_deleted(sender, instance, using, **kwargs):
             'api_key': API_KEY,
             'server': SERVER_PREFIX
         })
-        mailchimp.lists.delete_list_member(
-            AUDIENCE_ID, hashlib.md5(instance.email.encode()).hexdigest()
-        )
+        try:
+            mailchimp.lists.delete_list_member(
+                AUDIENCE_ID, hashlib.md5(instance.email.encode()).hexdigest()
+            )
+        except Exception:
+            MailChimpError.objects.create(email=instance.email, action='delete_list_member')

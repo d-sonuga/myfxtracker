@@ -218,12 +218,8 @@ class TradeManager(models.Manager):
     
 
 class Trade(models.Model):
-    action_choices = (
-        ('b', 'Buy'),
-        ('s', 'Sell')
-    )
     pair = models.CharField(max_length=10)
-    action = models.CharField(choices=action_choices, max_length=4)
+    action = models.CharField(max_length=50)
     entry_date = models.DateField(null=True)
     exit_date = models.DateField(blank=True, null=True)
     risk_reward_ratio = models.DecimalField(decimal_places=2, max_digits=19, null=True)

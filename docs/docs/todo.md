@@ -19,6 +19,19 @@
     *   what is the mql5 deal type for a withdrawal
     *   what is the mql4 comment for a withdrawal
 
-# Finally
-*   Integrate the frontend, backend and the metatrader data source
-*   All round testing
+# Issues
+1.  mt4 datasource ea automatically deleting after adding to expert advisors
+2.  Notes not saving properly
+3.  Complex instructions
+4.  Trade commissions not saved in the db
+5.  Datasource authentication reading deleted user account's datasource usernames as valid
+6.  Logo not showing
+7.  Landing page
+8.  Absolute gains on the overview page not showing percentage sign
+9.  Stats numbers on the frontend are more than 2 dp
+10. What does a withdrawal look like
+
+# Need to be added
+1.  Instructions to add new account
+2.  Periodic graph trading time default as all time
+3.  Account returns on the frontend should be set to be the cummulative

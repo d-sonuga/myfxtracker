@@ -44,7 +44,7 @@ const DataSourceSetupInstructions = ({dsUsername, eaDownloadUrls}: {dsUsername: 
                 </li>
                 <li><P>Open your Metatrader terminal</P></li>
                 <li><P>Press Ctrl + O </P></li>
-                <li><P>Tick allow WebRequest for listed url and enter https://myfxtracker.com</P></li>
+                <li><P>Tick allow WebRequest for listed url and enter https://new.myfxtracker.com</P></li>
                 <li><P>Launch the EA and input your MT username:</P><P>{dsUsername}</P></li>
                 <li><P>Check back in a minute and reload the page</P></li>
             </ol>

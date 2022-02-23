@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -9,14 +10,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'idcc2=#3@bp2$yasc2e23@tra!^)z=##wb4ml*1$2y!bfiouek'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'true'
 
 ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com',
-    'myfxtracker.herokuapp.com'
+    'myfxtracker.herokuapp.com',
+    'new.myfxtracker.com'
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -24,11 +26,9 @@ AUTH_USER_MODEL = 'users.User'
 # Application definition
 
 INSTALLED_APPS = [
-    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    #'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
@@ -65,12 +65,11 @@ else:
 
 MIDDLEWARE += [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'datasource_endpoint.middleware.DatasourceAuthenticationMiddleware',
-    # 'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -80,7 +79,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'static'),
+            os.path.join(BASE_DIR.parent, 'frontend', 'build')
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -115,6 +114,8 @@ DATABASES = {
         }
     }
 }
+if not DEBUG:
+    DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
 
 SITE_ID = 1
 
@@ -173,12 +174,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    # os.path.join(BASE_DIR, 'static', 'static'),
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR.parent, 'frontend', 'build', 'static')
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -187,7 +191,6 @@ REST_FRAMEWORK = {
         'core.authentication.UserAuthentication',
     ]
 }
-
 
 # For trader registration
 REST_AUTH_REGISTER_SERIALIZERS = {
@@ -207,11 +210,15 @@ if DEBUG:
     EMAIL_HOST_USER = ''
     EMAIL_HOST_PASSWORD = ''
 else:
-    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST = os.getenv('EMAIL_HOST')
     EMAIL_USE_TLS = True
-    EMAIL_PORT = 587
+    EMAIL_PORT = os.getenv('EMAIL_PORT')
     EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
     EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_EMAIL_ADDRESS')
+SERVER_EMAIL = os.getenv('EMAIL_HOST_USER')
+ADMINS = [('MyFxTracker', os.getenv('ADMIN_EMAIL'))]
 
 MAILCHIMP_AUDIENCE_ID = os.getenv('MAILCHIMP_AUDIENCE_ID')
 MAILCHIMP_API_KEY = os.getenv('MAILCHIMP_API_KEY')
@@ -237,7 +244,7 @@ if DEBUG:
     else:
         LOGIN_URL = 'http://localhost:3000/log-in'
 else:
-    LOGIN_URL = 'https://myfxtracker.com/log-in'
+    LOGIN_URL = 'https://new.myfxtracker.com/log-in'
 
 # Paypal endpoint
 PAYPAL_BASE_URL = os.getenv('PAYPAL_BASE_URL') #'https://api-m.sandbox.paypal.com'
@@ -259,4 +266,3 @@ MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
-#DATA_UPLOAD_MAX_MEMORY_SIZE = 10000000000000000000000000000000

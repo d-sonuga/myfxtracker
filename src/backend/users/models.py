@@ -1,5 +1,6 @@
 from django.db import IntegrityError, models
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
+from django.core.mail import mail_admins
 from datetime import datetime, date, timedelta
 import nanoid
 
@@ -192,3 +193,29 @@ def get_payment_method(user):
         return 'paypal'
     else:
         return 'paystack'
+
+
+class MailChimpErrorManager(models.Manager):
+    def create(self, *args, **kwargs):
+        error = super().create(*args, **kwargs)
+        mail_admins(
+            'A Mailchimp Error',
+            f'There was a mailchimp error when performing action {error.action} '
+            f'for a user with email address {error.email}'
+        )
+        return error
+
+
+class MailChimpError(models.Model):
+    """
+    To record all instances where any mailchimp mishaps happen
+    so they can be resolved later
+    """
+    actions = (
+        ('dellistmem', 'delete_list_member'),
+        ('addlistmem', 'add_list_member')
+    )
+    email = models.CharField(max_length=60)
+    action = models.CharField(max_length=20)
+
+    objects = MailChimpErrorManager()

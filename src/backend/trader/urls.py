@@ -7,7 +7,9 @@ from .views import (add_trade, add_deposit, add_withdrawal, update_trade, get_in
 
 urlpatterns = [
     path('sign-up/', sign_up),
-    path('login/', login),
+    # The name argument is needed by the email confirmation mechanism to
+    # determine the appropriate login url
+    path('login/', login, name='account_login'),
     path('send_weekly_reports/', send_weekly_reports),
     path('download_ea/', download_ea),
     path('logout/', logout),

@@ -1,3 +1,5 @@
+#include <myfxtracker/urls.mqh>
+
 class BaseErrors {
     public:
         int URL_NOT_ALLOWED_CODE;
@@ -21,7 +23,7 @@ class BaseErrors {
             this.SUBSCRIPTION_EXPIRED_CODE = -4;
             this.SUBSCRIPTION_EXPIRED_MSG = "Your subscription has expired. Please for subscribe for continued service and restart the EA";
             this.UNKNOWN_ERR_MSG = "Unknown Error";
-            this.URL_NOT_ALLOWED_MSG = "Please add https://myfxtracker.com to the list of allowed urls and restart the EA";
+            this.URL_NOT_ALLOWED_MSG = "Please add " + MAIN_BASE_URL + " to the list of allowed urls and restart the EA";
         }
         string getErrorMessage(int errorCode){
             if(errorCode == this.URL_NOT_ALLOWED_CODE){

@@ -14,6 +14,8 @@ mailchimp-marketing = "3.0.74"
 pillow = "9.0.0"
 django-rest-passwordreset = "*"
 nanoid = "*"
+django-database-url = "*"
+whitenoise = "*"
 
 [dev-packages]
 maildump = "1.0"
