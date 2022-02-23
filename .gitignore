@@ -31,4 +31,4 @@ description.md
 geckodriver.log
 **/site
 .vscode
-issues.md
+**/todo.md
