@@ -80,8 +80,9 @@ const initialGraphDataStateValues = (data?: GraphData, selectorOptions?: {[key: 
         return data;
     }
     if(selectorOptions !== undefined){
-        const firstOptionName = Object.keys(selectorOptions)[0];
-        return selectorOptions[firstOptionName];
+        const options = Object.keys(selectorOptions);
+        const lastOptionName = options[options.length - 1];
+        return selectorOptions[lastOptionName];
     }
     return []
 }

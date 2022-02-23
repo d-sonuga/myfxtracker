@@ -16,6 +16,8 @@ services:
       - ./backend/:/backend
     env_file:
       - backend/.env
+    stdin_open: true
+    tty: true
   firefox:
     image: selenium/standalone-firefox:96.0
     ports:

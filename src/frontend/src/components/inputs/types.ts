@@ -37,7 +37,8 @@ type SelectInputPropTypes = InputPropTypes & {
 
 type ChipSelectInputPropTypes = {
     options: string[],
-    onChange?: Function
+    onChange?: Function,
+    defaultOption?: 'first' | 'last' | number
 }
 
 export type {

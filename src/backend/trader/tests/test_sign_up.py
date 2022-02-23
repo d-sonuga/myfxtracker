@@ -27,6 +27,7 @@ Note: The cases concerning howYouHeard and yearsSpentTrading fields in user inpu
 from datetime import date, timedelta
 from django.test import TestCase, tag
 from django.core import mail
+from django.conf import settings
 from trader.models import Preferences
 from users.models import Trader
 from allauth.account.models import EmailAddress
@@ -44,7 +45,8 @@ class SignUpTests(TestCase):
         # The user should exist now
         self.assertEquals(user_set.count(), 1)
         # The verification email should have been sent
-        self.assertEquals(len(mail.outbox), 1)
+        if settings.DEBUG:
+            self.assertEquals(len(mail.outbox), 1)
         user = user_set[0]
         # The user should have a datasource_username
         self.assertTrue(len(user.traderinfo.datasourceusername.username) >= 10)

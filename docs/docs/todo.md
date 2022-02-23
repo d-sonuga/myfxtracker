@@ -7,8 +7,6 @@
 *  Datasource authentication reading deleted user account's datasource usernames as valid
 *  Logo not showing
 *  Landing page
-*  Absolute gains on the overview page not showing percentage sign
-*  Stats numbers on the frontend are more than 2 dp
 *  What does a withdrawal look like
 
 ## Frontend

@@ -1,13 +1,13 @@
-import {useEffect, useState, useRef, SyntheticEvent} from 'react'
+import {useState, useRef} from 'react'
 import {Chip, Menu, MenuItem} from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {ChipSelectInputPropTypes} from './types'
 
 
-const ChipSelectInput = ({options, onChange}: ChipSelectInputPropTypes) => {
+const ChipSelectInput = ({options, onChange, defaultOption}: ChipSelectInputPropTypes) => {
     const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
     const [menuIsOpen, setMenuIsOpen] = useState(false);
-    const [currentlySelectedMenuItem, setCurrentlySelectedMenuItem] = useState(options[0]);
+    const [currentlySelectedMenuItem, setCurrentlySelectedMenuItem] = useState(defaultSelectedMenuItem(options, defaultOption));
     const chipEl = useRef<HTMLDivElement | null>(null);
     const openMenu = (e: any) => { 
         setMenuAnchorEl(chipEl.current);
@@ -45,6 +45,20 @@ const ChipSelectInput = ({options, onChange}: ChipSelectInputPropTypes) => {
             </Menu>
         </div>
     );
+}
+
+const defaultSelectedMenuItem = (options: ChipSelectInputPropTypes['options'],
+        defaultOption: ChipSelectInputPropTypes['defaultOption']): string => {
+    if(defaultOption === undefined){
+        return options[options.length - 1];
+    }
+    if(defaultOption === 'first'){
+        return options[0];
+    } else if(defaultOption === 'last'){
+        return options[options.length - 1];
+    } else {
+        return options[defaultOption];
+    }
 }
 
 export default ChipSelectInput
