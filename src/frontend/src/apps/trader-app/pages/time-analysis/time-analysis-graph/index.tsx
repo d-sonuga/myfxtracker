@@ -1,4 +1,5 @@
 import {Graph} from '@apps/trader-app/components'
+import {objArrayTo2dp} from '@apps/trader-app/utils'
 import {TimeAnalysisGraphCalc, TimeAnalysisGraphCalcItem} from 'calculator'
 
 
@@ -7,7 +8,7 @@ const TimeAnalysisGraph = ({data}: {data: TimeAnalysisGraphCalc}) => {
         if(data.length === 0){
             return [{openHour: '', result: 0}]
         }
-        return data
+        return objArrayTo2dp(data, 'result');
     }
     const options = {
         'Today': format(data.todayGraphCalc),

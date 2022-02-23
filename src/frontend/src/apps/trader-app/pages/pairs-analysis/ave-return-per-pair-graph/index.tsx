@@ -1,10 +1,11 @@
 import {Graph} from '@apps/trader-app/components'
-import {AveReturnsPerPairGraphCalc} from 'calculator/dist'
+import {objArrayTo2dp} from '@apps/trader-app/utils'
+import {AveReturnsPerPairGraphCalc} from 'calculator'
 
 
 const AveReturnPerPairGraph = ({data}: {data: AveReturnsPerPairGraphCalc}) => {
     const graphData: AveReturnsPerPairGraphCalc = data.length === 0 ? [{pair: '', result: 0}]
-        : data
+        : objArrayTo2dp(data, 'result');
     return(
         <Graph
             title='Average Return Per Pair'

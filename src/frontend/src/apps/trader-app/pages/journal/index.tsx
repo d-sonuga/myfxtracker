@@ -2,6 +2,7 @@ import {useContext, useEffect, useState} from 'react'
 import {DataGrid, GridToolbar, GridColDef, GridRowsProp} from '@mui/x-data-grid'
 import {BP} from '@components/text'
 import {PageContainer} from '@apps/trader-app/components'
+import {formatMoney} from '@apps/trader-app/utils'
 import {GlobalDataContext} from '@apps/trader-app'
 
 
@@ -27,7 +28,7 @@ const Journal = () => {
                     pair: trade.pair, 
                     action: trade.action.toUpperCase(),
                     fee: trade.commission !== undefined && trade.swap !== undefined ? trade.commission + trade.swap : 'None Found',
-                    profit: `$${trade.profitLoss}`
+                    profit: formatMoney(trade.profitLoss)
                 }
             }));
         }

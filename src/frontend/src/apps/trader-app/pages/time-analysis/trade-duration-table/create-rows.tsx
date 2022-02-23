@@ -1,11 +1,12 @@
 import {P, BP} from '@components/text'
-import {TradeDurationCalc} from './types'
+import {formatMoney} from '@apps/trader-app/utils'
+import {TradeDurationTableCalc} from 'calculator'
 
-const createRows = (calcs: Array<TradeDurationCalc>) => {
+const createRows = (calcs: TradeDurationTableCalc) => {
     const rows = calcs.map((calc) => ([
         <BP>{calc.duration}</BP>,
         <P>{calc.noOfTrades.toString()}</P>,
-        <P>{calc.result < 0 ? `-$${-1 *calc.result}` : `$${calc.result}`}</P>
+        <P>{formatMoney(calc.result)}</P>
     ]))
     return rows
 }

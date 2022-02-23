@@ -1,6 +1,5 @@
+import {formatMoney, formatPercent} from '@apps/trader-app/utils'
 import {OverviewCardsCalc} from 'calculator'
-import {RowBox} from '@components/containers'
-import {to2dpString} from '../utils'
 import BalanceCard from './balance-card'
 import NoOfTradesCard from './no-of-trades-card'
 import WinRateCard from './win-rate-card'
@@ -9,10 +8,10 @@ import './style.css'
 
 
 const OverviewCards = ({calc}: {calc: OverviewCardsCalc}) => {
-    const balance = `$${to2dpString(calc.totalBalance)}`;
+    const balance = formatMoney(calc.totalBalance);
     const noOfTrades = calc.noOfTrades.toString();
-    const winRate = `${to2dpString(calc.winRate)}%`;
-    const absGain = `${to2dpString(calc.absGain)}`;
+    const winRate = formatPercent(calc.winRate);
+    const absGain = formatPercent(calc.absGain);
 
     return(
         <div className='apps-trader-app-pages-overview-overview-cards-container'

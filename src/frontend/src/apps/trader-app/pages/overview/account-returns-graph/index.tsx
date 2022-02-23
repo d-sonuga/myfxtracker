@@ -1,15 +1,16 @@
 import {Graph} from '@apps/trader-app/components'
+import { objObjArrayTo2dp } from '@apps/trader-app/utils'
 import {OverviewAccountReturnsGraphCalc} from 'calculator'
 
 
 const AccountReturnsGraph = ({data}: {data: OverviewAccountReturnsGraphCalc}) => {
-    const options = {
+    const options = objObjArrayTo2dp({
         'Today': data.todayGraphCalc,
         'This Week': data.thisWeekGraphCalc,
         'This Month': data.thisMonthGraphCalc,
         'This Year': data.thisYearGraphCalc,
         'All Time': data.allTimeGraphCalc
-    }
+    }, 'result');
 
     return(
         <div style={{width: '100%'}}>

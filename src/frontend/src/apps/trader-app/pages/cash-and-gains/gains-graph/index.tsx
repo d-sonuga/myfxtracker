@@ -1,17 +1,16 @@
 import {GainsGraphCalc} from 'calculator'
 import {Graph} from '@apps/trader-app/components'
-import formatData from './format-data'
+import {objObjArrayTo2dp} from '@apps/trader-app/utils';
 
 
 const GainsGraph = ({data}: {data: GainsGraphCalc}) => {
-    const refinedData = formatData(data);
-    const options = {
-        'Today': refinedData.todayGraphCalc,
-        'This Week': refinedData.thisWeekGraphCalc,
-        'This Month': refinedData.thisMonthGraphCalc,
-        'This Year': refinedData.thisYearGraphCalc,
-        'All Time': refinedData.allTimeGraphCalc
-    }
+    const options = objObjArrayTo2dp({
+        'Today': data.todayGraphCalc,
+        'This Week': data.thisWeekGraphCalc,
+        'This Month': data.thisMonthGraphCalc,
+        'This Year': data.thisYearGraphCalc,
+        'All Time': data.allTimeGraphCalc
+    }, 'gainsPercent');
     return(
         <Graph
             title='Gains'

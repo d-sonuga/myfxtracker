@@ -1,10 +1,10 @@
 import {Table} from '@apps/trader-app/components'
 import {getColor} from '@conf/utils'
 import createRows from './create-rows'
-import {TradeDurationCalc} from './types'
+import {TradeDurationTableCalc} from 'calculator'
 
 
-const TradeDurationTable = ({calc}: {calc: Array<TradeDurationCalc>}) => {
+const TradeDurationTable = ({calc}: {calc: TradeDurationTableCalc}) => {
     const headers = ['Duration', 'Num. of Trades', 'Result'];
     const rows = createRows(calc);
     return(

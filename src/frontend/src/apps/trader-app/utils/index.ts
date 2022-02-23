@@ -1,3 +1,5 @@
+import {cloneDeep} from 'lodash'
+
 /**
  * To turn raw money calculations to a presentable format
  * If money is negative, it should output money in
@@ -18,16 +20,33 @@ const formatPercent = (num: number) => {
 }
 
 const to2dpstring = (num: number) => {
-    return to2dp(num).toString();
+    return num.toFixed(2);
 }
 
 const to2dp = (num: number) => {
     return parseFloat(num.toFixed(2));
 }
 
+const objArrayTo2dp = <T extends {[key: string]: any}>(objArray: T[], objArrayKey: keyof T): T[] => {
+    return objArray.map((obj) => (
+        {...obj, [objArrayKey]: to2dp(obj[objArrayKey])}
+    ));
+}
+
+const objObjArrayTo2dp = <T extends {[key: string]: any}>(data: T, objKey: keyof T[keyof T][number]): T => {
+    const data2dp: T = cloneDeep(data);
+    Object.keys(data).forEach((skey) => {
+        const key = skey as keyof T;
+        data2dp[key] = objArrayTo2dp<T[keyof T]>(data[key], objKey) as T[keyof T];
+    })
+    return data2dp;
+}
+
 export {
     formatMoney,
     to2dp,
     to2dpstring,
-    formatPercent
+    formatPercent,
+    objArrayTo2dp,
+    objObjArrayTo2dp
 }

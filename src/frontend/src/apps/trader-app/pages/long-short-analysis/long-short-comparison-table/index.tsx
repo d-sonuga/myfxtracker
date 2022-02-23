@@ -1,7 +1,7 @@
 import {Table} from'@apps/trader-app/components'
 import {getColor} from '@conf/utils'
 import createRows from './create-rows'
-import { LongShortComparisonTableCalc } from 'calculator/dist'
+import {LongShortComparisonTableCalc} from 'calculator/dist'
 
 const LongShortComparisonTable = ({data}: {data: LongShortComparisonTableCalc}) => {
     const headers = ['', 'Long', 'Short'];

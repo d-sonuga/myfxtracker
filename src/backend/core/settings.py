@@ -124,16 +124,10 @@ if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
     CSRF_TRUSTED_ORIGINS = [
-        'http://172.17.0.1',
-        'http://172.17.0.1:3000',
-        'http://172.17.0.2',
-        'http://172.17.0.2:3000',
-        'http://172.17.0.3',
-        'http://172.17.0.3:3000',
-        'http://172.17.0.4',
-        'http://172.17.0.4:3000',
         'http://localhost',
         'http://localhost:3000',
+        'http://frontend',
+        'http://frontend:3000'
     ]
 
     CORS_ALLOW_CREDENTIALS = True

@@ -43,7 +43,6 @@ const createRows = (stats: OverviewStatsCalc) => {
             )
         ],
         [
-            //createCell('Lots', to2dpstring(stats.lots)),
             createCell(
                 'Commission',
                 formatMoney(stats.commissions)

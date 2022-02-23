@@ -1,6 +1,6 @@
 import {Table} from '@apps/trader-app/components'
 import {HeaderItemObject} from '@apps/trader-app/components/table/types'
-import { getColor } from '@conf/utils'
+import {getColor} from '@conf/utils'
 import createRows from './create-rows'
 import {PairsTablePropTypes} from './types'
 

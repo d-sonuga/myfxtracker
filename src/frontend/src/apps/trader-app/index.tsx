@@ -2,7 +2,7 @@ import {createContext, useEffect, Suspense, lazy} from 'react'
 import {Route, useLocation, useNavigate} from 'react-router-dom'
 import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
-import {RouteConst} from '@conf/const'
+import {HttpConst, RouteConst} from '@conf/const'
 import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis,
     PeriodAnalysis, TimeAnalysis, PairsAnalysis} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
@@ -30,7 +30,7 @@ const TraderApp = () => {
     }, [])
     const eaDownloadUrls = useEaDownloadUrl();
     const noteData = getNoteData();
-
+    
     const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
         TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE,
         TRADER_TIME_ANALYSIS_ROUTE, TRADER_PERIOD_ANALYSIS_ROUTE, TRADER_EXPENSES_ROUTE, TRADER_NOTES_ROUTE
