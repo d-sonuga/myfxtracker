@@ -14,7 +14,9 @@ import {OverviewAccountReturnsGraphCalc} from './types'
  * array of trades. For example, if trade A is the first trade a user
  * ever made and trade B was made after it, then trade A will have a tradeNo
  * of 0 and trade B will have a tradeNo of 1
- * The result is the profit / loss of that trade.
+ * The result is the cummulative profit / loss of that trade.
+ * That is the result is the addition of all the previous profit / losses and the profitLoss of
+ * the trade with the current tradeNo
  * Each field in the calculations object shows different views over the
  * same data, which correspond to different time ranges:
  * today, this week, this month, this year and all time
@@ -55,13 +57,18 @@ const allTimeGraphCalc = (accountData: AccountData, today: Date) => {
  * satisfies the period condition and makes it return true
  */
 const graphCalc = (accountData: AccountData, periodCondition: Function, today: Date) => {
+    let cummulativeProfitLoss = 0;
     return [
         {tradeNo: 0, result: 0},
         ...accountData.trades
             .filter((trade) => periodCondition(trade.closeTime, today))
-            .map((trade, i) => (
-                {tradeNo: i + 1, result: trade.profitLoss}
-            ))
+            .map((trade, i) => {
+                cummulativeProfitLoss += trade.profitLoss;
+                return {
+                    tradeNo: i + 1,
+                    result: cummulativeProfitLoss
+                }
+            })
     ]
 }
 
