@@ -7,13 +7,18 @@ import {ShortBalanceGraphCalc} from './types'
  * number 1 implies that it was carried out before a trade with an index number 2
  */
 const shortBalanceGraphCalc = (accountData: AccountData) => {
+    let cummulativeResult = 0;
     const calculations: ShortBalanceGraphCalc = [
         {tradeNo: 0, result: 0},
         ...accountData.trades
             .filter((trade) => trade.action === 'sell')
-            .map((trade, i) => (
-                {tradeNo: i + 1, result: trade.profitLoss}
-            ))
+            .map((trade, i) => {
+                cummulativeResult += trade.profitLoss;
+                return {
+                    tradeNo: i + 1,
+                    result: cummulativeResult
+                }
+            })
     ]
     return calculations
 }

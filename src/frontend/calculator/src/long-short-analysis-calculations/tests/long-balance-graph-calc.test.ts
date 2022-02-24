@@ -122,7 +122,7 @@ describe('Verify that longBalanceGraphCalc is working', () => {
         const createTradeSet = (date: string, noOfTrades: number): Trade[] => {
             const trades: Trade[] = [];
             for(let i=0; i<noOfTrades; i++){
-                trades.push(createTrade(todayDateStr));
+                trades.push(createTrade(date));
             }
             return trades
         }
