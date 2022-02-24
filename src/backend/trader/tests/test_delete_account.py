@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.test import TestCase, override_settings
 from rest_framework.authtoken.models import Token
-from users.models import Trader
+from users.models import Trader, datasource_username_is_valid, datasource_username_is_invalid
 
 
 @override_settings(DEBUG=True)
@@ -27,6 +27,7 @@ class DeleteAccountTest(TestCase):
         ds_username = self.trader.traderinfo.ds_username
         self.client.delete('/trader/delete-account/', **self.valid_headers)
         self.assertFalse(ds_username.is_valid())
-    
+        self.assertFalse(datasource_username_is_valid(ds_username.username))
+        self.assertTrue(datasource_username_is_invalid(ds_username.username))
     
     

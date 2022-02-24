@@ -88,7 +88,7 @@ def datasource_username_is_invalid(username):
     ds_username_set = DatasourceUsername.objects.filter(username=username)
     if ds_username_set.count() == 0:
         return True
-    return ds_username_set[0].username is None
+    return ds_username_set[0].traderinfo is None
 
 def datasource_username_is_valid(username):
     return not datasource_username_is_invalid(username)
