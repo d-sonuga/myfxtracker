@@ -273,15 +273,7 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             const trades: Trade[] = [
                 {
                     ...baseTrade,
-                    openTime: todayDateStr, closeTime: todayDateStr
-                },
-                {
-                    ...baseTrade,
-                    openTime: thisWeekDateStr, closeTime: thisWeekDateStr
-                },
-                {
-                    ...baseTrade,
-                    openTime: thisMonthDateStr, closeTime: thisMonthDateStr
+                    openTime: lastYearDateStr, closeTime: lastYearDateStr
                 },
                 {
                     ...baseTrade,
@@ -289,7 +281,15 @@ describe('Verify accountReturnsGraphCalc is working', () => {
                 },
                 {
                     ...baseTrade,
-                    openTime: lastYearDateStr, closeTime: lastYearDateStr
+                    openTime: thisMonthDateStr, closeTime: thisMonthDateStr
+                },
+                {
+                    ...baseTrade,
+                    openTime: thisWeekDateStr, closeTime: thisWeekDateStr
+                },
+                {
+                    ...baseTrade,
+                    openTime: todayDateStr, closeTime: todayDateStr
                 }
             ]
             const dummyAccountData: AccountData = {
@@ -300,11 +300,32 @@ describe('Verify accountReturnsGraphCalc is working', () => {
             }
             const result = accountReturnsGraphCalc(dummyAccountData, today);
             const defaultCalc = [{tradeNo: 0, result: 0}];
-            const expectedTodayCalc = [...defaultCalc, {tradeNo: 1, result: trades[0].profitLoss}];
-            const expectedThisWeekCalc = [...expectedTodayCalc, {tradeNo: 2, result: trades[1].profitLoss}]
-            const expectedThisMonthCalc = [...expectedThisWeekCalc, {tradeNo: 3, result: trades[2].profitLoss}];
-            const expectedThisYearCalc = [...expectedThisMonthCalc, {tradeNo: 4, result: trades[3].profitLoss}]
-            const expectedAllTimeCalc = [...expectedThisYearCalc, {tradeNo: 5, result: trades[4].profitLoss}];
+            const expectedTodayCalc = [...defaultCalc, {tradeNo: 1, result: trades[4].profitLoss}];
+            const expectedThisWeekCalc = [...defaultCalc,
+                {tradeNo: 1, result: trades[3].profitLoss},
+                {tradeNo: 2, result: trades[3].profitLoss + trades[4].profitLoss}
+            ]
+            const expectedThisMonthCalc = [...defaultCalc,
+                {tradeNo: 1, result: trades[2].profitLoss},
+                {tradeNo: 2, result: trades[2].profitLoss + trades[3].profitLoss},
+                {tradeNo: 3, result: trades[2].profitLoss + trades[3].profitLoss + trades[4].profitLoss}
+            ];
+            const expectedThisYearCalc = [...defaultCalc,
+                {tradeNo: 1, result: trades[1].profitLoss},
+                {tradeNo: 2, result: trades[1].profitLoss + trades[2].profitLoss},
+                {tradeNo: 3, result: trades[1].profitLoss + trades[2].profitLoss + trades[3].profitLoss},
+                {tradeNo: 4, result: trades[1].profitLoss + trades[2].profitLoss + trades[3].profitLoss
+                    + trades[4].profitLoss},
+            ];
+            const expectedAllTimeCalc = [...defaultCalc,
+                {tradeNo: 1, result: trades[0].profitLoss},
+                {tradeNo: 2, result: trades[0].profitLoss + trades[1].profitLoss},
+                {tradeNo: 3, result: trades[0].profitLoss + trades[1].profitLoss + trades[2].profitLoss},
+                {tradeNo: 4, result: trades[0].profitLoss + trades[1].profitLoss + trades[2].profitLoss
+                    + trades[3].profitLoss},
+                {tradeNo: 5, result: trades[0].profitLoss + trades[1].profitLoss + trades[2].profitLoss
+                    + trades[3].profitLoss + trades[4].profitLoss}
+            ];
 
             const expectedResult: OverviewAccountReturnsGraphCalc = {
                 todayGraphCalc: expectedTodayCalc,
