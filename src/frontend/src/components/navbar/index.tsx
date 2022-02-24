@@ -20,7 +20,8 @@ import './style.css'
  * 
  */
 
-const Navbar = ({rightElement, sidebar, dontShowOnBigScreen, onSidebarMenuButtonClick, ...props}: MainNavbarPropTypes) => {
+const Navbar = ({rightElement, sidebar, dontShowOnBigScreen, onSidebarMenuButtonClick,
+        sidebarOnlyLinks, ...props}: MainNavbarPropTypes) => {
     const isSmallScreen = useScreenIsSmall();
 
     if(!isSmallScreen && dontShowOnBigScreen){
@@ -34,6 +35,7 @@ const Navbar = ({rightElement, sidebar, dontShowOnBigScreen, onSidebarMenuButton
                     return(
                         <SmallScreenNavbar
                             sidebar={sidebar}
+                            sidebarOnlyLinks={sidebarOnlyLinks}
                             onSidebarMenuButtonClick={onSidebarMenuButtonClick}
                             {...props} />
                     );  

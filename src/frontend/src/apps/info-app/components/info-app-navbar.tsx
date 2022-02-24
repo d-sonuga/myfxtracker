@@ -18,6 +18,10 @@ const InfoAppNavbar = () => {
                 ['FAQ', formatRoute(INFO_FAQ_ROUTE)],
                 ['Features/Pricing', formatRoute(INFO_PRICING_ROUTE)]
             ]}
+            sidebarOnlyLinks={[
+                ['Sign Up', formatRoute(INFO_SIGN_UP_ROUTE)],
+                ['Login', formatRoute(INFO_LOGIN_ROUTE)]
+            ]}
             rightElement={
                 <RowBox>
                     {localStorage.getItem(ConfigConst.TOKEN_KEY) ?

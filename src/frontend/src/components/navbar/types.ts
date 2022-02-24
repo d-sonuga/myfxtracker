@@ -6,7 +6,8 @@ type NavbarPropTypes = ComponentPropTypes & {
     /** The links to be rendered on the navbar */
     links: Array<Array<string>>,
     /** Should the logo show on the navbar? */
-    showLogo?: boolean
+    showLogo?: boolean,
+    sidebarOnlyLinks?: NavbarPropTypes['links']
 }
 
 type SmallScreenNavbarPropTypes = NavbarPropTypes & {
@@ -34,7 +35,7 @@ type MainNavbarPropTypes = SmallScreenNavbarPropTypes & BigScreenNavbarPropTypes
     dontShowOnBigScreen?: boolean
 }
 
-type SidebarPropTypes = {
+type SidebarPropTypes = Pick<NavbarPropTypes, 'sidebarOnlyLinks'> & {
     /** links to be rendered on the sidebar */
     links: Array<Array<string>>,
     /** The function used for the default sidebar to close the sidebar */

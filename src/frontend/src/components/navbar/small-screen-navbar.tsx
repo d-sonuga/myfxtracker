@@ -1,17 +1,16 @@
 import {useState} from 'react'
-import {Link} from 'react-router-dom'
 import {SwipeableDrawer} from '@mui/material'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
 import {RowBox} from '@components/containers'
 import {PlainButton} from '@components/buttons'
 import Logo from '@components/logo'
 import Sidebar from './sidebar'
-import {LABEL_INDEX, LINK_INDEX} from './const'
 import {SmallScreenNavbarPropTypes} from './types'
 import {getDimen} from '@conf/utils'
 
 
-const SmallScreenNavbar = ({links, className, style, sidebar, showLogo, onSidebarMenuButtonClick}: SmallScreenNavbarPropTypes) => {
+const SmallScreenNavbar = ({links, className, style, sidebar, showLogo, sidebarOnlyLinks,
+        onSidebarMenuButtonClick}: SmallScreenNavbarPropTypes) => {
     const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
     const toggleSidebar = () => {
         setSidebarIsOpen(sidebarIsOpen => !sidebarIsOpen);
@@ -39,7 +38,14 @@ const SmallScreenNavbar = ({links, className, style, sidebar, showLogo, onSideba
                         open={sidebarIsOpen}
                         onOpen={() => {}}
                         onClose={toggleSidebar}>
-                            <Sidebar links={links} onCloseSidebar={toggleSidebar} />
+                            <Sidebar
+                                links={(() => {
+                                    if(sidebarOnlyLinks !== undefined){
+                                        return [...links, ...sidebarOnlyLinks];
+                                    }
+                                    return links;     
+                                })()}
+                                onCloseSidebar={toggleSidebar} />
                         </SwipeableDrawer>
             }
             {showLogo === undefined || showLogo ? <Logo /> : null}
