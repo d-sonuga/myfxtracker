@@ -250,6 +250,7 @@ class Trade(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['account', 'trade_id'], name='trader_no_duplicate_trade')
         ]
+        ordering = ('close_time',)
 
 
 class DepositManager(models.Manager):
@@ -280,6 +281,7 @@ class Deposit(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['account', 'deposit_id'], name='trader_no_duplicate_deposit')
         ]
+        ordering = ('time',)
 
 
 class WithdrawalManager(models.Manager):
@@ -310,6 +312,7 @@ class Withdrawal(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['account', 'withdrawal_id'], name='trader_no_duplicate_withdrawal')
         ]
+        ordering = ('time',)
 
 
 class UnknownTransactionManager(models.Manager):

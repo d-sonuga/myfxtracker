@@ -13,3 +13,7 @@ builds
 ## Deployment
 For deployment, only a python container is used.
 The Dockerfile in the src directory is used for deployment
+
+### Deployment Check
+*   build the frontend
+*   build the frontend's calculator
