@@ -145,9 +145,9 @@ const profitFactor = (accountData: AccountData) => {
 }
 
 const expectancy = (accountData: AccountData) => {
-    const winrate = winRate(accountData);
+    const winrate = winRate(accountData) / 100;
     return (
-        (aveProfit(accountData) * winrate) - (aveLoss(accountData) * (100 - winrate))
+        (aveProfit(accountData) * winrate) - (aveLoss(accountData) * (1 - winrate))
     );
 }
 

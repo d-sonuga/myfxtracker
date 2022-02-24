@@ -2,7 +2,7 @@ import {createContext, useEffect, Suspense, lazy} from 'react'
 import {Route, useLocation, useNavigate} from 'react-router-dom'
 import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
-import {HttpConst, RouteConst} from '@conf/const'
+import {RouteConst} from '@conf/const'
 import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis,
     PeriodAnalysis, TimeAnalysis, PairsAnalysis} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'

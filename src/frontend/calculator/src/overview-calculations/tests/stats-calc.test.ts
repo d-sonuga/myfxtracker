@@ -84,7 +84,7 @@ describe('Verify that statsCalc is working', () => {
             worstTrade: -100,
             profitFactor: -5,
             highestBalance: 500,
-            expectancy: 20000,
+            expectancy: 200,
             lots: 0,
             commissions: 60
         }

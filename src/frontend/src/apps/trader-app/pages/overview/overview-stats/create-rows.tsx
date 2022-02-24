@@ -31,7 +31,7 @@ const createRows = (stats: OverviewStatsCalc) => {
         [
             createCell(
                 'Highest Balance',
-                to2dpstring(stats.highestBalance)
+                formatMoney(stats.highestBalance)
             ),
             createCell('Average RRR', to2dpstring(stats.aveRRR))
         ],
@@ -39,7 +39,7 @@ const createRows = (stats: OverviewStatsCalc) => {
             createCell('Profit Factor', to2dpstring(stats.profitFactor)),
             createCell(
                 'Expectancy',
-                to2dpstring(stats.expectancy)
+                formatMoney(stats.expectancy)
             )
         ],
         [
