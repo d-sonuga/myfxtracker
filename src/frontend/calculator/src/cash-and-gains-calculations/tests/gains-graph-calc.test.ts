@@ -7,7 +7,7 @@ import {GainsGraphItem} from '../types'
 
 describe('Verify gainsGraphCalc is working', () => {
     /** To create a new trade object without having to specify all trade attributes */
-    const newTrade = (attr: any) => {
+    const newTrade = (attr: any): Trade => {
         return {
             profitLoss: randomNumber(-1000000, 1000000),
             openTime: attr.date !== undefined ? attr.date : '2021-10-18T18:34:00Z',
@@ -16,7 +16,9 @@ describe('Verify gainsGraphCalc is working', () => {
             action: 'buy',
             riskRewardRatio: 2,
             stopLoss: 0,
-            takeProfit: 0
+            takeProfit: 0,
+            openPrice: 0,
+            closePrice: 0
         }
     }
     describe('When there are no trades or deposits', () => {

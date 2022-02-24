@@ -34,7 +34,9 @@ describe('Verify that aveRrrPerPairGraphCalc is working', () => {
                     swap: 20,
                     profitLoss: 200,
                     openTime: '2022-09-04T13:02:00Z',
-                    closeTime: '2022-09-04T13:02:00Z'
+                    closeTime: '2022-09-04T13:02:00Z',
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         }

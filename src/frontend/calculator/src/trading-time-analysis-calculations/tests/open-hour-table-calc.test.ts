@@ -19,7 +19,9 @@ const generateTrades = (min: number = 2, max: number = 10000) => {
             takeProfit: 0,
             stopLoss: 0,
             openTime: time,
-            closeTime: time
+            closeTime: time,
+            openPrice: 0,
+            closePrice: 0
         }
     }
     for(let i=0; i<noOfTrades; i++){
@@ -56,7 +58,9 @@ describe('Verify openHourTableCalc is working', () => {
                     takeProfit: 0,
                     stopLoss: 0,
                     riskRewardRatio: 0,
-                    action: 'buy'
+                    action: 'buy',
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         }
@@ -75,7 +79,9 @@ describe('Verify openHourTableCalc is working', () => {
             takeProfit: 0,
             stopLoss: 0,
             riskRewardRatio: 0,
-            action: 'buy'
+            action: 'buy',
+            openPrice: 0,
+            closePrice: 0
         }
         const profitLoss12 = [300, -12, 233, 433];
         const profitLoss13 = [23, 455, 132];
