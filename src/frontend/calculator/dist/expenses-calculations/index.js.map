@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../src/expenses-calculations/index.ts"],"names":[],"mappings":";;;;;AACA,8EAAqD;AAIrD,IAAM,oBAAoB,GAAG,UAAC,WAAwB;IAClD,IAAM,YAAY,GAAiB;QAC/B,iBAAiB,EAAE,IAAA,6BAAiB,EAAC,WAAW,CAAC;KACpD,CAAA;IACD,OAAO,YAAY,CAAA;AACvB,CAAC,CAAA;AAGD,kBAAe,oBAAoB,CAAA"}
