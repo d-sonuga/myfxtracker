@@ -7,6 +7,12 @@
 const FAR_IN_THE_FUTURE_YEAR = 200000;
 
 /**
+ * Performs the same function as FAR_IN_THE_FUTURE_YEAR
+ * the -infinity for date sentinels
+ */
+const FAR_IN_THE_PAST_YEAR = 100;
+
+/**
  * Does the date in @param dateStr fall in the same day as @param otherDate
  */
  const sameDay = (dateStr: string, otherDate: Date): boolean => {
@@ -93,5 +99,6 @@ export {
     sameWeek,
     sameMonth,
     sameYear,
-    FAR_IN_THE_FUTURE_YEAR
+    FAR_IN_THE_FUTURE_YEAR,
+    FAR_IN_THE_PAST_YEAR
 }

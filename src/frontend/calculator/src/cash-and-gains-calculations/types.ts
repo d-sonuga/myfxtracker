@@ -1,3 +1,4 @@
+import {Trade} from '..'
 import {PeriodGraph} from '../types'
 
 type CashAndGainsCalculations = {
@@ -19,10 +20,16 @@ type GainsGraphItem = {
     gainsPercent: number
 }
 
+type BalanceCalcItem = {
+    trade: Trade,
+    balance: number
+}
+
 export type {
     CashAndGainsCalculations,
     CashGraphCalc,
     GainsGraphCalc,
     CashGraphItem,
-    GainsGraphItem
+    GainsGraphItem,
+    BalanceCalcItem
 }
