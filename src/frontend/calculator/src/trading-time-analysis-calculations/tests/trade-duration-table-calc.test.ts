@@ -33,7 +33,9 @@ describe('Verify tradeDurationTableCalc is working', () => {
                     takeProfit: 0,
                     stopLoss: 0,
                     riskRewardRatio: 0,
-                    profitLoss: 200
+                    profitLoss: 200,
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         }
@@ -51,7 +53,9 @@ describe('Verify tradeDurationTableCalc is working', () => {
             action: 'sell',
             takeProfit: 0,
             stopLoss: 0,
-            riskRewardRatio: 0
+            riskRewardRatio: 0,
+            openPrice: 0,
+            closePrice: 0
         }
         const profitLoss10mins = [12, 32, -455];
         const profitLoss34mins = [244];

@@ -56,7 +56,9 @@ const loseRate = (trades: Trade[]) => {
 const noOfTpOnPair = (trades: Trade[]) => {
     let tpOnPair = 0;
     trades.forEach((trade) => {
-        tpOnPair += trade.takeProfit;
+        if(trade.closePrice == trade.takeProfit){
+            tpOnPair += 1;
+        }
     })
     return tpOnPair;
 }
@@ -64,29 +66,19 @@ const noOfTpOnPair = (trades: Trade[]) => {
 const noOfSlOnPair = (trades: Trade[]) => {
     let slOnPair = 0;
     trades.forEach((trade) => {
-        slOnPair += trade.stopLoss;
+        if(trade.closePrice == trade.stopLoss){
+            slOnPair += 1;
+        }
     })
     return slOnPair;
 }
 
 const tpOnPairPercent = (trades: Trade[]) => {
-    let tpOnPair = 0;
-    let count = 0;
-    trades.forEach((trade) => {
-        tpOnPair += trade.takeProfit;
-        count++;
-    })
-    return tpOnPair / count;
+    return (noOfTpOnPair(trades) / trades.length) * 100;
 }
 
 const slOnPairPercent = (trades: Trade[]) => {
-    let slOnPair = 0;
-    let count = 0;
-    trades.forEach((trade) => {
-        slOnPair += trade.stopLoss;
-        count++;
-    })
-    return slOnPair / count;
+    return (noOfSlOnPair(trades) / trades.length) * 100;
 }
 
 export default pairsAnalysisTableCalc

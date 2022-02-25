@@ -33,7 +33,9 @@ type Trade = {
     stopLoss: number,
     takeProfit: number,
     comment?: string,
-    magicNumber?: number
+    magicNumber?: number,
+    openPrice: number,
+    closePrice: number
 }
 
 type Deposit = {

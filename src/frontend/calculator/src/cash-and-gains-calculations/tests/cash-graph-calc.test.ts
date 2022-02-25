@@ -19,7 +19,9 @@ describe('Verify cashGraphCalc works', () => {
             action: 'buy',
             riskRewardRatio: 2,
             takeProfit: 0,
-            stopLoss: 0
+            stopLoss: 0,
+            openPrice: 0,
+            closePrice: 0
         }
     }
     const defaultCashGraphItem: CashGraphItem[] = [{tradeNo: 0, balance: 0}];
@@ -113,12 +115,12 @@ describe('Verify cashGraphCalc works', () => {
             {
                 profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-25T18:34:00Z',
                 closeTime: '2021-10-25T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
-                stopLoss: 0, takeProfit: 0
+                stopLoss: 0, takeProfit: 0, openPrice: 0, closePrice: 0
             },
             {
                 profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-29T18:34:00Z',
                 closeTime: '2021-10-29T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
-                takeProfit: 0, stopLoss: 0
+                stopLoss: 0, takeProfit: 0, openPrice: 0, closePrice: 0
             }
         ]
         const thisMonthTrades: Trade[] = [
@@ -126,7 +128,7 @@ describe('Verify cashGraphCalc works', () => {
             {
                 profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-10-18T12:09:00Z',
                 closeTime: '2021-10-18T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
-                stopLoss: 0, takeProfit: 0
+                stopLoss: 0, takeProfit: 0, openPrice: 0, closePrice: 0
             }
         ]
         const thisYearTrades: Trade[] = [
@@ -134,7 +136,7 @@ describe('Verify cashGraphCalc works', () => {
             {
                 profitLoss: randomNumber(-1000000, 1000000), openTime: '2021-09-14T12:09:00Z',
                 closeTime: '2021-09-14T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
-                stopLoss: 0, takeProfit: 0
+                stopLoss: 0, takeProfit: 0, openPrice: 0, closePrice: 0
             }
         ]
         const allTimeTrades: Trade[] = [
@@ -142,7 +144,7 @@ describe('Verify cashGraphCalc works', () => {
             {
                 profitLoss: randomNumber(-1000000, 1000000), openTime: '2020-09-12T12:09:00Z',
                 closeTime: '2020-09-12T12:09:00Z', pair: 'GBPUSD', action: 'buy', riskRewardRatio: 2,
-                stopLoss: 0, takeProfit: 0
+                stopLoss: 0, takeProfit: 0, openPrice: 0, closePrice: 0
             }
         ]
         const accountData: AccountData = {

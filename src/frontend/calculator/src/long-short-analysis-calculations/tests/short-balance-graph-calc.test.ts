@@ -48,7 +48,9 @@ describe('Verify that shortBalanceGraphCalc is working', () => {
                 commission: 2.3,
                 swap: 3,
                 stopLoss: 0,
-                takeProfit: 0
+                takeProfit: 0,
+                openPrice: 0,
+                closePrice: 0
             }
         ];
         const accountData: AccountData = {
@@ -83,7 +85,9 @@ describe('Verify that shortBalanceGraphCalc is working', () => {
                 commission: 2.3,
                 swap: 3,
                 stopLoss: 0,
-                takeProfit: 0
+                takeProfit: 0,
+                openPrice: 0,
+                closePrice: 0
             }
         ];
         const accountData: AccountData = {
@@ -117,7 +121,9 @@ describe('Verify that shortBalanceGraphCalc is working', () => {
             commission: 2.3,
             swap: 3,
             takeProfit: 0,
-            stopLoss: 0
+            stopLoss: 0,
+            openPrice: 0,
+            closePrice: 0
         })
         const createTradeSet = (date: string, noOfTrades: number): Trade[] => {
             const trades: Trade[] = [];

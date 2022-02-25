@@ -49,7 +49,9 @@ import {LongShortComparisonGraphCalc} from '../types'
                 commission: 2.3,
                 swap: 3,
                 stopLoss: 0,
-                takeProfit: 0
+                takeProfit: 0,
+                openPrice: 0,
+                closePrice: 0
             }
         ];
         const accountData: AccountData = {
@@ -85,7 +87,9 @@ import {LongShortComparisonGraphCalc} from '../types'
                 commission: 2.3,
                 swap: 3,
                 takeProfit: 0,
-                stopLoss: 0
+                stopLoss: 0,
+                openPrice: 0,
+                closePrice: 0
             }
         ];
         const accountData: AccountData = {

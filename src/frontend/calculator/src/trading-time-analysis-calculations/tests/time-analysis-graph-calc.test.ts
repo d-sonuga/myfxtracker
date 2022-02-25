@@ -12,7 +12,9 @@ const baseTrade = (): Omit<Trade, 'openTime' | 'closeTime'> => {
         stopLoss: 0,
         riskRewardRatio: 0,
         pair: 'GBPUSD',
-        profitLoss: randomNumber(-10000, 10000)
+        profitLoss: randomNumber(-10000, 10000),
+        openPrice: 0,
+        closePrice: 0
     }
 }
 

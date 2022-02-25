@@ -139,7 +139,9 @@ describe('Verify that weeklySummaryCalc is working', () => {
                 commission: 32,
                 swap: 32,
                 stopLoss: 0,
-                takeProfit: 0
+                takeProfit: 0,
+                openPrice: 0,
+                closePrice: 0
             },
         ]
         const dummyAccountData: AccountData = {
@@ -184,7 +186,9 @@ describe('Verify that weeklySummaryCalc is working', () => {
                     commission: 32,
                     swap: 32,
                     stopLoss: 0,
-                    takeProfit: 0
+                    takeProfit: 0,
+                    openPrice: 0,
+                    closePrice: 0
                 })
             }
             return {
