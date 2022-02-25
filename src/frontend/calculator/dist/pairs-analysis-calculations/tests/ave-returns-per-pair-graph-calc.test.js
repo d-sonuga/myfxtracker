@@ -38,7 +38,9 @@ describe('Verify aveReturnsPerPairGraphCalc is working', function () {
                     swap: 12,
                     action: 'buy',
                     openTime: '2022-03-23T14:03:00Z',
-                    closeTime: '2022-03-23T14:03:00Z'
+                    closeTime: '2022-03-23T14:03:00Z',
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         };

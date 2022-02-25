@@ -54,7 +54,9 @@ describe('Verify that overviewCardsCalc is working', function () {
                     commission: 34,
                     swap: 43,
                     stopLoss: 0,
-                    takeProfit: 0
+                    takeProfit: 0,
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ];
             var dummyAccountData = {
@@ -139,7 +141,9 @@ describe('Verify that overviewCardsCalc is working', function () {
                 commission: 34,
                 swap: 43,
                 stopLoss: 0,
-                takeProfit: 0
+                takeProfit: 0,
+                openPrice: 0,
+                closePrice: 0
             }); });
             var dummyAccountData = {
                 name: 'dummy account',

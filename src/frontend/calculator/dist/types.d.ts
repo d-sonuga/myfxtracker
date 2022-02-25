@@ -33,6 +33,8 @@ declare type Trade = {
     takeProfit: number;
     comment?: string;
     magicNumber?: number;
+    openPrice: number;
+    closePrice: number;
 };
 declare type Deposit = {
     account: number;

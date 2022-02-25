@@ -61,7 +61,9 @@ describe('Verify returnsPerPeriodGraphCalc is working', function () {
                     stopLoss: 0,
                     action: 'buy',
                     commission: 20,
-                    swap: 12
+                    swap: 12,
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         };

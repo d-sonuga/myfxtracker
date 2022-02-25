@@ -30,35 +30,41 @@ describe('Verify that pairsAnalysisTableCalc is working', function () {
                 {
                     pair: pair1,
                     action: 'buy',
-                    takeProfit: 20,
+                    takeProfit: 200,
                     stopLoss: 15,
                     profitLoss: 200,
                     openTime: '2022-12-02T13:04:00Z',
                     closeTime: '2022-12-02T13:04:00Z',
                     commission: 20,
-                    swap: 12
+                    swap: 12,
+                    openPrice: 0,
+                    closePrice: 200
                 },
                 {
                     pair: pair1,
                     action: 'sell',
                     takeProfit: 10,
-                    stopLoss: 5,
+                    stopLoss: -500,
                     profitLoss: -500,
                     openTime: '2022-12-02T13:04:00Z',
                     closeTime: '2022-12-02T13:04:00Z',
                     commission: 10,
-                    swap: 2
+                    swap: 2,
+                    openPrice: 0,
+                    closePrice: 0
                 },
                 {
                     pair: pair2,
                     action: 'sell',
                     takeProfit: 10,
-                    stopLoss: 5,
-                    profitLoss: -500,
+                    stopLoss: -5,
+                    profitLoss: -3,
                     openTime: '2022-12-02T13:04:00Z',
                     closeTime: '2022-12-02T13:04:00Z',
                     commission: 10,
-                    swap: 2
+                    swap: 2,
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         };
@@ -68,32 +74,32 @@ describe('Verify that pairsAnalysisTableCalc is working', function () {
                 pair: pair1,
                 noOfTradesOnPair: 2,
                 noOfProfitableTradesOnPair: 1,
-                noOfSlOnPair: 20,
+                noOfSlOnPair: 0,
                 noOfLongsOnPair: 1,
                 noOfShortsOnPair: 1,
                 noOfLosingTradesOnPair: 1,
-                noOfTpOnPair: 30,
+                noOfTpOnPair: 1,
                 longsOnPairPercent: 50,
                 shortsOnPairPercent: 50,
                 losingTradesOnPairPercent: 50,
-                tpOnPairPercent: 15,
-                slOnPairPercent: 10,
+                tpOnPairPercent: 50,
+                slOnPairPercent: 0,
                 profitableTradesOnPairPercent: 50
             },
             {
                 pair: pair2,
                 noOfTradesOnPair: 1,
                 noOfProfitableTradesOnPair: 0,
-                noOfSlOnPair: 5,
+                noOfSlOnPair: 0,
                 noOfLongsOnPair: 0,
                 noOfShortsOnPair: 1,
                 noOfLosingTradesOnPair: 1,
-                noOfTpOnPair: 10,
+                noOfTpOnPair: 0,
                 longsOnPairPercent: 0,
                 shortsOnPairPercent: 100,
                 losingTradesOnPairPercent: 100,
-                tpOnPairPercent: 10,
-                slOnPairPercent: 5,
+                tpOnPairPercent: 0,
+                slOnPairPercent: 0,
                 profitableTradesOnPairPercent: 0
             },
         ];

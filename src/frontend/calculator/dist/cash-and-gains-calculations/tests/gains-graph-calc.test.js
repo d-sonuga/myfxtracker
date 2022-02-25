@@ -25,7 +25,9 @@ describe('Verify gainsGraphCalc is working', function () {
             action: 'buy',
             riskRewardRatio: 2,
             stopLoss: 0,
-            takeProfit: 0
+            takeProfit: 0,
+            openPrice: 0,
+            closePrice: 0
         };
     };
     describe('When there are no trades or deposits', function () {

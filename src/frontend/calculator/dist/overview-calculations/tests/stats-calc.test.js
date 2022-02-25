@@ -54,7 +54,9 @@ describe('Verify that statsCalc is working', function () {
                     riskRewardRatio: 3,
                     action: 'buy',
                     openTime: '2022-10-23T12:09:00Z',
-                    closeTime: '2022-10-23T12:09:00Z'
+                    closeTime: '2022-10-23T12:09:00Z',
+                    openPrice: 0,
+                    closePrice: 0
                 },
                 {
                     pair: 'USDNOK',
@@ -66,7 +68,9 @@ describe('Verify that statsCalc is working', function () {
                     riskRewardRatio: 3,
                     action: 'sell',
                     openTime: '2022-10-23T12:09:00Z',
-                    closeTime: '2022-10-23T12:09:00Z'
+                    closeTime: '2022-10-23T12:09:00Z',
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         };

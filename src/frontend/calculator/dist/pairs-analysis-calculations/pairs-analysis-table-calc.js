@@ -52,34 +52,26 @@ var loseRate = function (trades) {
 var noOfTpOnPair = function (trades) {
     var tpOnPair = 0;
     trades.forEach(function (trade) {
-        tpOnPair += trade.takeProfit;
+        if (trade.closePrice == trade.takeProfit) {
+            tpOnPair += 1;
+        }
     });
     return tpOnPair;
 };
 var noOfSlOnPair = function (trades) {
     var slOnPair = 0;
     trades.forEach(function (trade) {
-        slOnPair += trade.stopLoss;
+        if (trade.closePrice == trade.stopLoss) {
+            slOnPair += 1;
+        }
     });
     return slOnPair;
 };
 var tpOnPairPercent = function (trades) {
-    var tpOnPair = 0;
-    var count = 0;
-    trades.forEach(function (trade) {
-        tpOnPair += trade.takeProfit;
-        count++;
-    });
-    return tpOnPair / count;
+    return (noOfTpOnPair(trades) / trades.length) * 100;
 };
 var slOnPairPercent = function (trades) {
-    var slOnPair = 0;
-    var count = 0;
-    trades.forEach(function (trade) {
-        slOnPair += trade.stopLoss;
-        count++;
-    });
-    return slOnPair / count;
+    return (noOfSlOnPair(trades) / trades.length) * 100;
 };
 exports.default = pairsAnalysisTableCalc;
 //# sourceMappingURL=pairs-analysis-table-calc.js.map

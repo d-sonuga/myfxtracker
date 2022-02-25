@@ -34,7 +34,9 @@ var baseTrade = function () {
         stopLoss: 0,
         riskRewardRatio: 0,
         pair: 'GBPUSD',
-        profitLoss: (0, utils_1.randomNumber)(-10000, 10000)
+        profitLoss: (0, utils_1.randomNumber)(-10000, 10000),
+        openPrice: 0,
+        closePrice: 0
     };
 };
 var putInSameOrder = function (result, expectedResult) {

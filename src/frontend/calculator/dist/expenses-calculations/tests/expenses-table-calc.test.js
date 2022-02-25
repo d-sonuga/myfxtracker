@@ -26,7 +26,9 @@ var newTrade = function (pair, commission, swap) {
         action: 'buy',
         riskRewardRatio: 0,
         openTime: '2022-10-23T13:23:00Z',
-        closeTime: '2022-10-23T13:23:00Z'
+        closeTime: '2022-10-23T13:23:00Z',
+        openPrice: 0,
+        closePrice: 0
     };
 };
 describe('Verify that expensesTableCalc is working', function () {

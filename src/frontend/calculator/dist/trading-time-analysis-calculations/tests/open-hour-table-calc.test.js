@@ -33,7 +33,9 @@ var generateTrades = function (min, max) {
             takeProfit: 0,
             stopLoss: 0,
             openTime: time,
-            closeTime: time
+            closeTime: time,
+            openPrice: 0,
+            closePrice: 0
         };
     };
     for (var i = 0; i < noOfTrades; i++) {
@@ -69,7 +71,9 @@ describe('Verify openHourTableCalc is working', function () {
                     takeProfit: 0,
                     stopLoss: 0,
                     riskRewardRatio: 0,
-                    action: 'buy'
+                    action: 'buy',
+                    openPrice: 0,
+                    closePrice: 0
                 }
             ]
         };
@@ -88,7 +92,9 @@ describe('Verify openHourTableCalc is working', function () {
             takeProfit: 0,
             stopLoss: 0,
             riskRewardRatio: 0,
-            action: 'buy'
+            action: 'buy',
+            openPrice: 0,
+            closePrice: 0
         };
         var profitLoss12 = [300, -12, 233, 433];
         var profitLoss13 = [23, 455, 132];

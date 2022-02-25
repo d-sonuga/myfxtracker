@@ -57,7 +57,9 @@ const someAccounts: {[key: string]: AccountData} = {
                 profitLoss: 320,
                 pips: 3,
                 takeProfit: 20,
-                stopLoss: 13
+                stopLoss: 13,
+                openPrice: 0,
+                closePrice: 9
             }
         ],
         deposits: [
@@ -96,7 +98,9 @@ const someAccounts: {[key: string]: AccountData} = {
                 profitLoss: 320,
                 pips: 3,
                 takeProfit: 2,
-                stopLoss: 323
+                stopLoss: 323,
+                openPrice: 0,
+                closePrice: 9
             }
         ],
         deposits: [

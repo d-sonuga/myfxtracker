@@ -56,7 +56,9 @@ describe('Verify that longShortComparisonTableCalc is working', function () {
                 commission: 2.3,
                 swap: 3,
                 stopLoss: 0,
-                takeProfit: 0
+                takeProfit: 0,
+                openPrice: 0,
+                closePrice: 0
             }
         ];
         var accountData = {
@@ -105,7 +107,9 @@ describe('Verify that longShortComparisonTableCalc is working', function () {
                 commission: 2.3,
                 swap: 3,
                 stopLoss: 0,
-                takeProfit: 0
+                takeProfit: 0,
+                openPrice: 0,
+                closePrice: 0
             }
         ];
         var accountData = {
