@@ -1,6 +1,7 @@
 import {Trade} from '@root/types'
 import {cloneObj, sameDay, sameMonth, sameWeek, sameYear, approximate} from '@root/utils'
 import {AccountData} from '..'
+import { balanceCalc } from './common-calc'
 import {GainsGraphCalc, GainsGraphItem} from './types'
 
 /**
@@ -36,7 +37,6 @@ const todayGainsPercent = (accountData: AccountData, today: Date) => {
     accData.trades = accData.trades.filter((trade: Trade) => (
         sameDay(trade.closeTime, today)
     ));
-    console.log(accData.trades.length, 'no of today trades');
     return gainsPercent(accData);
 }
 
@@ -45,7 +45,6 @@ const thisWeekGainsPercent = (accountData: AccountData, today: Date) => {
     accData.trades = accData.trades.filter((trade: Trade) => (
         sameWeek(trade.closeTime, today)
     ));
-    console.log(accData.trades.length, 'no of this week trades');
     return gainsPercent(accData);
 }
 
@@ -54,7 +53,6 @@ const thisMonthGainsPercent = (accountData: AccountData, today: Date) => {
     accData.trades = accData.trades.filter((trade: Trade) => (
         sameMonth(trade.closeTime, today)
     ));
-    console.log(accData.trades.length, 'no of this month trades');
     return gainsPercent(accData);
 }
 
@@ -63,7 +61,6 @@ const thisYearGainsPercent = (accountData: AccountData, today: Date) => {
     accData.trades = accData.trades.filter((trade: Trade) => (
         sameYear(trade.closeTime, today)
     ));
-    console.log(accData.trades.length, 'no of this year trades');
     return gainsPercent(accData);
 }
 
@@ -72,35 +69,20 @@ const allTimeGainsPercent = (accountData: AccountData) => {
 }
 
 const gainsPercent = (accountData: AccountData) => {
-    const calc: GainsGraphItem[] = [{tradeNo: 0, gainsPercent: 0}];
-    let totalDeposits = 0;
-    let depositIndex = 0;
-    let cummulativeProfitLoss = 0;
-    const updateDeposit = (initialTotalDeposits: number, tradeClosingTimeStr: string, initialDepositIndex: number) => {
-        let totalDeposits = initialTotalDeposits;
-        let depositIndex = initialDepositIndex;
-        const tradeClosingTime = new Date(tradeClosingTimeStr);
-        let depositTime = new Date(accountData.deposits[depositIndex].time);
-        while(depositTime <= tradeClosingTime && depositIndex < accountData.deposits.length){
-            totalDeposits += accountData.deposits[depositIndex].amount;
-            depositIndex += 1;
-            if(depositIndex < accountData.deposits.length){
-                depositTime = new Date(accountData.deposits[depositIndex].time);
-            }
-        }
-        return [totalDeposits, depositIndex];
+    return [
+        {tradeNo: 0, gainsPercent: 0},
+        ...balanceCalc(accountData)
+            .map((calc, i) => ({
+                tradeNo: i + 1, gainsPercent: gain(calc.trade.profitLoss, calc.balance)
+            }))
+    ]
+}
+
+const gain = (profitLoss: number, balance: number) => {
+    if(balance == 0){
+        return 0;
     }
-    for(const i in accountData.trades){
-        const trade = accountData.trades[i];
-        if(depositIndex < accountData.deposits.length){
-            [totalDeposits, depositIndex] = updateDeposit(totalDeposits, trade.closeTime, depositIndex);
-        }
-        cummulativeProfitLoss += trade.profitLoss;
-        const gain = totalDeposits !== 0 ? cummulativeProfitLoss / totalDeposits : 0;
-        const gainsPercent = gain * 100;
-        calc.push({tradeNo: parseInt(i) + 1, gainsPercent: (gainsPercent)})
-    }
-    return calc
+    return (profitLoss / balance) * 100;
 }
 
 export default gainsGraphCalc
