@@ -7,12 +7,6 @@
 @media (max-width: 925px) {
     .apps-info-app-home-get-started-steps-container {
         grid-column: span 12;
-        align-items: center;
-    }
-    .apps-info-app-home-get-started-steps-container > div {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
 }
 
@@ -28,7 +22,7 @@
 }
 
 .apps-info-app-home-getting-started-step-content > div {
-    margin-bottom: 60px;
+    margin-bottom: 90px;
 }
 
 @media (max-width: 1064px) and (min-width: 620px) {

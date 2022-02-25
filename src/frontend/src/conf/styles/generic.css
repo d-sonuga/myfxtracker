@@ -22,6 +22,8 @@
     --dimen-padding-md: 35px;
     --dimen-padding-big: 50px;
     --dimen-padding-xbig: 70px;
+    --dimen-padding-xxbig: 100px;
+    --dimen-padding-xxxbig: 150px;
 
     --dimen-big-screen: 979px;
     --dimen-navbar-height: 35px;

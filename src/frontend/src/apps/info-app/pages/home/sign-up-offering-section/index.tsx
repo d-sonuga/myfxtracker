@@ -1,9 +1,10 @@
 import {useNavigate} from 'react-router'
 import {CenterRowBox, CenterColumnBox} from '@components/containers'
-import {H5} from '@components/text'
+import {H5, P} from '@components/text'
 import {getDimen} from '@conf/utils'
 import ButtonWithArrow from '../button-with-arrow'
 import './style.css'
+import { RouteConst } from '@conf/const'
 
 
 const SignUpOfferingSection = () => {
@@ -11,9 +12,15 @@ const SignUpOfferingSection = () => {
     return(
         <CenterRowBox className='apps-info-app-home-sign-up-offering-container'>
             <CenterColumnBox>
-                <H5 style={{marginBottom: getDimen('padding-xs'), textAlign: 'center'}}>Since we're both serious about your trading, let's make it official.</H5>
+                <H5 style={{marginBottom: getDimen('padding-xs'), textAlign: 'center'}}>
+                    100% satisafaction guaranteed
+                </H5>
+                <P style={{textAlign: 'center', marginBottom: getDimen('padding-xs')}}>
+                    We guarantee your satisfaction on MyFxTracker with a full refund.
+                    We will refund your subscription fee ($24.99) in full at any month you are dissatisfied.
+                </P>
                 <ButtonWithArrow 
-                    onClick={() => navigate('/sign-up')}
+                    onClick={() => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`)}
                     style={{maxWidth: '350px'}}>
                     Try MyFxTracker free for 14 days
                 </ButtonWithArrow>

@@ -6,7 +6,7 @@ const TraderSupportCard = () => {
         <BaseReasonCard
             img={<img src={traderSupportImg} alt=''  />}
             heading='24/7 Trader Support'
-            content='Lorem ipsum dolor sit amet. Avec moi, pourquoi.'
+            content='Get 24/7 access to our support team if you have any questions or need any help.'
             />
     );
 }

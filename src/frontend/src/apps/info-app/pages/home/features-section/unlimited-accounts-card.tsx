@@ -7,8 +7,9 @@ const UnlimitedAccountsCard = () => {
         <BaseFeatureCard
             imgSrc={unlimitedAccountsImg}
             header='Unlimited Accounts'
-            content='Greetings from the other side. Lorem ipsum dolor sit amet. Avec to pourqui
-            tu faus' />
+            content='Maximise profitability on all of your trading accounts.
+            MyFxTracker easily lets you connect and track your performance on as many
+            trading accounts as you have.' />
     );
 }
 

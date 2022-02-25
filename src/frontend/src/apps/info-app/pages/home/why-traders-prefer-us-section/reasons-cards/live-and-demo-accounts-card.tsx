@@ -7,7 +7,7 @@ const LiveAndDemoAccountsCard = () => {
         <BaseReasonCard
             img={<img src={liveAndDemoAccountsImg} alt='' />}
             heading='Live & Demo Accounts'
-            content='Lorem ipsum dolor sit amet. Avec moi pourquoi.'
+            content='Track and analyse your trading performance on both demo and live accounts.'
             />
     );
 }

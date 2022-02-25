@@ -22,6 +22,8 @@ type Dimen =
 'padding-md' |
 'padding-big' |
 'padding-xbig' |
+'padding-xxbig' |
+'padding-xxxbig' |
 'big-screen' |
 'navbar-height'|
 'sidebar-width' |

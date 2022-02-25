@@ -11,7 +11,8 @@ const Accordion = ({question, answer}: {question: string, answer: string}) => {
         <MuiAccordion sx={{
             boxShadow: '0',
             outline: '0.5px solid rgba(229, 231, 235)',
-            marginTop: getDimen('padding-sm')
+            marginTop: getDimen('padding-sm'),
+            width: '100%'
             }}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}>

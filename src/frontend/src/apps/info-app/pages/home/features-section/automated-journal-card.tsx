@@ -7,8 +7,9 @@ const AutomatedJournalCard = () => {
         <BaseFeatureCard
             imgSrc={automatedJournalImg}
             header='Automated Journal'
-            content='Greetings from the other side. Lorem ipsum dolor sit amet. Avec to pourqui
-            tu faus' />
+            content='Focus on your trading while we do the journalling for you. 
+            MyFxTracker removes the pain of manual journaling and makes the process faster,
+            enjoyable & more efficient.' />
     );
 }
 

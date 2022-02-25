@@ -1,7 +1,7 @@
 import {ComponentWithChildrenPropTypes} from '@components/types'
 
 interface TextPropTypes extends ComponentWithChildrenPropTypes {
-    children: string,
+    children: string | string[],
     onClick?: Function
 }
 

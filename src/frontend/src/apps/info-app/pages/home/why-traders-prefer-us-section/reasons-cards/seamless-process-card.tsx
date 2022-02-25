@@ -7,7 +7,8 @@ const SeamlessProcessCard = () => {
         <BaseReasonCard
             img={<img src={seamlessProcessImg} alt='' />}
             heading='Seamless process'
-            content='Lorem ipsum dolor sit amet. Avec moi pourquoi.' />
+            content='Easily connect your Metatrader to MyFxTracker and view your
+            analytics in as little as 5 minutes.' />
     );
 }
 

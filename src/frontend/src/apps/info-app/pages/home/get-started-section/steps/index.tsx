@@ -1,13 +1,12 @@
-import {H4} from '@components/text'
+import {H4, H3, H6} from '@components/text'
 import {getDimen} from '@conf/utils'
-import StepNumbers from './step-numbers'
-import StepContent from './step-content'
+import {CenterColumnBox, RowBox} from '@components/containers'
+import {getColor} from '@conf/utils'
+import VerticalDivider from '../vertical-divider'
 import './style.css'
 
 
 const Steps = () => {
-    const verticalDividerHeight = 150;
-
     return(
         <div className='apps-info-app-home-get-started-steps-container'>
             <div>
@@ -17,13 +16,36 @@ const Steps = () => {
                     paddingBottom: getDimen('padding-md'),
                     fontWeight: 600
                 }}>Get started in 3 easy steps</H4>
-                <div style={{display: 'flex'}}>
-                    <StepNumbers dividerHeight={verticalDividerHeight} />
-                    <StepContent dividerHeight={verticalDividerHeight} />
-                </div>
+                <>
+                    {steps.map((step: string, i: number) => (
+                        <>
+                        <RowBox key={i} style={{width: '100%'}}>
+                            <CenterColumnBox>
+                                <H3 style={{
+                                    color: getColor('light-blue'),
+                                    display: 'inline',
+                                    marginRight: getDimen('padding-md'),
+                                    textAlign: 'left'
+                                }}>0{(i + 1).toString()}</H3>
+                                {i !== steps.length - 1 ?
+                                    <VerticalDivider height={100} marginLeft='0px' marginRight={getDimen('padding-md')} />
+                                    : null
+                                }
+                            </CenterColumnBox>
+                            <H6 style={{marginTop: getDimen('padding-xs')}}>{step}</H6>
+                        </RowBox>
+                        </>
+                    ))}
+                </>
             </div>
         </div>
     );
 }
+
+const steps = [
+    'Create your account',
+    'Download MyFxTracker EA',
+    'Connect to your Metatrader account'
+]
 
 export default Steps

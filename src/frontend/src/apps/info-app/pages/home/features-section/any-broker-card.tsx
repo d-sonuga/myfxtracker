@@ -7,8 +7,8 @@ const AnyBrokerCard = () => {
         <BaseFeatureCard
             imgSrc={anyBrokerImg}
             header='Any Broker'
-            content='Greetings from the other side. Lorem ipsum dolor sit amet. Avec to pourqui
-            tu faus' />
+            content='Easily switch from one broker to another.
+            MyFxTracker works seamlessly with any broker of your choice.' />
     );
 }
 

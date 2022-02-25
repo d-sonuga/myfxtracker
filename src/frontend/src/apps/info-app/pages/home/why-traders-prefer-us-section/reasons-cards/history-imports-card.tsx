@@ -7,7 +7,7 @@ const HistoryImportsCard = () => {
         <BaseReasonCard
             img={<img src={historyImportsImg} alt='' />}
             heading='History Imports'
-            content='Lorem ipsum dolor sit amet. Avec moi pourquoi.'
+            content='Import and view trade analytics from your trading account as far back as a year ago.'
             />
     );
 }
