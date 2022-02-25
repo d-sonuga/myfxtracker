@@ -77,11 +77,11 @@ describe('Verify that pairsAnalysisTableCalc is working', () => {
                 noOfLongsOnPair: 1,
                 noOfShortsOnPair: 1,
                 noOfLosingTradesOnPair: 1,
-                noOfTpOnPair: 2,
+                noOfTpOnPair: 1,
                 longsOnPairPercent: 50,
                 shortsOnPairPercent: 50,
                 losingTradesOnPairPercent: 50,
-                tpOnPairPercent: 100,
+                tpOnPairPercent: 50,
                 slOnPairPercent: 0,
                 profitableTradesOnPairPercent: 50
             },
