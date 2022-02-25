@@ -1,6 +1,6 @@
 import {GainsGraphCalc} from '@root/index'
 import {AccountData, Deposit, Trade, Withdrawal} from '@root/types'
-import {randomNumber, sumObjArray} from '@root/utils'
+import {randomNumber, sum, sumObjArray} from '@root/utils'
 import gainsGraphCalc from '../gains-graph-calc'
 import {GainsGraphItem} from '../types'
 
@@ -10,7 +10,7 @@ describe('Verify gainsGraphCalc is working', () => {
     const newTrade = (attr: Partial<Trade> & {date?: string}) => {
         return {
             profitLoss: randomNumber(-1000000, 1000000),
-            openTime: attr.date !== undefined ? attr.date : '2021-10-18T18:34:00Z',
+            openTime: '1990-10-18T18:34:00Z',
             closeTime: attr.date !== undefined ? attr.date : '2021-10-18T18:34:00Z',
             pair: 'GBPUSD',
             action: 'buy',
@@ -106,7 +106,6 @@ describe('Verify gainsGraphCalc is working', () => {
             expect(result).toEqual(expectedResult);
         })
     })
-    */
     describe('When there are some trades and deposits', () => {
         const tradeDateStr = '2021-10-13T18:34:00Z';
         const today = new Date(tradeDateStr);
@@ -161,12 +160,12 @@ describe('Verify gainsGraphCalc is working', () => {
             expect(result).toEqual(expectedResult);
         })
     })
-    /*
+    */
     describe('When there are some trades and deposits', () => {
         const createTrades = (noOfTrades: number, date: string): Trade[] => {
             const trades: Trade[] = [];
             for(let i=0; i<noOfTrades; i++){
-                trades.push(newTrade({date: todayStr}))
+                trades.push(newTrade({date}))
             }
             return trades;
         }
@@ -206,9 +205,9 @@ describe('Verify gainsGraphCalc is working', () => {
             }
             return amount;
         }
-        // 2nd November, 2021
-        const today = new Date(2021, 10, 2);
+        // 18th November, 2021
         const todayStr = '2021-11-18T18:34:00Z';
+        const today = new Date(todayStr);
         const thisWeekStr = '2021-11-15T18:34:00Z';
         const thisMonthStr = '2021-11-03T18:34:00Z';
         const thisYearStr = '2021-09-03T18:34:00Z';
@@ -253,33 +252,35 @@ describe('Verify gainsGraphCalc is working', () => {
             ]
         }
         const defaultResult: GainsGraphItem = {tradeNo: 0, gainsPercent: 0};
-        const expectedTodayGraphCalc: GainsGraphCalc['todayGraphCalc'] = (() => {
-            let deposits = sumAmount(todayDeposits);
+        const expectedTodayGraphCalc = (() => {
+            let deposits = sumAmount(todayDeposits) + sumAmount(thisWeekDeposits) + 
+                sumAmount(thisMonthDeposits) + sumAmount(thisYearDeposits) + sumAmount(lastYearDeposits);
             let amount = 0;
             const result = [defaultResult];
             let tradeNo = 1;
             for(const trade of todayTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/deposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/deposits * 100)})
                 tradeNo += 1;
             }
             return result;
         })()
         const expectedThisWeekGraphCalc = (() => {
             let todayDepositAmount = sumAmount(todayDeposits);
-            let totalDeposits = sumAmount(thisWeekDeposits);
+            let totalDeposits = sumAmount(thisWeekDeposits) + sumAmount(thisMonthDeposits)
+            sumAmount(thisYearDeposits) + sumAmount(lastYearDeposits);
             let amount = 0;
             const result = [defaultResult];
             let tradeNo = 1;
             for(const trade of thisWeekTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += todayDepositAmount;
             for(const trade of todayTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             return result;
@@ -287,26 +288,26 @@ describe('Verify gainsGraphCalc is working', () => {
         const expectedThisMonthGraphCalc = (() => {
             let todayDepositAmount = sumAmount(todayDeposits);
             let thisWeekDepositAmount = sumAmount(thisWeekDeposits);
-            let totalDeposits = sumAmount(thisMonthDeposits);
+            let totalDeposits = sumAmount(thisMonthDeposits) + sumAmount(thisYearDeposits) + 
+                sumAmount(lastYearDeposits);
             let amount = 0;
             const result = [defaultResult];
             let tradeNo = 1;
             for(const trade of thisMonthTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: ((amount/totalDeposits * 100))})
                 tradeNo += 1;
             }
             totalDeposits += thisWeekDepositAmount
             for(const trade of thisWeekTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: ((amount/totalDeposits * 100))})
                 tradeNo += 1;
             }
             totalDeposits += todayDepositAmount;
-            totalDeposits += todayDepositAmount;
             for(const trade of todayTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: ((amount/totalDeposits * 100))})
                 tradeNo += 1;
             }
             return result;
@@ -315,32 +316,31 @@ describe('Verify gainsGraphCalc is working', () => {
             let todayDepositAmount = sumAmount(todayDeposits);
             let thisWeekDepositAmount = sumAmount(thisWeekDeposits);
             let thisMonthDepositAmount = sumAmount(thisMonthDeposits);
-            let totalDeposits = sumAmount(thisYearDeposits);
+            let totalDeposits = sumAmount(thisYearDeposits) + sumAmount(lastYearDeposits);
             let amount = 0;
             const result = [defaultResult];
             let tradeNo = 1;
             for(const trade of thisYearTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += thisMonthDepositAmount;
             for(const trade of thisMonthTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += thisWeekDepositAmount
             for(const trade of thisWeekTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += todayDepositAmount;
-            totalDeposits += todayDepositAmount;
             for(const trade of todayTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: ((amount/totalDeposits  * 100))})
                 tradeNo += 1;
             }
             return result;
@@ -356,32 +356,31 @@ describe('Verify gainsGraphCalc is working', () => {
             let tradeNo = 1;
             for(const trade of lastYearTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += thisYearDepositAmount;
             for(const trade of thisYearTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += thisMonthDepositAmount;
             for(const trade of thisMonthTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += thisWeekDepositAmount
             for(const trade of thisWeekTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             totalDeposits += todayDepositAmount;
-            totalDeposits += todayDepositAmount;
             for(const trade of todayTrades){
                 amount += trade.profitLoss;
-                result.push({tradeNo, gainsPercent: (amount/totalDeposits) * 100})
+                result.push({tradeNo, gainsPercent: (amount/totalDeposits * 100)})
                 tradeNo += 1;
             }
             return result;
@@ -398,5 +397,4 @@ describe('Verify gainsGraphCalc is working', () => {
             expect(result).toEqual(expectedResult);
         })
     })
-    */
 })

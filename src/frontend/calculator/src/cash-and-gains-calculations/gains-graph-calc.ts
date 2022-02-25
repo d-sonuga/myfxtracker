@@ -1,5 +1,5 @@
-import {Trade, Deposit} from '@root/types'
-import {cloneObj, FAR_IN_THE_PAST_YEAR, sameDay, sameMonth, sameWeek, sameYear, sumObjArray} from '@root/utils'
+import {Trade} from '@root/types'
+import {cloneObj, sameDay, sameMonth, sameWeek, sameYear, approximate} from '@root/utils'
 import {AccountData} from '..'
 import {GainsGraphCalc, GainsGraphItem} from './types'
 
@@ -34,11 +34,9 @@ const gainsGraphCalc = (accountData: AccountData, today: Date = new Date()) => {
 const todayGainsPercent = (accountData: AccountData, today: Date) => {
     const accData: AccountData = cloneObj(accountData);
     accData.trades = accData.trades.filter((trade: Trade) => (
-        sameDay(trade.openTime, today)
+        sameDay(trade.closeTime, today)
     ));
-    accData.deposits = accData.deposits.filter((deposit: Deposit) => (
-        sameDay(deposit.time, today)
-    ))
+    console.log(accData.trades.length, 'no of today trades');
     return gainsPercent(accData);
 }
 
@@ -47,9 +45,7 @@ const thisWeekGainsPercent = (accountData: AccountData, today: Date) => {
     accData.trades = accData.trades.filter((trade: Trade) => (
         sameWeek(trade.closeTime, today)
     ));
-    accData.deposits = accData.deposits.filter((deposit: Deposit) => (
-        sameWeek(deposit.time, today)
-    ));
+    console.log(accData.trades.length, 'no of this week trades');
     return gainsPercent(accData);
 }
 
@@ -58,9 +54,7 @@ const thisMonthGainsPercent = (accountData: AccountData, today: Date) => {
     accData.trades = accData.trades.filter((trade: Trade) => (
         sameMonth(trade.closeTime, today)
     ));
-    accData.deposits = accData.deposits.filter((deposit: Deposit) => (
-        sameMonth(deposit.time, today)
-    ));
+    console.log(accData.trades.length, 'no of this month trades');
     return gainsPercent(accData);
 }
 
@@ -69,9 +63,7 @@ const thisYearGainsPercent = (accountData: AccountData, today: Date) => {
     accData.trades = accData.trades.filter((trade: Trade) => (
         sameYear(trade.closeTime, today)
     ));
-    accData.deposits = accData.deposits.filter((deposit: Deposit) => (
-        sameYear(deposit.time, today)
-    ));
+    console.log(accData.trades.length, 'no of this year trades');
     return gainsPercent(accData);
 }
 
@@ -106,7 +98,7 @@ const gainsPercent = (accountData: AccountData) => {
         cummulativeProfitLoss += trade.profitLoss;
         const gain = totalDeposits !== 0 ? cummulativeProfitLoss / totalDeposits : 0;
         const gainsPercent = gain * 100;
-        calc.push({tradeNo: parseInt(i) + 1, gainsPercent})
+        calc.push({tradeNo: parseInt(i) + 1, gainsPercent: (gainsPercent)})
     }
     return calc
 }

@@ -30,6 +30,9 @@ const cloneObj = (obj: {[key: string]: any}) => {
     return JSON.parse(JSON.stringify(obj));
 }
 
+const approximate = (n: number): number => {
+    return parseFloat(n.toFixed(10));
+}
 
 
 export {
@@ -38,7 +41,8 @@ export {
     sum,
     sumObjArray,
     cloneObj,
-    randomInt
+    randomInt,
+    approximate
 }
 
 export * from './date-utils'
