@@ -290,7 +290,8 @@ class DeleteAccountView(APIView):
 
 
 class DownloadEA(APIView):
-    permission_classes = [IsAuthenticated, IsTrader]
+    #permission_classes = [IsAuthenticated, IsTrader]
+    permission_classes = [AllowAny]
     renderer_classes = [BinaryRenderer]
     
     def get(self, request):
