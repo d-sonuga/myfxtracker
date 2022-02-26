@@ -289,23 +289,6 @@ class DeleteAccountView(APIView):
         return Response()
 
 
-class DownloadEA(APIView):
-    #permission_classes = [IsAuthenticated, IsTrader]
-    permission_classes = [AllowAny]
-    renderer_classes = [BinaryRenderer]
-    
-    def get(self, request):
-        filename = 'MyFxTracker'
-        extension = ('ex4'
-            if request.query_params['variant'] == 'mt4' else 'ex5'
-        )
-        ea_location = os.path.join(settings.BASE_DIR, 'trader', 'expert_advisors', f'{filename}.{extension}')
-        file = open(ea_location, 'rb')
-        response = Response(file)
-        response['Content-Disposition'] = f'attachment; filename={filename}'
-        return response
-
-
 class NoteViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsTrader]
     serializer_class = NoteSerializer
@@ -427,7 +410,6 @@ But when there are errors, the response is of the following format:
 }
 """
 
-download_ea = DownloadEA.as_view()
 login = LoginView.as_view()
 sign_up = RegisterView.as_view()
 logout = Logout.as_view()

@@ -4,7 +4,7 @@ import {HttpConst} from '@conf/const'
 import {getColor} from '@conf/utils'
 
 
-const DataSourceSetupInstructions = ({dsUsername, eaDownloadUrls}: {dsUsername: string, eaDownloadUrls: {'mt4': string, 'mt5': string}}) => {
+const DataSourceSetupInstructions = ({dsUsername}: {dsUsername: string}) => {
     return(
         <ColumnBox
             style={{
@@ -22,7 +22,7 @@ const DataSourceSetupInstructions = ({dsUsername, eaDownloadUrls}: {dsUsername: 
                     <RowBox style={{alignItems: 'baseline'}}>
                         <P>Download the &nbsp;</P>
                         <a
-                            href={eaDownloadUrls['mt4']}
+                            href={`${HttpConst.BASE_URL}/${HttpConst.DOWNLOAD_MT4_EA_URL}`}
                             download='MyFxTracker.ex4'
                             style={{
                                 color: getColor('light-blue'),
@@ -32,7 +32,7 @@ const DataSourceSetupInstructions = ({dsUsername, eaDownloadUrls}: {dsUsername: 
                             data-testid='download-ea-mt4'>EA for MT4</a>
                         <P>&nbsp; or the &nbsp;</P>
                         <a
-                            href={eaDownloadUrls['mt5']}
+                            href={`${HttpConst.BASE_URL}/${HttpConst.DOWNLOAD_MT5_EA_URL}`}
                             download='MyFxTracker.ex5'
                             style={{
                                 color: getColor('light-blue'),

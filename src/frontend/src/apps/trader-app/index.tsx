@@ -9,7 +9,6 @@ import {GlobalData, useGlobalData} from '@apps/trader-app/models'
 import {Http, getNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
 import DataSourceSetupInstructions from './data-source-setup-instructions'
-import useEaDownloadUrl from './services/ea-download-url'
 
 const Notebook = lazy(() => import('@apps/trader-app/pages/notes'));
 const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
@@ -28,7 +27,6 @@ const TraderApp = () => {
     useEffect(() => {
         Http.initNavigate(navigate);
     }, [])
-    const eaDownloadUrls = useEaDownloadUrl();
     const noteData = getNoteData();
     
     const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
@@ -50,7 +48,6 @@ const TraderApp = () => {
                                     }
                                     return <DataSourceSetupInstructions
                                                 dsUsername={globalData.getUserDsUsername()}
-                                                eaDownloadUrls={eaDownloadUrls}
                                                 />
                                 } else {
                                     return (
