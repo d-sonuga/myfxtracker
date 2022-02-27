@@ -22,7 +22,7 @@ const overviewCardsCalc = (accountData: AccountData) => {
  * */
  const totalBalance = (accountData: AccountData) => {
     let totalBalance = totalProfitLoss(accountData) + totalDeposits(accountData)
-        - totalWithdrawals(accountData);
+        - totalWithdrawals(accountData) - totalExpenses(accountData);
     return totalBalance;
 }
 
@@ -63,6 +63,19 @@ const absGain = (accountData: AccountData) => {
     const deposits = totalDeposits(accountData);
     if(deposits === 0) return 0
     return (profitLoss / deposits) * 100;
+}
+
+const totalExpenses = (accountData: AccountData) => {
+    let expenses = 0;
+    for(const trade of accountData.trades){
+        if(trade.commission){
+            expenses += trade.commission;
+        }
+        if(trade.swap){
+            expenses += trade.swap;
+        }
+    }
+    return expenses;
 }
 
 export default overviewCardsCalc

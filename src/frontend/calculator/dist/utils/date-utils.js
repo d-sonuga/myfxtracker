@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FAR_IN_THE_FUTURE_YEAR = exports.sameYear = exports.sameMonth = exports.sameWeek = exports.sameDay = void 0;
+exports.FAR_IN_THE_PAST_YEAR = exports.FAR_IN_THE_FUTURE_YEAR = exports.sameYear = exports.sameMonth = exports.sameWeek = exports.sameDay = void 0;
 /**
  * A year to be used in date sentinels to represent dates whose values
  * are to far in the future for real date to be ahead of the same way
@@ -9,6 +9,12 @@ exports.FAR_IN_THE_FUTURE_YEAR = exports.sameYear = exports.sameMonth = exports.
  * */
 var FAR_IN_THE_FUTURE_YEAR = 200000;
 exports.FAR_IN_THE_FUTURE_YEAR = FAR_IN_THE_FUTURE_YEAR;
+/**
+ * Performs the same function as FAR_IN_THE_FUTURE_YEAR
+ * the -infinity for date sentinels
+ */
+var FAR_IN_THE_PAST_YEAR = 100;
+exports.FAR_IN_THE_PAST_YEAR = FAR_IN_THE_PAST_YEAR;
 /**
  * Does the date in @param dateStr fall in the same day as @param otherDate
  */

@@ -19,7 +19,7 @@ var overviewCardsCalc = function (accountData) {
  * */
 var totalBalance = function (accountData) {
     var totalBalance = totalProfitLoss(accountData) + totalDeposits(accountData)
-        - totalWithdrawals(accountData);
+        - totalWithdrawals(accountData) - totalExpenses(accountData);
     return totalBalance;
 };
 /** Sums all profit and losses */
@@ -59,6 +59,19 @@ var absGain = function (accountData) {
     if (deposits === 0)
         return 0;
     return (profitLoss / deposits) * 100;
+};
+var totalExpenses = function (accountData) {
+    var expenses = 0;
+    for (var _i = 0, _a = accountData.trades; _i < _a.length; _i++) {
+        var trade = _a[_i];
+        if (trade.commission) {
+            expenses += trade.commission;
+        }
+        if (trade.swap) {
+            expenses += trade.swap;
+        }
+    }
+    return expenses;
 };
 exports.default = overviewCardsCalc;
 //# sourceMappingURL=overview-cards-calc.js.map

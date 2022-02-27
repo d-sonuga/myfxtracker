@@ -19,7 +19,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.randomInt = exports.cloneObj = exports.sumObjArray = exports.sum = exports.mergeArrays = exports.randomNumber = void 0;
+exports.approximate = exports.randomInt = exports.cloneObj = exports.sumObjArray = exports.sum = exports.mergeArrays = exports.randomNumber = void 0;
 var randomNumber = function (min, max) {
     return (Math.random() * (max - min)) + min;
 };
@@ -57,5 +57,9 @@ var cloneObj = function (obj) {
     return JSON.parse(JSON.stringify(obj));
 };
 exports.cloneObj = cloneObj;
+var approximate = function (n) {
+    return parseFloat(n.toFixed(10));
+};
+exports.approximate = approximate;
 __exportStar(require("./date-utils"), exports);
 //# sourceMappingURL=index.js.map

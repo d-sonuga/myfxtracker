@@ -1,3 +1,4 @@
+import { Trade } from '..';
 import { PeriodGraph } from '../types';
 declare type CashAndGainsCalculations = {
     cashGraphCalc: CashGraphCalc;
@@ -13,5 +14,9 @@ declare type GainsGraphItem = {
     tradeNo: number;
     gainsPercent: number;
 };
-export type { CashAndGainsCalculations, CashGraphCalc, GainsGraphCalc, CashGraphItem, GainsGraphItem };
+declare type BalanceCalcItem = {
+    trade: Trade;
+    balance: number;
+};
+export type { CashAndGainsCalculations, CashGraphCalc, GainsGraphCalc, CashGraphItem, GainsGraphItem, BalanceCalcItem };
 //# sourceMappingURL=types.d.ts.map

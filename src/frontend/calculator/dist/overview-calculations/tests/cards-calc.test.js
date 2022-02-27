@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var overview_cards_calc_1 = __importDefault(require("../overview-cards-calc"));
+var utils_1 = require("../../utils");
 describe('Verify that overviewCardsCalc is working', function () {
     describe('When accountData.trades is empty', function () {
         var dummyDeposits = [];
@@ -65,9 +66,11 @@ describe('Verify that overviewCardsCalc is working', function () {
                 withdrawals: dummyWithdrawals,
                 trades: trades
             };
+            var totalExpenses = (trades[0].commission ? trades[0].commission : 0)
+                + (trades[0].swap ? trades[0].swap : 0);
             var result = (0, overview_cards_calc_1.default)(dummyAccountData);
             var expectedResult = {
-                totalBalance: tradeProfitLoss + depositAmount - withdrawalAmount,
+                totalBalance: tradeProfitLoss + depositAmount - withdrawalAmount - totalExpenses,
                 noOfTrades: 1,
                 winRate: 100,
                 absGain: (tradeProfitLoss / depositAmount) * 100
@@ -138,8 +141,8 @@ describe('Verify that overviewCardsCalc is working', function () {
                 entryImageLink: '',
                 exitImageLink: '',
                 lots: 3,
-                commission: 34,
-                swap: 43,
+                commission: Math.round((0, utils_1.randomNumber)(0, 50)),
+                swap: Math.round((0, utils_1.randomNumber)(0, 50)),
                 stopLoss: 0,
                 takeProfit: 0,
                 openPrice: 0,
@@ -151,9 +154,18 @@ describe('Verify that overviewCardsCalc is working', function () {
                 withdrawals: dummyWithdrawals,
                 trades: trades
             };
+            var totalExpenses = (function () {
+                var expenses = 0;
+                trades.forEach(function (trade) {
+                    expenses += (trade.commission ? trade.commission : 0) +
+                        (trade.swap ? trade.swap : 0);
+                });
+                return expenses;
+            })();
             var result = (0, overview_cards_calc_1.default)(dummyAccountData);
             var expectedResult = {
-                totalBalance: sum(tradeProfitLosses) + sum(depositAmounts) - sum(withdrawalAmounts),
+                totalBalance: sum(tradeProfitLosses) + sum(depositAmounts) - sum(withdrawalAmounts)
+                    - totalExpenses,
                 noOfTrades: tradeProfitLosses.length,
                 winRate: (noOfWinningTrades / tradeProfitLosses.length) * 100,
                 absGain: (sum(tradeProfitLosses) / sum(depositAmounts)) * 100

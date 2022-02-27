@@ -1,6 +1,7 @@
 import overviewCardsCalc from '../overview-cards-calc'
 import {OverviewCardsCalc} from '../types'
 import {Deposit, Withdrawal, AccountData, Trade} from '@root/types'
+import { randomNumber } from '@root/utils'
 
 
 describe('Verify that overviewCardsCalc is working', () => {
@@ -64,9 +65,11 @@ describe('Verify that overviewCardsCalc is working', () => {
                 withdrawals: dummyWithdrawals,
                 trades
             }
+            const totalExpenses = (trades[0].commission ? trades[0].commission : 0) 
+                + (trades[0].swap ? trades[0].swap : 0);
             const result = overviewCardsCalc(dummyAccountData);
             const expectedResult: OverviewCardsCalc = {
-                totalBalance: tradeProfitLoss + depositAmount - withdrawalAmount,
+                totalBalance: tradeProfitLoss + depositAmount - withdrawalAmount - totalExpenses,
                 noOfTrades: 1,
                 winRate: 100,
                 absGain: (tradeProfitLoss / depositAmount) * 100
@@ -137,8 +140,8 @@ describe('Verify that overviewCardsCalc is working', () => {
                     entryImageLink: '',
                     exitImageLink: '',
                     lots: 3,
-                    commission: 34,
-                    swap: 43,
+                    commission: Math.round(randomNumber(0, 50)),
+                    swap: Math.round(randomNumber(0, 50)),
                     stopLoss: 0,
                     takeProfit: 0,
                     openPrice: 0,
@@ -151,9 +154,18 @@ describe('Verify that overviewCardsCalc is working', () => {
                 withdrawals: dummyWithdrawals,
                 trades
             }
+            const totalExpenses = (() => {
+                let expenses = 0;
+                trades.forEach((trade) => {
+                    expenses += (trade.commission ? trade.commission : 0) +
+                        (trade.swap ? trade.swap : 0);
+                });
+                return expenses;
+            })()
             const result = overviewCardsCalc(dummyAccountData);
             const expectedResult: OverviewCardsCalc = {
-                totalBalance: sum(tradeProfitLosses) + sum(depositAmounts) - sum(withdrawalAmounts),
+                totalBalance: sum(tradeProfitLosses) + sum(depositAmounts) - sum(withdrawalAmounts)
+                    - totalExpenses,
                 noOfTrades: tradeProfitLosses.length,
                 winRate: (noOfWinningTrades / tradeProfitLosses.length) * 100,
                 absGain: (sum(tradeProfitLosses) / sum(depositAmounts)) * 100

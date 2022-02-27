@@ -8,6 +8,7 @@ declare const sumObjArray: (objs: {
 declare const cloneObj: (obj: {
     [key: string]: any;
 }) => any;
-export { randomNumber, mergeArrays, sum, sumObjArray, cloneObj, randomInt };
+declare const approximate: (n: number) => number;
+export { randomNumber, mergeArrays, sum, sumObjArray, cloneObj, randomInt, approximate };
 export * from './date-utils';
 //# sourceMappingURL=index.d.ts.map
