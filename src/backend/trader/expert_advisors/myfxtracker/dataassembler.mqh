@@ -36,6 +36,10 @@ class DataAssembler: public BaseDataAssembler {
                     return "buy";
                 case OP_SELL:
                     return "sell";
+                // apparently, I found that on an MT4 terminal,
+                // OrderType returns 6 when the order is a deposit
+                case 6:
+                    return "deposit";
                 default:
                     return IntegerToString(orderType);
             }
