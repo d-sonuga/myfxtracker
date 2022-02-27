@@ -69,11 +69,19 @@ class AccountManager(models.Manager):
     def get_by_name_broker_login_no(self, name, broker, login_no):
         return self.get(name=name, broker=broker, login_number=login_no)
 
+
 def is_deposit(item):
-    return item['comment'] is not None and item['comment'].lower() == 'deposit' and item['pair'] is None
+    return (
+        (
+            (item['comment'] is not None and item['comment'] == 'deposit') or
+            item['action'] == 'deposit'
+        ) and
+        item['pair'] is None
+    )
 
 def is_withdrawal(item):
     return item['comment'] is not None and item['comment'].lower() == 'withdrawal' and item['pair'] is None
+
 
 def get_account_trades(transaction_data):
     return list(filter(
