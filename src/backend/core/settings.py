@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == 'true'
+DEBUG = True#os.getenv('DEBUG') == 'true'
 
 ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com',
@@ -52,10 +52,10 @@ INSTALLED_APPS = [
     'datasource_endpoint'
 ]
 
-if DEBUG:
+if not DEBUG:
     INSTALLED_APPS += ['corsheaders']
 
-if DEBUG:
+if not DEBUG:
     MIDDLEWARE = [
         'corsheaders.middleware.CorsMiddleware',
         'corsheaders.middleware.CorsPostCsrfMiddleware'
@@ -114,13 +114,13 @@ DATABASES = {
         }
     }
 }
-if not DEBUG:
+if DEBUG:
     DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
 
 SITE_ID = 1
 
 
-if DEBUG:
+if not DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
     CSRF_TRUSTED_ORIGINS = [
@@ -199,7 +199,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-if DEBUG:
+if not DEBUG:
     EMAIL_HOST = '0.0.0.0'
     EMAIL_USE_TLS = False
     EMAIL_PORT = 1025
@@ -234,7 +234,7 @@ ACCOUNT_PASSWORD_MIN_LENGTH = 8
 
 # The login url is the location the user is redirected to after email confirmation
 # A link to this url will be in any confirmation email
-if DEBUG:
+if not DEBUG:
     if os.getenv('TEST') == 'true':
         LOGIN_URL = 'http://frontend:3000/log-in'
     else:
