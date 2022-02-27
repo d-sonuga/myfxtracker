@@ -173,8 +173,6 @@ class Transaction {
                 return "sell";
             case DEAL_TYPE_BALANCE:
                 return "deposit";
-            case DEAL_TYPE_BONUS:
-                return "deposit";
             default:
                 return DoubleToString(dealType);
         }
@@ -229,6 +227,7 @@ class Mapper {
          if(keyIndex != -1){
              return true;
          }
+         //////MessageBox("posMap doesnt contain key: " + key);
          return false;
       }
       ulong getValue(ulong key){ 
@@ -246,6 +245,8 @@ class Mapper {
          ArrayResize(this.values, this.noOfItems);
          this.keys[this.noOfItems - 1] = key;
          this.values[this.noOfItems - 1] = value;
+         //////MessageBox("posMap set key " + key + " at index " + (this.noOfItems - 1));
+         //////MessageBox("posMap keys now holds key " + this.keys[this.noOfItems - 1]);
       }
       int getNoOfItems(){
           return this.noOfItems;
@@ -358,6 +359,7 @@ class TestDataAssembler: public BaseDataAssembler {
             allData["account-leverage"] = 32;
             allData["account-trade-mode"] = "demo";
             allData["account-stopout-level-format"] ="money";
+            //allData["account-transactions"] = [];
             return allData;
         }
 
