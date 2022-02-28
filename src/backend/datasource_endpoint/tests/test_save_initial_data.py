@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 import nanoid
-from trader.models import Account, Deposit, Trade, Withdrawal, UnknownTransaction
+from trader.models import Account, Deposit, Trade, Withdrawal, UnknownTransaction, format_time_for_saving_as_transaction_id
 from users.models import Trader
 from .base_test import BaseTest
 from .test_data import SaveInitialDataTestData
@@ -117,13 +117,13 @@ class TestSaveInitialData(BaseTest):
         for deposit_data in self.get_account_deposits(initial_data['account-transactions']):
             deposit_set = Deposit.objects.filter(
                 account=account,
-                deposit_id=deposit_data['transaction-id']
+                deposit_id=format_time_for_saving_as_transaction_id(deposit_data['transaction-id'])
             )
             self.assertEquals(deposit_set.count(), 1)
         for withdrawal_data in self.get_account_withdrawals(initial_data['account-transactions']):
             withdrawal_set = Withdrawal.objects.filter(
                 account=account,
-                withdrawal_id=withdrawal_data['transaction-id']
+                withdrawal_id=format_time_for_saving_as_transaction_id(withdrawal_data['transaction-id'])
             )
             self.assertEquals(withdrawal_set.count(), 1)
             

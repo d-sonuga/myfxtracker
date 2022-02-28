@@ -1,3 +1,4 @@
+from collections import namedtuple
 from datetime import datetime
 from django.db import IntegrityError, models
 from django.core.serializers.json import DjangoJSONEncoder
@@ -11,7 +12,7 @@ class IntegerFromCharField(models.CharField):
 
     def to_python(self, value):
         value_in_str = super().to_python(value).split('.')[0]
-        return int(value_in_str)
+        return float(value_in_str)
     
     def get_prep_value(self, value):
         return str(value)
@@ -71,42 +72,32 @@ class AccountManager(models.Manager):
 
 
 def is_deposit(item):
-    return (
-        (
-            (item['comment'] is not None and item['comment'] == 'deposit') or
-            item['action'] == 'deposit'
-        ) and
-        item['pair'] is None
-    )
+    return item['action'] == 'deposit' and item['pair'] is None
 
 def is_withdrawal(item):
-    return item['comment'] is not None and item['comment'].lower() == 'withdrawal' and item['pair'] is None
+    return item['action'] == 'withdrawal' and item['pair'] is None
 
 
 def get_account_trades(transaction_data):
     return list(filter(
             lambda item:
                 not is_deposit(item) and
-                not is_withdrawal(item) and
-                item['pair'] is not None and len(item['pair']) != 0,
+                not is_withdrawal(item)
+                and item['pair'] is not None,
             transaction_data
         )
     )
 
 def get_account_deposits(transaction_data):
     return list(filter(
-            lambda item:
-                (item['pair'] is None and item['action'] == 'deposit') or
-                (item['comment'] and item['comment'].lower() == 'deposit'),
+            is_deposit,
             transaction_data
         )
     )
 
 def get_account_withdrawals(transaction_data):
     return list(filter(
-            lambda item:
-                (item['pair'] is None and item['action'] == 'withdrawal') or
-                (item['comment'] and item['comment'].lower() == 'withdrawal'),
+            is_withdrawal,
             transaction_data
         )
     )
@@ -269,7 +260,7 @@ class DepositManager(models.Manager):
             account=account,
             amount=rawdata['profit'],
             time=format_time(rawdata['close-time']),
-            deposit_id=int(rawdata['transaction-id'])
+            deposit_id=format_time_for_saving_as_transaction_id(rawdata['transaction-id'])
         )
     
     def is_duplicate(self, account, rawdata):
@@ -300,7 +291,7 @@ class WithdrawalManager(models.Manager):
             account=account,
             amount=rawdata['profit'],
             time=format_time(rawdata['close-time']),
-            withdrawal_id=int(rawdata['transaction-id'])
+            withdrawal_id=format_time_for_saving_as_transaction_id(rawdata['transaction-id'])
         )
     
     def is_duplicate(self, account, rawdata):
@@ -389,3 +380,15 @@ def format_time(time_str):
         date_time[1] = date_time[1][:-3]
     time_str = ' '.join(date_time).replace('.', '-')
     return timezone.make_aware(datetime.strptime(time_str, '%Y-%m-%d %H:%M'))
+
+
+def format_time_for_saving_as_transaction_id(value):
+    # 'year.month.date hour:minute:second'
+    date, time = value.split(' ')
+    [year, month, day] = [int(val) for val in date.split('.')]
+    [hour, minute, second] = [int(val) for val in time.split(':')]
+    datetimestamp = datetime(
+        year, month, day, hour, minute, second
+    ).timestamp()
+    transaction_id = ''.join((str(datetimestamp), str(second)))
+    return transaction_id
