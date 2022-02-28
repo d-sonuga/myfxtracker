@@ -29,7 +29,13 @@ string accountStopoutModeInString(int accountStopoutMode){
 string timeInPreciseString(datetime time){
     MqlDateTime preciseTime;
     TimeToStruct(time, preciseTime);
-    return TimeToString(time) + ":" + preciseTime.sec;
+    string sec;
+    if(preciseTime.sec < 10){
+        sec = "0" + IntegerToString(preciseTime.sec);
+    } else {
+        sec = IntegerToString(preciseTime.sec);
+    }
+    return TimeToString(time) + ":" + sec;
 }
 
 #ifdef __MQL4__
@@ -57,14 +63,19 @@ class DataAssembler: public BaseDataAssembler {
         CJAVal assembleTransaction(){
             CJAVal transaction;
             double profit = OrderProfit();
+            string action = this.getTransactionAction(OrderType(), profit);
             transaction["pair"] = OrderSymbol();
             transaction["open-price"] = OrderOpenPrice();
             transaction["close-price"] = OrderClosePrice();
             transaction["profit"] = profit;
             transaction["open-time"] = timeInPreciseString(OrderOpenTime());
             transaction["close-time"] = timeInPreciseString(OrderCloseTime());
-            transaction["transaction-id"] = OrderTicket();
-            transaction["action"] = this.getTransactionAction(OrderType(), profit);
+            if(action != "buy" && action != "sell"){
+                transaction["transaction-id"] = timeInPreciseString(OrderOpenTime());
+            } else {
+                transaction["transaction-id"] = IntegerToString(OrderTicket());
+            }
+            transaction["action"] = action;
             transaction["swap"] = OrderSwap();
             transaction["commission"] = OrderCommission();
             transaction["stop-loss"] = OrderStopLoss();
@@ -132,7 +143,7 @@ class Transaction {
       double profit;
       datetime openTime;
       datetime closeTime;
-      long transactionId;
+      string transactionId;
       string action;
       double swap;
       double commission;
@@ -144,14 +155,14 @@ class Transaction {
       Transaction(ulong firstDealTicket, ulong secondDealTicket){
          ulong dealType;
          this.profit = 0.0;
-         long posid;
+         long posId;
          HistoryDealGetString(firstDealTicket, DEAL_SYMBOL, this.pair);
          HistoryDealGetDouble(firstDealTicket, DEAL_PRICE, this.openPrice);
          HistoryDealGetDouble(secondDealTicket, DEAL_PRICE, this.closePrice);
          HistoryDealGetDouble(secondDealTicket, DEAL_PROFIT, this.profit);
          HistoryDealGetInteger(firstDealTicket, DEAL_TIME, this.openTime);
          HistoryDealGetInteger(secondDealTicket, DEAL_TIME, this.closeTime);
-         HistoryDealGetInteger(firstDealTicket, DEAL_POSITION_ID, this.transactionId);
+         HistoryDealGetInteger(firstDealTicket, DEAL_POSITION_ID, posId);
          HistoryDealGetInteger(firstDealTicket, DEAL_TYPE, dealType);
          HistoryDealGetDouble(secondDealTicket, DEAL_SWAP, this.swap);
          HistoryDealGetDouble(secondDealTicket, DEAL_COMMISSION, this.commission);
@@ -159,6 +170,7 @@ class Transaction {
          HistoryDealGetDouble(firstDealTicket, DEAL_TP, this.takeProfit);
          HistoryDealGetString(firstDealTicket, DEAL_COMMENT, this.comment);
          HistoryDealGetInteger(firstDealTicket, DEAL_MAGIC, this.magicNumber);
+         this.transactionId = IntegerToString(posId);
          this.action = this.dealTypeInString(dealType);
       }
       Transaction(ulong dealTicket){
@@ -166,21 +178,21 @@ class Transaction {
           // So the time is used as the transaction id
          ulong dealType;
          this.profit = 0.0;
-         HistoryDealGetString(dealTicket, DEAL_SYMBOL, this.pair);
-         HistoryDealGetDouble(dealTicket, DEAL_PRICE, this.openPrice);
-         HistoryDealGetDouble(dealTicket, DEAL_PRICE, this.closePrice);
+         HistoryDealGetInteger(dealTicket, DEAL_TYPE, dealType);
          HistoryDealGetDouble(dealTicket, DEAL_PROFIT, this.profit);
          HistoryDealGetInteger(dealTicket, DEAL_TIME, this.openTime);
          HistoryDealGetInteger(dealTicket, DEAL_TIME, this.closeTime);
-         HistoryDealGetInteger(dealTicket, DEAL_POSITION_ID, this.transactionId);
-         HistoryDealGetInteger(dealTicket, DEAL_TYPE, dealType);
+         this.action = this.dealTypeInString(dealType, this.profit);
+         this.transactionId = timeInPreciseString(this.closeTime);
+         HistoryDealGetString(dealTicket, DEAL_SYMBOL, this.pair);
+         HistoryDealGetDouble(dealTicket, DEAL_PRICE, this.openPrice);
+         HistoryDealGetDouble(dealTicket, DEAL_PRICE, this.closePrice);
          HistoryDealGetDouble(dealTicket, DEAL_SWAP, this.swap);
          HistoryDealGetDouble(dealTicket, DEAL_COMMISSION, this.commission);
          HistoryDealGetDouble(dealTicket, DEAL_SL, this.stopLoss);
          HistoryDealGetDouble(dealTicket, DEAL_TP, this.takeProfit);
          HistoryDealGetString(dealTicket, DEAL_COMMENT, this.comment);
          HistoryDealGetInteger(dealTicket, DEAL_MAGIC, this.magicNumber);
-         this.action = dealTypeInString(dealType, this.profit);
       }
       string dealTypeInString(ulong dealType, double profit = 0){
         switch(dealType){
@@ -195,7 +207,7 @@ class Transaction {
                     return "withdrawal";
                 }
             default:
-                return DoubleToString(dealType);
+                return IntegerToString(dealType);
         }
         }
       CJAVal intoJson(){
