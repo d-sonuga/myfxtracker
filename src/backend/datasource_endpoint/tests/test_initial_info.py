@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 import nanoid
-from trader.models import Account
+from trader.models import Account, Trade
 from users.models import Trader
 from .base_test import BaseTest
 from .test_data import DatasourceInitialInfoData
@@ -76,6 +76,10 @@ class TestInitialInfo(BaseTest):
         self.assertEquals(no_of_trades, details['no-of-trades'])
         self.assertEquals(no_of_withdrawals, details['no-of-withdrawals'])
         self.assertEquals(no_of_deposits, details['no-of-deposits'])
+        # None of the commissions or swaps should be saved as a negative number
+        newly_saved_trades = Trade.objects.all()
+        self.assertTrue(all((trade.commission >= 0 for trade in newly_saved_trades)))
+        self.assertTrue(all((trade.swap >= 0 for trade in newly_saved_trades)))
 
     def test_bad_data_datasource_username_not_valid(self):
         resp = self.client.post('/datasource/get-initial-info/',

@@ -206,6 +206,8 @@ class Account(models.Model):
 
 class TradeManager(models.Manager):
     def create_trade(self, account, rawdata):
+        swap = float(rawdata['swap'])
+        commission = float(rawdata['commission'])
         return self.create(
             account=account,
             pair=rawdata['pair'],
@@ -216,8 +218,8 @@ class TradeManager(models.Manager):
             close_time=format_time(rawdata['close-time']),
             trade_id=int(rawdata['transaction-id']),
             action=rawdata['action'],
-            swap=float(rawdata['swap']),
-            commission=float(rawdata['commission']),
+            swap=swap if swap >= 0 else swap * -1,
+            commission=commission if commission >= 0 else commission * -1,
             stop_loss=float(rawdata['stop-loss']),
             take_profit=float(rawdata['take-profit']),
             comment=rawdata['comment'],
