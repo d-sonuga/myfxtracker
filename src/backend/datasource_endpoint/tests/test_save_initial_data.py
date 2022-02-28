@@ -126,4 +126,6 @@ class TestSaveInitialData(BaseTest):
                 withdrawal_id=format_time_for_saving_as_transaction_id(withdrawal_data['transaction-id'])
             )
             self.assertEquals(withdrawal_set.count(), 1)
+            # Withdrawal should be saved as positive numbers in the db
+            self.assertTrue(all((withdrawal.amount > 0 for withdrawal in withdrawal_set)))
             

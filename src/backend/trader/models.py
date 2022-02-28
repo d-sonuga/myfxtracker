@@ -287,9 +287,10 @@ class Deposit(models.Model):
 
 class WithdrawalManager(models.Manager):
     def create_withdrawal(self, account, rawdata):
+        amount = float(rawdata['profit'])
         self.create(
             account=account,
-            amount=rawdata['profit'],
+            amount=amount if amount > 0 else amount * -1,
             time=format_time(rawdata['close-time']),
             withdrawal_id=format_time_for_saving_as_transaction_id(rawdata['transaction-id'])
         )
