@@ -26,11 +26,17 @@ string accountStopoutModeInString(int accountStopoutMode){
     }
 }
 
+string timeInPreciseString(datetime time){
+    MqlDateTime preciseTime;
+    TimeToStruct(time, preciseTime);
+    return TimeToString(time) + ":" + preciseTime.sec;
+}
+
 #ifdef __MQL4__
 
 class DataAssembler: public BaseDataAssembler {
     private:
-        string getTransactionAction(int orderType){
+        string getTransactionAction(int orderType, double profit = 0){
             switch(orderType){
                 case OP_BUY:
                     return "buy";
@@ -39,21 +45,26 @@ class DataAssembler: public BaseDataAssembler {
                 // apparently, I found that on an MT4 terminal,
                 // OrderType returns 6 when the order is a deposit
                 case 6:
-                    return "deposit";
+                    if(profit > 0){
+                        return "deposit";
+                    } else {
+                        return "withdrawal";
+                    }
                 default:
                     return IntegerToString(orderType);
             }
         }
         CJAVal assembleTransaction(){
             CJAVal transaction;
+            double profit = OrderProfit();
             transaction["pair"] = OrderSymbol();
             transaction["open-price"] = OrderOpenPrice();
             transaction["close-price"] = OrderClosePrice();
-            transaction["profit"] = OrderProfit();
-            transaction["open-time"] = TimeToString(OrderOpenTime());
-            transaction["close-time"] = TimeToString(OrderCloseTime());
+            transaction["profit"] = profit;
+            transaction["open-time"] = timeInPreciseString(OrderOpenTime());
+            transaction["close-time"] = timeInPreciseString(OrderCloseTime());
             transaction["transaction-id"] = OrderTicket();
-            transaction["action"] = this.getTransactionAction(OrderType());
+            transaction["action"] = this.getTransactionAction(OrderType(), profit);
             transaction["swap"] = OrderSwap();
             transaction["commission"] = OrderCommission();
             transaction["stop-loss"] = OrderStopLoss();
@@ -151,6 +162,8 @@ class Transaction {
          this.action = this.dealTypeInString(dealType);
       }
       Transaction(ulong dealTicket){
+          // All deposits and withdrawals have the same order and position id of 0
+          // So the time is used as the transaction id
          ulong dealType;
          this.profit = 0.0;
          HistoryDealGetString(dealTicket, DEAL_SYMBOL, this.pair);
@@ -167,28 +180,34 @@ class Transaction {
          HistoryDealGetDouble(dealTicket, DEAL_TP, this.takeProfit);
          HistoryDealGetString(dealTicket, DEAL_COMMENT, this.comment);
          HistoryDealGetInteger(dealTicket, DEAL_MAGIC, this.magicNumber);
-         this.action = dealTypeInString(dealType);
+         this.action = dealTypeInString(dealType, this.profit);
       }
-      string dealTypeInString(ulong dealType){
+      string dealTypeInString(ulong dealType, double profit = 0){
         switch(dealType){
             case DEAL_TYPE_BUY:
                 return "buy";
             case DEAL_TYPE_SELL:
                 return "sell";
             case DEAL_TYPE_BALANCE:
-                return "deposit";
+                if(profit > 0){
+                    return "deposit";
+                } else {
+                    return "withdrawal";
+                }
             default:
                 return DoubleToString(dealType);
         }
         }
       CJAVal intoJson(){
          CJAVal inJson;
+         string openTimeStr = timeInPreciseString(this.openTime);
+         string closeTimeStr = timeInPreciseString(this.closeTime);
          inJson["pair"] = this.pair;
          inJson["open-price"] = this.openPrice;
          inJson["close-price"] = this.closePrice;
          inJson["profit"] = this.profit;
-         inJson["open-time"] = TimeToString(this.openTime);
-         inJson["close-time"] = TimeToString(this.closeTime);
+         inJson["open-time"] = openTimeStr;
+         inJson["close-time"] = closeTimeStr;
          inJson["transaction-id"] = this.transactionId;
          inJson["action"] = this.action;
          inJson["swap"] = this.swap;
@@ -231,7 +250,6 @@ class Mapper {
          if(keyIndex != -1){
              return true;
          }
-         //////MessageBox("posMap doesnt contain key: " + key);
          return false;
       }
       ulong getValue(ulong key){ 
@@ -249,8 +267,6 @@ class Mapper {
          ArrayResize(this.values, this.noOfItems);
          this.keys[this.noOfItems - 1] = key;
          this.values[this.noOfItems - 1] = value;
-         //////MessageBox("posMap set key " + key + " at index " + (this.noOfItems - 1));
-         //////MessageBox("posMap keys now holds key " + this.keys[this.noOfItems - 1]);
       }
       int getNoOfItems(){
           return this.noOfItems;
