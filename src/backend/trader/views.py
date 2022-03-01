@@ -366,6 +366,8 @@ class GetInitData(APIView):
                             'swap': trade.swap,
                             'openTime': trade.open_time,
                             'closeTime': trade.close_time,
+                            'openPrice': trade.open_price,
+                            'closePrice': trade.close_price,
                             'takeProfit': trade.take_profit,
                             'stopLoss': trade.stop_loss,
                         } for trade in account.get_all_trades()],

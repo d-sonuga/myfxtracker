@@ -76,6 +76,8 @@ class InitDataTest(TestCase):
                                 'swap': float(trade.swap),
                                 'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
                                 'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
+                                'openPrice': float(trade.open_price),
+                                'closePrice': float(trade.close_price),
                                 'takeProfit': float(trade.take_profit),
                                 'stopLoss': float(trade.stop_loss)
                             } for trade in account.get_all_trades()],
