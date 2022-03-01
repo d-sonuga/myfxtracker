@@ -7,7 +7,7 @@ const InstructionsVideo = () => {
             marginBottom: getDimen('padding-xs')
         }}>
             <iframe width="853" height="480" 
-                src="https://www.youtube.com/embed/Fcw6QNF8jcc"
+                src="https://www.youtube.com/embed/TU3bg7RB3Kg"
                 title="YouTube video player" frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen></iframe>
