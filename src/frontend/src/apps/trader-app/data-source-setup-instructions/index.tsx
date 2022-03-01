@@ -31,7 +31,8 @@ const DataSourceSetupInstructions = ({dsUsername}: {dsUsername: string}) => {
             <H6>How to start using MyFxTracker</H6>
             <InstructionsVideo />
             {instructions.map((instruction, i) => (
-                <MuiAccordion key={i} 
+                <MuiAccordion key={i}
+                    TransitionProps={{unmountOnExit: true}}
                     sx={{
                         boxShadow: '0',
                         outline: '0.5px solid rgba(229, 231, 235)',
@@ -39,14 +40,12 @@ const DataSourceSetupInstructions = ({dsUsername}: {dsUsername: string}) => {
                         width: '80%'
                     }}>
                     
-                        <>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <BP>{instruction.outline}</BP>
                             </AccordionSummary>
                             <AccordionDetails>  
                                 {instruction.detail(dsUsername)}
                             </AccordionDetails>
-                        </>
                 </MuiAccordion>
             ))}
         </ColumnBox>
@@ -60,27 +59,17 @@ const instructions = [
             <ColumnBox>
                 <RowBox style={{alignItems: 'baseline'}}>
                     <P>For MT4: &nbsp;</P>
-                    <a
+                    <DownloadLink
                         href={`${HttpConst.BASE_URL}/${HttpConst.DOWNLOAD_MT4_EA_URL}`}
                         download='MyFxTracker.ex4'
-                        style={{
-                            color: getColor('light-blue'),
-                            textDecoration: 'underline',
-                            cursor: 'pointer'
-                        }}
-                        data-testid='download-ea-mt4'>EA for MT4</a>
+                        data-testid='download-ea-mt4'>EA for MT4</DownloadLink>
                 </RowBox>
                 <RowBox style={{alignItems: 'baseline'}}>
                     <P>For MT5: &nbsp;</P>
-                    <a
+                    <DownloadLink
                         href={`${HttpConst.BASE_URL}/${HttpConst.DOWNLOAD_MT5_EA_URL}`}
                         download='MyFxTracker.ex5'
-                        style={{
-                            color: getColor('light-blue'),
-                            textDecoration: 'underline',
-                            cursor: 'pointer'
-                        }}
-                        data-testid='download-ea-mt5'>EA for MT5</a>
+                        data-testid='download-ea-mt5'>EA for MT5</DownloadLink>
                 </RowBox>
             </ColumnBox>
         )
@@ -90,17 +79,11 @@ const instructions = [
         detail: (...args: any) => (
             <ColumnBox>
                 <P>Go to File and click "Open Data Folder"</P>
-                <hr />
-                <img src={step1} alt='' />
-                <hr />
+                <Image src={step1} />
                 <P>Inside your data folder, open the "MQL4" folder (for MT4) or "MQL5" folder (for MT5) &gt; "Experts"</P>
-                <hr />
-                <img src={step3} alt='' />
-                <hr />
+                <Image src={step3} />
                 <P>Move the downloaded MyFxTracker EA to the "Experts" folder</P>
-                <hr />
-                <img src={step4} alt='' />
-                <hr />
+                <Image src={step4} />
             </ColumnBox>
         )
     },
@@ -115,14 +98,10 @@ const instructions = [
         detail: (...args: any) => (
             <ColumnBox>
                 <P>In your MetaTrader terminal menu, go to "Tools" and click "Options"</P>
-                <hr />
-                <img src={clickOptionsStep} alt='' />
-                <hr />
+                <Image src={clickOptionsStep} />
                 <P>Tick "Allow WebRequest for listed URL"</P>
                 <P>Paste "https://new.myfxtracker.com" in the provided field and click OK</P>
-                <hr />
-                <img src={step5} alt='' />
-                <hr />
+                <Image src={step5} />
             </ColumnBox>
         )
     },
@@ -131,22 +110,39 @@ const instructions = [
         detail: (dsUsername: string, ...args: any) => (
             <ColumnBox>
                 <P>In the Navigator, under Expert Advisors, open "MyFxTracker"</P>
-                <hr />
-                <img src={step6} alt='' />
-                <hr />
+                <Image src={step6} />
                 <P>When the EA opens, open the "Inputs" tab</P>
                 <RowBox>
                     <P>Paste your MT Username: &nbsp;</P>
                     <BP>{dsUsername} &nbsp;</BP>
                     <P>in the value field for "DSUsername" and click OK</P>
                 </RowBox>
-                <hr />
-                <img src={step7} alt='' />
-                <hr />
+                <Image src={step7} />
             </ColumnBox>
         )
     }
-    
 ]
+
+const Image = ({src}: {src: string}) => {
+    return(
+        <>
+            <hr />
+            <img src={src} alt='' />
+            <hr />
+        </>
+    )
+}
+
+const DownloadLink = ({children, ...props}: {children: string, [key: string]: any}) => {
+    return(
+        <a
+            style={{
+                color: getColor('light-blue'),
+                textDecoration: 'underline',
+                cursor: 'pointer'
+            }}
+            {...props}>{children}</a>
+    )
+}
 
 export default DataSourceSetupInstructions
