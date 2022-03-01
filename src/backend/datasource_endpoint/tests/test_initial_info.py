@@ -59,9 +59,9 @@ class TestInitialInfo(BaseTest):
 
     def test_good_data_valid_datasource_username_trader_has_transaction(self):
         details = self.test_data.good_details_with_transactions
-        no_of_trades = self.no_of_trades(details['data']['account-transactions'])
-        no_of_deposits = self.no_of_deposits(details['data']['account-transactions'])
-        no_of_withdrawals = self.no_of_withdrawals(details['data']['account-transactions'])
+        no_of_trades = self.no_of_trades(details['data'])
+        no_of_deposits = self.no_of_deposits(details['data'])
+        no_of_withdrawals = self.no_of_withdrawals(details['data'])
         resp = self.client.post(
             '/datasource/get-initial-info/',
             self.trader_with_transactions_request_body,

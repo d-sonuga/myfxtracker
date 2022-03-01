@@ -57,13 +57,13 @@ class AccountManager(models.Manager):
             type=rawdata['account-trade-mode'],
             stopout_level_format=rawdata['account-stopout-level-format']
         )
-        for trade_data in get_account_trades(rawdata['account-transactions']):
+        for trade_data in get_account_trades(rawdata.get('account-transactions', [])):
             Trade.objects.create_trade(new_account, trade_data)
-        for deposit_data in get_account_deposits(rawdata['account-transactions']):
+        for deposit_data in get_account_deposits(rawdata.get('account-transactions', [])):
             Deposit.objects.create_deposit(new_account, deposit_data)
-        for withdrawal_data in get_account_withdrawals(rawdata['account-transactions']):
+        for withdrawal_data in get_account_withdrawals(rawdata.get('account-transactions', [])):
             Withdrawal.objects.create_withdrawal(new_account, withdrawal_data)
-        for unknown_transaction_data in get_account_unknown_transactions(rawdata['account-transactions']):
+        for unknown_transaction_data in get_account_unknown_transactions(rawdata.get('account-transactions', [])):
             UnknownTransaction.objects.create_unknown_transaction(new_account, unknown_transaction_data)
         return new_account
     

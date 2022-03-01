@@ -30,9 +30,9 @@ class TestSaveInitialData(BaseTest):
         resp = self.make_request(self.valid_ds_username, initial_data)
         self.assertEquals(resp.status_code, 200)
         self.assertDictEqual(resp.json(), {
-            'no-of-transactions': self.no_of_trades(initial_data['account-transactions'])
-                + self.no_of_deposits(initial_data['account-transactions'])
-                + self.no_of_withdrawals(initial_data['account-transactions'])
+            'no-of-transactions': self.no_of_trades(initial_data)
+                + self.no_of_deposits(initial_data)
+                + self.no_of_withdrawals(initial_data)
         })
         self.assert_account_trade_deposit_withdrawal_data_saved(initial_data)
     
@@ -42,9 +42,9 @@ class TestSaveInitialData(BaseTest):
         resp = self.make_request(self.valid_ds_username, initial_data)
         self.assertEquals(resp.status_code, 200)
         self.assertDictEqual(resp.json(), {
-            'no-of-transactions': self.no_of_trades(initial_data['account-transactions'])
-                + self.no_of_deposits(initial_data['account-transactions'])
-                + self.no_of_withdrawals(initial_data['account-transactions'])
+            'no-of-transactions': self.no_of_trades(initial_data)
+                + self.no_of_deposits(initial_data)
+                + self.no_of_withdrawals(initial_data)
         })
         self.assert_account_trade_deposit_withdrawal_data_saved(initial_data)
     
@@ -109,18 +109,18 @@ class TestSaveInitialData(BaseTest):
             initial_data['account-company'],
             initial_data['account-login-number']
         )
-        for trade_data in self.get_account_trades(initial_data['account-transactions']):
+        for trade_data in self.get_account_trades(initial_data.get('account-transactions', [])):
             trade_set = Trade.objects.filter(trade_id=trade_data['transaction-id'])
             self.assertEquals(trade_set.count(), 1)
             trade = trade_set[0]
             self.assertTrue(trade.account == account)
-        for deposit_data in self.get_account_deposits(initial_data['account-transactions']):
+        for deposit_data in self.get_account_deposits(initial_data.get('account-transactions', [])):
             deposit_set = Deposit.objects.filter(
                 account=account,
                 deposit_id=format_time_for_saving_as_transaction_id(deposit_data['transaction-id'])
             )
             self.assertEquals(deposit_set.count(), 1)
-        for withdrawal_data in self.get_account_withdrawals(initial_data['account-transactions']):
+        for withdrawal_data in self.get_account_withdrawals(initial_data.get('account-transactions', [])):
             withdrawal_set = Withdrawal.objects.filter(
                 account=account,
                 withdrawal_id=format_time_for_saving_as_transaction_id(withdrawal_data['transaction-id'])

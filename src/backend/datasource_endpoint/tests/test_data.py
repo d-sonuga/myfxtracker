@@ -354,8 +354,7 @@ class DatasourceInitialInfoData:
             'account-login-number':'205497893',
             'account-leverage':'500',
             'account-trade-mode':'demo',
-            'account-stopout-level-format': 'percent',
-            'account-transactions':[]
+            'account-stopout-level-format': 'percent'
         }
     }
     good_details_with_no_transactions2 = {
@@ -377,8 +376,7 @@ class DatasourceInitialInfoData:
             'account-login-number':'705497893',
             'account-leverage':'500',
             'account-trade-mode':'demo',
-            'account-stopout-level-format': 'percent',
-            'account-transactions':[]
+            'account-stopout-level-format': 'percent'
         }
     }
     saved_account_details_trader_with_a_saved_account = {

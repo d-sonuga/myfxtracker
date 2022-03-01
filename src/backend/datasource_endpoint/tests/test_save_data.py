@@ -34,10 +34,10 @@ class TestSaveData(BaseTest):
     
     def test_with_valid_ds_username(self):
         no_of_initial_trades, no_of_initial_deposits, no_of_initial_withdrawals = self.count_transaction_types(
-            self.test_data.account_transaction_data1['account-transactions']
+            self.test_data.account_transaction_data1
         )
         no_of_new_trades, no_of_new_deposits, no_of_new_withdrawals = self.count_transaction_types(
-            self.test_data.new_data['account-transactions']
+            self.test_data.new_data
         )
         self.assertEquals(self.valid_trader_account.no_of_trades(), no_of_initial_trades)
         resp = self.make_request(self.valid_ds_username, self.test_data.new_data)
@@ -62,7 +62,7 @@ class TestSaveData(BaseTest):
     
     def test_with_expired_ds_username(self):
         no_of_initial_trades, no_of_initial_deposits, no_of_initial_withdrawals = self.count_transaction_types(
-            self.test_data.account_transaction_data2['account-transactions']
+            self.test_data.account_transaction_data2
         )
         def assert_data_hasnt_changed():
             self.assertEquals(self.expired_trader_account.no_of_trades(), no_of_initial_trades)
