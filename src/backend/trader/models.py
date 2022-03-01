@@ -83,7 +83,8 @@ def get_account_trades(transaction_data):
             lambda item:
                 not is_deposit(item) and
                 not is_withdrawal(item)
-                and item['pair'] is not None,
+                and item['pair'] is not None
+                and (item['action'] == 'buy' or item['action'] == 'sell'),
             transaction_data
         )
     )
