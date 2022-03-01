@@ -1,15 +1,20 @@
 import './style.css'
-const video  = require('@visuals/videos/demo-video.mp4');
+const video  = require('./demo-video.webm');
 
 
 const DemoVideo = () => {
-    return(
-        <div className='apps-info-app-home-demo-video-container'>
-            <video className='apps-info-app-home-demo-video-video' width="950" height="535" loop autoPlay muted>
-                <source src={video} type="video/mp4" />
-            </video>
-        </div>
-    );
+   return(
+       <div 
+            className='apps-info-app-home-demo-video-container'
+            dangerouslySetInnerHTML={{
+                __html: `
+                <video class='apps-info-app-home-demo-video-video' width="950" height="535" loop autoplay muted>
+                    <source src=${video} type="video/webm" />
+                </video>
+                `
+            }}
+        />
+   )
 }
 
 export default DemoVideo
