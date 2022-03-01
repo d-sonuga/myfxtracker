@@ -2,7 +2,7 @@ import {useNavigate} from 'react-router'
 import {CenterRowBox, CenterColumnBox} from '@components/containers'
 import {H5, P} from '@components/text'
 import {getDimen} from '@conf/utils'
-import ButtonWithArrow from '../button-with-arrow'
+import ButtonWithArrow from '../../../components/button-with-arrow'
 import './style.css'
 import { RouteConst } from '@conf/const'
 

@@ -16,7 +16,7 @@ const InfoAppNavbar = () => {
         <Navbar
             links={[
                 ['FAQ', formatRoute(INFO_FAQ_ROUTE)],
-                ['Features', formatRoute(INFO_PRICING_ROUTE)]
+                ['Features/Pricing', formatRoute(INFO_PRICING_ROUTE)]
             ]}
             sidebarOnlyLinks={[
                 ['Sign Up', formatRoute(INFO_SIGN_UP_ROUTE)],

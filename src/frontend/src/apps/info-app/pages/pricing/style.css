@@ -1,0 +1,59 @@
+.apps-info-app-pricing-container {
+    margin-top: 150px;
+    margin-left: 15%;
+    margin-right: 15%;
+    display: flex;
+    justify-content: center;
+}
+
+.apps-info-app-pricing-container-content {
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    border: 0.5px solid rgba(229, 231, 235);
+    border-radius: 5px;
+    margin-bottom: var(--dimen-padding-big);
+    padding: var(--dimen-padding-big);
+}
+
+@media(max-width: 1315px) {
+    .apps-info-app-pricing-container {
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+}
+
+@media(max-width: 1266px) {
+    .apps-info-app-pricing-container {
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+}
+
+@media(max-width: 1111px){
+    .apps-info-app-pricing-container {
+        margin-left: 9%;
+        margin-right: 9%;
+    }
+}
+
+@media(max-width: 1081px) {
+    .apps-info-app-pricing-container {
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+}
+
+@media(max-width: 990px) {
+    .apps-info-app-pricing-container {
+        margin-left: 3%;
+        margin-right: 3%;
+    }
+}
+
+@media(max-width: 960px) {
+    .apps-info-app-pricing-container-content {
+        flex-direction: column;
+    }
+}
+

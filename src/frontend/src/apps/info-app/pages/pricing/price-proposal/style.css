@@ -1,0 +1,8 @@
+.apps-info-app-pages-pricing-price {
+    font-size: 25px;
+    font-weight: 500;
+    padding: 15px 20px;
+    background-color: var(--color-yellow);
+    margin-bottom: var(--dimen-padding-xs);
+    margin-top: var(--dimen-padding-big);
+}
