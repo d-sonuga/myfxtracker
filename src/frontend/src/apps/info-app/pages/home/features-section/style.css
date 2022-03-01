@@ -60,3 +60,9 @@ div.apps-info-app-home-features-section-feature-cards-content {
         padding-right: 200px;
     }
 }
+
+@media (min-width: 815px) {
+    div.apps-info-app-home-features-section-feature-cards-content {
+        width: 30%;
+    }
+}

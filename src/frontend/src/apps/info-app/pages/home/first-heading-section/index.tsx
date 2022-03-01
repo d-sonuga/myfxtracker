@@ -1,7 +1,7 @@
 import {useNavigate} from 'react-router'
 import {CenterBox} from '@components/containers'
 import {H1, P} from '@components/text'
-import ButtonWithArrow from '../button-with-arrow'
+import ButtonWithArrow from '../../../components/button-with-arrow'
 import firstHeadingSectionStyle from './style'
 import './style.css'
 

@@ -1,6 +1,6 @@
 import {useNavigate} from 'react-router'
 import {H5, P} from '@components/text'
-import ButtonWithArrow from '@apps/info-app/pages/home/button-with-arrow'
+import ButtonWithArrow from '@apps/info-app/components/button-with-arrow'
 import './style.css'
 
 

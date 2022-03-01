@@ -1,0 +1,30 @@
+.apps-info-app-pricing-features-list {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media(max-width: 687px){
+    .apps-info-app-pricing-features-list {
+        justify-content: center;
+        flex-direction: column;
+    }   
+}
+
+.apps-info-app-pricing-features-divider {
+    height: .1px;
+    width: 60%;
+    opacity: .25;
+    margin-top: 12px;
+}
+
+@media(max-width: 575px){
+    .apps-info-app-pricing-features-divider {
+        width: 50%;
+    }   
+}
+
+@media(max-width: 485px){
+    .apps-info-app-pricing-features-divider {
+        width: 40%;
+    }   
+}

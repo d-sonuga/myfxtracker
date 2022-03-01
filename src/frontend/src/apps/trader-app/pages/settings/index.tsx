@@ -18,7 +18,6 @@ const Settings = () => {
                 <EmailSection email={globalData.getUserEmail()} />
                 <DsUsernameSection dsUsername={globalData.getUserDsUsername()} />
                 <ChangePasswordSection />
-                <SubscribeSection />
                 <DeleteAccountSection />
             </div>
         </PageContainer>

@@ -22,7 +22,7 @@ const DataSourceSetupInstructions = ({dsUsername}: {dsUsername: string}) => {
             style={{
                 width: '100%',
                 alignItems: 'center',
-                marginTop: getDimen('padding-xxbig'),
+                marginTop: getDimen('padding-big'),
                 paddingBottom: getDimen('padding-xbig')
             }}
             data-testid='data-source-setup-instructions'>

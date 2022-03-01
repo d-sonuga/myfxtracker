@@ -2,7 +2,7 @@ import {Route} from 'react-router-dom'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
 import {HomePage, SignUpPage, LoginPage, ResetPasswordPage, ResetPasswordConfirmPage,
-    FAQPage, FeaturesPage, ChangePasswordPage} from './pages'
+    FAQPage, PricingPage, ChangePasswordPage} from './pages'
 
 const InfoApp = () => {
     const {INFO_HOME_ROUTE, INFO_SIGN_UP_ROUTE, INFO_CHANGE_PASSWORD_ROUTE, INFO_RESET_PASSWORD_ROUTE,
@@ -17,7 +17,7 @@ const InfoApp = () => {
                 <Route path={INFO_RESET_PASSWORD_ROUTE} element={<ResetPasswordPage />} />
                 <Route path={`${INFO_RESET_PASSWORD_ROUTE}/:token`} element={<ResetPasswordConfirmPage />} />
                 <Route path={INFO_FAQ_ROUTE} element={<FAQPage />} />
-                <Route path={INFO_PRICING_ROUTE} element={<FeaturesPage />} />
+                <Route path={INFO_PRICING_ROUTE} element={<PricingPage />} />
             </Routes>
         </div>
     );
