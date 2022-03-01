@@ -1,26 +1,19 @@
-import {CenterColumnBox} from '@components/containers'
+import {CenterColumnBox, ColumnBox} from '@components/containers'
 import {InfoAppNavbar} from '@apps/info-app/components'
 import {H4, P} from '@components/text'
 import {getDimen} from '@conf/utils'
+import PriceProposal from './price-proposal'
+import './style.css'
 
 
 const FeaturesPage = () => {
     return(
-        <div>
+        <>
             <InfoAppNavbar />
-            <CenterColumnBox style={{
-                paddingTop: getDimen('padding-xxxbig'),
-                paddingBottom: getDimen('padding-big')
-            }}>
-                <H4 style={{marginBottom: getDimen('padding-md')}}>Features</H4>
-                <CenterColumnBox>
-                    {features.map((feature: string, i) => (
-                        <P key={i}
-                            style={{marginBottom: getDimen('padding-xs')}}>● &#9; {feature}</P>
-                    ))}
-                </CenterColumnBox>
-            </CenterColumnBox>
-        </div>
+            <div className='apps-info-app-pricing-content-container'>
+                <PriceProposal />
+            </div>
+        </>
     );
 }
 

@@ -1,4 +1,5 @@
 import {ComponentWithChildrenPropTypes} from '@components/types'
+import { ReactNode } from 'react'
 
 interface TextPropTypes extends ComponentWithChildrenPropTypes {
     children: string | string[],

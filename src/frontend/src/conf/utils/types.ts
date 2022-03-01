@@ -14,7 +14,8 @@ type Color =
 'xlight-green' |
 'light-purple' |
 'red' |
-'light-red'
+'light-red' |
+'yellow'
 
 type Dimen =
 'padding-xs' |

@@ -1,0 +1,6 @@
+.fff {
+    font-size: 20px;
+    font-weight: 500;
+    padding: var(--dimen-padding-md);
+    background-color: var(--color-yellow);
+}

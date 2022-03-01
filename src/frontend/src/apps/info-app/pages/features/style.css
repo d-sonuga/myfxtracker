@@ -1,0 +1,8 @@
+.apps-info-app-pricing-content-container {
+    display: flex;
+    border: 0.5px solid rgba(229, 231, 235);
+    border-radius: 5px;
+    margin-top: calc(var(--dimen-navbar-height) + var(--dimen-padding-xbig));
+    margin-right: 15%;
+    margin-left: 15%;
+}
