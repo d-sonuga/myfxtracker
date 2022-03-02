@@ -14,6 +14,8 @@
 const int RESP_CODE_UNAUTHORIZED = 401;
 const int RESP_CODE_FORBIDDEN = 403;
 const int RESP_CODE_SUCCESS = 200;
+const int RESP_CODE_SERVER_ERROR = 500;
+const int MAX_SERVER_ERRORS = 3;
 
 class Response {
    public:
@@ -41,7 +43,8 @@ interface BaseRequester {
          BaseAlerter *alerter,
          BaseErrorGetter *errorGetter,
          BaseErrors *errors,
-         BaseHttp *http 
+         BaseHttp *http,
+         int noOfServerErrors = 0
       );
 };
 
@@ -54,7 +57,8 @@ class Requester: public BaseRequester {
          BaseAlerter *alerter,
          BaseErrorGetter *errorGetter,
          BaseErrors *errors,
-         BaseHttp *http 
+         BaseHttp *http,
+         int noOfServerErrors = 0
       ){
          if(StringLen(DSUsername) == 0){
             alerter.showMessage(errors.NO_DATASOURCE_USERNAME_MSG);
@@ -86,7 +90,6 @@ class Requester: public BaseRequester {
                      http
                   );
                } else {
-                  MessageBox(lastError);
                   return this.sendRequest(
                      url,
                      DSUsername,
@@ -111,9 +114,26 @@ class Requester: public BaseRequester {
                   Response response(errors.SUBSCRIPTION_EXPIRED_CODE, errors.SUBSCRIPTION_EXPIRED_MSG);
                   return response;
                }
+            } else if(respCode == RESP_CODE_SERVER_ERROR){
+               if(noOfServerErrors != MAX_SERVER_ERRORS){
+                  Sleep(10000);
+                  return this.sendRequest(
+                     url,
+                     DSUsername,
+                     data,
+                     alerter,
+                     errorGetter,
+                     errors,
+                     http,
+                     noOfServerErrors + 1
+                  );
+               } else {
+                  alerter.showMessage(errors.UNKNOWN_ERR_MSG);
+                  Response response(errors.UNKNOWN_ERR_CODE, errors.UNKNOWN_ERR_MSG);
+                  return response;
+               }
             } else {
                string respData = CharArrayToString(rawRespData);
-               // successful response
                Response resp(RESP_CODE_SUCCESS, respData);
                return resp;
             }

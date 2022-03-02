@@ -12,6 +12,7 @@ class BaseErrors {
         string INVALID_USERNAME_MSG;
         int SUBSCRIPTION_EXPIRED_CODE;
         string SUBSCRIPTION_EXPIRED_MSG;
+        int UNKNOWN_ERR_CODE;
         string UNKNOWN_ERR_MSG;
         BaseErrors(){
             this.SERVER_CONNECTION_LOST_CODE = 5203;
@@ -22,7 +23,8 @@ class BaseErrors {
             this.INVALID_USERNAME_MSG = "Please input a valid username and restart the EA";
             this.SUBSCRIPTION_EXPIRED_CODE = -4;
             this.SUBSCRIPTION_EXPIRED_MSG = "Your subscription has expired. Please for subscribe for continued service and restart the EA";
-            this.UNKNOWN_ERR_MSG = "Unknown Error";
+            this.UNKNOWN_ERR_CODE = -5;
+            this.UNKNOWN_ERR_MSG = "Sorry. An unexpected error occured.";
             this.URL_NOT_ALLOWED_MSG = "Please add " + MAIN_BASE_URL + " to the list of allowed urls and restart the EA";
         }
         string getErrorMessage(int errorCode){
