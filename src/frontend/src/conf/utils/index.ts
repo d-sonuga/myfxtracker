@@ -36,7 +36,7 @@ const _getAttr = (name: string) => {
 
 const _extractNo = (dimen: string) => {
     let no = '';
-    for(let char of dimen) {
+    for(let char of dimen.trim()) {
         if(isNaN(parseInt(char))) {
             break;
         }
