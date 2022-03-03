@@ -1,8 +1,7 @@
 import datetime
-from re import L
-from itsdangerous import Serializer
+from django.shortcuts import redirect
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes, renderer_classes, parser_classes
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.generics import DestroyAPIView
 from rest_framework.viewsets import ModelViewSet
@@ -13,16 +12,13 @@ from django.conf import settings
 from rest_framework.views import APIView
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView
-from users.models import Trader, User
+from users.models import User
 from trader.models import Note
 from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
 from .models import Trade, Deposit, Withdrawal, Account, Preferences
-from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader, IsFromSite
+from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
 import datetime as dt
-import os
-import mimetypes
-from .renderers import BinaryRenderer
 
 
 class DeleteTrade(DestroyAPIView):
@@ -388,6 +384,14 @@ class GetInitData(APIView):
         return Response(init_data, status=status.HTTP_200_OK)
 
 
+class RedirectToSignup(APIView):
+    def get(self, request, *args, **kwargs):
+        return redirect(settings.SIGN_UP_URL)
+    
+    def post(self, request, *args, **kwargs):
+        return redirect(settings.SIGN_UP_URL)
+
+
 """
 Handles the registration of traders
 When a sign up request for the trader app is sent from the frontend,
@@ -421,3 +425,4 @@ save_note = NoteViewSet.as_view({'post': 'create'})
 update_note = NoteViewSet.as_view({'put': 'partial_update'})
 delete_note = NoteViewSet.as_view({'delete': 'destroy'})
 get_init_data = GetInitData.as_view()
+redirect_to_signup = RedirectToSignup.as_view()

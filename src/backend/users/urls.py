@@ -1,13 +1,12 @@
 from django.urls import path, include, re_path
-from dj_rest_auth.registration.views import RegisterView, ConfirmEmailView, VerifyEmailView
-from dj_rest_auth.views import (PasswordResetConfirmView,
-                                PasswordChangeView, LoginView, LogoutView)
-from .views import update_email, subscribe_user, unsubscribe_user, Register, set_logins_after_ask
-from  django_rest_passwordreset import urls, models
+from dj_rest_auth.registration.views import VerifyEmailView
+from dj_rest_auth.views import PasswordChangeView, LogoutView
+from .views import update_email, subscribe_user, unsubscribe_user, set_logins_after_ask, confirm_email_view
+
 
 urlpatterns = [
     re_path(
-        r'^account-confirm-email/(?P<key>[-:\w]+)/$', ConfirmEmailView.as_view(),
+        r'^account-confirm-email/(?P<key>[-:\w]+)/$', confirm_email_view,
         name='account_confirm_email',
     ),
     path('sign-up/verify-email/', VerifyEmailView.as_view(), name='rest_verify_email'),

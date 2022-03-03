@@ -242,6 +242,14 @@ if DEBUG:
 else:
     LOGIN_URL = 'https://new.myfxtracker.com/log-in'
 
+# Trader is redirected here if he/she clicks email confirmation link 
+# after authentication and logging in
+TRADER_APP_URL = 'https://new.myfxtracker.com/app'
+
+# Trader is redirected here if he/she clicks email confirmation link 
+# after deleting account, meaning he/she has to sign up again
+SIGN_UP_URL = 'https://new.myfxtracker.com/sign-up'
+
 # Paypal endpoint
 PAYPAL_BASE_URL = os.getenv('PAYPAL_BASE_URL') #'https://api-m.sandbox.paypal.com'
 PAYPAL_WEBHOOK_ID = os.getenv('PAYPAL_WEBHOOK_ID') #'4MS34996WD956560C'

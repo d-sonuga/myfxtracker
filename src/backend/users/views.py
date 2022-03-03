@@ -1,4 +1,7 @@
 from dj_rest_auth.registration.views import RegisterView
+from dj_rest_auth.registration.views import ConfirmEmailView as BaseConfirmEmailView
+from django.conf import settings
+from django.shortcuts import redirect
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
@@ -164,3 +167,18 @@ def set_logins_after_ask(request):
         serializer.save()
         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ConfirmEmailView(BaseConfirmEmailView):
+    def get(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(settings.TRADER_APP_URL)
+        return super().get(*args, **kwargs)
+    
+    def post(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect(settings.TRADER_APP_URL)
+        return super().get(*args, **kwargs)
+
+
+confirm_email_view = ConfirmEmailView.as_view()
