@@ -178,7 +178,7 @@ class ConfirmEmailView(BaseConfirmEmailView):
     def post(self, *args, **kwargs):
         if self.request.user.is_authenticated:
             return redirect(settings.TRADER_APP_URL)
-        return super().get(*args, **kwargs)
+        return super().post(*args, **kwargs)
 
 
 confirm_email_view = ConfirmEmailView.as_view()
