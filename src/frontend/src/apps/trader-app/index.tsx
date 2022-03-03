@@ -3,7 +3,7 @@ import {Route, useLocation, useNavigate} from 'react-router-dom'
 import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
-import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis,
+import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis, AddAccount,
     PeriodAnalysis, TimeAnalysis, PairsAnalysis} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
 import {Http, getNoteData} from '@apps/trader-app/services'
@@ -30,7 +30,7 @@ const TraderApp = () => {
     const noteData = getNoteData();
     
     const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
-        TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE,
+        TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE, TRADER_ADD_ACCOUNT_ROUTE,
         TRADER_TIME_ANALYSIS_ROUTE, TRADER_PERIOD_ANALYSIS_ROUTE, TRADER_EXPENSES_ROUTE, TRADER_NOTES_ROUTE
     } = RouteConst;
     
@@ -64,6 +64,7 @@ const TraderApp = () => {
                                                     <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
                                                     <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
                                                     <Route path={TRADER_SETTINGS_ROUTE} element={<Settings />} />
+                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount dsUsername={globalData.getUserDsUsername()} />} />
                                                 </Routes>
                                             </Suspense>
                                         </PageLoadingErrorBoundary>

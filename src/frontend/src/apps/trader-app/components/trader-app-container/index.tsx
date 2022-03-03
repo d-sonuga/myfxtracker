@@ -21,9 +21,9 @@ const TraderAppContainer = ({children}: {children: ReactNode}) => {
         <div 
             style={{
                 marginTop: screenIsSmall ? `${getDimenInNo('navbar-height') + 32}px` : 0,
+                paddingBottom: getDimen('padding-big'),
                 marginLeft: !screenIsSmall ? `${NAVBAR_WIDTH}px` : 0,
-                height: '100vh',
-                overflowY: 'scroll'
+                height: 'fit-content',
             }}>
                 {children}
         </div>

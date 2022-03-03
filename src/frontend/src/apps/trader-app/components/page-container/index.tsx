@@ -8,7 +8,6 @@ const PageContainer = ({children, style, className}: PageContainerPropTypes) => 
             style={{
                 marginLeft: getDimen('padding-big'),
                 marginRight: getDimen('padding-big'),
-                marginBottom: getDimen('padding-big'),
                 ...style
             }}
             className={className ? className : ''}>

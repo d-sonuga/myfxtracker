@@ -57,7 +57,8 @@ const RouteConst = {
     TRADER_PERIOD_ANALYSIS_ROUTE: 'period-analysis',
     TRADER_EXPENSES_ROUTE: 'expenses',
     TRADER_SETTINGS_ROUTE: 'settings',
-    TRADER_NOTES_ROUTE: 'notes'
+    TRADER_NOTES_ROUTE: 'notes',
+    TRADER_ADD_ACCOUNT_ROUTE: 'add-account'
 }
 
 const ConfigConst = {

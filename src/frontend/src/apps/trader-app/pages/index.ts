@@ -8,6 +8,7 @@ import PeriodAnalysis from './period-analysis'
 import TimeAnalysis from './time-analysis'
 import Settings from './settings'
 import Notebook from './notes'
+export {default as AddAccount} from './add-account'
 
 
 export {

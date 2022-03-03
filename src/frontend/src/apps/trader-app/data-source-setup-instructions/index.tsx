@@ -16,7 +16,7 @@ import step7 from './step7.png'
 import clickOptionsStep from './click-options-step.png'
 
 
-const DataSourceSetupInstructions = ({dsUsername}: {dsUsername: string}) => {
+const DataSourceSetupInstructions = ({dsUsername, addAccount}: {dsUsername: string, addAccount?: boolean}) => {
     return(
         <ColumnBox
             style={{
@@ -26,9 +26,17 @@ const DataSourceSetupInstructions = ({dsUsername}: {dsUsername: string}) => {
                 paddingBottom: getDimen('padding-xbig')
             }}
             data-testid='data-source-setup-instructions'>
-            <H5>No Accounts Found</H5>
-            <P>Your stats will appear once you set up the MyFxTracker EA</P>
-            <H6>How to start using MyFxTracker</H6>
+            {addAccount ?
+                <>
+                    <H5>Add Account</H5>
+                    <P>Follow the same process you took to setup your first account</P>
+                    <P>Here are the instructions below</P>
+                </>
+            : <>
+                <H5>No Accounts Found</H5>
+                <P>Your stats will appear once you set up the MyFxTracker EA</P>
+                <H6>How to start using MyFxTracker</H6>
+            </>}
             <InstructionsVideo />
             {instructions.map((instruction, i) => (
                 <MuiAccordion key={i}
