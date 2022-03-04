@@ -62,7 +62,8 @@ const RouteConst = {
 }
 
 const ConfigConst = {
-    TOKEN_KEY: 'KEY'
+    TOKEN_KEY: 'KEY',
+    GA_MEASUREMENT_ID: 'G-K2C8098L1V'
 }
 
 export {

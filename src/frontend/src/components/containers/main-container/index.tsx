@@ -5,8 +5,10 @@
  */
 
 import {useEffect, ReactNode, useState, Fragment} from 'react'
+import ReactGA from 'react-ga4'
 import {ErrorToast, SuccessToast, ToastContext} from '@components/toast'
 import Http from'@services/http'
+import {ConfigConst} from '@conf/const'
 
 
 const MainContainer = ({children}: {children: ReactNode}) => {
@@ -16,6 +18,7 @@ const MainContainer = ({children}: {children: ReactNode}) => {
 
     useEffect(() => {
         Http.init(Toast);
+        ReactGA.initialize(ConfigConst.GA_MEASUREMENT_ID);
     });
 
     /**

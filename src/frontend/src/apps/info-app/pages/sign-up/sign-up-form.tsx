@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga4'
 import {Yup} from '@apps/info-app/components'
 import {Button} from '@components/buttons'
 import {getColor} from '@conf/utils'
@@ -60,6 +61,9 @@ const SignUpForm = ({submitValues}: {submitValues: Function}) => {
                     successFunc: (resp: HttpResponseType) => {
                         setSuccessMsg(FormMsg.emailConfirmationSent());
                         setNonFieldError('');
+                        ReactGA.event('sign_up', {
+                            method: 'site sign up form'
+                        })
                     },
                     errorFunc: (err: any) => {
                         try {

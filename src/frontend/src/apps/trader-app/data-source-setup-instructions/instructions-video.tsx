@@ -1,16 +1,22 @@
+import Youtube from 'react-youtube'
 import {getDimen} from '@conf/utils'
+
 
 const InstructionsVideo = () => {
     return(
-        <div style={{
+        <div
+            style={{
             marginTop: getDimen('padding-xs'),
             marginBottom: getDimen('padding-xs')
         }}>
-            <iframe width="853" height="480" 
-                src="https://www.youtube.com/embed/TU3bg7RB3Kg"
-                title="YouTube video player" frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen></iframe>
+            <Youtube
+                videoId='TU3bg7RB3Kg'
+                title='MyFxTracker Account Setup Tutorial'
+                opts={{
+                    width: '853',
+                    height: '480'
+                }}
+                />
         </div>
     )
 }
