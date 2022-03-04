@@ -84,7 +84,7 @@ describe('Verify cashGraphCalc works', function () {
             trades: []
         };
         var result = (0, cash_graph_calc_1.default)(accountData);
-        var defaultCashGraphItem = [{ tradeNo: 0, balance: 0 }];
+        var defaultCashGraphItem = [{ tradeNo: 0, balance: deposits[0].amount }];
         var expectedResult = {
             todayGraphCalc: defaultCashGraphItem,
             thisWeekGraphCalc: defaultCashGraphItem,
@@ -188,6 +188,7 @@ describe('Verify cashGraphCalc works', function () {
             withdrawals: [],
             trades: __spreadArray([], tradesA, true)
         };
+        var defaultCashGraphItem = [{ tradeNo: 0, balance: depositsA[0].amount }];
         var result = (0, cash_graph_calc_1.default)(accountData, today);
         var expectedResult = {
             todayGraphCalc: __spreadArray([], defaultCashGraphItem, true),

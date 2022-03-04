@@ -51,8 +51,9 @@ var allTimeGraphCalc = function (accountData, today) {
     return graphCalc(accountData);
 };
 var graphCalc = function (accountData) {
+    var initialDeposit = accountData.deposits.length !== 0 ? accountData.deposits[0].amount : 0;
     return __spreadArray([
-        { tradeNo: 0, balance: 0 }
+        { tradeNo: 0, balance: initialDeposit }
     ], (0, common_calc_1.balanceCalc)(accountData)
         .map(function (calc, i) { return ({
         tradeNo: i + 1, balance: calc.balance
