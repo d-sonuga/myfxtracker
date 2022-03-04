@@ -1,4 +1,4 @@
-import React, {lazy, Suspense, Profiler} from 'react'
+import React, {lazy, Suspense} from 'react'
 import ReactDOM from 'react-dom'
 import {BrowserRouter, Route} from 'react-router-dom'
 import {MainContainer} from '@components/containers'
