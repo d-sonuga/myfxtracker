@@ -131,7 +131,7 @@ var highestBalance = function (accountData) {
 var aveRRR = function (data) {
     var profit = aveProfit(data);
     var loss = aveLoss(data);
-    if (profit === 0 && loss === 0)
+    if (profit === 0 || loss === 0)
         return 0;
     return profit / loss;
 };
