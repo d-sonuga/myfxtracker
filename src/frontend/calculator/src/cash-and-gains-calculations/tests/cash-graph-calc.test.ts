@@ -79,7 +79,7 @@ describe('Verify cashGraphCalc works', () => {
             trades: []
         }
         const result = cashGraphCalc(accountData);
-        const defaultCashGraphItem: CashGraphItem[] = [{tradeNo: 0, balance: 0}];
+        const defaultCashGraphItem: CashGraphItem[] = [{tradeNo: 0, balance: deposits[0].amount}];
         const expectedResult: CashGraphCalc = {
             todayGraphCalc: defaultCashGraphItem,
             thisWeekGraphCalc: defaultCashGraphItem,
@@ -200,6 +200,7 @@ describe('Verify cashGraphCalc works', () => {
             withdrawals: [],
             trades: [...tradesA]
         }
+        const defaultCashGraphItem = [{tradeNo: 0, balance: depositsA[0].amount}]
         const result = cashGraphCalc(accountData, today);
         const expectedResult: CashGraphCalc = {
             todayGraphCalc: [

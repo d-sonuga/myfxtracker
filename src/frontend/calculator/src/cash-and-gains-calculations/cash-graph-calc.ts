@@ -55,8 +55,9 @@ const allTimeGraphCalc = (accountData: AccountData, today: Date) => {
 }
 
 const graphCalc = (accountData: AccountData) => {
+    const initialDeposit = accountData.deposits.length !== 0 ? accountData.deposits[0].amount : 0
     return [
-        {tradeNo: 0, balance: 0},
+        {tradeNo: 0, balance: initialDeposit},
         ...balanceCalc(accountData)
             .map((calc, i) => ({
                 tradeNo: i + 1, balance: calc.balance
