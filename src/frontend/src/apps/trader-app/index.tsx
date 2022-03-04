@@ -1,4 +1,4 @@
-import {createContext, useEffect, Suspense, lazy} from 'react'
+import {createContext, useEffect, Suspense, lazy, useCallback} from 'react'
 import {Route, useLocation, useNavigate} from 'react-router-dom'
 import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
@@ -6,7 +6,7 @@ import {RouteConst} from '@conf/const'
 import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis, AddAccount,
     PeriodAnalysis, TimeAnalysis, PairsAnalysis} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
-import {Http, getNoteData} from '@apps/trader-app/services'
+import {Http, useNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
 import DataSourceSetupInstructions from './data-source-setup-instructions'
 
@@ -27,7 +27,7 @@ const TraderApp = () => {
     useEffect(() => {
         Http.initNavigate(navigate);
     }, [])
-    const noteData = getNoteData();
+    const noteData = useNoteData();
     
     const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
         TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE, TRADER_ADD_ACCOUNT_ROUTE,
