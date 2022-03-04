@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga4'
 import {Yup} from '@apps/info-app/components'
 import {Button} from '@components/buttons'
 import {HttpErrorType, HttpResponseType} from '@services/http'
@@ -29,6 +30,9 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                         storageService.setItem(ConfigConst.TOKEN_KEY, resp.data.key);
                         navigate(`/${RouteConst.TRADER_APP_ROUTE}`);
                         setNonFieldError('');
+                        ReactGA.event('log_in', {
+                            method: 'site login up form'
+                        })
                     },
                     errorFunc: (err: HttpErrorType) => {
                         try {

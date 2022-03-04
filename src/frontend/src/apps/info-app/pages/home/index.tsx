@@ -14,7 +14,7 @@ import ReactGA from 'react-ga4'
 
 const HomePage = () => {
     useEffect(() => {
-        ReactGA.send('pageview')
+        ReactGA.send('pageview');
     })
     return(
         <div>

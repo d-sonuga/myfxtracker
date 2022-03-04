@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga4'
 import MuiAccordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -46,6 +47,12 @@ const DataSourceSetupInstructions = ({dsUsername, addAccount}: {dsUsername: stri
                         outline: '0.5px solid rgba(229, 231, 235)',
                         marginTop: getDimen('padding-sm'),
                         width: '80%'
+                    }}
+                    onClick={() => {
+                        ReactGA.event('select_content', {
+                            content_type: 'Datasource Setup Instructions',
+                            item_id: `The ${i + 1}th instruction`
+                        })
                     }}>
                     
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -120,11 +127,9 @@ const instructions = [
                 <P>In the Navigator, under Expert Advisors, open "MyFxTracker"</P>
                 <Image src={step6} />
                 <P>When the EA opens, open the "Inputs" tab</P>
-                <RowBox>
-                    <P>Paste your MT Username: &nbsp;</P>
-                    <BP>{dsUsername} &nbsp;</BP>
-                    <P>in the value field for "DSUsername" and click OK</P>
-                </RowBox>
+                <P>Paste your MT Username: &nbsp;</P>
+                <BP>{dsUsername} &nbsp;</BP>
+                <P>in the value field for "DSUsername" and click OK</P>
                 <Image src={step7} />
             </ColumnBox>
         )
@@ -141,13 +146,20 @@ const Image = ({src}: {src: string}) => {
     )
 }
 
-const DownloadLink = ({children, ...props}: {children: string, [key: string]: any}) => {
+const DownloadLink = ({children, 'data-testid': testId, ...props}: {children: string, [key: string]: any}) => {
     return(
         <a
             style={{
                 color: getColor('light-blue'),
                 textDecoration: 'underline',
                 cursor: 'pointer'
+            }}
+            data-testid={testId}
+            onClick={() => {
+                ReactGA.event('select_content', {
+                    content_type: 'Datasource Expert Advisor',
+                    item_id: testId.slice(-3)
+                })
             }}
             {...props}>{children}</a>
     )
