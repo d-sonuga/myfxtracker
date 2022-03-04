@@ -19,7 +19,7 @@ const NavbarItem = ({Icon, children, onClick, index, selected, subMenu, onSubMen
                 marginTop: index === 0 ? getDimen('padding-md') : undefined,
                 flexDirection: subMenu ? 'column' : undefined
             }}>
-            <ListItemButton selected={selected} onClick={(e) => {
+            <ListItemButton sx={{width: '100%'}} selected={selected} onClick={(e) => {
                 onClick(e, index);
             }}>
                 {hasIcon() ? 
