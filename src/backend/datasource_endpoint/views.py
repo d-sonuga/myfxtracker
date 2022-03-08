@@ -1,8 +1,7 @@
-from itsdangerous import exc
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datasource_endpoint.models import DatasourceErrors
-from trader.models import Account
+from trader.models import Account, FailedTransactionSave
 from .authentication import DatasourceUsernameAuth
 from .permissions import DatasourceUsernameNotExpired, IsAuthenticated
 
@@ -46,7 +45,10 @@ class SaveInitialData(APIView):
     permission_classes = [IsAuthenticated, DatasourceUsernameNotExpired]
 
     def post(self, request, *args, **kwargs):
-        new_account = Account.objects.create_account(request.user, request.data)
+        try:
+            new_account = Account.objects.create_account(request.user, request.data)
+        except Exception:
+            FailedTransactionSave.objects.create(user=request.user, data=request.data)
         return Response({
             'no-of-transactions': new_account.no_of_trades()
                 + new_account.no_of_deposits()
@@ -59,14 +61,17 @@ class SaveData(APIView):
     permission_classes = [IsAuthenticated, DatasourceUsernameNotExpired]
 
     def post(self, request, *args, **kwargs):
-        account = Account.objects.get_by_name_broker_login_no(
-            request.data['account-name'],
-            request.data['account-company'],
-            request.data['account-login-number']
-        )
-        account.save_trades(request.data['account-transactions'])
-        account.save_deposits(request.data['account-transactions'])
-        account.save_withdrawals(request.data['account-transactions'])
+        try:
+            account = Account.objects.get_by_name_broker_login_no(
+                request.data['account-name'],
+                request.data['account-company'],
+                request.data['account-login-number']
+            )
+            account.save_trades(request.data['account-transactions'])
+            account.save_deposits(request.data['account-transactions'])
+            account.save_withdrawals(request.data['account-transactions'])
+        except Exception:
+            FailedTransactionSave.objects.create(user=request.user, data=request.data)
         return Response({
             'no-of-transactions': account.no_of_trades()
                 + account.no_of_deposits()

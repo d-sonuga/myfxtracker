@@ -1,4 +1,3 @@
-from collections import namedtuple
 from datetime import datetime
 from django.db import IntegrityError, models
 from django.core.serializers.json import DjangoJSONEncoder
@@ -331,6 +330,7 @@ class UnknownTransaction(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     transaction_id = TransactionIdField()
     data = models.JSONField(encoder=DjangoJSONEncoder)
+    time = models.DateTimeField(default=timezone.now, null=True)
 
     objects = UnknownTransactionManager()
 
@@ -341,6 +341,12 @@ class UnknownTransaction(models.Model):
                 name='trader_no_duplicate_unknown_transaction'
             )
         ]
+
+
+class FailedTransactionSave(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    data = models.JSONField(encoder=DjangoJSONEncoder)
+    time = models.DateTimeField(default=timezone.now)
 
 
 class NoteManager(models.Manager):
