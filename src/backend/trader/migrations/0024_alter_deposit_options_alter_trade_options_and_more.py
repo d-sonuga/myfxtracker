@@ -36,14 +36,5 @@ class Migration(migrations.Migration):
             model_name='trade',
             name='action',
             field=models.CharField(max_length=50),
-        ),
-        migrations.CreateModel(
-            name='FailedTransactionSave',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', models.JSONField(encoder=django.core.serializers.json.DjangoJSONEncoder)),
-                ('time', models.DateTimeField(default=django.utils.timezone.now)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
+        )
     ]
