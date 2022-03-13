@@ -270,3 +270,9 @@ MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
+
+# To test what happens when an error occurs during user creation
+# Always set to false
+# It will only be programmatically set to true when the test that uses it
+# runs and will be set back to false immediately
+TEST_TRADER_CREATE_ERROR = False

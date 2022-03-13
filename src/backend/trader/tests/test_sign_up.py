@@ -18,6 +18,10 @@ The passwords don't match or any of them are lesser than 8 characters
 4
 The email used to sign up has already been used to sign up
 
+5
+Something goes wrong while creating a user in the db
+The transaction should be completely rolled back
+
 Note: The cases concerning howYouHeard and yearsSpentTrading fields in user input
     are not covered because
     1. Time
@@ -25,7 +29,7 @@ Note: The cases concerning howYouHeard and yearsSpentTrading fields in user inpu
 """
 
 from datetime import date, timedelta
-from django.test import TestCase, tag
+from django.test import TestCase, override_settings, tag
 from django.core import mail
 from django.conf import settings
 from trader.models import Preferences
@@ -138,3 +142,15 @@ class SignUpTests(TestCase):
         resp_body = resp.json()
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp_body, {'email': ['A user is already registered with this e-mail address.']})
+    
+    # case 4
+    @override_settings(TEST_TRADER_CREATE_ERROR=True)
+    def test_user_doesnt_stay_in_db_when_smt_goes_wrong_during_creation(self):
+        user_details = SignUpDetails.good_details
+        trader_set = Trader.objects.filter(email=user_details['email'])
+        self.assertEquals(trader_set.count(), 0)
+        try:
+            self.client.post('/trader/sign-up/', SignUpDetails.good_details)
+        except Exception:
+            pass
+        self.assertEquals(trader_set.count(), 0)

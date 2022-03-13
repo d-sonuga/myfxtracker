@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.test import TestCase, override_settings
 from rest_framework.authtoken.models import Token
 from users.models import Trader, datasource_username_is_valid, datasource_username_is_invalid

@@ -1,11 +1,13 @@
-from django.db import IntegrityError, models
+from django.db import IntegrityError, models, transaction
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.core.mail import mail_admins
+from django.conf import settings
 from datetime import datetime, date, timedelta
 import nanoid
 
 
 class TraderManager(DjangoUserManager):
+    @transaction.atomic
     def create(self, **kwargs):
         new_trader = super().create(
             email=kwargs['email'],
@@ -14,10 +16,14 @@ class TraderManager(DjangoUserManager):
         )
         new_trader.set_password(kwargs['password'])
         traderinfo = TraderInfo.objects.create(
-            user=new_trader,
-            how_you_heard_about_us=kwargs.get('how_you_heard_about_us', ''),
-            trading_time_before_joining=kwargs.get('trading_time_before_joining', '')
-        )
+                user=new_trader,
+                how_you_heard_about_us=kwargs.get('how_you_heard_about_us', ''),
+                trading_time_before_joining=kwargs.get('trading_time_before_joining', '')
+            )
+        # This setting was added to test what happens when something goes wrong during the creation
+        # of a user
+        if settings.TEST_TRADER_CREATE_ERROR:
+            raise Exception('Testing what happens during an exception')
         DatasourceUsername.objects.create(traderinfo=traderinfo)
         referrer = kwargs.get('referrer')
         if referrer:
