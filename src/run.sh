@@ -2,4 +2,4 @@ echo 'Running Myfxtracker'
 cd backend
 python manage.py collectstatic --noinput
 python manage.py migrate
-gunicorn core.wsgi -b 0.0.0.0:$PORT
+daphne core.asgi:application -b 0.0.0.0 -p $PORT

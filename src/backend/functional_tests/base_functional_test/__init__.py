@@ -35,7 +35,7 @@ class BaseFunctionalTest(LiveServerTestCase):
     
     @classmethod
     def start_server(cls):
-        launch_gunicorn_command = ['gunicorn', 'core.wsgi', '-b', '0.0.0.0:8000']
+        launch_gunicorn_command = ['daphne', 'core.asgi:application', '-b', '0.0.0.0', '-p', '8000']
         subprocess.Popen(launch_gunicorn_command)
     
     @classmethod
