@@ -24,14 +24,14 @@ Roles
 
 Roles
 -----
-*   Receiving data from the trader data source
+*   Requesting data from the trader data source
 *   Saving trader data
 *   Keeping track of user info, sign ups, log ins, and other peripheral data
 
 
 ## Trader Data Source
--   Metatrader EA
--   New trader data sources may be added at any time
+-   MetaApi servers
+
 Roles
 -----
-*   Send trader data to the backend whenever new data becomes available
+*   Provide trader data whenever it is requested for
