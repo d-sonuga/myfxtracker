@@ -30,7 +30,6 @@ class InitDataTest(TestCase):
                 'user_data': {
                     'id': self.trader_with_no_data.id,
                     'email': self.trader_with_no_data.email,
-                    'ds_username': self.trader_with_no_data.get_datasource_username(),
                     'is_subscribed': self.trader_with_no_data.is_subscribed,
                     'on_free': self.trader_with_no_data.on_free
                 },
@@ -42,10 +41,13 @@ class InitDataTest(TestCase):
         )
 
     def test_trader_with_data(self):
-        from datasource_endpoint.tests.test_data import DatasourceInitialInfoData
+        from .test_data import AddTradingAccountTestData
+        from trader.metaapi import Transaction
+        test_data = AddTradingAccountTestData.good_account_details
         account = Account.objects.create_account(
             self.trader_with_data,
-            DatasourceInitialInfoData.good_details_with_transactions['data']
+            test_data['account-info'],
+            *Transaction.from_raw_data(test_data['deals'].copy())
         )
         pref = Preferences.objects.get(user=self.trader_with_data)
         pref.current_account = account
@@ -59,7 +61,6 @@ class InitDataTest(TestCase):
                 'user_data': {
                     'id': self.trader_with_data.id,
                     'email': self.trader_with_data.email,
-                    'ds_username': self.trader_with_data.get_datasource_username(),
                     'is_subscribed': self.trader_with_data.is_subscribed,
                     'on_free': self.trader_with_data.on_free
                 },

@@ -5,7 +5,7 @@ from trader.models import Account, Deposit, Trade, Withdrawal
 from .base_test import BaseTest
 from .test_data import SaveDataTestData
 
-
+""""
 class TestSaveData(BaseTest):
     def setUp(self):
         self.test_data = SaveDataTestData
@@ -87,3 +87,5 @@ class TestSaveData(BaseTest):
             self.no_of_deposits(transaction_data),
             self.no_of_withdrawals(transaction_data)
         )
+
+"""

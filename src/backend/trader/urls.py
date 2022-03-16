@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (add_trade, add_deposit, add_withdrawal, update_trade, get_init_data,
-            add_account, DeleteTrade, DeleteAccount, set_account_pref,
+            add_account, DeleteTrade, DeleteAccount, set_account_pref, add_trading_account,
             send_weekly_reports, sign_up, login, logout, delete_account,
             get_all_notes, save_note, update_note, delete_note, redirect_to_signup)
 
@@ -19,6 +19,7 @@ urlpatterns = [
     path('delete-note/<int:pk>/', delete_note),
     path('get-init-data/', get_init_data),
     path('redirect-to-signup/', redirect_to_signup, name='account_signup'),
+    path('add-trading-account/', add_trading_account),
 
     path('add_trade/', add_trade),
     path('delete_trade/<int:pk>/', DeleteTrade.as_view()),

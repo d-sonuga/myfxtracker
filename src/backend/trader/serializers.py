@@ -143,3 +143,9 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = '__all__'
+
+
+class AddAccountInfoSerializer(serializers.Serializer):
+    login = serializers.IntegerField()
+    password = serializers.CharField(max_length=300)
+    server = serializers.CharField(max_length=300)

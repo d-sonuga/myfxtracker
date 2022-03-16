@@ -271,6 +271,13 @@ MEDIA_URL = '/media/'
 
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
 
+# The token that will be used to authenticate the server on MetaApi servers
+METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
+# The class that will be used to interact with the MA servers
+# It is changed during tests for testing specific scenarios
+# It should not be changed manually
+META_API_CLASS_MODULE = 'trader.metaapi.main'
+
 # To test what happens when an error occurs during user creation
 # Always set to false
 # It will only be programmatically set to true when the test that uses it

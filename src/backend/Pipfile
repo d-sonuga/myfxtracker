@@ -16,6 +16,7 @@ nanoid = "2.0.0"
 django-database-url = "1.0.3"
 whitenoise = "6.0.0"
 daphne = "3.0.2"
+metaapi-cloud-sdk = "*"
 
 [dev-packages]
 maildump = "1.0"

@@ -1,4 +1,7 @@
+import asyncio
+from curses import meta
 import datetime
+from importlib import import_module
 from django.shortcuts import redirect
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
@@ -16,7 +19,7 @@ from users.models import User
 from trader.models import Note
 from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
-from .models import Trade, Deposit, Withdrawal, Account, Preferences
+from .models import Trade, Deposit, UnknownTransaction, Withdrawal, Account, Preferences, MetaApiError
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
 import datetime as dt
 
@@ -334,6 +337,11 @@ class GetInitData(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def get(self, request, *args, **kwargs):
+        init_data = GetInitData.build_init_data(request)
+        return Response(init_data, status=status.HTTP_200_OK)
+    
+    @staticmethod
+    def build_init_data(request):
         accounts = Account.objects.filter(user=request.user)
         trader_pref = Preferences.objects.get(user=request.user)
         current_account_id = (
@@ -345,9 +353,8 @@ class GetInitData(APIView):
             'user_data': {
                 'id': request.user.id,
                 'email': request.user.email,
-                'ds_username': request.user.get_datasource_username(),
                 'is_subscribed': request.user.subscriptioninfo.is_subscribed,
-                'on_free': request.user.subscriptioninfo.on_free
+                'on_free': request.user.subscriptioninfo.on_free,
             },
             'trade_data': {
                 'current_account_id': current_account_id,
@@ -381,7 +388,7 @@ class GetInitData(APIView):
                 }
             }
         }
-        return Response(init_data, status=status.HTTP_200_OK)
+        return init_data
 
 
 class RedirectToSignup(APIView):
@@ -391,6 +398,45 @@ class RedirectToSignup(APIView):
     def post(self, request, *args, **kwargs):
         return redirect(settings.SIGN_UP_URL)
 
+from asgiref.sync import async_to_sync
+from .serializers import AddAccountInfoSerializer
+from . import metaapi
+from django.db import transaction
+
+class AddTradingAccountView(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        reg_account_info_serializer = AddAccountInfoSerializer(request.data)
+        if reg_account_info_serializer.is_valid:
+            mtapi = metaapi.MetaApi()
+            ma_acc_id = mtapi.create_account(request.data)
+            (account_data, trade_data, deposit_data, withdrawal_data, 
+                unknown_transaction_data) = mtapi.get_all_data(ma_acc_id)
+            Account.objects.create_account(
+                request.user,
+                account_data,
+                trade_data,
+                deposit_data,
+                withdrawal_data,
+                unknown_transaction_data
+            )
+            resp_data = GetInitData.build_init_data(request)
+            return Response(resp_data, status=status.HTTP_201_CREATED)
+        return Response(reg_account_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, (
+                metaapi.BrokerNotSupportedError,
+                metaapi.UserAuthenticationError,
+                metaapi.CurrentlyUnavailableError,
+                metaapi.UnknownError
+            )
+        ):
+            MetaApiError.objects.create(user=self.request.user, error=exc.detail)
+            return Response({'detail': exc.detail}, status=status.HTTP_400_BAD_REQUEST)
+        return super().handle_exception(exc)
 
 """
 Handles the registration of traders
@@ -426,3 +472,4 @@ update_note = NoteViewSet.as_view({'put': 'partial_update'})
 delete_note = NoteViewSet.as_view({'delete': 'destroy'})
 get_init_data = GetInitData.as_view()
 redirect_to_signup = RedirectToSignup.as_view()
+add_trading_account = AddTradingAccountView.as_view()
