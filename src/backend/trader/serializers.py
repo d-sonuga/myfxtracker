@@ -149,3 +149,28 @@ class AddAccountInfoSerializer(serializers.Serializer):
     login = serializers.IntegerField()
     password = serializers.CharField(max_length=300)
     server = serializers.CharField(max_length=300)
+    platform = serializers.CharField(max_length=5)
+
+    def validate_login(self, login):
+        """
+        An MT login number is always greater than 0
+        """
+        if login <= 0:
+            raise serializers.ValidationError('A valid login is required.')
+        return login
+    
+    def validate_password(self, password):
+        """
+        I'm guessing that an MT password is always greater than or equal to 5
+        """
+        if len(password) < 5:
+            raise serializers.ValidationError('A valid password is required.')
+        return password
+
+    def validate_platform(self, platform):
+        """
+        A platform can be either mt4 or mt5
+        """
+        if platform not in ('mt4', 'mt5'):
+            raise serializers.ValidationError('A valid platform is required.')
+        return platform

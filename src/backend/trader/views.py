@@ -22,6 +22,9 @@ from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer,
 from .models import Trade, Deposit, UnknownTransaction, Withdrawal, Account, Preferences, MetaApiError
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
 import datetime as dt
+from .serializers import AddAccountInfoSerializer
+from . import metaapi
+from django.db import IntegrityError, transaction
 
 
 class DeleteTrade(DestroyAPIView):
@@ -398,18 +401,14 @@ class RedirectToSignup(APIView):
     def post(self, request, *args, **kwargs):
         return redirect(settings.SIGN_UP_URL)
 
-from asgiref.sync import async_to_sync
-from .serializers import AddAccountInfoSerializer
-from . import metaapi
-from django.db import transaction
 
 class AddTradingAccountView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
-        reg_account_info_serializer = AddAccountInfoSerializer(request.data)
-        if reg_account_info_serializer.is_valid:
+        reg_account_info_serializer = AddAccountInfoSerializer(data=request.data)
+        if reg_account_info_serializer.is_valid():
             mtapi = metaapi.MetaApi()
             ma_acc_id = mtapi.create_account(request.data)
             (account_data, trade_data, deposit_data, withdrawal_data, 
@@ -436,7 +435,41 @@ class AddTradingAccountView(APIView):
         ):
             MetaApiError.objects.create(user=self.request.user, error=exc.detail)
             return Response({'detail': exc.detail}, status=status.HTTP_400_BAD_REQUEST)
+        if isinstance(exc, IntegrityError):
+            if any((
+                exc.args[0].count(constraint) != 0
+                for constraint in ('trader_no_duplicate_account', 'trader_unique_ma_account_id') 
+            )):
+                return Response(
+                    {'detail': 'The account already exists.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         return super().handle_exception(exc)
+
+    
+class RefreshData(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+    def get(self, request, *args, **kwargs):
+        mtapi = metaapi.MetaApi()
+        for account, unsaved_data in mtapi.get_all_unsaved_data(request.user):
+            (account_info, unsaved_trade_data, unsaved_deposit_data,
+                unsaved_withdrawal_data, unsaved_unknown_transaction_data) = unsaved_data
+            account.update_account(
+                account_info,
+                unsaved_trade_data,
+                unsaved_deposit_data,
+                unsaved_withdrawal_data,
+                unsaved_unknown_transaction_data
+            )
+        updated_data = GetInitData.build_init_data(request)
+        return Response(updated_data)
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, metaapi.UnknownError):
+            MetaApiError.objects.create(user=self.request.user, error=exc.detail)
+            return Response({'detail': exc.detail}, status.HTTP_400_BAD_REQUEST)
+        return super().handle_exception(exc)
+
 
 """
 Handles the registration of traders
@@ -473,3 +506,4 @@ delete_note = NoteViewSet.as_view({'delete': 'destroy'})
 get_init_data = GetInitData.as_view()
 redirect_to_signup = RedirectToSignup.as_view()
 add_trading_account = AddTradingAccountView.as_view()
+refresh_data = RefreshData.as_view()

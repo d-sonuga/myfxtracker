@@ -1,15 +1,38 @@
 from django.test import TestCase, override_settings
+from django.test.utils import TestContextDecorator
 from rest_framework.authtoken.models import Token
-from trader.models import Account, Preferences
+from trader.metaapi.main import Transaction
+from trader.models import Account, Deposit, Preferences, MetaApiError, Trade, UnknownTransaction, Withdrawal
 from users.models import Trader
-from .test_data import AddTradingAccountTestData
+from trader import metaapi
+from .test_data import AddTradingAccountRegisterDetails, AddTradingAccountTestData, SignUpDetails
+
+
+
+class test_mtapi_error(TestContextDecorator):
+    def __init__(self, **kwargs):
+        self.mod_settings = kwargs
+
+    def decorate_callable(self, test):
+        @override_settings(**self.mod_settings)
+        def dec_test(*args, **kwargs):
+            # MetaApiErrors before each mtapi test should be 0
+            # and they should be 1 after
+            user_mtapi_errors = MetaApiError.objects.all().count()
+            TestCase().assertEquals(user_mtapi_errors, 0)
+            result = test(*args, **kwargs)
+            user_mtapi_errors = MetaApiError.objects.all().count()
+            TestCase().assertEquals(user_mtapi_errors, 1)
+            return result
+        return dec_test
 
 
 class AddTradingAccountTests(TestCase):
     def setUp(self) -> None:
+        trader_data = SignUpDetails.good_details
         self.trader = Trader.objects.create(
-            email='sonugademilade8703@gmail.com',
-            password='password'
+            email=trader_data['email'],
+            password=trader_data['password1']
         )
         trader_token = Token.objects.create(user=self.trader).key
         self.valid_headers = {
@@ -17,18 +40,14 @@ class AddTradingAccountTests(TestCase):
             'HTTP_AUTHORIZATION': f'Token {trader_token}'
         }
     
-    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_noerror')
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
     def test_good_details(self):
         """
         To test the scenario where the user enters proper, well-formed details
         and the MA server doesn't return any errors
         """
         test_account_data = AddTradingAccountTestData.good_account_details
-        resp = self.client.post(
-            '/trader/add-trading-account/',
-            test_account_data['register-details'],
-            **self.valid_headers
-        )
+        resp = self.make_request(test_account_data['register-details'])
         self.assertEquals(resp.status_code, 201)
         account_set = Account.objects.filter(user=self.trader)
         self.assertEquals(account_set.count(), 1)
@@ -55,8 +74,8 @@ class AddTradingAccountTests(TestCase):
                                 'profitLoss': float(trade.profit_loss),
                                 'commission': float(trade.commission),
                                 'swap': float(trade.swap),
-                                'openTime': trade.open_time.isoformat(),
-                                'closeTime': trade.close_time.isoformat(),
+                                'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
+                                'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
                                 'openPrice': float(trade.open_price),
                                 'closePrice': float(trade.close_price),
                                 'takeProfit': float(trade.take_profit),
@@ -87,6 +106,175 @@ class AddTradingAccountTests(TestCase):
         )
         self.assertEquals(resp.status_code, 401)
 
+    def test_bad_details_no_login(self):
+        """
+        To test the scenario where a user tries to add an account
+        with no login included in the register details
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_no_login
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'login': ['This field is required.']})
+    
+    def test_bad_details_empty_login(self):
+        """
+        To test the scenario where a user tries to add an account
+        with an empty login
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_empty_login
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'login': ['A valid integer is required.']})
+
+    def test_bad_details_invalid_login(self):
+        """
+        To test the scenario where a user tries to add an account
+        with an empty login
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_invalid_login
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'login': ['A valid login is required.']})
+
+    def test_bad_details_no_password(self):
+        """
+        To test the scenario where a user tries to add an account
+        with no password included
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_no_password
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'password': ['This field is required.']})
+    
+    def test_bad_details_invalid_password(self):
+        """
+        To test the scenario where a user tries to add an account
+        with a password that couldn't possibly be a valid MT password
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_invalid_password
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'password': ['A valid password is required.']})
+
+    def test_bad_details_no_server(self):
+        """
+        To test the scenario where a user tries to add an account
+        without adding the server field to the details
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_no_server
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'server': ['This field is required.']})
+    
+    def test_bad_details_empty_server(self):
+        """
+        To test the scenario where a user tries to add an account
+        without adding the server field to the details
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_empty_server
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'server': ['This field may not be blank.']})
+
+    def test_bad_details_no_platform(self):
+        """
+        To test the scenario where a user tries to add an account
+        without adding the platform field to the details
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_no_platform
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'platform': ['This field is required.']})
+
+    def test_bad_details_empty_platform(self):
+        """
+        To test the scenario where a user tries to add an account with a blank platform field
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_empty_platform
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'platform': ['This field may not be blank.']})
+    
+    def test_bad_details_invalid_server(self):
+        """
+        To test the scenario where a user tries to add an account with a platform that isn't mt4 or 5
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_invalid_platform
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'platform': ['A valid platform is required.']})
+
+    @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_srv_not_found_error')
+    def test_mtapi_throws_server_not_found_error(self):
+        """
+        To test the scenario where the MA server returns a server not found error
+        """
+        test_account_details = AddTradingAccountTestData.good_account_details['register-details']
+        resp = self.make_request(test_account_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'detail': metaapi.BrokerNotSupportedError.detail})
+
+    @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_user_auth_error')
+    def test_mtapi_throws_authentication_error(self):
+        """
+        To test the scenario where the MA server returns an authentication error
+        """
+        test_account_details = AddTradingAccountTestData.good_account_details['register-details']
+        resp = self.make_request(test_account_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'detail': metaapi.UserAuthenticationError.detail})
+
+    @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_curr_unavailable_srv_error')
+    def test_mtapi_throws_unavailable_error(self):
+        """
+        To test the scenario where the MA server returns E_SERVER_TIMEZONE error,
+        unable to retrieve server settings using provided credentials
+        """
+        test_account_details = AddTradingAccountTestData.good_account_details['register-details']
+        resp = self.make_request(test_account_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'detail': metaapi.CurrentlyUnavailableError.detail})
+
+    @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_unknown_error')
+    def test_mtapi_throws_unknown_error(self):
+        """
+        To test the scenario where the MA server returns an unknown error
+        """
+        test_account_details = AddTradingAccountTestData.good_account_details['register-details']
+        resp = self.make_request(test_account_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'detail': metaapi.UnknownError.detail})
+
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
+    def test_user_create_account_already_existing(self):
+        """
+        To the scenario where a user creates an account that already exists
+        """
+        test_account_data = AddTradingAccountTestData.good_account_details
+        account = self.create_account_and_transactions(test_account_data)
+        self.assertEquals(Account.objects.all().count(), 1)
+        self.assert_account_transactions_are_only_ones_in_db(account)
+        resp = self.make_request(test_account_data['register-details'])
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(Account.objects.all().count(), 1)
+        self.assert_account_transactions_are_only_ones_in_db(account)
+        self.assertEquals(resp.json(), {'detail': 'The account already exists.'})
+
+    def create_account_and_transactions(self, test_account_data: dict):
+        account = Account.objects.create_account(
+            self.trader,
+            test_account_data['account-info'],
+            *Transaction.from_raw_data(test_account_data['deals'])
+        )
+        return account
+
+    def assert_account_transactions_are_only_ones_in_db(self, account: Account):
+        self.assertEquals(Trade.objects.all().count(), account.no_of_trades())
+        self.assertEquals(Deposit.objects.all().count(), account.no_of_deposits())
+        self.assertEquals(Withdrawal.objects.all().count(), account.no_of_withdrawals())
+        self.assertEquals(UnknownTransaction.objects.all().count(), account.no_of_unknown_transactions())
+
+
     def assert_account_saved_properly(self, test_account_data: dict, account: Account) -> bool:
         data = test_account_data['account-info']
         self.assertEquals(data['platform'], account.platform)
@@ -105,4 +293,11 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(data['investorMode'], account.investor_mode)
         self.assertEquals(data['marginMode'], account.margin_mode)
         self.assertEquals(data['type'], account.type)
+        self.assertEquals(data['ma_account_id'], account.ma_account_id)
     
+    def make_request(self, data: AddTradingAccountRegisterDetails):
+        return self.client.post(
+            '/trader/add-trading-account/',
+            data,
+            **self.valid_headers
+        )

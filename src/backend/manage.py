@@ -15,11 +15,15 @@ def main():
             elif sys.argv[2] == '--all':
                 run_all_tests = ['manage.py', 'test']
                 execute_from_command_line(run_all_tests)
+            elif sys.argv[2] == '--nokeepdb':
+                run_only_unit_tests = ['manage.py', 'test', '--exclude-tag=functional']
+                execute_from_command_line(run_only_unit_tests)    
             else:
                 run_specific_tests = ['manage.py', 'test', *sys.argv[2:]]
                 execute_from_command_line(run_specific_tests)
         else:
-            run_only_unit_tests = ['manage.py', 'test', '--exclude-tag=functional', *sys.argv[2:]]
+            # --keepdb, so a new db won't have to be created for every test
+            run_only_unit_tests = ['manage.py', 'test', '--exclude-tag=functional', '--keepdb']
             execute_from_command_line(run_only_unit_tests)
     else:
         execute_from_command_line(sys.argv)

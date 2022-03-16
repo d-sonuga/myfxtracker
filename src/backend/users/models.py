@@ -80,6 +80,9 @@ class Trader(User):
             except AttributeError:
                 return getattr(subscriptioninfo, __name)
     
+    def get_all_accounts(self):
+        return self.account_set.all()
+
     @transaction.atomic
     def delete(self):
         ds_username = self.traderinfo.datasourceusername

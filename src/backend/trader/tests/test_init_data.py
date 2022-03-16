@@ -3,6 +3,8 @@ from rest_framework.authtoken.models import Token
 from trader.models import Account, Preferences
 from users.models import Trader
 from .test_data import InitDataTestData
+from .test_data import AddTradingAccountTestData
+from trader.metaapi import Transaction
 
 
 class InitDataTest(TestCase):
@@ -41,8 +43,6 @@ class InitDataTest(TestCase):
         )
 
     def test_trader_with_data(self):
-        from .test_data import AddTradingAccountTestData
-        from trader.metaapi import Transaction
         test_data = AddTradingAccountTestData.good_account_details
         account = Account.objects.create_account(
             self.trader_with_data,

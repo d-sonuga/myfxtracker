@@ -1,10 +1,9 @@
 from datetime import datetime
-from django.db import IntegrityError, models
+from django.db import IntegrityError, models, transaction
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 from django.core import mail
-from trader.metaapi.main import RawDepositWithdrawalDealData, RawTradeDealData
-from trader.metaapi import AccountData, TradeData
+from trader.metaapi_types import AccountData, TradeData, RawDepositWithdrawalDealData, RawTradeDealData
 from users.models import Trader, User
 from typing import List
 
@@ -26,11 +25,12 @@ class TransactionIdField(IntegerFromCharField):
     To store transaction ids for trades, deposits and withdrawals.
     Stores them as characters, loads them as integers
     """
-    def __init__(self, unique=False, *args, **kwargs):
-        super().__init__(unique=unique, max_length=100)
+    def __init__(self, unique=True, *args, **kwargs):
+        super().__init__(unique=unique, max_length=100, *args)
 
 
 class AccountManager(models.Manager):
+    @transaction.atomic
     def create_account(
         self,
         user,
@@ -57,7 +57,8 @@ class AccountManager(models.Manager):
             balance=account_data['balance'],
             investor_mode=account_data['investorMode'],
             trade_allowed=account_data['tradeAllowed'],
-            margin_mode=account_data['marginMode']
+            margin_mode=account_data['marginMode'],
+            ma_account_id=account_data['ma_account_id']
         )
         Trade.objects.create_trades(new_account, trade_data)
         Deposit.objects.create_deposits(new_account, deposit_data)
@@ -122,7 +123,7 @@ class Account(models.Model):
     )
     name = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    login = models.IntegerField()
+    login = models.PositiveBigIntegerField()
     currency = models.TextField()
     broker = models.TextField()
     server = models.TextField()
@@ -137,6 +138,8 @@ class Account(models.Model):
     investor_mode = models.BooleanField()
     trade_allowed = models.BooleanField()
     margin_mode = models.CharField(max_length=50)
+    # The id used to identify the account when making requests to the MA servers
+    ma_account_id = models.CharField(max_length=200)
 
     objects = AccountManager()
 
@@ -148,6 +151,9 @@ class Account(models.Model):
     
     def no_of_withdrawals(self):
         return self.withdrawal_set.all().count()
+
+    def no_of_unknown_transactions(self):
+        return self.get_all_unknown_transactions().count()
     
     def save_trades(self, transaction_data):
         for trade in get_account_trades(transaction_data):
@@ -179,12 +185,38 @@ class Account(models.Model):
     def get_all_trades(self):
         return self.trade_set.all()
 
+    def get_all_unknown_transactions(self):
+        return self.unknowntransaction_set.all()
+    
+    @transaction.atomic
+    def update_account(
+        self,
+        account_info: AccountData,
+        unsaved_trade_data: List[TradeData],
+        unsaved_deposit_data: List[RawDepositWithdrawalDealData],
+        unsaved_withdrawal_data: List[RawDepositWithdrawalDealData],
+        unsaved_unknown_transaction_data: List[RawDepositWithdrawalDealData | RawTradeDealData]
+    ):
+        
+        self.credit = account_info['credit']
+        self.equity = account_info['equity']
+        self.margin = account_info['margin']
+        self.free_margin = account_info['freeMargin']
+        self.leverage = account_info['leverage']
+        self.balance = account_info['balance']
+        self.save()
+        Trade.objects.create_trades(self, unsaved_trade_data)
+        Deposit.objects.create_deposits(self, unsaved_deposit_data)
+        Withdrawal.objects.create_withdrawals(self, unsaved_withdrawal_data)
+        UnknownTransaction.objects.create_unknown_transactions(self, unsaved_unknown_transaction_data)
+
     def __str__(self):
         return f'{self.user.username}\'s account'
     
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['login', 'user'], name='trader_no_duplicate_account')
+            models.UniqueConstraint(fields=['login', 'user'], name='trader_no_duplicate_account'),
+            models.UniqueConstraint(fields=['ma_account_id'], name='trader_unique_ma_account_id')
         ]
 
 
@@ -244,13 +276,18 @@ class Trade(models.Model):
     stop_loss = models.DecimalField(decimal_places=2, max_digits=19)
     swap = models.DecimalField(decimal_places=2, max_digits=19)
     commission = models.DecimalField(decimal_places=2, max_digits=19)
+    volume = models.DecimalField(decimal_places=2, max_digits=19)
     open_time = models.DateTimeField()
     close_time = models.DateTimeField()
     # order ticket id in mt4, position id in mt5
     trade_id = TransactionIdField()
-    magic_number = models.IntegerField()
+    order_id = TransactionIdField(unique=False)
+    position_id = TransactionIdField(unique=False)
+    magic = models.IntegerField()
     notes = models.TextField(blank=True, null=True)
     reason = models.CharField(max_length=100)
+    broker_open_time = models.CharField(max_length=100)
+    broker_close_time = models.CharField(max_length=100)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     objects = TradeManager()
@@ -304,7 +341,7 @@ class WithdrawalManager(models.Manager):
         self.create(
             account=account,
             amount=rawdata['profit'],
-            time=rawdata['close-time'],
+            time=rawdata['time'],
             withdrawal_id=rawdata['id'],
             broker_time=rawdata['brokerTime']
         )
