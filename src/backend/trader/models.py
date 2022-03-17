@@ -197,7 +197,6 @@ class Account(models.Model):
         unsaved_withdrawal_data: List[RawDepositWithdrawalDealData],
         unsaved_unknown_transaction_data: List[RawDepositWithdrawalDealData | RawTradeDealData]
     ):
-        
         self.credit = account_info['credit']
         self.equity = account_info['equity']
         self.margin = account_info['margin']

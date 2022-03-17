@@ -271,10 +271,15 @@ MEDIA_URL = '/media/'
 
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
 
+# The key that is used to authenticate requests to refresh all trader
+# account data. The key is used by whatever task manager is making periodic
+# requests to refresh traders' account data
+REFRESH_ACCOUNTS_REQUEST_KEY = os.getenv('REFRESH_ACCOUNTS_REQUEST_KEY')
+
 # The token that will be used to authenticate the server on MetaApi servers
 METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
 # The class that will be used to interact with the MA servers
-# It is changed during tests for testing specific scenarios
+# It is changed programmatically during tests for testing specific scenarios
 # It should not be changed manually
 META_API_CLASS_MODULE = 'trader.metaapi.main'
 

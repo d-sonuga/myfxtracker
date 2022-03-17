@@ -36,6 +36,25 @@ class RefreshAccountDataTests(TestCase):
             if deal.get('positionId'):
                 deal['positionId'] = str(int(deal['positionId']) * 5)
         return trader, valid_headers
+    
+    def setup_trader_with_one_account_and_no_new_data(self):
+        trader_data = SignUpDetails.good_details
+        test_data = deepcopy(RefreshAccountDataTestData.OneAccountUserDataWithNoNewData)
+        trader = Trader.objects.create(
+            email=trader_data['email'],
+            password=trader_data['password1']
+        )
+        trader_token = Token.objects.create(user=trader).key
+        valid_headers = {
+            'Content-Type': 'application/json',
+            'HTTP_AUTHORIZATION': f'Token {trader_token}'
+        }
+        Account.objects.create_account(
+            trader,
+            test_data.original_account_info,
+            *Transaction.from_raw_data(test_data.original_deals)
+        )
+        return trader, valid_headers
 
     def setup_trader_with_more_than_one_account(self):
         trader_data = SignUpDetails.good_details
@@ -148,6 +167,73 @@ class RefreshAccountDataTests(TestCase):
                 }
             })
     
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_refresh_account_no_new_data_no_error')
+    def test_valid_trader_refresh_data_with_no_new_data(self):
+        """
+        To test the scenario where an authenticated user with 1 account requests a data refresh
+        on his account
+        """
+        trader, valid_headers = self.setup_trader_with_one_account_and_no_new_data()
+        account = Account.objects.get(user=trader)
+        prev_account_state = {
+            'no-of-trades': account.no_of_trades(),
+            'no-of-deposits': account.no_of_deposits(),
+            'no-of-withdrawals': account.no_of_withdrawals(),
+            'no-of-unknown-transactions': account.no_of_unknown_transactions(),
+            'balance': account.balance,
+            'equity': account.equity,
+            'margin': account.margin,
+            'free-margin': account.free_margin,
+            'leverage': account.leverage,
+            'credit': account.credit,
+            'margin-mode': account.margin_mode
+        }
+        resp = self.request_refresh(**valid_headers)
+        self.assertEquals(resp.status_code, 200)
+        account = Account.objects.get(user=trader)
+        self.assert_account_data_didnt_update(account, prev_account_state)
+        pref_current_account = Preferences.objects.get(user=trader).current_account
+        current_account_id = pref_current_account.id if pref_current_account is not None else -1
+        self.assertEquals(resp.json(), {
+                'user_data': {
+                    'id': trader.id,
+                    'email': trader.email,
+                    'is_subscribed': trader.is_subscribed,
+                    'on_free': trader.on_free,
+                },
+                'trade_data': {
+                    'current_account_id': current_account_id,
+                    'accounts': {
+                        f'{account.id}': {
+                            'name': account.name,
+                            'trades': [{
+                                'pair': trade.pair,
+                                'action': trade.action,
+                                'profitLoss': float(trade.profit_loss),
+                                'commission': float(trade.commission),
+                                'swap': float(trade.swap),
+                                'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
+                                'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
+                                'openPrice': float(trade.open_price),
+                                'closePrice': float(trade.close_price),
+                                'takeProfit': float(trade.take_profit),
+                                'stopLoss': float(trade.stop_loss)
+                            } for trade in account.get_all_trades()],
+                            'deposits': [{
+                                'account': account.id,
+                                'amount': float(deposit.amount),
+                                'time': deposit.time.isoformat().replace('+00:00', 'Z')
+                            } for deposit in account.get_all_deposits()],
+                            'withdrawals': [{
+                                'account': account.id,
+                                'amount': float(withdrawal.amount),
+                                'time': withdrawal.time.isoformat().replace('+00:00', 'Z')
+                            } for withdrawal in account.get_all_withdrawals()]
+                        }
+                    }
+                }
+            })
+
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_refresh_multiple_accounts_no_error')
     def test_valid_trader_more_than_1_account(self):
         """
@@ -274,15 +360,31 @@ class RefreshAccountDataTests(TestCase):
         self.assertEquals(account.leverage, test_data.new_account_info['leverage'])
         self.assertEquals(account.credit, test_data.new_account_info['credit'])
         self.assertEquals(account.margin_mode, test_data.new_account_info['marginMode'])
+    
+    def assert_account_data_didnt_update(self, account: Account, prev_account_state):
+        self.assertEquals(
+            account.no_of_trades(),
+            prev_account_state['no-of-trades']
+        )
+        self.assertEquals(
+            account.no_of_deposits(),
+            prev_account_state['no-of-deposits']
+        )
+        self.assertEquals(
+            account.no_of_withdrawals(),
+            prev_account_state['no-of-withdrawals']
+        )
+        self.assertEquals(
+            account.no_of_unknown_transactions(),
+            prev_account_state['no-of-unknown-transactions']
+        )
+        self.assertEquals(account.balance, prev_account_state['balance'])
+        self.assertEquals(account.equity, prev_account_state['equity'])
+        self.assertEquals(account.margin, prev_account_state['margin'])
+        self.assertEquals(account.free_margin, prev_account_state['free-margin'])
+        self.assertEquals(account.leverage, prev_account_state['leverage'])
+        self.assertEquals(account.credit, prev_account_state['credit'])
+        self.assertEquals(account.margin_mode, prev_account_state['margin-mode'])
 
     def request_refresh(self, *args, **kwargs):
         return self.client.get('/trader/refresh-data/', *args, **kwargs)
-    """
-    Refresh
-    -   Makes request to MetaApi guys and gets deals that have been done after the last saved deal
-    -   Makes request to get account information
-    -   Handles errors
-    Cases
-    1.  User is valid trader and user wants to refresh
-    2.  User is invalid and user doesn't want to refresh
-    """

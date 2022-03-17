@@ -32,3 +32,8 @@ class IsTraderOrAdmin(BasePermission):
 class IsFromSite(BasePermission):
     def has_permission(self, request, view):
         return request.META.get('Weekly-Reports-Key') == settings.WEEKLY_REPORTS_KEY
+
+
+class IsRefreshRequestFromSite(BasePermission):
+    def has_permission(self, request, view):
+        return request.META.get('Refresh-Accounts-Request-Key') == settings.REFRESH_ACCOUNTS_REQUEST_KEY

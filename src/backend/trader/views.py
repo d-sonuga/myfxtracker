@@ -1,4 +1,3 @@
-import asyncio
 from curses import meta
 import datetime
 from importlib import import_module
@@ -15,7 +14,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView
-from users.models import User
+from users.models import Trader, User
 from trader.models import Note
 from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
@@ -25,6 +24,8 @@ import datetime as dt
 from .serializers import AddAccountInfoSerializer
 from . import metaapi
 from django.db import IntegrityError, transaction
+
+from .permissions import IsRefreshRequestFromSite
 
 
 class DeleteTrade(DestroyAPIView):
@@ -450,8 +451,14 @@ class AddTradingAccountView(APIView):
 class RefreshData(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
     def get(self, request, *args, **kwargs):
+        RefreshData.refresh_account_data(request.user)
+        updated_data = GetInitData.build_init_data(request)
+        return Response(updated_data)
+    
+    @staticmethod
+    def refresh_account_data(trader: Trader):
         mtapi = metaapi.MetaApi()
-        for account, unsaved_data in mtapi.get_all_unsaved_data(request.user):
+        for account, unsaved_data in mtapi.get_all_unsaved_data(trader):
             (account_info, unsaved_trade_data, unsaved_deposit_data,
                 unsaved_withdrawal_data, unsaved_unknown_transaction_data) = unsaved_data
             account.update_account(
@@ -461,14 +468,34 @@ class RefreshData(APIView):
                 unsaved_withdrawal_data,
                 unsaved_unknown_transaction_data
             )
-        updated_data = GetInitData.build_init_data(request)
-        return Response(updated_data)
-    
+
     def handle_exception(self, exc):
         if isinstance(exc, metaapi.UnknownError):
             MetaApiError.objects.create(user=self.request.user, error=exc.detail)
             return Response({'detail': exc.detail}, status.HTTP_400_BAD_REQUEST)
         return super().handle_exception(exc)
+
+ERROR_NOT_ALL_ACCOUNTS_UPDATED = 550
+
+class RefreshAllAccountsData(APIView):
+    """
+    To be called periodically to update all account data
+    If any error occurs, the a response with status
+    ERROR_NOT_ALL_ACCOUNTS_UPDATED will be returned, but that won't
+    stop it from attempting to update the other accounts.
+    """
+    permission_classes = [IsRefreshRequestFromSite]
+    def get(self, request, *args, **kwargs):
+        error_occured = False
+        for trader in Trader.objects.all():
+            try:
+                RefreshData.refresh_account_data(trader)
+            except metaapi.UnknownError as exc:
+                MetaApiError.objects.create(user=trader, error=exc.detail)
+                error_occured = True
+        if error_occured:
+            return Response(status=ERROR_NOT_ALL_ACCOUNTS_UPDATED)
+        return Response()
 
 
 """
@@ -507,3 +534,4 @@ get_init_data = GetInitData.as_view()
 redirect_to_signup = RedirectToSignup.as_view()
 add_trading_account = AddTradingAccountView.as_view()
 refresh_data = RefreshData.as_view()
+refresh_all_accounts_data = RefreshAllAccountsData.as_view()
