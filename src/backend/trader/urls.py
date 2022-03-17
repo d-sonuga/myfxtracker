@@ -3,7 +3,7 @@ from .views import (add_trade, add_deposit, add_withdrawal, update_trade, get_in
             add_account, DeleteTrade, DeleteAccount, set_account_pref, add_trading_account,
             send_weekly_reports, sign_up, login, logout, delete_account, refresh_data,
             get_all_notes, save_note, update_note, delete_note, redirect_to_signup,
-            refresh_all_accounts_data)
+            refresh_all_accounts_data, remove_trading_account)
 
 
 urlpatterns = [
@@ -23,6 +23,7 @@ urlpatterns = [
     path('add-trading-account/', add_trading_account),
     path('refresh-data/', refresh_data),
     path('refresh-all-account-data/', refresh_all_accounts_data),
+    path('remove-trading-account/<int:pk>/', remove_trading_account),
 
     path('add_trade/', add_trade),
     path('delete_trade/<int:pk>/', DeleteTrade.as_view()),

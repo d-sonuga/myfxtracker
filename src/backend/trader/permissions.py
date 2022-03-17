@@ -37,3 +37,12 @@ class IsFromSite(BasePermission):
 class IsRefreshRequestFromSite(BasePermission):
     def has_permission(self, request, view):
         return request.META.get('Refresh-Accounts-Request-Key') == settings.REFRESH_ACCOUNTS_REQUEST_KEY
+
+
+class IsTradingAccountOwner(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        print(dir(request))
+        if request.user == obj.user:
+            return True
+        return False

@@ -15,3 +15,6 @@ class MainMetaApi(BaseTestMetaApi):
 
     async def get_deals_by_time_range(self, start, end):
         return AddTradingAccountTestData.good_account_details['deals']
+
+    async def remove(self, *args, **kwargs):
+        pass

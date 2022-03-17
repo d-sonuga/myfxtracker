@@ -1,30 +1,12 @@
 from django.test import TestCase, override_settings
-from trader.views import ERROR_NOT_ALL_ACCOUNTS_UPDATED
+from trader.views import ERROR_FROM_METAAPI
 from trader.metaapi.main import Transaction
 from users.models import Trader
 from trader.models import Account
-from trader import metaapi
 from typing import List
-from copy import deepcopy
 from .test_add_trading_account import test_mtapi_error
-from .test_data import RefreshAccountDataTestData, SignUpDetails, RefreshAllAccountsTestData
+from .test_data import RefreshAccountDataTestData, RefreshAllAccountsTestData
 
-"""
-Refresh All Account Data
-Iterating through a list of all users
-Iterating through a list of their respective accounts
-And running the update account data procedure on each of them
-
-Scenarios
-When there is 1 user
-When there is more than 1 user
-When each user has 1 account
-When each user has more than 1 account
-When an error occurs on the MetaApi side
-When the request is not coming from the server 
-    (a token will be used for this, because only the task manager should be able to 
-    invoke this view)
-"""
 
 TEST_REFRESH_ACCOUNT_REQUEST_KEY = '8hriuzehf318u289erfeeflihd'
 
@@ -150,7 +132,7 @@ class RefreshAllAccountDataTests(TestCase):
         """
         self.setup_one_trader_with_one_account()
         resp = self.request_refresh_all_accounts()
-        self.assertEquals(resp.status_code, ERROR_NOT_ALL_ACCOUNTS_UPDATED)
+        self.assertEquals(resp.status_code, ERROR_FROM_METAAPI)
 
     def assert_accounts_updated(
         self,

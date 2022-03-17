@@ -14,7 +14,10 @@ class MainMetaApi(BaseTestMetaApi):
         raise Exception
 
     async def get_account_information(self):
-        return AddTradingAccountTestData.good_account_details['account-info']
+        raise Exception
 
     async def get_deals_by_time_range(self, start, end):
-        return AddTradingAccountTestData.good_account_details['deals']
+        raise Exception
+
+    async def remove(self):
+        raise Exception

@@ -24,8 +24,7 @@ import datetime as dt
 from .serializers import AddAccountInfoSerializer
 from . import metaapi
 from django.db import IntegrityError, transaction
-
-from .permissions import IsRefreshRequestFromSite
+from .permissions import IsRefreshRequestFromSite, IsTradingAccountOwner
 
 
 class DeleteTrade(DestroyAPIView):
@@ -475,7 +474,7 @@ class RefreshData(APIView):
             return Response({'detail': exc.detail}, status.HTTP_400_BAD_REQUEST)
         return super().handle_exception(exc)
 
-ERROR_NOT_ALL_ACCOUNTS_UPDATED = 550
+ERROR_FROM_METAAPI = 550
 
 class RefreshAllAccountsData(APIView):
     """
@@ -485,6 +484,7 @@ class RefreshAllAccountsData(APIView):
     stop it from attempting to update the other accounts.
     """
     permission_classes = [IsRefreshRequestFromSite]
+
     def get(self, request, *args, **kwargs):
         error_occured = False
         for trader in Trader.objects.all():
@@ -494,9 +494,34 @@ class RefreshAllAccountsData(APIView):
                 MetaApiError.objects.create(user=trader, error=exc.detail)
                 error_occured = True
         if error_occured:
-            return Response(status=ERROR_NOT_ALL_ACCOUNTS_UPDATED)
+            return Response(status=ERROR_FROM_METAAPI)
         return Response()
 
+
+class RemoveTradingAccount(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+    
+    @transaction.atomic
+    def delete(self, request, pk, *args, **kwargs):
+        account = Account.objects.get(user=request.user, id=pk)
+        mtapi = metaapi.MetaApi()
+        mtapi.remove_account(account.ma_account_id)
+        account.delete()
+        return Response()
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, Account.DoesNotExist):
+            return Response(
+                {'detail': 'Account with requested id does not exist.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if isinstance(exc, metaapi.UnknownError):
+            MetaApiError.objects.create(user=self.request.user, error=exc.detail)
+            return Response(
+                {'detail': exc.detail},
+                status=ERROR_FROM_METAAPI
+            )
+        return super().handle_exception(exc)
 
 """
 Handles the registration of traders
@@ -535,3 +560,4 @@ redirect_to_signup = RedirectToSignup.as_view()
 add_trading_account = AddTradingAccountView.as_view()
 refresh_data = RefreshData.as_view()
 refresh_all_accounts_data = RefreshAllAccountsData.as_view()
+remove_trading_account = RemoveTradingAccount.as_view()
