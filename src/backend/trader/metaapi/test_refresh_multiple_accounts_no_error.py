@@ -32,7 +32,7 @@ class TestMTAccount:
         self.data = data
         self.id = id
     
-    async def get_rpc_connection(self):
+    def get_rpc_connection(self):
         return self
     
     async def get_account_information(self):

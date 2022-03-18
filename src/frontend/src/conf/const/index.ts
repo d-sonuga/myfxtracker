@@ -25,6 +25,9 @@ const HttpConst = {
     DELETE_NOTE_URL: 'trader/delete-note',
     GET_ALL_NOTES_URL: 'trader/get-all-notes',
     DELETE_ACCOUNT_URL: 'trader/delete-account',
+    ADD_TRADING_ACCOUNT_URL: 'trader/add-trading-account',
+    REFRESH_DATA_URL: 'trader/refresh-data',
+    REMOVE_TRADING_ACCOUNT_URL: 'trader/remove-trading-account',
     FEEDBACK_FORM_URL: 'https://forms.gle/SWAdgLtd64Vzmyso9'
 }
 
@@ -63,7 +66,8 @@ const RouteConst = {
 
 const ConfigConst = {
     TOKEN_KEY: 'KEY',
-    GA_MEASUREMENT_ID: 'G-K2C8098L1V'
+    GA_MEASUREMENT_ID: 'G-K2C8098L1V',
+    MAX_NO_OF_TRADING_ACCOUNT: 3
 }
 
 export {

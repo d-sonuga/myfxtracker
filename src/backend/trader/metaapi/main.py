@@ -4,7 +4,9 @@ from django.db import models
 from asgiref.sync import async_to_sync
 from typing import List, Tuple, TypedDict, Optional, Union, Literal, Dict
 import datetime as dt
+from copy import deepcopy
 from importlib import import_module
+import time
 from trader.models import Account
 from users.models import Trader
 from trader.metaapi_types import (
@@ -18,22 +20,27 @@ class MetaApi:
         mtapi_module_name = getattr(settings, 'META_API_CLASS_MODULE', 'trader.metaapi.main')
         mtapi_module = import_module(mtapi_module_name)
         self._api: MainMetaApi = getattr(mtapi_module, 'MainMetaApi')(settings.METAAPI_TOKEN)
+        self.NO_OF_MAX_RETRIES = 3
+        self.SECS_TO_SLEEP_BEFORE_RETRY = 3
 
-    def create_account(self, account_details: RegisterAccountDetails) -> str:
+    def create_account(self, account_details: RegisterAccountDetails) -> Tuple[str, str]:
         try:
             account = async_to_sync(self._api.metatrader_account_api.create_account)(account={
                 'login': account_details['login'],
                 'type': 'cloud',
                 'password': account_details['password'],
-                'server': 'TradersGlobalGroup-Demo',
+                'server': account_details['server'],
                 'application': 'MetaApi',
-                'name': account_details.get('name', ''),
+                # Have to do this because MA keeps the name up to the first space
+                'name': account_details['name'],
                 'magic': 000000,
                 'platform': account_details['platform']
             })
-            return account.id
+            return account.id, account_details['name'].strip()
         except Exception as e:
+            print(e)
             if hasattr(e, 'details'):
+                print(e.details)
                 if e.details == 'E_SRV_NOT_FOUND':
                     raise BrokerNotSupportedError
                 elif e.details == 'E_AUTH':
@@ -47,7 +54,9 @@ class MetaApi:
         
     def get_all_data(
         self,
-        ma_account_id: str
+        ma_account_id: str,
+        account_name: str,
+        no_of_retries: int = 0
     ) -> Tuple[
         AccountData,
         TradeData,
@@ -57,11 +66,14 @@ class MetaApi:
     ]:
         try:
             account_info, all_deals = async_to_sync(self._get_all_data)(ma_account_id)
-        except Exception:
+        except Exception as e:
+            if no_of_retries < self.NO_OF_MAX_RETRIES:
+                time.sleep(self.SECS_TO_SLEEP_BEFORE_RETRY + (no_of_retries * 2))
+                return self.get_all_data(ma_account_id, no_of_retries + 1)
             raise UnknownError
         trade_data, deposit_data, withdrawal_data, unrecognized_deals = Transaction.from_raw_data(all_deals)
         return (
-            account_info,
+            {**account_info, 'ma_account_id': ma_account_id, 'name': account_name},
             trade_data,
             deposit_data,
             withdrawal_data,
@@ -114,8 +126,9 @@ class MetaApi:
         AccountData, List[Union[RawTradeDealData, RawDepositWithdrawalDealData]]
     ]:
         account = await self._api.metatrader_account_api.get_account(account_id=ma_account_id)
-        connection = await account.get_rpc_connection()
+        connection = account.get_rpc_connection()
         account_info = await connection.get_account_information()
+        print(account_info)
         start = dt.datetime.now() - dt.timedelta(days=365*1000) if start_time is None else start_time
         end = dt.datetime.now()
         all_deals = await connection.get_deals_by_time_range(start, end)
@@ -133,12 +146,13 @@ class MetaApi:
 class Transaction:
     @staticmethod
     def from_raw_data(all_deals: List[Union[RawDepositWithdrawalDealData, RawTradeDealData]]):
-        deals = all_deals.copy()
+        deals = deepcopy(all_deals['deals'])
         trades: List[TradeData] = []
         deposits = []
         withdrawals = []
         unpaired_deals: Dict[str | int, RawTradeDealData | RawDepositWithdrawalDealData] = {}
         for i in range(len(deals)):
+
             raw_deal = deals[i]
             if raw_deal.get('type') == 'DEAL_TYPE_BALANCE':
                 if raw_deal.get('profit') > 0:
@@ -163,19 +177,19 @@ class Transaction:
 
 
 class BrokerNotSupportedError(Exception):
-    detail = 'broker not supported'
+    detail = 'Your broker is not supported'
 
 
 class UserAuthenticationError(Exception):
-    detail = 'invalid user details'
+    detail = 'User details are invalid'
 
 
 class CurrentlyUnavailableError(Exception):
-    detail = 'currently unavailable'
+    detail = 'Account addition is currently unavailable'
 
 
 class UnknownError(Exception):
-    detail = 'unknown error'
+    detail = 'Sorry. An unknown error occured.'
 
     def __init__(self, detail=detail):
         self.detail = detail

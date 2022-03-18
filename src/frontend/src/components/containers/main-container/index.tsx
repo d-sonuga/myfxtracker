@@ -4,9 +4,9 @@
  * toast function
  */
 
-import {useEffect, ReactNode, useState, Fragment} from 'react'
+import React, {useEffect, ReactNode, useState, Fragment} from 'react'
 import ReactGA from 'react-ga4'
-import {ErrorToast, SuccessToast, ToastContext} from '@components/toast'
+import {ErrorToast, SuccessToast, InfoToast, ToastContext} from '@components/toast'
 import Http from'@services/http'
 import {ConfigConst} from '@conf/const'
 
@@ -14,6 +14,7 @@ import {ConfigConst} from '@conf/const'
 const MainContainer = ({children}: {children: ReactNode}) => {
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const [showInfoToast, setShowInfoToast] = useState(false);
     const [toastMsg, setToastMsg] = useState('It\s taking a while to reach the server');
 
     useEffect(() => {
@@ -45,26 +46,33 @@ const MainContainer = ({children}: {children: ReactNode}) => {
         /** For toasting success messages */
         success: function(msg: string, delay: number = 0){
             this.toast(msg, delay, setShowSuccessToast);
-        }
+        },
+        info: function(msg: string, delay: number = 0){
+            this.toast(msg, delay, setShowInfoToast);
+        },
     }
 
-    const handleErrorToastClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        setShowErrorToast(false);
-      };
-    const handleSuccessToastClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    const handleToastClose = (setToastOpen: Function, reason?: string) => {
         if (reason === 'clickaway') {
             return;
         }
-        setShowSuccessToast(false);
+        setToastOpen(false);
+    }
+    const handleErrorToastClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        handleToastClose(setShowErrorToast, reason)
+      };
+    const handleSuccessToastClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        handleToastClose(setShowSuccessToast, reason)
     };
+    const handleInfoToastClose = (e?: React.SyntheticEvent | Event, reason?: string) => {
+        handleToastClose(setShowInfoToast, reason);
+    }
 
     return(
         <Fragment>
             <ErrorToast msg={toastMsg} open={showErrorToast} handleClose={handleErrorToastClose} />
             <SuccessToast msg={toastMsg} open={showSuccessToast} handleClose={handleSuccessToastClose} />
+            <InfoToast msg={toastMsg} open={showInfoToast} handleClose={handleInfoToastClose} />
             <ToastContext.Provider value={Toast}>
                 {children}
             </ToastContext.Provider>

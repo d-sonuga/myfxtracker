@@ -8,7 +8,7 @@ import {LoginFormPropTypes} from './types'
 import LoadingIcon from '@components/loading-icon'
 import {HttpMsg} from '@services/generic-msg'
 import {Form} from '@apps/info-app/components'
-import {canSubmit, buildErrors} from '@apps/info-app/form-utils'
+import {canSubmit, buildErrors} from '@components/forms'
 
 
 const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes) => {

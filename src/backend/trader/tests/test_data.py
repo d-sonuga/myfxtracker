@@ -159,6 +159,7 @@ class InitDataTestData:
 class AddTradingAccountTestData:
     good_account_details: dict = {
         'register-details': {
+            'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
             'login': 129320,
             'password': 'password',
             'server': 'TradersGlobalGroup-Demo',
@@ -183,7 +184,7 @@ class AddTradingAccountTestData:
             'type': 'ACCOUNT_TRADE_MODE_CONTEST',
             'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
         },
-        'deals': [
+        'deals': {'deals': [
             {
                 "id": "1542994",
                 "platform": "mt4", 
@@ -321,16 +322,18 @@ class AddTradingAccountTestData:
                 "takeProfit": 157.4, 
                 "accountCurrencyExchangeRate": 1
             }
-        ]
+        ]}
     }
 
     bad_details_no_login = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'password': 'password',
         'server': 'TradersGlobalGroup-Demo',
         'platform': 'mt4'
     }
 
     bad_details_empty_login = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': '',
         'password': 'password',
         'server': 'TradersGlobalGroup-Demo',
@@ -338,6 +341,7 @@ class AddTradingAccountTestData:
     }
 
     bad_details_invalid_login = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 0,
         'password': 'password',
         'server': 'TradersGlobalGroup-Demo',
@@ -345,12 +349,14 @@ class AddTradingAccountTestData:
     }
 
     bad_details_no_password = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 7366273,
         'server': 'TradersGlobalGroup-Demo',
         'platform': 'mt4'
     }
 
     bad_details_invalid_password = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 7366273,
         # I'm guessing that MT passwords can't be lesser than 5
         'password': '1234',
@@ -359,12 +365,14 @@ class AddTradingAccountTestData:
     }
 
     bad_details_no_server = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 7366273,
         'password': 'password',
         'platform': 'mt4'
     }
 
     bad_details_empty_server = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 7366273,
         'password': 'password',
         'server': '',
@@ -372,12 +380,14 @@ class AddTradingAccountTestData:
     }
 
     bad_details_no_platform = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 7366273,
         'password': 'password',
         'server': 'TradersGlobalGroup-Demo',
     }
 
     bad_details_empty_platform = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 7366273,
         'password': 'password',
         'server': 'TradersGlobalGroup-Demo',
@@ -385,10 +395,26 @@ class AddTradingAccountTestData:
     }
 
     bad_details_invalid_platform = {
+        'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
         'login': 7366273,
         'password': 'password',
         'server': 'TradersGlobalGroup-Demo',
         'platform': 'h'
+    }
+
+    bad_details_no_name = {
+        'login': 129320,
+        'password': 'password',
+        'server': 'TradersGlobalGroup-Demo',
+        'platform': 'mt4'
+    }
+
+    bad_details_empty_name = {
+        'name': '',
+        'login': 129320,
+        'password': 'password',
+        'server': 'TradersGlobalGroup-Demo',
+        'platform': 'mt4'
     }
 
 class RefreshAccountDataTestData:
@@ -435,7 +461,7 @@ class RefreshAccountDataTestData:
             'type': 'ACCOUNT_TRADE_MODE_CONTEST',
             'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
         }
-        original_deals = [
+        original_deals = {'deals': [
             {
                 "id": "1542994",
                 "platform": "mt4", 
@@ -573,8 +599,8 @@ class RefreshAccountDataTestData:
                 "takeProfit": 157.4, 
                 "accountCurrencyExchangeRate": 1
             }
-        ]
-        new_deals = [
+        ]}
+        new_deals = {'deals': [
             {
                 "id": "1797524",
                 "platform": "mt4",
@@ -712,7 +738,7 @@ class RefreshAccountDataTestData:
                 "comment": "Initial Deposit", 
                 "accountCurrencyExchangeRate": 1
             }
-        ]
+        ]}
     
     class OneAccountUserDataWithNoNewData:
         no_of_new_trades = 0
@@ -738,7 +764,7 @@ class RefreshAccountDataTestData:
             'type': 'ACCOUNT_TRADE_MODE_CONTEST',
             'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
         }
-        original_deals = [
+        original_deals = {'deals': [
             {
                 "id": "1542994",
                 "platform": "mt4", 
@@ -876,7 +902,7 @@ class RefreshAccountDataTestData:
                 "takeProfit": 157.4, 
                 "accountCurrencyExchangeRate": 1
             }
-        ]
+        ]}
     
 
     class MoreThanOneAccountUserData:
@@ -923,7 +949,7 @@ class RefreshAccountDataTestData:
                 'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                 'ma_account_id': 'nfrozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
             },
-            'original_deals': [
+            'original_deals': {'deals': [
                 {
                     "id": "1542994",
                     "platform": "mt4", 
@@ -1061,8 +1087,8 @@ class RefreshAccountDataTestData:
                     "takeProfit": 157.4, 
                     "accountCurrencyExchangeRate": 1
                 }
-            ],
-            'new_deals': [
+            ]},
+            'new_deals': {'deals': [
                 {
                     "id": "1797524",
                     "platform": "mt4",
@@ -1200,7 +1226,7 @@ class RefreshAccountDataTestData:
                     "comment": "Initial Deposit", 
                     "accountCurrencyExchangeRate": 1
                 }
-            ]
+            ]}
         }
         account2_data  = {
             'no_of_new_trades': 2,
@@ -1245,7 +1271,7 @@ class RefreshAccountDataTestData:
                 'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                 'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
             },
-            'original_deals': [
+            'original_deals': {'deals': [
                 {
                     "id": "1500994",
                     "platform": "mt4", 
@@ -1383,8 +1409,8 @@ class RefreshAccountDataTestData:
                     "takeProfit": 157.4, 
                     "accountCurrencyExchangeRate": 1
                 }
-            ],
-            'new_deals': [
+            ]},
+            'new_deals': {'deals': [
                 {
                     "id": "17457524",
                     "platform": "mt4",
@@ -1522,7 +1548,7 @@ class RefreshAccountDataTestData:
                     "comment": "Initial Deposit", 
                     "accountCurrencyExchangeRate": 1
                 }
-            ]
+            ]}
         }
         
 
@@ -1575,7 +1601,7 @@ class RefreshAllAccountsTestData:
                 'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                 'ma_account_id': 'nfrozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
             }
-            original_deals = [
+            original_deals = {'deals': [
                 {
                     "id": "1500994",
                     "platform": "mt4", 
@@ -1713,8 +1739,8 @@ class RefreshAllAccountsTestData:
                     "takeProfit": 157.4, 
                     "accountCurrencyExchangeRate": 1
                 }
-            ]
-            new_deals = [
+            ]}
+            new_deals = {'deals': [
                 {
                     "id": "17457524",
                     "platform": "mt4",
@@ -1852,7 +1878,7 @@ class RefreshAllAccountsTestData:
                     "comment": "Initial Deposit", 
                     "accountCurrencyExchangeRate": 1
                 }
-            ]
+            ]}
         
         class TraderWithMoreThanOneAccount:
             user_details = {
@@ -1903,7 +1929,7 @@ class RefreshAllAccountsTestData:
                         'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                         'ma_account_id': 'nfrozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
                     },
-                    'original_deals': [
+                    'original_deals': {'deals': [
                         {
                             "id": "1500994",
                             "platform": "mt4", 
@@ -2041,8 +2067,8 @@ class RefreshAllAccountsTestData:
                             "takeProfit": 157.4, 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ],
-                    'new_deals': [
+                    ]},
+                    'new_deals': {'deals': [
                         {
                             "id": "17457524",
                             "platform": "mt4",
@@ -2181,7 +2207,7 @@ class RefreshAllAccountsTestData:
                             "comment": "Initial Deposit", 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ]
+                    ]}
                 },
                 'account2_data': {
                     'no_of_new_trades': 2,
@@ -2226,7 +2252,7 @@ class RefreshAllAccountsTestData:
                         'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                         'ma_account_id': 'slam,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
                     },
-                    'original_deals': [
+                    'original_deals': {'deals': [
                         {
                             "id": "1542994",
                             "platform": "mt4", 
@@ -2364,8 +2390,8 @@ class RefreshAllAccountsTestData:
                             "takeProfit": 157.4, 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ],
-                    'new_deals': [
+                    ]},
+                    'new_deals': {'deals': [
                         {
                             "id": "1797524",
                             "platform": "mt4",
@@ -2503,7 +2529,7 @@ class RefreshAllAccountsTestData:
                             "comment": "Initial Deposit", 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ]
+                    ]}
                 }
             }
             
@@ -2555,7 +2581,7 @@ class RefreshAllAccountsTestData:
                         'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                         'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
                     },
-                    'original_deals': [
+                    'original_deals': {'deals': [
                         {
                             "id": "1500994",
                             "platform": "mt4", 
@@ -2693,8 +2719,8 @@ class RefreshAllAccountsTestData:
                             "takeProfit": 157.4, 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ],
-                    'new_deals': [
+                    ]},
+                    'new_deals': {'deals': [
                         {
                             "id": "17457524",
                             "platform": "mt4",
@@ -2832,7 +2858,7 @@ class RefreshAllAccountsTestData:
                             "comment": "Initial Deposit", 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ]
+                    ]}
                 }
             }
         }
@@ -2883,7 +2909,7 @@ class RefreshAllAccountsTestData:
                         'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                         'ma_account_id': 'nfrozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
                     },
-                    'original_deals': [
+                    'original_deals': {'deals': [
                         {
                             "id": "1542994",
                             "platform": "mt4", 
@@ -3021,8 +3047,8 @@ class RefreshAllAccountsTestData:
                             "takeProfit": 157.4, 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ],
-                    'new_deals': [
+                    ]},
+                    'new_deals': {'deals': [
                         {
                             "id": "1797524",
                             "platform": "mt4",
@@ -3160,7 +3186,7 @@ class RefreshAllAccountsTestData:
                             "comment": "Initial Deposit", 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ]
+                    ]}
                 },
                 'account2_data': {
                     'no_of_new_trades': 2,
@@ -3205,7 +3231,7 @@ class RefreshAllAccountsTestData:
                         'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                         'ma_account_id': 'nfrozf,ew0000998777eulf,nO48TU8WER9E-UD.Z'
                     },
-                    'original_deals': [
+                    'original_deals': {'deals': [
                         {
                             "id": "789786",
                             "platform": "mt4", 
@@ -3343,8 +3369,8 @@ class RefreshAllAccountsTestData:
                             "takeProfit": 157.4, 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ],
-                    'new_deals': [
+                    ]},
+                    'new_deals': {'deals': [
                         {
                             "id": "999888332",
                             "platform": "mt4",
@@ -3482,7 +3508,7 @@ class RefreshAllAccountsTestData:
                             "comment": "Initial Deposit", 
                             "accountCurrencyExchangeRate": 1
                         }
-                    ]
+                    ]}
                 }
             }
         }
@@ -3514,7 +3540,7 @@ class RemoveAccountTestData:
                 'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                 'ma_account_id': 'nfrozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
             },
-            'deals': [
+            'deals': {'deals': [
                 {
                     "id": "1542994",
                     "platform": "mt4", 
@@ -3652,7 +3678,7 @@ class RemoveAccountTestData:
                     "takeProfit": 157.4, 
                     "accountCurrencyExchangeRate": 1
                 }
-            ],
+            ]},
         },
         'account2_data': {
             'account_info': {
@@ -3674,7 +3700,7 @@ class RemoveAccountTestData:
                 'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                 'ma_account_id': 'nfrozf,ew0000998777eulf,nO48TU8WER9E-UD.Z'
             },
-            'deals': [
+            'deals': {'deals': [
                 {
                     "id": "789786",
                     "platform": "mt4", 
@@ -3812,7 +3838,7 @@ class RemoveAccountTestData:
                     "takeProfit": 157.4, 
                     "accountCurrencyExchangeRate": 1
                 }
-            ],
+            ]},
         }
     }
     other_user_details = {
@@ -3839,7 +3865,7 @@ class RemoveAccountTestData:
             'type': 'ACCOUNT_TRADE_MODE_CONTEST',
             'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
         },
-        'deals': [
+        'deals': {'deals': [
             {
                 "id": "1500994",
                 "platform": "mt4", 
@@ -3977,7 +4003,7 @@ class RemoveAccountTestData:
                 "takeProfit": 157.4, 
                 "accountCurrencyExchangeRate": 1
             }
-        ]
+        ]}
     }
     
 

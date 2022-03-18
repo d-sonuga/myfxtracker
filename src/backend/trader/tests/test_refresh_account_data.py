@@ -29,7 +29,7 @@ class RefreshAccountDataTests(TestCase):
             test_data.original_account_info,
             *Transaction.from_raw_data(test_data.original_deals)
         )
-        for deal in test_data.new_deals:
+        for deal in test_data.new_deals['deals']:
             deal['id'] = str(int(deal['id']) * 5)
             if deal.get('orderId'):
                 deal['orderId'] = str(int(deal['orderId']) * 5)
@@ -73,7 +73,7 @@ class RefreshAccountDataTests(TestCase):
             test_data.account1_data['original_account_info'],
             *Transaction.from_raw_data(test_data.account1_data['original_deals'])
         )
-        for deal in test_data.account1_data['new_deals']:
+        for deal in test_data.account1_data['new_deals']['deals']:
             deal['id'] = str(int(deal['id']) * 5)
             if deal.get('orderId'):
                 deal['orderId'] = str(int(deal['orderId']) * 5)
@@ -98,7 +98,7 @@ class RefreshAccountDataTests(TestCase):
             withdrawal_data,
             unknown_transaction_data
         )
-        for deal in test_data.account2_data['new_deals']:
+        for deal in test_data.account2_data['new_deals']['deals']:
             deal['id'] = str(int(deal['id']) * 5)
             if deal.get('orderId'):
                 deal['orderId'] = str(int(deal['orderId']) * 5)

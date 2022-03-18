@@ -5,7 +5,8 @@ import {ToastFuncType} from './types'
 
 
 const ToastContext = createContext<ToastFuncType>({
-    error: () => {}
+    error: () => {},
+    info: () => {}
 });
 
 export {
@@ -13,3 +14,5 @@ export {
     SuccessToast,
     ToastContext
 }
+
+export {default as InfoToast} from './info-toast'

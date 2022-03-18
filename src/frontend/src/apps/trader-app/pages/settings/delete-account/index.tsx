@@ -31,7 +31,7 @@ const DeleteAccountSection = () => {
             <Dialog
                 title='Delete Account?'
                 okButtonColor='error'
-                okButtonText='Delete Account'
+                okButtonContent='Delete Account'
                 okButtonProps={{'data-testid': 'confirm-delete-account-button'}}
                 onOkClick={() => deleteAccount()}
                 onCancelClick={() => setDialogIsOpen(false)}

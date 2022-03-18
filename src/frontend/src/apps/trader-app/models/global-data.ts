@@ -27,6 +27,7 @@
  *    }
 */
 
+import {AccountData} from 'calculator/dist'
 import {RawData} from './types'
 import {cloneObject} from './utils'
 
@@ -48,14 +49,19 @@ class GlobalData {
         this.getUserEmail = this.getUserEmail.bind(this);
         this.userIsSubscribed = this.userIsSubscribed.bind(this);
         this.userIsOnFreeTrial = this.userIsOnFreeTrial.bind(this);
+        this.numberOfAccounts = this.numberOfAccounts.bind(this);
+        this.getUserId = this.getUserId.bind(this);
+        this.getAllAccounts = this.getAllAccounts.bind(this);
+        this.getTradeAccountIdOf = this.getTradeAccountIdOf.bind(this);
+        this.removeAccount = this.removeAccount.bind(this);
     }
     /** Has the data from the backend loaded */
-    hasLoaded(){
+    hasLoaded(): boolean {
         /** A real user id is always a positive number an never negative */
         return this.rawData.user_data.id !== -1
     }
     /** What is the id of the currently selected trading account */
-    getCurrentTradeAccountId(){
+    getCurrentTradeAccountId(): number {
         let accountId = this.rawData.trade_data.current_account_id;
         if(accountId === -1){
             return parseInt(Object.keys(this.rawData.trade_data.accounts)[0]);
@@ -63,7 +69,7 @@ class GlobalData {
         return accountId;
     }
     /** What is the account name of the currently selected trading account */
-    getCurrentTradeAccountName(){
+    getCurrentTradeAccountName(): string {
         if(this.hasLoaded()){
             let accountId = this.getCurrentTradeAccountId();
             return this.rawData.trade_data.accounts[accountId].name;
@@ -72,7 +78,7 @@ class GlobalData {
         }
     }
     /** What are the names of all the trading accounts */
-    getTradeAccountNames(){
+    getTradeAccountNames(): string[] {
         const accountIds = Object.keys(this.rawData.trade_data.accounts);
         if(accountIds.length === 0){
             /** Just so the account selector will have something to show */
@@ -85,18 +91,18 @@ class GlobalData {
         return accountNames
     }
     /** Change the currently selected trading account id to @param newCurrentAccountId */
-    changeCurrentTradeAccountId(newCurrentAccountId: number){
+    changeCurrentTradeAccountId(newCurrentAccountId: number): GlobalData{
         const rawDataClone = cloneObject(this.rawData);
         rawDataClone.trade_data.current_account_id = newCurrentAccountId;
         return new GlobalData(rawDataClone);
     }
     /** Returns an object of all data related to the currently selected account */
-    getCurrentTradeAccountData(){
+    getCurrentTradeAccountData(): AccountData{
         const currentAccountId = this.getCurrentTradeAccountId();
         return this.rawData.trade_data.accounts[currentAccountId];
     }
     /** Given the account name @param accountName, return the associated id */
-    getTradeAccountIdOf(accountName: string){
+    getTradeAccountIdOf(accountName: string): number {
         const accountIds = Object.keys(this.rawData.trade_data.accounts);
         for(const accountId of accountIds){
             const account = this.rawData.trade_data.accounts[parseInt(accountId)];
@@ -109,23 +115,52 @@ class GlobalData {
          */
         return -1;
     }
+    /** Get number of accounts */
+    numberOfAccounts(): number {
+        return Object.keys(this.rawData.trade_data.accounts).length
+    }
+    /** Get all accounts as an array of objects */
+    getAllAccounts(): (AccountData & {id: number})[] {
+        const accountIds = Object.keys(this.rawData.trade_data.accounts);
+        return accountIds.map((accountId: any) => ({
+            id: accountId as number, ...this.rawData.trade_data.accounts[accountId as number]
+        }));
+    }
+    /** 
+     * Remove account with an id of @param id 
+     * and return a new updated GlobalData object
+     * */
+    removeAccount(id: number): GlobalData {
+        const newAccounts = Object.keys(this.rawData.trade_data.accounts)
+            .filter((accountId) => accountId != id.toString())
+            .map((accountId) => ({
+                ...this.rawData.trade_data.accounts[parseInt(accountId)]
+            }));
+        const newRawData: RawData = cloneObject(this.rawData);
+        newRawData.trade_data.accounts = newAccounts;
+        if(newRawData.trade_data.current_account_id === id){
+            newRawData.trade_data.current_account_id = -1;
+        }
+        const newGlobalData = new GlobalData(newRawData);
+        return newGlobalData;
+    }
     /** Are there any accounts? */
-    noAccounts(){
-        return Object.keys(this.rawData.trade_data.accounts).length === 0;
+    noAccounts(): boolean {
+        return this.numberOfAccounts() === 0;
     }
     getUserId(): number {
         return this.rawData.user_data.id
     }
-    getUserEmail(){
+    getUserEmail(): string {
         return this.rawData.user_data.email
     }
-    getUserDsUsername(){
+    getUserDsUsername(): string {
         return this.rawData.user_data.ds_username;
     }
-    userIsSubscribed(){
+    userIsSubscribed(): boolean {
         return this.rawData.user_data.is_subscribed
     }
-    userIsOnFreeTrial(){
+    userIsOnFreeTrial(): boolean {
         return this.rawData.user_data.on_free
     }
 }
@@ -141,6 +176,7 @@ const initialEmptyRawData = {
         current_feedback_question: -1
     },
     trade_data: {
+        // This no_of_trades should be X-ed out of here
         no_of_trades: -1,
         current_account_id: -1,
         accounts: {}

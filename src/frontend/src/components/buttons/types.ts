@@ -22,7 +22,9 @@ type IButtonPropTypes = ComponentWithChildrenPropTypes  & Pick<ButtonProps, 'col
     disabled?: boolean,
     elevation?: boolean,
     type?: 'button' | 'submit' | 'reset',
-    'data-testid'?: string
+    'data-testid'?: string,
+    size?: 'small' | 'medium' | 'large',
+    variant?: 'contained' | 'outlined' | 'text'
 }
 
 type BaseButtonPropTypes = IButtonPropTypes & {

@@ -14,4 +14,4 @@ class MainMetaApi(BaseTestMetaApi):
         return RefreshAccountDataTestData.OneAccountUserDataWithNoNewData.original_account_info
 
     async def get_deals_by_time_range(self, start, end):
-        return []
+        return {'deals': []}

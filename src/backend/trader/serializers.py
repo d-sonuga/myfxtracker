@@ -146,6 +146,7 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class AddAccountInfoSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=30000)
     login = serializers.IntegerField()
     password = serializers.CharField(max_length=300)
     server = serializers.CharField(max_length=300)

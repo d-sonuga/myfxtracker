@@ -108,7 +108,8 @@ const Http: HttpClientType = {
     },
     init: function(toast: {[key: string]: Function}) {
         this.toast = toast;
-    }
+    },
+    createCancelRequestToken: () => axios.CancelToken.source()
 }
 
 export default Http

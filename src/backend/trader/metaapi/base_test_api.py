@@ -21,7 +21,7 @@ class BaseTestMetaApi:
     async def get_account(self, account_id):
         return self
     
-    async def get_rpc_connection(self):
+    def get_rpc_connection(self):
         return self
     
     @abstractmethod

@@ -8,7 +8,7 @@ import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis, AddAccoun
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
 import {Http, useNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
-import DataSourceSetupInstructions from './data-source-setup-instructions'
+import {RawData} from './models/types'
 
 const Notebook = lazy(() => import('@apps/trader-app/pages/notes'));
 const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
@@ -21,6 +21,16 @@ const TraderApp = () => {
     /** Function called by account selector to change current account */
     const onCurrentAccountChange = (newCurrentAccountId: number) => {
         const newGlobalData = globalData.changeCurrentTradeAccountId(newCurrentAccountId);
+        setGlobalData(newGlobalData);
+    }
+    /** Function called when a new account is added */
+    const onAccountAdded = (rawData: RawData) => {
+        const newGlobalData = new GlobalData(rawData);
+        setGlobalData(newGlobalData);
+    }
+    /** Function called when an account is removed from settings */
+    const removeAccountFromGlobalData = (id: number) => {
+        const newGlobalData = globalData.removeAccount(id);
         setGlobalData(newGlobalData);
     }
     const navigate = useNavigate();
@@ -44,11 +54,13 @@ const TraderApp = () => {
                             if(globalData.hasLoaded()){
                                 if(globalData.noAccounts()){
                                     if(location.pathname.endsWith(TRADER_SETTINGS_ROUTE)){
-                                        return <Settings />
+                                        return <Settings removeAccountFromGlobalData={removeAccountFromGlobalData} />
                                     }
-                                    return <DataSourceSetupInstructions
-                                                dsUsername={globalData.getUserDsUsername()}
-                                                />
+                                    return (
+                                        <AddAccount
+                                            onAccountAdded={onAccountAdded}
+                                            noOfAccounts={globalData.numberOfAccounts()} />
+                                    );
                                 } else {
                                     return (
                                         <PageLoadingErrorBoundary>
@@ -63,8 +75,8 @@ const TraderApp = () => {
                                                     <Route path={TRADER_PERIOD_ANALYSIS_ROUTE} element={<PeriodAnalysis />} />
                                                     <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
                                                     <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
-                                                    <Route path={TRADER_SETTINGS_ROUTE} element={<Settings />} />
-                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount dsUsername={globalData.getUserDsUsername()} />} />
+                                                    <Route path={TRADER_SETTINGS_ROUTE} element={<Settings removeAccountFromGlobalData={removeAccountFromGlobalData} />} />
+                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount onAccountAdded={onAccountAdded} noOfAccounts={globalData.numberOfAccounts()} />} />
                                                 </Routes>
                                             </Suspense>
                                         </PageLoadingErrorBoundary>

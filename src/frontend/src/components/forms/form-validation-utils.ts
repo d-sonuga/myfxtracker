@@ -1,4 +1,13 @@
+import {object , string, ref, number} from 'yup'
 import {FormikErrors} from 'formik'
+
+
+const Yup = {
+    object,
+    string,
+    ref,
+    number
+}
 
 /**
  * @param rawErrors the json response from the server mapping rawError fields to their array of errors
@@ -6,10 +15,13 @@ import {FormikErrors} from 'formik'
  *  for example, if rawErrors is {'user-email': ['An error]} and rawToRefinedFieldMapping is
  *  {'user-email': 'email'}, then the object returned will be {'email': 'An error'}
  */
-const buildErrors = (rawErrors: {[key: string]: string[]}, rawToRefinedFieldMapping: {[key: string]: string}) => {
+const buildErrors = (
+    rawErrors: {[key: string]: string[]},
+    rawToRefinedFieldMapping: {[key: string]: string}
+): {[key: string]: string} => {
     const refinedErrors: {[key: string]: string} = {}
     rawToRefinedFieldMapping['non_field_errors'] = 'non_field_errors';
-    console.log(rawErrors);
+    console.log('rawErrors:', rawErrors);
     for(const key of Object.keys(rawErrors)){
         rawErrors[key].forEach((err) => {
             if(refinedErrors[rawToRefinedFieldMapping[key]] === undefined){
@@ -49,3 +61,5 @@ export {
     buildErrors,
     canSubmit
 }
+
+export default Yup

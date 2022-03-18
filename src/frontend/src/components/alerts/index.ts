@@ -6,3 +6,5 @@ export {
     SuccessAlert,
     ErrorAlert
 }
+
+export {default as InfoAlert} from './info-alert'

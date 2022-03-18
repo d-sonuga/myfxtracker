@@ -410,9 +410,9 @@ class AddTradingAccountView(APIView):
         reg_account_info_serializer = AddAccountInfoSerializer(data=request.data)
         if reg_account_info_serializer.is_valid():
             mtapi = metaapi.MetaApi()
-            ma_acc_id = mtapi.create_account(request.data)
+            ma_acc_id, account_name = mtapi.create_account(request.data)
             (account_data, trade_data, deposit_data, withdrawal_data, 
-                unknown_transaction_data) = mtapi.get_all_data(ma_acc_id)
+                unknown_transaction_data) = mtapi.get_all_data(ma_acc_id, account_name)
             Account.objects.create_account(
                 request.user,
                 account_data,
@@ -434,14 +434,16 @@ class AddTradingAccountView(APIView):
             )
         ):
             MetaApiError.objects.create(user=self.request.user, error=exc.detail)
-            return Response({'detail': exc.detail}, status=status.HTTP_400_BAD_REQUEST)
+            if isinstance(exc, metaapi.BrokerNotSupportedError):
+                return Response({'server': [exc.detail]}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'non_field_errors': [exc.detail]}, status=status.HTTP_400_BAD_REQUEST)
         if isinstance(exc, IntegrityError):
             if any((
                 exc.args[0].count(constraint) != 0
                 for constraint in ('trader_no_duplicate_account', 'trader_unique_ma_account_id') 
             )):
                 return Response(
-                    {'detail': 'The account already exists.'},
+                    {'non_field_errors': ['The account already exists.']},
                     status=status.HTTP_400_BAD_REQUEST
                 )
         return super().handle_exception(exc)

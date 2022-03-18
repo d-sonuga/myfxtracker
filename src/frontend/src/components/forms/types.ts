@@ -17,7 +17,7 @@ type FormPropTypes = {
      */
     onSubmit: {
         (utils: 
-            Pick<FormUtils, 'values' | 'setNonFieldError' | 'setSuccessMsg'> &
+            Pick<FormUtils, 'values' | 'setNonFieldError' | 'setSuccessMsg' | 'setInfoMsg'> &
             Pick<FormikHelpers<FormikValues>, 'setErrors' | 'setSubmitting'>
         ): void
     },
@@ -35,7 +35,8 @@ type FormUtils = {
     isSubmitting: boolean,
     submitForm: Function
     setSuccessMsg: Function,
-    setNonFieldError: Function
+    setNonFieldError: Function,
+    setInfoMsg: Function
 }
 
 export type {

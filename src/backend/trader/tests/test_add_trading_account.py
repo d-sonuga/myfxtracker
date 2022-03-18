@@ -106,6 +106,26 @@ class AddTradingAccountTests(TestCase):
         )
         self.assertEquals(resp.status_code, 401)
 
+    def test_bad_details_no_name(self):
+        """
+        To test the scenario where a user tries to add an account
+        with no name included
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_no_name
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'name': ['This field is required.']})
+
+    def test_bad_details_empty_name(self):
+        """
+        To test the scenario where a user tries to add an account
+        with a zero length name included
+        """
+        test_account_register_details = AddTradingAccountTestData.bad_details_no_name
+        resp = self.make_request(test_account_register_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'name': ['This field is required.']})
+
     def test_bad_details_no_login(self):
         """
         To test the scenario where a user tries to add an account
@@ -195,7 +215,7 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp.json(), {'platform': ['This field may not be blank.']})
     
-    def test_bad_details_invalid_server(self):
+    def test_bad_details_invalid_platform(self):
         """
         To test the scenario where a user tries to add an account with a platform that isn't mt4 or 5
         """
@@ -212,7 +232,7 @@ class AddTradingAccountTests(TestCase):
         test_account_details = AddTradingAccountTestData.good_account_details['register-details']
         resp = self.make_request(test_account_details)
         self.assertEquals(resp.status_code, 400)
-        self.assertEquals(resp.json(), {'detail': metaapi.BrokerNotSupportedError.detail})
+        self.assertEquals(resp.json(), {'server': [metaapi.BrokerNotSupportedError.detail]})
 
     @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_user_auth_error')
     def test_mtapi_throws_authentication_error(self):
@@ -222,7 +242,7 @@ class AddTradingAccountTests(TestCase):
         test_account_details = AddTradingAccountTestData.good_account_details['register-details']
         resp = self.make_request(test_account_details)
         self.assertEquals(resp.status_code, 400)
-        self.assertEquals(resp.json(), {'detail': metaapi.UserAuthenticationError.detail})
+        self.assertEquals(resp.json(), {'non_field_errors': [metaapi.UserAuthenticationError.detail]})
 
     @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_curr_unavailable_srv_error')
     def test_mtapi_throws_unavailable_error(self):
@@ -233,7 +253,7 @@ class AddTradingAccountTests(TestCase):
         test_account_details = AddTradingAccountTestData.good_account_details['register-details']
         resp = self.make_request(test_account_details)
         self.assertEquals(resp.status_code, 400)
-        self.assertEquals(resp.json(), {'detail': metaapi.CurrentlyUnavailableError.detail})
+        self.assertEquals(resp.json(), {'non_field_errors': [metaapi.CurrentlyUnavailableError.detail]})
 
     @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_unknown_error')
     def test_mtapi_throws_unknown_error(self):
@@ -243,7 +263,7 @@ class AddTradingAccountTests(TestCase):
         test_account_details = AddTradingAccountTestData.good_account_details['register-details']
         resp = self.make_request(test_account_details)
         self.assertEquals(resp.status_code, 400)
-        self.assertEquals(resp.json(), {'detail': metaapi.UnknownError.detail})
+        self.assertEquals(resp.json(), {'non_field_errors': [metaapi.UnknownError.detail]})
 
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
     def test_user_create_account_already_existing(self):
@@ -258,7 +278,7 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(Account.objects.all().count(), 1)
         self.assert_account_transactions_are_only_ones_in_db(account)
-        self.assertEquals(resp.json(), {'detail': 'The account already exists.'})
+        self.assertEquals(resp.json(), {'non_field_errors': ['The account already exists.']})
 
     def create_account_and_transactions(self, test_account_data: dict):
         account = Account.objects.create_account(

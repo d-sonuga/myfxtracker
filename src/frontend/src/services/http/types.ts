@@ -1,4 +1,5 @@
 import {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios'
+import { CancellationToken } from 'typescript';
 
 /**
  * Type of the Http client used throughout the app
@@ -32,7 +33,11 @@ type HttpClientType = {
     /**
      * Init to initialize the toast function on page load
      */
-    init: Function
+    init: Function,
+    /**
+     * To create a token used to cancel a request
+     */
+    createCancelRequestToken: Function
 }
 
 /**
@@ -45,7 +50,7 @@ interface HttpRequestConfigType {
     thenFunc?: Function,
     noToken?: boolean, 
     timeout?: number,
-    extras?: Partial<AxiosRequestConfig>
+    extras?: Partial<AxiosRequestConfig>,
 }
 
 type HttpGetConfigType = HttpRequestConfigType;

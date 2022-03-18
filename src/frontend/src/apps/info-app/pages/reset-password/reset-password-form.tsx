@@ -3,7 +3,7 @@ import {Button} from '@components/buttons'
 import {HttpResponseType} from '@services/http'
 import {Form, TextInput} from '@apps/info-app/components'
 import LoadingIcon from '@components/loading-icon'
-import {canSubmit, buildErrors} from '@apps/info-app/form-utils'
+import {canSubmit, buildErrors} from '@components/forms'
 import {FormMsg, HttpMsg} from '@services/generic-msg'
 
 

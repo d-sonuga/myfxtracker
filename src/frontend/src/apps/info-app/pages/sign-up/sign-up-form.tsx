@@ -8,7 +8,7 @@ import {SelectInput, TextInput} from '@apps/info-app/components'
 import LoadingIcon from '@components/loading-icon'
 import {HttpResponseType} from '@services/http'
 import {Form} from '@apps/info-app/components'
-import {buildErrors, canSubmit} from '@apps/info-app/form-utils'
+import {buildErrors, canSubmit} from '@components/forms'
 
 
 /**

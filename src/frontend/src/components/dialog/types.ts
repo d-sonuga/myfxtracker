@@ -5,15 +5,22 @@ type DialogPropTypes = {
     children: ReactNode,
     onOkClick: Function,
     onCancelClick: Function,
-    okButtonText?: string,
+    okButtonContent?: string | ReactNode,
     okButtonColor?: IButtonPropTypes['color'],
     okButtonProps?: {[key: string]: any},
     title: string,
     onClose: Function,
-    open: boolean
+    open: boolean,
+    showCancelButton?: boolean
 }
 
-type DialogButtonsPropTypes = Pick<DialogPropTypes, 'okButtonColor' | 'okButtonText' | 'okButtonProps'> & {
+type DialogButtonsPropTypes = Pick<
+    DialogPropTypes,
+    'okButtonColor' |
+    'okButtonContent' | 
+    'okButtonProps' |
+    'showCancelButton'
+> & {
     onOkClick: Function,
     onCancelClick: Function
 }

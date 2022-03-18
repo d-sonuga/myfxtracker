@@ -4,23 +4,29 @@ import {getDimen} from '@conf/utils'
 import {DialogButtonsPropTypes} from './types'
 
 
-const Buttons = ({onOkClick, onCancelClick, okButtonColor, okButtonText, okButtonProps}: DialogButtonsPropTypes) => {
+const Buttons = ({onOkClick, onCancelClick, okButtonColor, okButtonContent, okButtonProps, showCancelButton}: DialogButtonsPropTypes) => {
     return(
         <RowBox style={{
             justifyContent: 'right',
             marginTop: getDimen('padding-xs')
             }}>
-            <Button
-                style={{
-                    marginRight: getDimen('padding-xs')
-                }}
-                onClick={() => onCancelClick()}
-                color='neutral'>Cancel</Button>
+            {showCancelButton !== undefined && !showCancelButton?
+                null
+                : <Button
+                    style={{
+                        marginRight: getDimen('padding-xs')
+                    }}
+                    onClick={() => onCancelClick()}
+                    color='neutral'>Cancel</Button>
+            }
             <Button
                 color={okButtonColor}
                 onClick={(e) => onOkClick()}
                 {...okButtonProps}>
-                {okButtonText ? okButtonText : 'ok'}
+                {okButtonContent ? 
+                    typeof(okButtonContent) === 'string' ? 'ok' : okButtonContent
+                    : 'ok'
+                }
             </Button>
         </RowBox>
     )

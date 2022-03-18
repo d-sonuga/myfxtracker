@@ -6,7 +6,7 @@ import {FormMsg, HttpMsg} from '@services/generic-msg'
 import {TextInput} from '@apps/info-app/components'
 import {FormConst} from '@conf/const'
 import LoadingIcon from '@components/loading-icon'
-import {buildErrors, canSubmit} from '@apps/info-app/form-utils'
+import {buildErrors, canSubmit} from '@components/forms'
 import {Form} from '@apps/info-app/components'
 
 

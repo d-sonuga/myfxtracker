@@ -5,12 +5,11 @@ import {PageContainer, PageHeading} from '@apps/trader-app/components'
 import EmailSection from './email-section'
 import ChangePasswordSection from './change-password-section'
 import DeleteAccountSection from './delete-account'
-import DsUsernameSection from './ds-username-section'
 import AccountsSection from './accounts-section'
 import './style.css'
 
 
-const Settings = () => {
+const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: Function}) => {
     const globalData = useContext(GlobalDataContext);
     return(
         <PageContainer>
@@ -19,13 +18,15 @@ const Settings = () => {
                 <H5>Profile</H5>
                 <div>
                     <EmailSection email={globalData.getUserEmail()} />
-                    <DsUsernameSection dsUsername={globalData.getUserDsUsername()} />
                     <ChangePasswordSection />
                     <DeleteAccountSection />
                 </div>
                 <div>
                     <H5>Accounts</H5>
-                    <AccountsSection accountNames={globalData.getTradeAccountNames()} />
+                    <AccountsSection 
+                        accounts={globalData.getAllAccounts()}
+                        removeAccountFromData={removeAccountFromGlobalData}
+                        />
                 </div>
             </div>
         </PageContainer>

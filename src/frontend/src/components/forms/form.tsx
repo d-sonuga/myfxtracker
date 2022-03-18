@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import {Formik, Form as FormikForm} from 'formik'
 import {CenterColumnBox} from '@components/containers'
-import {ErrorAlert} from '@components/alerts'
+import {ErrorAlert, InfoAlert} from '@components/alerts'
 import {H4} from '@components/text'
 import {getDimen} from '@conf/utils'
 import {FormContainer} from '@apps/info-app/components'
@@ -12,6 +12,7 @@ import {FormPropTypes} from './types'
 const Form = ({title, initialValues, validationSchema, onSubmit, children}: FormPropTypes) => {
     const [successMsg, setSuccessMsg] = useState('');
     const [nonFieldError, setNonFieldError] = useState('');
+    const [infoMsg, setInfoMsg] = useState('');
 
     return(
         <FormContainer>
@@ -26,7 +27,8 @@ const Form = ({title, initialValues, validationSchema, onSubmit, children}: Form
                     setErrors,
                     setSubmitting,
                     setSuccessMsg,
-                    setNonFieldError
+                    setNonFieldError,
+                    setInfoMsg
                 })}>
                     {({values, errors, isSubmitting, submitForm}) => (
                         <FormikForm>
@@ -48,6 +50,15 @@ const Form = ({title, initialValues, validationSchema, onSubmit, children}: Form
                                     </ErrorAlert>
                                     : null
                             }
+                            {
+                                infoMsg.length ?
+                                    <InfoAlert
+                                        style={{marginBottom: getDimen('padding-xs')}}
+                                        data-testid='info-alert'>
+                                            {infoMsg}
+                                    </InfoAlert>
+                                    : null
+                            }
                             <CenterColumnBox>
                                 {children({
                                     values,
@@ -55,7 +66,8 @@ const Form = ({title, initialValues, validationSchema, onSubmit, children}: Form
                                     isSubmitting,
                                     submitForm,
                                     setSuccessMsg,
-                                    setNonFieldError
+                                    setNonFieldError,
+                                    setInfoMsg
                                 })}
                             </CenterColumnBox>
                         </FormikForm>

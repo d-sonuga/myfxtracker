@@ -13,7 +13,8 @@ type BaseToastPropTypes = ToastPropTypes & {
 }
 
 type ToastFuncType = {
-    error: Function
+    error: Function,
+    info: Function
 }
 
 export type {
