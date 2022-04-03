@@ -47,7 +47,7 @@ const FeatureItem = ({feature}: {feature: string}) => {
 
 const leftFeatures = [
     'Full access to all MyFxTracker stats & charts',
-    'Unlimited Trading Accounts',
+    'Up to 3 Trading Accounts',
     'Accounts Sync',
     'Trading History Import',
     'Filter Trades',
