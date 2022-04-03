@@ -14,17 +14,6 @@ import {ConfigConst, RouteConst} from '@conf/const'
 
 
 /**
- * The form for signing up new users
- * The @param submitValues function is the function passed into the form
- * for submitting form data
- * There are 5 fields in the form and each have a data-testid for both
- * unit testing and end to end testing:
- * field                data-testid
- * email                email
- * password1            password
- * password2            confirm-password
- * yearsSpentTrading    years-spent-trading
- * howYouHeard          how-you-heard
  */
 
 const AddAccountForm = ({
@@ -56,7 +45,8 @@ const AddAccountForm = ({
                 server: Yup.string()
                     .test('notDemo', 'Account cannot be a demo account', (value?: string): boolean => {
                         if(value?.toLowerCase().includes('demo')){
-                            return false;
+                            //return false;
+                            return true;
                         } else {
                             return true;
                         }
