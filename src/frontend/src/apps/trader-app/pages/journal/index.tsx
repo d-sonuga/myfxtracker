@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react'
 import {DataGrid, GridToolbar, GridColDef, GridRowsProp} from '@mui/x-data-grid'
 import {BP} from '@components/text'
-import {PageContainer} from '@apps/trader-app/components'
+import {PageContainer, PageHeading} from '@apps/trader-app/components'
 import {formatMoney} from '@apps/trader-app/utils'
 import {GlobalDataContext} from '@apps/trader-app'
 
@@ -36,9 +36,9 @@ const Journal = () => {
 
     return(
         <PageContainer>
+            <PageHeading heading='Journal' />
             <div style={{height: '75vh'}} data-testid='journal-table'>
                 <DataGrid
-                    sx={{marginTop: '100px'}}
                     columns={columns}
                     rows={rows}
                     pageSize={10}
