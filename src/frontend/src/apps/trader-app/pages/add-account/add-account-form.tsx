@@ -54,6 +54,13 @@ const AddAccountForm = ({
                     .min(5, 'Please enter a valid investor password')
                     .required(FormMsg.fieldRequiredErr('password')),
                 server: Yup.string()
+                    .test('notDemo', 'Account cannot be a demo account', (value?: string): boolean => {
+                        if(value?.toLowerCase().includes('demo')){
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    })
                     .required(FormMsg.fieldRequiredErr('server')),
                 platform: Yup.string()
                     .required(FormMsg.fieldRequiredErr('years spent trading'))
