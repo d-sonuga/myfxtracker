@@ -19,10 +19,10 @@ daphne = "*"
 metaapi-cloud-sdk = "*"
 
 [dev-packages]
-maildump = "1.0"
-django-cors-headers = "3.11.0"
-selenium = "4.1.0"
-mkdocs = "1.2.3"
+maildump = "*"
+django-cors-headers = "*"
+selenium = "*"
+mkdocs = "*"
 
 [requires]
 python_version = "3.10"
