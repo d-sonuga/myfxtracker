@@ -1,7 +1,6 @@
-from curses import meta
 import datetime
-from importlib import import_module
 from django.shortcuts import redirect
+from django.utils import timezone
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -352,6 +351,7 @@ class GetInitData(APIView):
             if trader_pref.current_account is not None
             else -1
         )
+        last_data_refresh_time = request.user.last_data_refresh_time
         init_data = {
             'user_data': {
                 'id': request.user.id,
@@ -361,6 +361,7 @@ class GetInitData(APIView):
             },
             'trade_data': {
                 'current_account_id': current_account_id,
+                'last_data_refresh_time': last_data_refresh_time,
                 'accounts': {
                     account.id: {
                         'name': account.name,
@@ -413,7 +414,7 @@ class AddTradingAccountView(APIView):
             ma_acc_id, account_name = mtapi.create_account(request.data)
             (account_data, trade_data, deposit_data, withdrawal_data, 
                 unknown_transaction_data) = mtapi.get_all_data(ma_acc_id, account_name)
-            Account.objects.create_account(
+            new_account = Account.objects.create_account(
                 request.user,
                 account_data,
                 trade_data,
@@ -421,6 +422,12 @@ class AddTradingAccountView(APIView):
                 withdrawal_data,
                 unknown_transaction_data
             )
+            if Account.objects.filter(user=request.user).count() == 1:
+                # If the account just created is the first account the user added,
+                # let the time be the last account data updated time
+                traderinfo = request.user.traderinfo
+                traderinfo.last_data_refresh_time = new_account.time_added
+                traderinfo.save()
             resp_data = GetInitData.build_init_data(request)
             return Response(resp_data, status=status.HTTP_201_CREATED)
         return Response(reg_account_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -469,6 +476,8 @@ class RefreshData(APIView):
                 unsaved_withdrawal_data,
                 unsaved_unknown_transaction_data
             )
+        trader.traderinfo.last_data_refresh_time = timezone.now()
+        trader.traderinfo.save()
 
     def handle_exception(self, exc):
         if isinstance(exc, metaapi.UnknownError):

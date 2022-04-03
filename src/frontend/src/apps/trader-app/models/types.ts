@@ -19,6 +19,7 @@ type UserData = {
 
 type TradeData = {
     current_account_id: number,
+    last_data_refresh_time: Date,
     accounts: {
         [key: number]: AccountData
     }

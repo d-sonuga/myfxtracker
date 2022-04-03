@@ -41,6 +41,7 @@ const noAccountsRawData  = {
     trade_data: {
         no_of_trades: 0,
         current_account_id: -1,
+        last_data_refresh_time: new Date(2022, 10, 11),
         accounts: {}
     }
 }
@@ -142,7 +143,8 @@ const dummyRawData: RawData = {
     },
     trade_data: {
         current_account_id: 2,
-        accounts: someAccounts
+        accounts: someAccounts,
+        last_data_refresh_time: new Date(2022, 10, 11)
     }
 }
 

@@ -43,7 +43,7 @@ class AddTradingAccountTests(TestCase):
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
     def test_good_details(self):
         """
-        To test the scenario where the user enters proper, well-formed details
+        To test the scenario where the user with no account enters proper, well-formed details
         and the MA server doesn't return any errors
         """
         test_account_data = AddTradingAccountTestData.good_account_details
@@ -65,6 +65,7 @@ class AddTradingAccountTests(TestCase):
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
+                    'last_data_refresh_time': account.time_added.isoformat().replace('+00:00', 'Z'),
                     'accounts': {
                         f'{account.id}': {
                             'name': account.name,

@@ -1,3 +1,5 @@
+from datetime import date, datetime, timedelta
+from django.utils import timezone
 from django.test import TestCase, override_settings
 from trader.views import ERROR_FROM_METAAPI
 from trader.metaapi.main import Transaction
@@ -70,8 +72,13 @@ class RefreshAllAccountDataTests(TestCase):
             'no-of-withdrawals': account.no_of_withdrawals(),
             'no-of-unknown-transactions': account.no_of_unknown_transactions()
         }
+        refresh_account_time_before_refresh = trader.last_data_refresh_time
         resp = self.request_refresh_all_accounts()
+        trader = Trader.objects.get(id=trader.id)
+        refresh_account_time_after_refresh = trader.last_data_refresh_time
         self.assertEquals(resp.status_code, 200)
+        self.assertTrue(refresh_account_time_after_refresh > refresh_account_time_before_refresh)
+        self.assertTrue(refresh_account_time_after_refresh - timezone.now() < timedelta(minutes=10))
         account = Account.objects.get(user=trader)
         self.assert_account_data_updated(account, test_data, prev_account_state)
     
@@ -91,8 +98,13 @@ class RefreshAllAccountDataTests(TestCase):
             'no-of-withdrawals': account.no_of_withdrawals(),
             'no-of-unknown-transactions': account.no_of_unknown_transactions()
         } for account in accounts]
+        refresh_account_time_before_refresh = trader.last_data_refresh_time
         resp = self.request_refresh_all_accounts()
+        trader = Trader.objects.get(id=trader.id)
+        refresh_account_time_after_refresh = trader.last_data_refresh_time
         self.assertEquals(resp.status_code, 200)
+        self.assertTrue(refresh_account_time_after_refresh > refresh_account_time_before_refresh)
+        self.assertTrue(refresh_account_time_after_refresh - timezone.now() < timedelta(minutes=10))
         accounts = Account.objects.filter(user=trader)
         self.assert_accounts_updated(accounts, list(test_data.data.values()), prev_account_states)
 
@@ -114,10 +126,17 @@ class RefreshAllAccountDataTests(TestCase):
                 'no-of-withdrawals': account.no_of_withdrawals(),
                 'no-of-unknown-transactions': account.no_of_unknown_transactions()
             } for account in accounts])
+        refresh_account_time_before_refresh_for_all_traders = [trader.last_data_refresh_time for trader in traders]
         resp = self.request_refresh_all_accounts()
         self.assertEquals(resp.status_code, 200)
         for i in range(len(traders)):
-            trader = traders[i]
+            trader = Trader.objects.all()[i]
+            refresh_account_time_before_refresh = refresh_account_time_before_refresh_for_all_traders[i]
+            refresh_account_time_after_refresh = trader.last_data_refresh_time
+            self.assertTrue(refresh_account_time_after_refresh > refresh_account_time_before_refresh)
+            self.assertTrue(refresh_account_time_after_refresh - timezone.now() < timedelta(minutes=10))
+        for i in range(len(traders)):
+            trader = Trader.objects.all()[i]
             prev_account_states = prev_account_states_per_trader[i]
             test_data_for_trader = getattr(test_data, f'user{i}_details')['data']
             accounts = Account.objects.filter(user=trader)
@@ -130,8 +149,12 @@ class RefreshAllAccountDataTests(TestCase):
         Only unknown errors are considered because I don't know what other errors
         to consider
         """
-        self.setup_one_trader_with_one_account()
+        trader = self.setup_one_trader_with_one_account()
+        refresh_account_time_before_refresh = trader.last_data_refresh_time
         resp = self.request_refresh_all_accounts()
+        trader = Trader.objects.get(id=trader.id)
+        refresh_account_time_after_refresh = trader.last_data_refresh_time
+        self.assertEquals(refresh_account_time_before_refresh, refresh_account_time_after_refresh)
         self.assertEquals(resp.status_code, ERROR_FROM_METAAPI)
 
     def assert_accounts_updated(
@@ -152,7 +175,14 @@ class RefreshAllAccountDataTests(TestCase):
         is not from the server or whatever task manager is running
         the requests periodically
         """
+        traders = Trader.objects.all()
+        refresh_account_time_before_refresh_for_all_traders = [trader.last_data_refresh_time for trader in traders]
         resp = self.request_refresh_all_accounts(valid_authentication=False)
+        for i in range(len(traders)):
+            trader = Trader.objects.all()
+            refresh_account_time_before_refresh = refresh_account_time_before_refresh_for_all_traders[i]
+            refresh_account_time_after_refresh = trader.last_data_refresh_time
+            self.assertEquals(refresh_account_time_before_refresh, refresh_account_time_after_refresh)
         self.assertEquals(resp.status_code, 401)
 
     def assert_account_data_updated(

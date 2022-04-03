@@ -1,14 +1,16 @@
 import {useContext} from 'react'
 import {Divider} from '@mui/material'
+import {format} from 'timeago.js'
 import {Button} from '@components/buttons'
 import {RowBox} from '@components/containers'
 import {SBP} from '@components/text'
 import {getColor, getDimen} from '@conf/utils'
-import {RefreshDataContext, DataIsRefreshingContext} from '@apps/trader-app'
+import {RefreshDataContext, DataIsRefreshingContext, GlobalDataContext} from '@apps/trader-app'
 import LoadingIcon from '@components/loading-icon'
 
 
 const DataStatusBar = () => {
+    const globalData = useContext(GlobalDataContext);
     const dataIsRefreshing = useContext(DataIsRefreshingContext);
     const refreshData = useContext(RefreshDataContext);
     return(
@@ -22,7 +24,7 @@ const DataStatusBar = () => {
                 <SBP style={{
                     color: getColor('dark-gray'),
                     marginRight: getDimen('padding-xs')
-                }}>Data Last Refreshed: 17/03/2022 at 3:00 am</SBP>
+                }}>Data Last Refreshed: {format(globalData.lastDataRefreshTime())}</SBP>
                 <Button 
                     variant='outlined'
                     size='small'

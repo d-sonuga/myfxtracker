@@ -54,6 +54,7 @@ class GlobalData {
         this.getAllAccounts = this.getAllAccounts.bind(this);
         this.getTradeAccountIdOf = this.getTradeAccountIdOf.bind(this);
         this.removeAccount = this.removeAccount.bind(this);
+        this.lastDataRefreshTime = this.lastDataRefreshTime.bind(this);
     }
     /** Has the data from the backend loaded */
     hasLoaded(): boolean {
@@ -148,6 +149,9 @@ class GlobalData {
     noAccounts(): boolean {
         return this.numberOfAccounts() === 0;
     }
+    lastDataRefreshTime(): Date {
+        return new Date(this.rawData.trade_data.last_data_refresh_time);
+    }
     getUserId(): number {
         return this.rawData.user_data.id
     }
@@ -179,6 +183,7 @@ const initialEmptyRawData = {
         // This no_of_trades should be X-ed out of here
         no_of_trades: -1,
         current_account_id: -1,
+        last_data_refresh_time: new Date(1900, 0, 1),
         accounts: {}
     }
 };

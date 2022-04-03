@@ -8,6 +8,9 @@ from users.models import Trader, User
 from typing import List
 
 
+# Variables used to keep track of how many mails concerning model errors have been sent
+no_of_unknown_transactions_sent = 0
+
 class IntegerFromCharField(models.CharField):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -140,6 +143,8 @@ class Account(models.Model):
     margin_mode = models.CharField(max_length=50)
     # The id used to identify the account when making requests to the MA servers
     ma_account_id = models.CharField(max_length=200)
+    # The time the account got added in the database
+    time_added = models.DateTimeField(default=timezone.now)
 
     objects = AccountManager()
 
@@ -373,7 +378,6 @@ class Withdrawal(models.Model):
 
 
 class UnknownTransactionManager(models.Manager):
-    _no_of_unknown_transactions_sent = 0
     def create_unknown_transaction(
         self,
         account: Account,
@@ -394,14 +398,15 @@ class UnknownTransactionManager(models.Manager):
             self.create_unknown_transaction(account, data)
 
     def mail_unknown_transaction(self, account):
-        if self._no_of_unknown_transactions_sent < 3:
+        global no_of_unknown_transactions_sent
+        if no_of_unknown_transactions_sent < 3:
             mail.mail_admins(
                 'An Unrecognized Transaction',
                 f'An unrecognized transaction has been saved for a user {account.user.email} '
                 f'with id {account.user_id} for his/her account with id {account.id} at '
                 'time %s'.format(timezone.now().strftime('%Y-%m-%d %H:%M:%S'))
             )
-            self._no_of_unknown_transactions_sent += 1
+            no_of_unknown_transactions_sent += 1
 
 
 class UnknownTransaction(models.Model):

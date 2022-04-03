@@ -1,5 +1,6 @@
-from cgi import test
+from datetime import datetime, timedelta
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from trader.metaapi.main import Transaction
 from users.models import Trader
@@ -121,8 +122,14 @@ class RefreshAccountDataTests(TestCase):
             'no-of-withdrawals': account.no_of_withdrawals(),
             'no-of-unknown-transactions': account.no_of_unknown_transactions()
         }
+        
+        last_data_refresh_time_before_refresh = trader.last_data_refresh_time
         resp = self.request_refresh(**valid_headers)
+        trader = Trader.objects.get(id=trader.id)
+        last_data_refresh_time_after_refresh = trader.last_data_refresh_time
         self.assertEquals(resp.status_code, 200)
+        self.assertTrue(last_data_refresh_time_after_refresh > last_data_refresh_time_before_refresh)
+        self.assertTrue(last_data_refresh_time_after_refresh - timezone.now() < timedelta(minutes=10))
         account = Account.objects.get(user=trader)
         self.assert_account_data_updated(account, test_data, prev_account_state)
         pref_current_account = Preferences.objects.get(user=trader).current_account
@@ -136,6 +143,7 @@ class RefreshAccountDataTests(TestCase):
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
+                    'last_data_refresh_time': trader.last_data_refresh_time.isoformat().replace('+00:00', 'Z'),
                     'accounts': {
                         f'{account.id}': {
                             'name': account.name,
@@ -188,8 +196,13 @@ class RefreshAccountDataTests(TestCase):
             'credit': account.credit,
             'margin-mode': account.margin_mode
         }
+        last_data_refresh_time_before_refresh = trader.last_data_refresh_time
         resp = self.request_refresh(**valid_headers)
+        trader = Trader.objects.get(id=trader.id)
+        last_data_refresh_time_after_refresh = trader.last_data_refresh_time
         self.assertEquals(resp.status_code, 200)
+        self.assertTrue(last_data_refresh_time_after_refresh > last_data_refresh_time_before_refresh)
+        self.assertTrue(last_data_refresh_time_after_refresh - timezone.now() < timedelta(minutes=10))
         account = Account.objects.get(user=trader)
         self.assert_account_data_didnt_update(account, prev_account_state)
         pref_current_account = Preferences.objects.get(user=trader).current_account
@@ -203,6 +216,7 @@ class RefreshAccountDataTests(TestCase):
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
+                    'last_data_refresh_time': last_data_refresh_time_after_refresh.isoformat().replace('+00:00', 'Z'),
                     'accounts': {
                         f'{account.id}': {
                             'name': account.name,
@@ -249,7 +263,13 @@ class RefreshAccountDataTests(TestCase):
             'no-of-withdrawals': account.no_of_withdrawals(),
             'no-of-unknown-transactions': account.no_of_unknown_transactions()
         } for account in accounts]
+        last_data_refresh_time_before_refresh = trader.last_data_refresh_time
         resp = self.request_refresh(**valid_headers)
+        trader = Trader.objects.get(id=trader.id)
+        last_data_refresh_time_after_refresh = trader.last_data_refresh_time
+        self.assertEquals(resp.status_code, 200)
+        self.assertTrue(last_data_refresh_time_after_refresh > last_data_refresh_time_before_refresh)
+        self.assertTrue(last_data_refresh_time_after_refresh - timezone.now() < timedelta(minutes=10))
         self.assertEquals(resp.status_code, 200)
         accounts = Account.objects.filter(user=trader)
         per_account_test_data = [test_data.account1_data, test_data.account2_data]
@@ -265,6 +285,7 @@ class RefreshAccountDataTests(TestCase):
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
+                    'last_data_refresh_time': trader.last_data_refresh_time.isoformat().replace('+00:00', 'Z'),
                     'accounts': {
                         f'{account.id}': {
                             'name': account.name,

@@ -2,6 +2,7 @@ from django.db import IntegrityError, models, transaction
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 from django.core.mail import mail_admins
 from django.conf import settings
+from django.utils import timezone
 from datetime import datetime, date, timedelta
 import nanoid
 
@@ -104,6 +105,12 @@ def datasource_username_is_valid(username):
     return not datasource_username_is_invalid(username)
 
 
+def trader_info_default_last_data_refresh_time():
+    # if the user's account is just being created, then the last_data_refresh_time
+    # should be set to an impossibly long time ago as a sort of placeholder
+    # It should never be displayed this way on the frontend    
+    return timezone.make_aware(datetime(year=1900, month=1, day=1))
+
 class TraderInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     current_feedback_question = models.SmallIntegerField(default=0)
@@ -112,13 +119,15 @@ class TraderInfo(models.Model):
     how_you_heard_about_us = models.TextField()
     # The answer to the question 'How long have you been trading' asked on sign up
     trading_time_before_joining = models.TextField()
+    # The last time the user's trading account data was refreshed
+    last_data_refresh_time = models.DateTimeField(default=trader_info_default_last_data_refresh_time)
 
     def datasource_username_has_expired(self):
         return self.datasourceusername.has_expired()
     
     def get_datasource_username(self):
         return self.datasourceusername.username
-    
+
     def __getattribute__(self, __name):
         if __name in ('ds_username', 'datasource_username'):
             return super().__getattribute__('datasourceusername')
