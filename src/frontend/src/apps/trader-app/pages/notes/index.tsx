@@ -59,7 +59,7 @@ const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
         return <PageStillLoading />
     }
     return(
-        <PageContainer>
+        <PageContainer showDataStatusBar={false}>
             <PageHeading heading='Notes' />
             <ColumnBox data-testid='notebook'>
                 <MainToolbar 
