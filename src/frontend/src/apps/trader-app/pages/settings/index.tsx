@@ -11,6 +11,7 @@ import './style.css'
 
 const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: Function}) => {
     const globalData = useContext(GlobalDataContext);
+    console.log(globalData);
     return(
         <PageContainer showDataStatusBar={false}>
             <PageHeading heading='Settings' dontShowSelector={true} />
@@ -24,6 +25,7 @@ const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: F
                 <div>
                     <H5>Accounts</H5>
                     <AccountsSection 
+                        userIsOnFreeTrial={globalData.userIsOnFreeTrial()}
                         accounts={globalData.getAllAccounts()}
                         removeAccountFromData={removeAccountFromGlobalData}
                         />

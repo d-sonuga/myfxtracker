@@ -6,7 +6,7 @@ import {SubmitValuesTypes} from './types'
 import {getDimen} from '@conf/utils'
 
 
-const AddAccount = ({onAccountAdded, noOfAccounts}: {onAccountAdded: Function, noOfAccounts: number}) => {
+const AddAccount = ({onAccountAdded, noOfAccounts, userIsOnFreeTrial}: {onAccountAdded: Function, noOfAccounts: number, userIsOnFreeTrial: boolean}) => {
     /** The function used by the form to submit values
      * @param config: object used to configure the Http client
      */
@@ -30,7 +30,8 @@ const AddAccount = ({onAccountAdded, noOfAccounts}: {onAccountAdded: Function, n
             <AddAccountForm
                 submitValues={submitValues}
                 onAccountAdded={onAccountAdded}
-                noOfAccounts={noOfAccounts} />
+                noOfAccounts={noOfAccounts}
+                userIsOnFreeTrial={userIsOnFreeTrial} />
         </CenterColumnBox>
     )
 }

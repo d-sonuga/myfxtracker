@@ -28,8 +28,8 @@ import {ConfigConst, RouteConst} from '@conf/const'
  */
 
 const AddAccountForm = ({
-    submitValues, onAccountAdded, noOfAccounts
-}: {submitValues: Function, onAccountAdded: Function, noOfAccounts: number}) => {
+    submitValues, onAccountAdded, noOfAccounts, userIsOnFreeTrial
+}: {submitValues: Function, onAccountAdded: Function, noOfAccounts: number, userIsOnFreeTrial: boolean}) => {
     const navigate = useNavigate();
     return(
         <Form
@@ -60,10 +60,18 @@ const AddAccountForm = ({
                     .oneOf(platforms)
             })}
             onSubmit={({values, setErrors, setSubmitting, setSuccessMsg, setNonFieldError, setInfoMsg}) => {
-                if(noOfAccounts >= ConfigConst.MAX_NO_OF_TRADING_ACCOUNT){
-                    setNonFieldError('You have reached the maximum number of accounts you can add.');
-                    setSubmitting(false);
-                    return;
+                if(userIsOnFreeTrial){
+                    if(noOfAccounts >= ConfigConst.MAX_NO_OF_TRADING_ACCOUNT_FREE_TRIAL_TRADER){
+                        setNonFieldError('You have reached the maximum number of accounts you can add.');
+                        setSubmitting(false);
+                        return;
+                    }
+                } else {
+                    if(noOfAccounts >= ConfigConst.MAX_NO_OF_TRADING_ACCOUNT_SUBSCRIBED_TRADER){
+                        setNonFieldError('You have reached the maximum number of accounts you can add.');
+                        setSubmitting(false);
+                        return;
+                    }
                 }
                 setNonFieldError('');
                 setInfoMsg('Please wait. This could take several minutes.');

@@ -2,7 +2,8 @@ import {AccountData} from 'calculator/dist'
 
 type AccountsSectionPropTypes = {
     accounts: AccountDataWithId[],
-    removeAccountFromData: Function
+    removeAccountFromData: Function,
+    userIsOnFreeTrial: boolean
 }
 
 type AccountDataWithId = AccountData & {id: number}

@@ -84,7 +84,8 @@ const TraderApp = () => {
                                     return (
                                         <AddAccount
                                             onAccountAdded={onAccountAdded}
-                                            noOfAccounts={globalData.numberOfAccounts()} />
+                                            noOfAccounts={globalData.numberOfAccounts()}
+                                            userIsOnFreeTrial={globalData.userIsOnFreeTrial()} />
                                     );
                                 } else {
                                     return (
@@ -101,7 +102,11 @@ const TraderApp = () => {
                                                     <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
                                                     <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
                                                     <Route path={TRADER_SETTINGS_ROUTE} element={<Settings removeAccountFromGlobalData={removeAccountFromGlobalData} />} />
-                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount onAccountAdded={onAccountAdded} noOfAccounts={globalData.numberOfAccounts()}  />} />
+                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount 
+                                                        onAccountAdded={onAccountAdded}
+                                                        noOfAccounts={globalData.numberOfAccounts()}
+                                                        userIsOnFreeTrial={globalData.userIsOnFreeTrial()} />}
+                                                        />
                                                 </Routes>
                                             </Suspense>
                                         </PageLoadingErrorBoundary>

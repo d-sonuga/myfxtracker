@@ -2,23 +2,28 @@ import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router'
 import {Button} from '@components/buttons'
 import {ColumnBox, RowBox} from '@components/containers'
-import {H6, P, SBP} from '@components/text'
-import {RouteConst, HttpConst} from '@conf/const'
+import {H6, P} from '@components/text'
+import {HttpConst} from '@conf/const'
 import {getDimen} from '@conf/utils'
 import Http from '@services/http'
 import Dialog from '@components/dialog'
 import {ToastContext} from '@components/toast'
-import {AccountsSectionPropTypes, AccountDataWithId} from './types'
+import {ConfigConst} from '@conf/const'
 import LoadingIcon from '@components/loading-icon'
+import AddAccountButton from './add-account-button'
+import {AccountsSectionPropTypes, AccountDataWithId} from './types'
+import NoOfAccountsLeftToAddStatus from './no-of-accounts-left-to-add-status'
 
 
-const AccountsSection = ({accounts, removeAccountFromData}: AccountsSectionPropTypes) => {
+const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial}: AccountsSectionPropTypes) => {
     const navigate = useNavigate();
     const [accountToDelete, setAccountToDelete] = useState<AccountDataWithId | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [cancelDelete, setCancelDelete] = useState<any>(null);
-    const {TRADER_APP_ROUTE, TRADER_ADD_ACCOUNT_ROUTE} = RouteConst;
     const Toast = useContext(ToastContext);
+    const maxNoOfAccounts = userIsOnFreeTrial ?
+        ConfigConst.MAX_NO_OF_TRADING_ACCOUNT_FREE_TRIAL_TRADER
+        : ConfigConst.MAX_NO_OF_TRADING_ACCOUNT_SUBSCRIBED_TRADER;
     const removeAccount = () => {
         setIsDeleting(true);
         const idOfAccount = accountToDelete !== null ? accountToDelete.id : -1;
@@ -88,21 +93,13 @@ const AccountsSection = ({accounts, removeAccountFromData}: AccountsSectionPropT
                 </RowBox>
             ))}
             <div style={{marginTop: getDimen('padding-xs')}}>
-                {
-                    accounts.length >= 3 ?
-                        <SBP style={{marginBottom: '10px'}}>
-                            You have reached the maximum number of accounts
-                        </SBP>
-                    :
-                        <SBP style={{marginBottom: '10px'}}>
-                            You can add only {(3 - accounts.length).toString()} more accounts
-                        </SBP>
-                }
-                <Button
-                    disabled={accounts.length >= 3}
-                    onClick={() => navigate(`/${TRADER_APP_ROUTE}/${TRADER_ADD_ACCOUNT_ROUTE}`)}>
-                    Add Account
-                </Button>
+                <NoOfAccountsLeftToAddStatus
+                    noOfAccounts={accounts.length}
+                    maxAccounts={maxNoOfAccounts} />
+                <AddAccountButton
+                    noOfAccounts={accounts.length}
+                    navigate={navigate}
+                    maxAccounts={maxNoOfAccounts} />
             </div>
         </ColumnBox>
     )
