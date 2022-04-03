@@ -12,7 +12,7 @@ import './style.css'
 const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: Function}) => {
     const globalData = useContext(GlobalDataContext);
     return(
-        <PageContainer>
+        <PageContainer showDataStatusBar={false}>
             <PageHeading heading='Settings' dontShowSelector={true} />
             <div id='apps-trader-app-pages-settings-sections'>
                 <H5>Profile</H5>

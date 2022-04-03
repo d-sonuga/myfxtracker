@@ -14,15 +14,17 @@ const LongShortAnalysis = () => {
     useRecalc(longShortAnalysisCalculations, setLongShortAnalysisCalc);
 
     return(
-        <PageContainer className='apps-trader-app-pages-long-short-analysis-container'>
+        <PageContainer>
             <PageHeading heading='Long / Short Analysis' />
-            <div>
-                <LongShortComparisonTable data={longShortAnalysisCalc.longShortComparisonTableCalc} />
-                <LongShortBarGraph data={longShortAnalysisCalc.longShortComparisonGraphCalc} />
-            </div>
-            <div>
-                <LongBalanceGraph data={longShortAnalysisCalc.longBalanceGraphCalc} />
-                <ShortBalanceGraph data={longShortAnalysisCalc.shortBalanceGraphCalc} />
+            <div className='apps-trader-app-pages-long-short-analysis-container'>
+                <div>
+                    <LongShortComparisonTable data={longShortAnalysisCalc.longShortComparisonTableCalc} />
+                    <LongShortBarGraph data={longShortAnalysisCalc.longShortComparisonGraphCalc} />
+                </div>
+                <div>
+                    <LongBalanceGraph data={longShortAnalysisCalc.longBalanceGraphCalc} />
+                    <ShortBalanceGraph data={longShortAnalysisCalc.shortBalanceGraphCalc} />
+                </div>
             </div>
         </PageContainer>
     )

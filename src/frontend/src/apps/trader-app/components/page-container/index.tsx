@@ -1,8 +1,9 @@
 import {ColumnBox} from '@components/containers'
 import {getDimen} from '@conf/utils'
+import DataStatusBar from './data-status-bar'
 import {PageContainerPropTypes} from './types'
 
-const PageContainer = ({children, style, className}: PageContainerPropTypes) => {
+const PageContainer = ({children, style, className, showDataStatusBar}: PageContainerPropTypes) => {
     return(
         <ColumnBox
             style={{
@@ -11,6 +12,10 @@ const PageContainer = ({children, style, className}: PageContainerPropTypes) => 
                 ...style
             }}
             className={className ? className : ''}>
+            {showDataStatusBar !== undefined && !showDataStatusBar ?
+                null
+                : <DataStatusBar />
+            }
             {children}
         </ColumnBox>
     )

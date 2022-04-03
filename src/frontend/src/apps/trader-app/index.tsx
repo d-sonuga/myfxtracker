@@ -1,4 +1,4 @@
-import {createContext, useEffect, Suspense, lazy, useCallback} from 'react'
+import {createContext, useEffect, Suspense, lazy, useState, useContext} from 'react'
 import {Route, useLocation, useNavigate} from 'react-router-dom'
 import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
@@ -8,7 +8,10 @@ import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis, AddAccoun
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
 import {Http, useNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
+import {HttpConst} from '@conf/const'
+import {HttpErrorType, HttpResponseType} from '@services/http'
 import {RawData} from './models/types'
+import {ToastContext} from '@components/toast'
 
 const Notebook = lazy(() => import('@apps/trader-app/pages/notes'));
 const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
@@ -18,6 +21,9 @@ const TraderApp = () => {
     const location = useLocation();
     /** User and trade data from the backend. Globally required by most trader app pages */
     const [globalData, setGlobalData] = useGlobalData();
+    /** Is the data currently being refreshed */
+    const [dataIsRefreshing, setDataIsRefreshing] = useState(false);
+    const Toast = useContext(ToastContext);
     /** Function called by account selector to change current account */
     const onCurrentAccountChange = (newCurrentAccountId: number) => {
         const newGlobalData = globalData.changeCurrentTradeAccountId(newCurrentAccountId);
@@ -32,6 +38,23 @@ const TraderApp = () => {
     const removeAccountFromGlobalData = (id: number) => {
         const newGlobalData = globalData.removeAccount(id);
         setGlobalData(newGlobalData);
+    }
+    /** Function called when refresh account data is called from the data status bar */
+    const refreshData = () => {
+        const {BASE_URL, REFRESH_DATA_URL} = HttpConst;
+        setDataIsRefreshing(true);
+        Http.get({
+            url: `${BASE_URL}/${REFRESH_DATA_URL}/`,
+            successFunc: (resp: HttpResponseType) => {
+                const newGlobalData = new GlobalData(resp.data);
+                setGlobalData(newGlobalData);
+            },
+            errorFunc: (err: HttpErrorType) => {
+                console.log(err);
+                Toast.error('Sorry but something went wrong. Your data could not be refreshed.');
+            },
+            thenFunc: () => setDataIsRefreshing(false)
+        })
     }
     const navigate = useNavigate();
     useEffect(() => {
@@ -50,6 +73,8 @@ const TraderApp = () => {
             <TraderAppContainer>
                 <GlobalDataContext.Provider value={globalData}>
                     <CurrentAccountChangerContext.Provider value={onCurrentAccountChange}>
+                        <RefreshDataContext.Provider value={refreshData}>
+                        <DataIsRefreshingContext.Provider value={dataIsRefreshing}>
                         {(() => {
                             if(globalData.hasLoaded()){
                                 if(globalData.noAccounts()){
@@ -76,7 +101,7 @@ const TraderApp = () => {
                                                     <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
                                                     <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
                                                     <Route path={TRADER_SETTINGS_ROUTE} element={<Settings removeAccountFromGlobalData={removeAccountFromGlobalData} />} />
-                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount onAccountAdded={onAccountAdded} noOfAccounts={globalData.numberOfAccounts()} />} />
+                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount onAccountAdded={onAccountAdded} noOfAccounts={globalData.numberOfAccounts()}  />} />
                                                 </Routes>
                                             </Suspense>
                                         </PageLoadingErrorBoundary>
@@ -85,6 +110,8 @@ const TraderApp = () => {
                             }
                             return <PageStillLoading />
                         })()}
+                        </DataIsRefreshingContext.Provider>
+                        </RefreshDataContext.Provider>
                     </CurrentAccountChangerContext.Provider>
                 </GlobalDataContext.Provider>
             </TraderAppContainer>
@@ -100,6 +127,16 @@ const GlobalDataContext = createContext(new GlobalData(null));
  * Initialized to empty function to satisfy the Typescript compiler
  * */
 const CurrentAccountChangerContext = createContext((newCurrentAccountId: number) => {});
+/**
+ * Is the data currently being refreshed
+ */
+const DataIsRefreshingContext = createContext(false);
+const RefreshDataContext = createContext(() => {});
 
 export default TraderApp
-export {GlobalDataContext, CurrentAccountChangerContext}
+export {
+    GlobalDataContext,
+    CurrentAccountChangerContext,
+    DataIsRefreshingContext,
+    RefreshDataContext
+}

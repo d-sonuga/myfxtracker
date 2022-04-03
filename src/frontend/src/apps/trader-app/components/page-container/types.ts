@@ -1,7 +1,9 @@
-import { ComponentWithChildrenPropTypes} from "@components/types";
+import {ComponentWithChildrenPropTypes} from "@components/types";
 
 
-type PageContainerPropTypes = ComponentWithChildrenPropTypes;
+type PageContainerPropTypes = ComponentWithChildrenPropTypes & {
+    showDataStatusBar?: boolean
+};
 
 
 export type {
