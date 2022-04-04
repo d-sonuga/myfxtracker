@@ -168,11 +168,15 @@ class Transaction:
                     except KeyError:
                         from django.core.mail import mail_admins
                         import json
+                        open_deal = deepcopy(unpaired_deals[raw_deal['positionId']])
+                        open_deal['time'] = open_deal['time'].isoformat()
+                        close_deal = deepcopy(raw_deal)
+                        close_deal['time'] = close_deal['time'].isoformat()
                         mail_admins(
                             'Weird Trade Data',
                             json.dumps({
-                                'open_deal': unpaired_deals[raw_deal['positionId']],
-                                'close_deal': raw_deal
+                                'open_deal': open_deal,
+                                'close_deal': close_deal
                             })
                         )
                 else:
