@@ -80,8 +80,8 @@ class TradeData:
         self.volume = close_deal['volume']
         self.open_price = open_deal['price']
         self.close_price = close_deal['price']
-        self.stop_loss = close_deal['stopLoss']
-        self.take_profit = close_deal['takeProfit']
+        self.stop_loss = close_deal.get('stopLoss', 0)
+        self.take_profit = close_deal.get('takeProfit', 0)
         self.account_currency_exchange_rate = close_deal['accountCurrencyExchangeRate']
         self.action = (
             'buy' if close_deal['type'] == 'DEAL_TYPE_BUY' else 

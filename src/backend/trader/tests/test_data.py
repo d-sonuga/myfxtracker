@@ -659,8 +659,7 @@ class RefreshAccountDataTestData:
                 "entryType": "DEAL_ENTRY_IN", 
                 "volume": 0.57, 
                 "price": 156.58, 
-                "stopLoss": 156.38, 
-                "takeProfit": 157.397, 
+                "stopLoss": 156.38,
                 "accountCurrencyExchangeRate": 1
             }, 
             {
@@ -681,7 +680,6 @@ class RefreshAccountDataTestData:
                 "volume": 0.57, 
                 "price": 156.542, 
                 "stopLoss": 156.38, 
-                "takeProfit": 157.397, 
                 "accountCurrencyExchangeRate": 1
             }, 
             {
@@ -701,7 +699,6 @@ class RefreshAccountDataTestData:
                 "entryType": "DEAL_ENTRY_IN", 
                 "volume": 0.47, 
                 "price": 156.432, 
-                "stopLoss": 156.677, 
                 "takeProfit": 155.076, 
                 "accountCurrencyExchangeRate": 1
             },
@@ -721,7 +718,6 @@ class RefreshAccountDataTestData:
                 "entryType": "DEAL_ENTRY_OUT", 
                 "volume": 0.47, 
                 "price": 156.402, 
-                "stopLoss": 156.677, 
                 "takeProfit": 155.076, 
                 "accountCurrencyExchangeRate": 1
             },
@@ -786,8 +782,6 @@ class RefreshAccountDataTestData:
                 "entryType": "DEAL_ENTRY_IN",
                 "volume": 0.41,
                 "price": 156.501,
-                "stopLoss": 156.484,
-                "takeProfit": 155.088,
                 "accountCurrencyExchangeRate": 1
             },
             {
@@ -807,8 +801,6 @@ class RefreshAccountDataTestData:
                 "entryType": "DEAL_ENTRY_OUT",
                 "volume": 0.41,
                 "price": 156.185,
-                "stopLoss": 156.484,
-                "takeProfit": 155.088,
                 "accountCurrencyExchangeRate": 1
             },
             {
