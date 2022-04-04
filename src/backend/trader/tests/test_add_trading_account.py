@@ -41,16 +41,74 @@ class AddTradingAccountTests(TestCase):
         }
     
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
-    def test_good_details(self):
+    def test_good_details_mt4(self):
         """
         To test the scenario where the user with no account enters proper, well-formed details
-        and the MA server doesn't return any errors
+        of an mt4 account and the MA server doesn't return any errors
         """
         test_account_data = AddTradingAccountTestData.good_account_details
         resp = self.make_request(test_account_data['register-details'])
         self.assertEquals(resp.status_code, 201)
         account_set = Account.objects.filter(user=self.trader)
         self.assertEquals(account_set.count(), 1)
+        account = account_set[0]
+        pref = Preferences.objects.get(user=self.trader)
+        current_account_id = pref.current_account.id if pref.current_account is not None else -1
+        self.assert_account_saved_properly(test_account_data, account)
+        self.maxDiff = None
+        self.assertEquals(resp.json(), {
+                'user_data': {
+                    'id': self.trader.id,
+                    'email': self.trader.email,
+                    'is_subscribed': self.trader.is_subscribed,
+                    'on_free': self.trader.on_free,
+                },
+                'trade_data': {
+                    'current_account_id': current_account_id,
+                    'last_data_refresh_time': account.time_added.isoformat().replace('+00:00', 'Z'),
+                    'accounts': {
+                        f'{account.id}': {
+                            'name': account.name,
+                            'trades': [{
+                                'pair': trade.pair,
+                                'action': trade.action,
+                                'profitLoss': float(trade.profit_loss),
+                                'commission': float(trade.commission),
+                                'swap': float(trade.swap),
+                                'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
+                                'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
+                                'openPrice': float(trade.open_price),
+                                'closePrice': float(trade.close_price),
+                                'takeProfit': float(trade.take_profit),
+                                'stopLoss': float(trade.stop_loss)
+                            } for trade in account.get_all_trades()],
+                            'deposits': [{
+                                'account': account.id,
+                                'amount': float(deposit.amount),
+                                'time': deposit.time.isoformat().replace('+00:00', 'Z')
+                            } for deposit in account.get_all_deposits()],
+                            'withdrawals': [{
+                                'account': account.id,
+                                'amount': float(withdrawal.amount),
+                                'time': withdrawal.time.isoformat().replace('+00:00', 'Z')
+                            } for withdrawal in account.get_all_withdrawals()]
+                        }
+                    }
+                }
+            })
+    
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', TEST_DATA=AddTradingAccountTestData.GoodAccountMT5)
+    def test_good_details_mt5(self):
+        """
+        To test the scenario where the user with no account enters proper, well-formed details
+        of an mt5 account and the MA server doesn't return any errors
+        """
+        test_account_data = AddTradingAccountTestData.GoodAccountMT5.good_account_details
+        resp = self.make_request(test_account_data['register-details'])
+        self.assertEquals(resp.status_code, 201)
+        account_set = Account.objects.filter(user=self.trader)
+        self.assertEquals(account_set.count(), 1)
+        self.assertEquals(UnknownTransaction.objects.all().count(), 0)
         account = account_set[0]
         pref = Preferences.objects.get(user=self.trader)
         current_account_id = pref.current_account.id if pref.current_account is not None else -1

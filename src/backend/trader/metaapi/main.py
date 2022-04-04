@@ -38,9 +38,7 @@ class MetaApi:
             })
             return account.id, account_details['name'].strip()
         except Exception as e:
-            print(e)
             if hasattr(e, 'details'):
-                print(e.details)
                 if e.details == 'E_SRV_NOT_FOUND':
                     raise BrokerNotSupportedError
                 elif e.details == 'E_AUTH':
@@ -128,7 +126,6 @@ class MetaApi:
         account = await self._api.metatrader_account_api.get_account(account_id=ma_account_id)
         connection = account.get_rpc_connection()
         account_info = await connection.get_account_information()
-        print(account_info)
         start = dt.datetime.now() - dt.timedelta(days=365*1000) if start_time is None else start_time
         end = dt.datetime.now()
         all_deals = await connection.get_deals_by_time_range(start, end)
@@ -162,14 +159,14 @@ class Transaction:
                     withdrawals.append(raw_deal)
                     deals[i] = None
             else:
-                if raw_deal.get('id') in unpaired_deals and raw_deal.get('entryType') == 'DEAL_ENTRY_OUT':
-                    trade_data = TradeData(unpaired_deals[raw_deal['id']], raw_deal)
+                if raw_deal.get('positionId') in unpaired_deals and raw_deal.get('entryType') == 'DEAL_ENTRY_OUT':
+                    trade_data = TradeData(unpaired_deals[raw_deal['positionId']], raw_deal)
                     trades.append(trade_data)
-                    del unpaired_deals[raw_deal['id']]
+                    del unpaired_deals[raw_deal['positionId']]
                     deals[i] = None
                 else:
                     if raw_deal.get('entryType') == 'DEAL_ENTRY_IN':
-                        unpaired_deals[raw_deal['id']] = raw_deal
+                        unpaired_deals[raw_deal['positionId']] = raw_deal
                         deals[i] = None
         unrecognized_deals = [deal for deal in deals if deal is not None]
         unrecognized_deals += [unpaired_deal for unpaired_deal in unpaired_deals.values()]

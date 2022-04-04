@@ -64,7 +64,7 @@ class RawDepositWithdrawalDealData(TypedDict):
 
 class TradeData:
     def __init__(self, open_deal, close_deal):
-        self.id = open_deal['id']
+        self.id = open_deal['positionId']
         self.platform = open_deal['platform']
         self.open_time = open_deal['time']
         self.broker_open_time = open_deal['brokerTime']
