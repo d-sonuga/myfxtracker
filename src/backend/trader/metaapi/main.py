@@ -160,10 +160,21 @@ class Transaction:
                     deals[i] = None
             else:
                 if raw_deal.get('positionId') in unpaired_deals and raw_deal.get('entryType') == 'DEAL_ENTRY_OUT':
-                    trade_data = TradeData(unpaired_deals[raw_deal['positionId']], raw_deal)
-                    trades.append(trade_data)
-                    del unpaired_deals[raw_deal['positionId']]
-                    deals[i] = None
+                    try:
+                        trade_data = TradeData(unpaired_deals[raw_deal['positionId']], raw_deal)
+                        trades.append(trade_data)
+                        del unpaired_deals[raw_deal['positionId']]
+                        deals[i] = None
+                    except KeyError:
+                        from django.core.mail import mail_admins
+                        import json
+                        mail_admins(
+                            'Weird Trade Data',
+                            json.dumps({
+                                'open_deal': unpaired_deals[raw_deal['positionId']],
+                                'close_deal': raw_deal
+                            })
+                        )
                 else:
                     if raw_deal.get('entryType') == 'DEAL_ENTRY_IN':
                         unpaired_deals[raw_deal['positionId']] = raw_deal
