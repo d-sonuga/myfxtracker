@@ -352,10 +352,6 @@ class AddTradingAccountTestData:
                 'type': 'ACCOUNT_TRADE_MODE_CONTEST',
                 'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
             },
-            'no-of-deposits': 1,
-            'no-of-withdrawals': 0,
-            'no-of-trades': 4,
-            'no-of-unknown-transactions': 0,
             'deals': {'deals': [
                 {
                     "id": "1542994",
@@ -492,44 +488,6 @@ class AddTradingAccountTestData:
                     "price": 156.473, 
                     "stopLoss": 156.442, 
                     "takeProfit": 157.4, 
-                    "accountCurrencyExchangeRate": 1
-                },
-                {
-                    "id": "50039952449",
-                    "swap": 0,
-                    "time": "2022-02-04T05:22:39+00:00",
-                    "type": "DEAL_TYPE_BUY",
-                    "magic": 0,
-                    "price": 1.14669,
-                    "profit": 0,
-                    "reason": "DEAL_REASON_CLIENT",
-                    "symbol": "EURUSD",
-                    "volume": 0.13,
-                    "orderId": "50039146673",
-                    "platform": "mt5",
-                    "entryType": "DEAL_ENTRY_IN",
-                    "brokerTime": "2022-02-04 07:22:39.100",
-                    "commission": 0,
-                    "positionId": "50039146673",
-                    "accountCurrencyExchangeRate": 1
-                },
-                {
-                    "id": "50039952516",
-                    "swap": 0,
-                    "time": "2022-02-04T05:22:43+00:00",
-                    "type": "DEAL_TYPE_SELL",
-                    "magic": 0,
-                    "price": 1.1467,
-                    "profit": 0.13,
-                    "reason": "DEAL_REASON_CLIENT",
-                    "symbol": "EURUSD",
-                    "volume": 0.13,
-                    "orderId": "50039146738",
-                    "platform": "mt5",
-                    "entryType": "DEAL_ENTRY_OUT",
-                    "brokerTime": "2022-02-04 07:22:43.776",
-                    "commission": 0,
-                    "positionId": "50039146673",
                     "accountCurrencyExchangeRate": 1
                 }
             ]}

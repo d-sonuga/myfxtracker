@@ -108,10 +108,7 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(resp.status_code, 201)
         account_set = Account.objects.filter(user=self.trader)
         self.assertEquals(account_set.count(), 1)
-        self.assertEquals(Trade.objects.all().count(), test_account_data['no-of-trades'])
-        self.assertEquals(Deposit.objects.all().count(), test_account_data['no-of-deposits'])
-        self.assertEquals(Withdrawal.objects.all().count(), test_account_data['no-of-withdrawals'])
-        self.assertEquals(UnknownTransaction.objects.all().count(), test_account_data['no-of-unknown-transactions'])
+        self.assertEquals(UnknownTransaction.objects.all().count(), 0)
         account = account_set[0]
         pref = Preferences.objects.get(user=self.trader)
         current_account_id = pref.current_account.id if pref.current_account is not None else -1
