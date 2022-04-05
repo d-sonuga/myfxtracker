@@ -447,6 +447,25 @@ class AddAccountError(models.Model):
     time_added = models.DateTimeField(auto_now_add=True)
     error = models.JSONField(encoder=DjangoJSONEncoder)
 
+    def consume_error(self):
+        error = self.error
+        self.delete()
+        return error
+
+
+class UnresolvedRefreshAccount(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+
+
+class RefreshAccountError(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    error = models.JSONField(encoder=DjangoJSONEncoder)
+
+    def consume_error(self):
+        error = self.error
+        self.delete()
+        return error
+
 
 class NoteManager(models.Manager):
     def create(self, **kwargs):

@@ -18,7 +18,7 @@ from .test_data import AddTradingAccountRegisterDetails, AddTradingAccountTestDa
 """
 When a user requests to add a new account, the request is placed on a queue
 A response of 'pending' is returned
-The user makes a request to see if it's resolved every 10 seconds
+The user makes a request to see if it's resolved every few seconds
 If it's resolved, an init data payload is returned
 If it's not resolved, a 'pending' response is returned
 If it's resolved with an error, the error is returned
@@ -37,6 +37,11 @@ If there isn't error
         If they are
             return error 'account already exists'
         If they are not
+            Check if the details are in AddAccountError
+            If they are
+                retrieve the error and delete it
+                return the erorr
+            If they are not
             put job on queue
             save details in UnresolvedAddAccount
             return 'pending' response
@@ -453,6 +458,24 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(resp.json(), {'detail': 'pending'})
         self.assertEquals(UnresolvedAddAccount.objects.all().count(), 1)
     
+    @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_unknown_error')
+    def test_request_add_account_when_add_account_error_exists_in_db(self):
+        """
+        To test the scenario where the MA server returns an unknown error
+        """
+        test_account_details = AddTradingAccountTestData.good_account_details['register-details']
+        resp = self.request_add_account(test_account_details)
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'detail': 'pending'})
+        
+        self.assertEquals(AddAccountError.objects.all().count(), 0)
+        self.resolve_test_account()
+        self.assertEquals(AddAccountError.objects.all().count(), 1)
+
+        resp = self.request_add_account(test_account_details)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'non_field_errors': [metaapi.UnknownError.detail]})
+
     def test_unauthorized_trader_request_add_account(self):
         test_account_data = AddTradingAccountTestData.good_account_details
         details = test_account_data['register-details']

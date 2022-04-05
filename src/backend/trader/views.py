@@ -20,7 +20,7 @@ from users.models import Trader, User
 from trader.models import Note
 from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
-from .models import AddAccountError, Trade, Deposit, UnknownTransaction, UnresolvedAddAccount, Withdrawal, Account, Preferences, MetaApiError
+from .models import AddAccountError, RefreshAccountError, Trade, Deposit, UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, Withdrawal, Account, Preferences, MetaApiError
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
 import datetime as dt
 from .serializers import AddAccountInfoSerializer
@@ -421,6 +421,9 @@ class AddTradingAccountView(APIView):
                 )
             if self.account_is_being_resolved():
                 return Response({'detail': 'pending'}, status=status.HTTP_200_OK)
+            if self.add_account_error_exists():
+                error = self.get_add_account_error()
+                return Response(error, status=status.HTTP_400_BAD_REQUEST)
             UnresolvedAddAccount.objects.create(
                 user=request.user,
                 name=request.data['name'],
@@ -431,27 +434,9 @@ class AddTradingAccountView(APIView):
             django_rq.enqueue(resolve_add_account, request.data, request.user)
             return Response({'detail': 'pending'}, status=status.HTTP_200_OK)
         return Response(reg_account_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def account_is_duplicate(self):
-        return Account.objects.filter(
-            name=self.request.data.get('name'),
-            server=self.request.data.get('server'),
-            login=self.request.data.get('login'),
-            platform=self.request.data.get('platform'),
-            user=self.request.user
-        ).count() != 0
     
-    def account_is_being_resolved(self):
-        return UnresolvedAddAccount.objects.filter(
-            name=self.request.data.get('name'),
-            server=self.request.data.get('server'),
-            login=self.request.data.get('login'),
-            platform=self.request.data.get('platform'),
-            user=self.request.user
-        ).count() != 0
-
-def resolve_add_account(data, user):
-    try:
+    @staticmethod
+    def resolve_add_account(data, user):
         class classyrequest:
             def __init__(self, data, user):
                 self.data = data
@@ -475,85 +460,170 @@ def resolve_add_account(data, user):
             traderinfo = request.user.traderinfo
             traderinfo.last_data_refresh_time = new_account.time_added
             traderinfo.save()
-    except Exception as exc:
-        handle_resolve_add_account_exception(request, exc)
-    finally:
-        UnresolvedAddAccount.objects.get(
-            user=request.user,
-            name=request.data['name'],
-            login=request.data['login'],
-            server=request.data['server'],
-            platform=request.data['platform']
-        ).delete()
 
-def handle_resolve_add_account_exception(request, exc):
-    account_details = {
-        'name': request.data.get('name'),
-        'server': request.data.get('server'),
-        'login': request.data.get('login'),
-        'platform': request.data.get('platform')
-    }
-    def create_add_account_error(err):
-        AddAccountError.objects.create(**account_details, user=request.user, error=err)
-    if isinstance(exc, (
-            metaapi.BrokerNotSupportedError,
-            metaapi.UserAuthenticationError,
-            metaapi.CurrentlyUnavailableError,
-            metaapi.UnknownError
-        )
-    ):
-        MetaApiError.objects.create(user=request.user, error=exc.detail)
-        if isinstance(exc, metaapi.BrokerNotSupportedError):
-            create_add_account_error({'server': [exc.detail]})
-        else:
-            create_add_account_error({'non_field_errors': [exc.detail]})
-    elif isinstance(exc, IntegrityError):
-        if any((
-            exc.args[0].count(constraint) != 0
-            for constraint in ('trader_no_duplicate_account', 'trader_unique_ma_account_id') 
-        )):
-            create_add_account_error({'non_field_errors': ['The account already exists.']})
+    @staticmethod
+    def handle_resolve_add_account_exception(user, data, exc):
+        account_details = {
+            'name': data.get('name'),
+            'server': data.get('server'),
+            'login': data.get('login'),
+            'platform': data.get('platform')
+        }
+        def create_add_account_error(err):
+            AddAccountError.objects.create(**account_details, user=user, error=err)
+        if isinstance(exc, (
+                metaapi.BrokerNotSupportedError,
+                metaapi.UserAuthenticationError,
+                metaapi.CurrentlyUnavailableError,
+                metaapi.UnknownError
+            )
+        ):
+            MetaApiError.objects.create(user=user, error=exc.detail)
+            if isinstance(exc, metaapi.BrokerNotSupportedError):
+                create_add_account_error({'server': [exc.detail]})
+            else:
+                create_add_account_error({'non_field_errors': [exc.detail]})
+        elif isinstance(exc, IntegrityError):
+            if any((
+                exc.args[0].count(constraint) != 0
+                for constraint in ('trader_no_duplicate_account', 'trader_unique_ma_account_id') 
+            )):
+                create_add_account_error({'non_field_errors': ['The account already exists.']})
+            else:
+                create_add_account_error({'non_field_errors': ['unknown error']})
         else:
             create_add_account_error({'non_field_errors': ['unknown error']})
-    else:
-        create_add_account_error({'non_field_errors': ['unknown error']})
+
+    def account_is_duplicate(self):
+        return Account.objects.filter(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).count() != 0
+    
+    def account_is_being_resolved(self):
+        return UnresolvedAddAccount.objects.filter(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).count() != 0
+
+    
+    def add_account_error_exists(self):
+        return AddAccountError.objects.filter(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).exists()
+    
+    def get_add_account_error(self):
+        return AddAccountError.objects.get(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).consume_error()
+
+def resolve_add_account(data, user):
+    try:
+        AddTradingAccountView.resolve_add_account(data, user)
+    except Exception as exc:
+        AddTradingAccountView.handle_resolve_add_account_exception(user, data, exc)
+    finally:
+        UnresolvedAddAccount.objects.get(
+            user=user,
+            name=data['name'],
+            login=data['login'],
+            server=data['server'],
+            platform=data['platform']
+        ).delete()
 
 
 class PendingAddTradingAccount(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def post(self, request, *args, **kwargs):
-        details = {
-            'name': request.data.get('name'),
-            'server': request.data.get('server'),
-            'login': request.data.get('login'),
-            'platform': request.data.get('platform')
-        }
-        unresolved_account_set = UnresolvedAddAccount.objects.filter(user=request.user, **details)
-        if unresolved_account_set.count() != 0:
+        if self.account_is_being_resolved():
             return Response({'detail': 'pending'}, status=status.HTTP_200_OK)
-        account_set = Account.objects.filter(user=request.user, **details)
-        if account_set.count() != 0:
+        if self.account_has_been_added():
             resp_data = GetInitData.build_init_data(request)
             return Response(resp_data, status=status.HTTP_201_CREATED)
-        else:
-            add_account_error_set = AddAccountError.objects.filter(**details, user=request.user)
-            if add_account_error_set.count() != 0:
-                add_account_error = add_account_error_set[0]
-                resp_data = add_account_error.error
-                add_account_error.delete()
-                return Response(resp_data, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({'detail': 'account details not found'}, status=status.HTTP_400_BAD_REQUEST)
+        if self.add_account_error_exists():
+            error = self.get_add_account_error()
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'account details not found'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def account_is_being_resolved(self):
+        return UnresolvedAddAccount.objects.filter(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).count() != 0
+
+    
+    def add_account_error_exists(self):
+        return AddAccountError.objects.filter(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).exists()
+    
+    def get_add_account_error(self):
+        return AddAccountError.objects.get(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).consume_error()
+
+    def account_has_been_added(self):
+        return Account.objects.filter(
+            name=self.request.data.get('name'),
+            server=self.request.data.get('server'),
+            login=self.request.data.get('login'),
+            platform=self.request.data.get('platform'),
+            user=self.request.user
+        ).count() != 0
 
     
 class RefreshData(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
     def get(self, request, *args, **kwargs):
-        RefreshData.refresh_account_data(request.user)
-        updated_data = GetInitData.build_init_data(request)
-        return Response(updated_data)
+        if not self.refresh_account_data_is_being_resolved():
+            if self.refresh_account_error_exists():
+                refresh_account_error = self.get_refresh_account_error()
+                error = refresh_account_error.error
+                refresh_account_error.delete()
+                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            UnresolvedRefreshAccount.objects.create(user=request.user)
+            django_rq.enqueue(resolve_refresh_account_data, request.user)
+        return Response({'detail': 'pending'})
     
+    def refresh_account_data_is_being_resolved(self):
+        return UnresolvedRefreshAccount.objects.filter(
+            user=self.request.user
+        ).count() != 0
+    
+    def refresh_account_error_exists(self):
+        return RefreshAccountError.objects.filter(
+            user=self.request.user
+        ).exists()
+    
+    def get_refresh_account_error(self):
+        return RefreshAccountError.objects.get(user=self.request.user)
+
     @staticmethod
     def refresh_account_data(trader: Trader):
         mtapi = metaapi.MetaApi()
@@ -570,11 +640,44 @@ class RefreshData(APIView):
         trader.traderinfo.last_data_refresh_time = timezone.now()
         trader.traderinfo.save()
 
-    def handle_exception(self, exc):
+    @staticmethod
+    def handle_resolve_refresh_account_exception(trader, exc):
         if isinstance(exc, metaapi.UnknownError):
-            MetaApiError.objects.create(user=self.request.user, error=exc.detail)
-            return Response({'detail': exc.detail}, status.HTTP_400_BAD_REQUEST)
-        return super().handle_exception(exc)
+            MetaApiError.objects.create(user=trader, error=exc.detail)
+            RefreshAccountError.objects.create(user=trader, error={'detail': exc.detail})
+
+def resolve_refresh_account_data(trader):
+    try:
+        RefreshData.refresh_account_data(trader)
+    except Exception as exc:
+        RefreshData.handle_resolve_refresh_account_exception(trader, exc)
+    finally:
+        UnresolvedRefreshAccount.objects.get(user=trader).delete()
+
+class PendingRefreshData(APIView):
+    def get(self, request, *args, **kwargs):
+        if self.refresh_account_data_is_being_resolved():
+            return Response({'detail': 'pending'})
+        if self.refresh_account_error_exists():
+            refresh_account_error = self.get_refresh_account_error()
+            error = refresh_account_error.error
+            refresh_account_error.delete()
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        updated_data = GetInitData.build_init_data(request)
+        return Response(updated_data)
+    
+    def refresh_account_data_is_being_resolved(self):
+        return UnresolvedRefreshAccount.objects.filter(
+            user=self.request.user
+        ).exists()
+
+    def refresh_account_error_exists(self):
+        return RefreshAccountError.objects.filter(
+            user=self.request.user
+        ).exists()
+    
+    def get_refresh_account_error(self):
+        return RefreshAccountError.objects.get(user=self.request.user)
 
 ERROR_FROM_METAAPI = 550
 
@@ -662,5 +765,6 @@ redirect_to_signup = RedirectToSignup.as_view()
 add_trading_account = AddTradingAccountView.as_view()
 pending_add_trading_account = PendingAddTradingAccount.as_view()
 refresh_data = RefreshData.as_view()
+pending_refresh_data = PendingRefreshData.as_view()
 refresh_all_accounts_data = RefreshAllAccountsData.as_view()
 remove_trading_account = RemoveTradingAccount.as_view()
