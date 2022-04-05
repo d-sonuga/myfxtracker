@@ -17,6 +17,9 @@ django-database-url = "*"
 whitenoise = "*"
 daphne = "*"
 metaapi-cloud-sdk = "*"
+rq = "*"
+django-rq = "*"
+pytest = "*"
 
 [dev-packages]
 maildump = "*"

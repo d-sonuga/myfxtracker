@@ -175,3 +175,4 @@ class AddAccountInfoSerializer(serializers.Serializer):
         if platform not in ('mt4', 'mt5'):
             raise serializers.ValidationError('A valid platform is required.')
         return platform
+    

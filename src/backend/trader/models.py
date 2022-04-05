@@ -429,6 +429,25 @@ class MetaApiError(models.Model):
     time = models.DateTimeField(default=timezone.now)
 
 
+class UnresolvedAddAccount(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    name = models.TextField()
+    login = models.PositiveBigIntegerField()
+    server = models.TextField()
+    platform = models.CharField(choices=Account.platform_choices, max_length=5)
+    time_added = models.DateTimeField(auto_now_add=True)
+
+
+class AddAccountError(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    name = models.TextField()
+    login = models.PositiveBigIntegerField()
+    server = models.TextField()
+    platform = models.CharField(choices=Account.platform_choices, max_length=5)
+    time_added = models.DateTimeField(auto_now_add=True)
+    error = models.JSONField(encoder=DjangoJSONEncoder)
+
+
 class NoteManager(models.Manager):
     def create(self, **kwargs):
         if kwargs.get('lastEdited'):

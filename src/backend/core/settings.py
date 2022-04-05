@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'django_rest_passwordreset',
     'mailchimp_marketing',
+    'django_rq',
 
     'users',
     'trader',
@@ -111,6 +112,9 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'TEST': {
             'NAME': os.getenv('TEST_DB_NAME')
+        },
+        'OPTIONS': {
+            'sslmode': 'disable'
         }
     }
 }
@@ -270,6 +274,17 @@ MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
+
+# Queues to use for processing of account adding and interactions with the metaapi servers
+RQ_QUEUES = {
+    'default': {
+        'HOST': '172.17.0.1',
+        'PORT': 6379,
+        'DB': 0
+    }
+}
+
+#RQ_EXCEPTION_HANDLERS = ['trader.views.handle_resolve_add_account_exception']
 
 # The key that is used to authenticate requests to refresh all trader
 # account data. The key is used by whatever task manager is making periodic
