@@ -467,6 +467,22 @@ class RefreshAccountError(models.Model):
         return error
 
 
+class UnresolvedRemoveAccount(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+
+
+class RemoveAccountError(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    error = models.JSONField(encoder=DjangoJSONEncoder)
+
+    def consume_error(self):
+        error = self.error
+        self.delete()
+        return error
+
+
 class NoteManager(models.Manager):
     def create(self, **kwargs):
         if kwargs.get('lastEdited'):

@@ -20,7 +20,7 @@ from users.models import Trader, User
 from trader.models import Note
 from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
-from .models import AddAccountError, RefreshAccountError, Trade, Deposit, UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, Withdrawal, Account, Preferences, MetaApiError
+from .models import AddAccountError, RefreshAccountError, RemoveAccountError, Trade, Deposit, UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, UnresolvedRemoveAccount, Withdrawal, Account, Preferences, MetaApiError
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
 import datetime as dt
 from .serializers import AddAccountInfoSerializer
@@ -600,6 +600,7 @@ class PendingAddTradingAccount(APIView):
     
 class RefreshData(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
+    
     def get(self, request, *args, **kwargs):
         if not self.refresh_account_data_is_being_resolved():
             if self.refresh_account_error_exists():
@@ -657,6 +658,8 @@ def resolve_refresh_account_data(trader):
 
 
 class PendingRefreshData(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+
     def get(self, request, *args, **kwargs):
         if self.refresh_account_data_is_being_resolved():
             return Response({'detail': 'pending'})
@@ -709,30 +712,66 @@ def resolve_refresh_all_accounts_data(trader):
         RefreshAllAccountsData.handle_resolve_refresh_account_exception(trader, exc)
 
 
-class RemoveTradingAccount(APIView):
+class RemoveTradingAccountView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
     
-    @transaction.atomic
     def delete(self, request, pk, *args, **kwargs):
-        account = Account.objects.get(user=request.user, id=pk)
+        if not self.account_exists(pk):
+            return Response({'detail': 'removed'})
+        if not self.user_is_account_owner(pk):
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        account = Account.objects.get(id=pk)
+        if self.remove_account_error_exists(account):
+            error = self.get_remove_account_error(account)
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        UnresolvedRemoveAccount.objects.create(user=request.user, account=account)
+        django_rq.enqueue(resolve_remove_trading_account, request.user, account)
+        return Response({'detail': 'pending'})
+    
+    def account_exists(self, pk):
+        return Account.objects.filter(id=pk).exists()
+    
+    def user_is_account_owner(self, pk):
+        return Account.objects.get(id=pk).user == self.request.user
+    
+    def remove_account_error_exists(self, account):
+        return RemoveAccountError.objects.filter(
+            user=self.request.user, account=account
+        ).exists()
+    
+    def get_remove_account_error(self, account):
+        return RemoveAccountError.objects.get(
+            user=self.request.user, account=account
+        ).consume_error()
+
+    @staticmethod
+    def remove_trading_account(user, account):
         mtapi = metaapi.MetaApi()
         mtapi.remove_account(account.ma_account_id)
+        UnresolvedRemoveAccount.objects.get(user=user, account=account).delete()
         account.delete()
-        return Response()
-    
+
     def handle_exception(self, exc):
         if isinstance(exc, Account.DoesNotExist):
             return Response(
                 {'detail': 'Account with requested id does not exist.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        if isinstance(exc, metaapi.UnknownError):
-            MetaApiError.objects.create(user=self.request.user, error=exc.detail)
-            return Response(
-                {'detail': exc.detail},
-                status=ERROR_FROM_METAAPI
-            )
         return super().handle_exception(exc)
+    
+    @staticmethod
+    def handle_resolve_remove_trading_account_exception(user, account, exc):
+        MetaApiError.objects.create(user=user, error=exc.detail)
+        RemoveAccountError.objects.create(user=user, account=account, error={'detail': exc.detail})
+        UnresolvedRemoveAccount.objects.get(user=user, account=account).delete()
+        
+
+@transaction.atomic
+def resolve_remove_trading_account(user, account):
+    try:
+        RemoveTradingAccountView.remove_trading_account(user, account)
+    except Exception as exc:
+        RemoveTradingAccountView.handle_resolve_remove_trading_account_exception(user, account, exc)
 
 """
 Handles the registration of traders
@@ -773,4 +812,4 @@ pending_add_trading_account = PendingAddTradingAccount.as_view()
 refresh_data = RefreshData.as_view()
 pending_refresh_data = PendingRefreshData.as_view()
 refresh_all_accounts_data = RefreshAllAccountsData.as_view()
-remove_trading_account = RemoveTradingAccount.as_view()
+remove_trading_account = RemoveTradingAccountView.as_view()

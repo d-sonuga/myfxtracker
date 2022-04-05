@@ -18,6 +18,9 @@ class RefreshAllAccountDataTests(TestCase):
     def setUp(self) -> None:
         # Redis queue handling resolutions
         self.queue_name = 'low'
+    
+    def tearDown(self) -> None:
+        django_rq.get_queue('low').empty()
 
     def setup_one_trader_with_one_account(self):
         test_data = RefreshAllAccountsTestData.OneTrader.TraderWithOneAccount

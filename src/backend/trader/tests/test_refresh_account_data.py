@@ -58,7 +58,7 @@ What if user attempts to sign up again with the same details while the other is 
 
 class RefreshAccountDataTests(TestCase):
     def tearDown(self) -> None:
-        django_rq.get_queue('default').empty()
+        django_rq.get_queue().empty()
 
     def setup_trader_with_one_account(self):
         trader_data = SignUpDetails.good_details
@@ -540,7 +540,20 @@ class RefreshAccountDataTests(TestCase):
 
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp.json(), {'detail': metaapi.UnknownError.detail})
+    
+    def test_request_refresh_account_unauthorized(self):
+        """
+        To test the scenario where an unauthorized fellow requests a refresh
+        """
+        resp = self.request_refresh()
+        self.assertEquals(resp.status_code, 401)
 
+    def test_request_refresh_account_unauthorized(self):
+        """
+        To test the scenario where an unauthorized fellow requests a pending refresh
+        """
+        resp = self.request_pending_refresh()
+        self.assertEquals(resp.status_code, 401)
 
     def resolve_refresh_account(self):
         django_rq.get_worker().work(burst=True)
