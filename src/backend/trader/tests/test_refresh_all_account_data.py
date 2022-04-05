@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta
 from django.utils import timezone
 from django.test import TestCase, override_settings
+import django_rq
 from trader.views import ERROR_FROM_METAAPI
 from trader.metaapi.main import Transaction
 from users.models import Trader
@@ -14,6 +15,10 @@ TEST_REFRESH_ACCOUNT_REQUEST_KEY = '8hriuzehf318u289erfeeflihd'
 
 @override_settings(REFRESH_ACCOUNTS_REQUEST_KEY=TEST_REFRESH_ACCOUNT_REQUEST_KEY)
 class RefreshAllAccountDataTests(TestCase):
+    def setUp(self) -> None:
+        # Redis queue handling resolutions
+        self.queue_name = 'low'
+
     def setup_one_trader_with_one_account(self):
         test_data = RefreshAllAccountsTestData.OneTrader.TraderWithOneAccount
         trader = Trader.objects.create(
@@ -73,10 +78,12 @@ class RefreshAllAccountDataTests(TestCase):
             'no-of-unknown-transactions': account.no_of_unknown_transactions()
         }
         refresh_account_time_before_refresh = trader.last_data_refresh_time
-        resp = self.request_refresh_all_accounts()
+
+        self.request_refresh_all_accounts()
+        self.resolve_refresh_accounts()
+
         trader = Trader.objects.get(id=trader.id)
         refresh_account_time_after_refresh = trader.last_data_refresh_time
-        self.assertEquals(resp.status_code, 200)
         self.assertTrue(refresh_account_time_after_refresh > refresh_account_time_before_refresh)
         self.assertTrue(refresh_account_time_after_refresh - timezone.now() < timedelta(minutes=10))
         account = Account.objects.get(user=trader)
@@ -99,10 +106,12 @@ class RefreshAllAccountDataTests(TestCase):
             'no-of-unknown-transactions': account.no_of_unknown_transactions()
         } for account in accounts]
         refresh_account_time_before_refresh = trader.last_data_refresh_time
-        resp = self.request_refresh_all_accounts()
+
+        self.request_refresh_all_accounts()
+        self.resolve_refresh_accounts()
+
         trader = Trader.objects.get(id=trader.id)
         refresh_account_time_after_refresh = trader.last_data_refresh_time
-        self.assertEquals(resp.status_code, 200)
         self.assertTrue(refresh_account_time_after_refresh > refresh_account_time_before_refresh)
         self.assertTrue(refresh_account_time_after_refresh - timezone.now() < timedelta(minutes=10))
         accounts = Account.objects.filter(user=trader)
@@ -127,8 +136,10 @@ class RefreshAllAccountDataTests(TestCase):
                 'no-of-unknown-transactions': account.no_of_unknown_transactions()
             } for account in accounts])
         refresh_account_time_before_refresh_for_all_traders = [trader.last_data_refresh_time for trader in traders]
-        resp = self.request_refresh_all_accounts()
-        self.assertEquals(resp.status_code, 200)
+
+        self.request_refresh_all_accounts()
+        self.resolve_refresh_accounts()
+
         for i in range(len(traders)):
             trader = Trader.objects.all()[i]
             refresh_account_time_before_refresh = refresh_account_time_before_refresh_for_all_traders[i]
@@ -151,11 +162,13 @@ class RefreshAllAccountDataTests(TestCase):
         """
         trader = self.setup_one_trader_with_one_account()
         refresh_account_time_before_refresh = trader.last_data_refresh_time
-        resp = self.request_refresh_all_accounts()
+
+        self.request_refresh_all_accounts()
+        self.resolve_refresh_accounts()
+
         trader = Trader.objects.get(id=trader.id)
         refresh_account_time_after_refresh = trader.last_data_refresh_time
         self.assertEquals(refresh_account_time_before_refresh, refresh_account_time_after_refresh)
-        self.assertEquals(resp.status_code, ERROR_FROM_METAAPI)
 
     def assert_accounts_updated(
         self,
@@ -184,6 +197,9 @@ class RefreshAllAccountDataTests(TestCase):
             refresh_account_time_after_refresh = trader.last_data_refresh_time
             self.assertEquals(refresh_account_time_before_refresh, refresh_account_time_after_refresh)
         self.assertEquals(resp.status_code, 401)
+    
+    def resolve_refresh_accounts(self):
+        django_rq.get_worker(self.queue_name).work(burst=True)
 
     def assert_account_data_updated(
         self,

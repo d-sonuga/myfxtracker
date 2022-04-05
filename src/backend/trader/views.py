@@ -436,7 +436,7 @@ class AddTradingAccountView(APIView):
         return Response(reg_account_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @staticmethod
-    def resolve_add_account(data, user):
+    def add_account(data, user):
         class classyrequest:
             def __init__(self, data, user):
                 self.data = data
@@ -533,7 +533,7 @@ class AddTradingAccountView(APIView):
 
 def resolve_add_account(data, user):
     try:
-        AddTradingAccountView.resolve_add_account(data, user)
+        AddTradingAccountView.add_account(data, user)
     except Exception as exc:
         AddTradingAccountView.handle_resolve_add_account_exception(user, data, exc)
     finally:
@@ -625,6 +625,7 @@ class RefreshData(APIView):
         return RefreshAccountError.objects.get(user=self.request.user)
 
     @staticmethod
+    @transaction.atomic
     def refresh_account_data(trader: Trader):
         mtapi = metaapi.MetaApi()
         for account, unsaved_data in mtapi.get_all_unsaved_data(trader):
@@ -653,6 +654,7 @@ def resolve_refresh_account_data(trader):
         RefreshData.handle_resolve_refresh_account_exception(trader, exc)
     finally:
         UnresolvedRefreshAccount.objects.get(user=trader).delete()
+
 
 class PendingRefreshData(APIView):
     def get(self, request, *args, **kwargs):
@@ -691,16 +693,20 @@ class RefreshAllAccountsData(APIView):
     permission_classes = [IsRefreshRequestFromSite]
 
     def get(self, request, *args, **kwargs):
-        error_occured = False
         for trader in Trader.objects.all():
-            try:
-                RefreshData.refresh_account_data(trader)
-            except metaapi.UnknownError as exc:
-                MetaApiError.objects.create(user=trader, error=exc.detail)
-                error_occured = True
-        if error_occured:
-            return Response(status=ERROR_FROM_METAAPI)
+            django_rq.get_queue('low').enqueue(resolve_refresh_all_accounts_data, trader)
         return Response()
+    
+    @staticmethod
+    def handle_resolve_refresh_account_exception(trader, exc):
+        if isinstance(exc, metaapi.UnknownError):
+            MetaApiError.objects.create(user=trader, error=exc.detail)
+    
+def resolve_refresh_all_accounts_data(trader):
+    try:
+        RefreshData.refresh_account_data(trader)
+    except Exception as exc:
+        RefreshAllAccountsData.handle_resolve_refresh_account_exception(trader, exc)
 
 
 class RemoveTradingAccount(APIView):

@@ -90,7 +90,6 @@ class test_mtapi_error(TestContextDecorator):
         return dec_test
 
 
-@override_settings(RQ_QUEUES={'default': {**settings.RQ_QUEUES['default'], 'ASYNC': False}})
 class AddTradingAccountTests(TestCase):
     def setUp(self) -> None:
         trader_data = SignUpDetails.good_details
