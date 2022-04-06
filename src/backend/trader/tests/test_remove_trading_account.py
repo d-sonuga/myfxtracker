@@ -67,9 +67,8 @@ class RemoveTradingAccountTests(TestCase):
     def tearDown(self) -> None:
         django_rq.get_queue().empty()
     
-    @tag('d')
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
-    def test_valid_user_removes_account_without_errors(self):
+    def test_valid_user_removes_account_without_errors_removal_resolved_before_pending_request(self):
         """
         To test the scenario where a valid authenticated trader requests to remove his account
         and removal is resolved before the follow up request
@@ -83,6 +82,34 @@ class RemoveTradingAccountTests(TestCase):
         self.assertEquals(UnresolvedRemoveAccount.objects.all().count(), 1)
 
         self.resolve_remove_account()
+        self.assertEquals(UnresolvedRemoveAccount.objects.all().count(), 0)
+        resp = self.request_remove_account(account_to_delete_id)
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'detail': 'removed'})
+
+        nonexistent_account_set = Account.objects.filter(id=account_to_delete_id)
+        self.assertEquals(nonexistent_account_set.count(), 0)
+    
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
+    def test_valid_user_removes_account_without_errors_removal_resolved_after_request(self):
+        """
+        To test the scenario where a valid authenticated trader requests to remove his account
+        and removal is resolved before the follow up request
+        """
+        account_to_delete_id = Account.objects.filter(user=self.trader)[0].id
+
+        self.assertEquals(UnresolvedRemoveAccount.objects.all().count(), 0)
+        resp = self.request_remove_account(account_to_delete_id)
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'detail': 'pending'})
+        self.assertEquals(UnresolvedRemoveAccount.objects.all().count(), 1)
+
+        resp = self.request_remove_account(account_to_delete_id)
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'detail': 'pending'})
+        self.assertEquals(UnresolvedRemoveAccount.objects.all().count(), 1)
+        self.resolve_remove_account()
+
         self.assertEquals(UnresolvedRemoveAccount.objects.all().count(), 0)
         resp = self.request_remove_account(account_to_delete_id)
         self.assertEquals(resp.status_code, 200)

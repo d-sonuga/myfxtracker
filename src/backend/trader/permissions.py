@@ -42,7 +42,6 @@ class IsRefreshRequestFromSite(BasePermission):
 class IsTradingAccountOwner(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        print(dir(request))
         if request.user == obj.user:
             return True
         return False

@@ -718,6 +718,8 @@ class RemoveTradingAccountView(APIView):
         if not self.user_is_account_owner(pk):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         account = Account.objects.get(id=pk)
+        if self.account_removal_is_being_resolved(account):
+            return Response({'detail': 'pending'})
         if self.remove_account_error_exists(account):
             error = self.get_remove_account_error(account)
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
@@ -740,6 +742,12 @@ class RemoveTradingAccountView(APIView):
         return RemoveAccountError.objects.get(
             user=self.request.user, account=account
         ).consume_error()
+    
+    def account_removal_is_being_resolved(self, account):
+        return UnresolvedRemoveAccount.objects.filter(
+            user=self.request.user,
+            account=account
+        ).exists()
 
     @staticmethod
     def remove_trading_account(user, account):
