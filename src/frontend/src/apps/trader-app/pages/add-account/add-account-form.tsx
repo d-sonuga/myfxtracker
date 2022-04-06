@@ -11,6 +11,7 @@ import {HttpResponseType} from '@services/http'
 import {buildErrors, canSubmit} from '@components/forms'
 import {ToastContext} from '@components/toast'
 import {ConfigConst, RouteConst} from '@conf/const'
+import { RawData } from '@apps/trader-app/models/types'
 
 
 /**
@@ -74,14 +75,14 @@ const AddAccountForm = ({
                 setInfoMsg('Please wait. This could take several minutes.');
                 submitValues({
                     values,
-                    successFunc: (resp: HttpResponseType) => {
+                    successFunc: (data: RawData) => {
                         setNonFieldError('');
                         /*
                         ReactGA.event('add_account', {
                             method: 'site '
                         })
                         */
-                        onAccountAdded(resp.data);
+                        onAccountAdded(data);
                         navigate(`/${RouteConst.TRADER_APP_ROUTE}/`);
                     },
                     errorFunc: (err: any) => {

@@ -26,6 +26,7 @@ const HttpConst = {
     GET_ALL_NOTES_URL: 'trader/get-all-notes',
     DELETE_ACCOUNT_URL: 'trader/delete-account',
     ADD_TRADING_ACCOUNT_URL: 'trader/add-trading-account',
+    PENDING_ADD_TRADING_ACCOUNT_URL: 'trader/pending-add-trading-account',
     REFRESH_DATA_URL: 'trader/refresh-data',
     REMOVE_TRADING_ACCOUNT_URL: 'trader/remove-trading-account',
     FEEDBACK_FORM_URL: 'https://forms.gle/SWAdgLtd64Vzmyso9'

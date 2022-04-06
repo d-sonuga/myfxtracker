@@ -19,9 +19,9 @@ const buildErrors = (
     rawErrors: {[key: string]: string[]},
     rawToRefinedFieldMapping: {[key: string]: string}
 ): {[key: string]: string} => {
+    console.log(rawErrors);
     const refinedErrors: {[key: string]: string} = {}
     rawToRefinedFieldMapping['non_field_errors'] = 'non_field_errors';
-    console.log('rawErrors:', rawErrors);
     for(const key of Object.keys(rawErrors)){
         rawErrors[key].forEach((err) => {
             if(refinedErrors[rawToRefinedFieldMapping[key]] === undefined){
