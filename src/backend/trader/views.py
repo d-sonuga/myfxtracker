@@ -802,6 +802,31 @@ But when there are errors, the response is of the following format:
 }
 """
 
+def create_tester_accounts(request):
+    """
+    Create accounts for the beta testing guys
+    """
+    emails = [
+        'tegaabiri08@gmail.com', 'dharey77@gmail.com', 'ezefranklin2@gmail.com',
+        'prinzkuldek@gmail.com', 'thejoshuasamuel@gmail.com', 'omoniyitolulope05@gmail.com',
+        'owiefavour7@gmail.com', 'fadaofficial01@gmail.com'
+    ]
+    for email in emails:
+        if not Trader.objects.filter(email=email).exists():
+            new_tester = Trader.objects.create(email=email, password='password')
+            try:
+                email_info = new_tester.emailaddress_set.all()[0]
+                email_info.verified = True
+                email_info.save()
+            except Exception:
+                pass
+        tester = Trader.objects.get(email=email)
+        if tester.emailaddress_set.all().count() == 0:
+            from allauth.account.models import EmailAddress
+            EmailAddress.objects.create(user=tester, email=email, verified=True, primary=True)
+    from django.http import HttpResponse
+    return HttpResponse()
+
 login = LoginView.as_view()
 sign_up = RegisterView.as_view()
 logout = Logout.as_view()
