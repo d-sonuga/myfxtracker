@@ -276,18 +276,28 @@ MEDIA_URL = '/media/'
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
 
 # Queues to use for processing of account adding and interactions with the metaapi servers
-RQ_QUEUES = {
-    'default': {
-        'HOST': '172.17.0.1',
-        'PORT': 6379,
-        'DB': 0
-    },
-    'low': {
-        'HOST': '172.17.0.1',
-        'PORT': 6379,
-        'DB': 0
+if DEBUG:
+    RQ_QUEUES = {
+        'default': {
+            'HOST': '172.17.0.1',
+            'PORT': 6379,
+            'DB': 0
+        },
+        'low': {
+            'HOST': '172.17.0.1',
+            'PORT': 6379,
+            'DB': 0
+        }
     }
-}
+else:
+    RQ_QUEUES = {
+        'default': {
+            'URL': os.getenv('REDISTOGO_URL')
+        },
+        'low': {
+            'URL': os.getenv('REDISTOGO_URL')
+        }
+    }
 
 #RQ_EXCEPTION_HANDLERS = ['trader.views.handle_resolve_add_account_exception']
 
@@ -301,7 +311,7 @@ METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
 # The class that will be used to interact with the MA servers
 # It is changed programmatically during tests for testing specific scenarios
 # It should not be changed manually
-META_API_CLASS_MODULE = 'trader.metaapi.test_no_error'
+META_API_CLASS_MODULE = 'trader.metaapi.main'
 
 # To test what happens when an error occurs during user creation
 # Always set to false
