@@ -602,14 +602,13 @@ class RefreshData(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
     
     def get(self, request, *args, **kwargs):
-        if not self.refresh_account_data_is_being_resolved():
-            if self.refresh_account_error_exists():
-                refresh_account_error = self.get_refresh_account_error()
-                error = refresh_account_error.error
-                refresh_account_error.delete()
-                return Response(error, status=status.HTTP_400_BAD_REQUEST)
-            UnresolvedRefreshAccount.objects.create(user=request.user)
-            django_rq.enqueue(resolve_refresh_account_data, request.user)
+        if self.refresh_account_data_is_being_resolved():
+            return Response({'detail': 'pending'})
+        if self.refresh_account_error_exists():
+            error = self.get_refresh_account_error()
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        UnresolvedRefreshAccount.objects.create(user=request.user)
+        django_rq.enqueue(resolve_refresh_account_data, request.user)
         return Response({'detail': 'pending'})
     
     def refresh_account_data_is_being_resolved(self):
@@ -623,7 +622,7 @@ class RefreshData(APIView):
         ).exists()
     
     def get_refresh_account_error(self):
-        return RefreshAccountError.objects.get(user=self.request.user)
+        return RefreshAccountError.objects.get(user=self.request.user).consume_error()
 
     @staticmethod
     @transaction.atomic
@@ -664,9 +663,7 @@ class PendingRefreshData(APIView):
         if self.refresh_account_data_is_being_resolved():
             return Response({'detail': 'pending'})
         if self.refresh_account_error_exists():
-            refresh_account_error = self.get_refresh_account_error()
-            error = refresh_account_error.error
-            refresh_account_error.delete()
+            error = self.get_refresh_account_error()
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         updated_data = GetInitData.build_init_data(request)
         return Response(updated_data)
@@ -682,7 +679,7 @@ class PendingRefreshData(APIView):
         ).exists()
     
     def get_refresh_account_error(self):
-        return RefreshAccountError.objects.get(user=self.request.user)
+        return RefreshAccountError.objects.get(user=self.request.user).consume_error()
 
 ERROR_FROM_METAAPI = 550
 

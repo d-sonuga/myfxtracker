@@ -8,10 +8,9 @@ import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis, AddAccoun
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
 import {Http, useNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
-import {HttpConst} from '@conf/const'
-import {HttpErrorType, HttpResponseType} from '@services/http'
-import {RawData} from './models/types'
 import {ToastContext} from '@components/toast'
+import refreshAccountData from './services/refresh-account-data'
+import {RawData} from './models/types'
 
 const Notebook = lazy(() => import('@apps/trader-app/pages/notes'));
 const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
@@ -40,22 +39,7 @@ const TraderApp = () => {
         setGlobalData(newGlobalData);
     }
     /** Function called when refresh account data is called from the data status bar */
-    const refreshData = () => {
-        const {BASE_URL, REFRESH_DATA_URL} = HttpConst;
-        setDataIsRefreshing(true);
-        Http.get({
-            url: `${BASE_URL}/${REFRESH_DATA_URL}/`,
-            successFunc: (resp: HttpResponseType) => {
-                const newGlobalData = new GlobalData(resp.data);
-                setGlobalData(newGlobalData);
-            },
-            errorFunc: (err: HttpErrorType) => {
-                console.log(err);
-                Toast.error('Sorry but something went wrong. Your data could not be refreshed.');
-            },
-            thenFunc: () => setDataIsRefreshing(false)
-        })
-    }
+    const refreshData = () => refreshAccountData(Toast, setGlobalData, setDataIsRefreshing);
     const navigate = useNavigate();
     useEffect(() => {
         Http.initNavigate(navigate);

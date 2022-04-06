@@ -28,6 +28,7 @@ const HttpConst = {
     ADD_TRADING_ACCOUNT_URL: 'trader/add-trading-account',
     PENDING_ADD_TRADING_ACCOUNT_URL: 'trader/pending-add-trading-account',
     REFRESH_DATA_URL: 'trader/refresh-data',
+    PENDING_REFRESH_DATA_URL: 'trader/pending-refresh-data',
     REMOVE_TRADING_ACCOUNT_URL: 'trader/remove-trading-account',
     FEEDBACK_FORM_URL: 'https://forms.gle/SWAdgLtd64Vzmyso9'
 }
