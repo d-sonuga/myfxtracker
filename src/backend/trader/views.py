@@ -809,7 +809,8 @@ def create_tester_accounts(request):
     emails = [
         'tegaabiri08@gmail.com', 'dharey77@gmail.com', 'ezefranklin2@gmail.com',
         'prinzkuldek@gmail.com', 'thejoshuasamuel@gmail.com', 'omoniyitolulope05@gmail.com',
-        'owiefavour7@gmail.com', 'fadaofficial01@gmail.com'
+        'owiefavour7@gmail.com', 'fadaofficial01@gmail.com', 'oyewaledaniel48@gmail.com',
+        'bisiriyuadeniyi21@gmail.com', 'olakunlelawal290@gmail.com', 'wondyolulana@gmail.com'
     ]
     for email in emails:
         if not Trader.objects.filter(email=email).exists():
