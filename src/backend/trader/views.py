@@ -1,7 +1,4 @@
 import datetime
-from inspect import trace
-from platform import platform
-from sqlite3 import connect
 from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -289,9 +286,37 @@ class DeleteAccountView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def delete(self, request):
+        if request.user.account_set.exists():
+            if self.account_removal_error_exists():
+                error = self.get_account_removal_error()
+                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            if not self.accounts_are_being_removed():
+                for account in Account.objects.filter(user=request.user):
+                    UnresolvedRemoveAccount.objects.create(user=request.user, account=account)
+                    django_rq.enqueue(
+                        resolve_remove_trading_account,
+                        request.user,
+                        account
+                    )
+            return Response({'detail': 'pending'})
         request.user.delete()
-        return Response()
-
+        return Response({'detail': 'removed'})
+        
+    def accounts_are_being_removed(self):
+        return UnresolvedRemoveAccount.objects.filter(
+            user=self.request.user
+        ).exists()
+    
+    def account_removal_error_exists(self):
+        return RemoveAccountError.objects.filter(
+            user=self.request.user
+        ).exists()
+    
+    def get_account_removal_error(self):
+        remove_account_error_set = RemoveAccountError.objects.filter(user=self.request.user)
+        error = remove_account_error_set[0].consume_error()
+        remove_account_error_set.delete()
+        return error
 
 class NoteViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsTrader]
@@ -772,10 +797,14 @@ class RemoveTradingAccountView(APIView):
         
 
 @transaction.atomic
-def resolve_remove_trading_account(user, account):
+def resolve_remove_trading_account(user, account, post_success_func=None, post_error_func=None):
     try:
         RemoveTradingAccountView.remove_trading_account(user, account)
+        if post_success_func:
+            post_success_func()
     except Exception as exc:
+        if post_error_func:
+            post_error_func()
         RemoveTradingAccountView.handle_resolve_remove_trading_account_exception(user, account, exc)
 
 """

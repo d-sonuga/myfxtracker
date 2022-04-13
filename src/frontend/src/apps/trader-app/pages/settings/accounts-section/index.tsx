@@ -39,7 +39,11 @@ const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial}: A
                     setAccountToDelete(defaultAccountData);
                     setIsDeleting(false);
                 }}
-                onClose={() => {}}
+                onClose={() => {
+                    if(!isDeleting){
+                       setAccountToDelete(defaultAccountData);
+                    }
+                }}
                 open={accountToDelete != defaultAccountData || isDeleting}
                 >
                     <ColumnBox>
@@ -73,7 +77,7 @@ const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial}: A
 
 const defaultAccountData: AccountDataWithId = {
     id: -1,
-    name: 'dummy',
+    name: '',
     trades: [],
     deposits: [],
     withdrawals: []

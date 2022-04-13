@@ -73,8 +73,9 @@ What if user attempts to sign up again with the same details while the other is 
 from django.test import tag
 
 class test_mtapi_error(TestContextDecorator):
-    def __init__(self, **kwargs):
+    def __init__(self, no_of_errors=1, **kwargs):
         self.mod_settings = kwargs
+        self.no_of_errors = no_of_errors
 
     def decorate_callable(self, test):
         @override_settings(**self.mod_settings)
@@ -85,7 +86,7 @@ class test_mtapi_error(TestContextDecorator):
             TestCase().assertEquals(user_mtapi_errors, 0)
             result = test(*args, **kwargs)
             user_mtapi_errors = MetaApiError.objects.all().count()
-            TestCase().assertEquals(user_mtapi_errors, 1)
+            TestCase().assertEquals(user_mtapi_errors, self.no_of_errors)
             return result
         return dec_test
 
