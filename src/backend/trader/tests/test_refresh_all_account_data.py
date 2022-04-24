@@ -185,22 +185,6 @@ class RefreshAllAccountDataTests(TestCase):
             prev_account_state = prev_account_states[i]
             self.assert_account_data_updated(account, test_data, prev_account_state)
 
-    def test_not_from_server(self):
-        """
-        To test the scenario where the request to refresh all data
-        is not from the server or whatever task manager is running
-        the requests periodically
-        """
-        traders = Trader.objects.all()
-        refresh_account_time_before_refresh_for_all_traders = [trader.last_data_refresh_time for trader in traders]
-        resp = self.request_refresh_all_accounts(valid_authentication=False)
-        for i in range(len(traders)):
-            trader = Trader.objects.all()
-            refresh_account_time_before_refresh = refresh_account_time_before_refresh_for_all_traders[i]
-            refresh_account_time_after_refresh = trader.last_data_refresh_time
-            self.assertEquals(refresh_account_time_before_refresh, refresh_account_time_after_refresh)
-        self.assertEquals(resp.status_code, 401)
-    
     def resolve_refresh_accounts(self):
         django_rq.get_worker(self.queue_name).work(burst=True)
 
@@ -245,10 +229,5 @@ class RefreshAllAccountDataTests(TestCase):
     
 
     def request_refresh_all_accounts(self, valid_authentication=True):
-        headers = {
-            'Refresh-Accounts-Request-Key': TEST_REFRESH_ACCOUNT_REQUEST_KEY
-        } if valid_authentication else {}
-        return self.client.get(
-            '/trader/refresh-all-account-data/',
-            **headers
-        )
+        from trader.scheduled_functions import RefreshAllAccountsData
+        RefreshAllAccountsData.refresh_all_accounts()
