@@ -6,9 +6,12 @@ import django_rq
 from trader.models import AccountDataLastRefreshed
 from trader.scheduled_functions import RefreshAllAccountsData
         
-
+# To determine whether or not the scheduler has already been launched
+scheduled = False
 @receiver(connection_created)
 def schedule_account_data_refresh(**kwargs):
+    global scheduled
+    if not scheduled:
         ACCOUNT_DATA_REFRESH_INTERVAL = 30
         scheduler = django_rq.get_scheduler('low')
         last_refresh_time = AccountDataLastRefreshed.last_refresh_time()
@@ -26,3 +29,4 @@ def schedule_account_data_refresh(**kwargs):
             datetime.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL),
             RefreshAllAccountsData.refresh_all_accounts
         )
+        scheduled = True
