@@ -293,7 +293,7 @@ class DeleteAccountView(APIView):
             if not self.accounts_are_being_removed():
                 for account in Account.objects.filter(user=request.user):
                     UnresolvedRemoveAccount.objects.create(user=request.user, account=account)
-                    django_rq.enqueue(
+                    rq_enqueue(
                         resolve_remove_trading_account,
                         request.user,
                         account
@@ -431,6 +431,7 @@ class RedirectToSignup(APIView):
         return redirect(settings.SIGN_UP_URL)
 
 import django_rq
+from .redis_utils import rq_enqueue
 
 class AddTradingAccountView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
@@ -456,7 +457,7 @@ class AddTradingAccountView(APIView):
                 server=request.data['server'],
                 platform=request.data['platform']
             )
-            django_rq.enqueue(resolve_add_account, request.data, request.user)
+            rq_enqueue(resolve_add_account, request.data, request.user)
             return Response({'detail': 'pending'}, status=status.HTTP_200_OK)
         return Response(reg_account_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -633,7 +634,7 @@ class RefreshData(APIView):
             error = self.get_refresh_account_error()
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         UnresolvedRefreshAccount.objects.create(user=request.user)
-        django_rq.enqueue(resolve_refresh_account_data, request.user)
+        rq_enqueue(resolve_refresh_account_data, request.user)
         return Response({'detail': 'pending'})
     
     def refresh_account_data_is_being_resolved(self):
@@ -724,7 +725,7 @@ class RemoveTradingAccountView(APIView):
             error = self.get_remove_account_error(account)
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         UnresolvedRemoveAccount.objects.create(user=request.user, account=account)
-        django_rq.enqueue(resolve_remove_trading_account, request.user, account)
+        rq_enqueue(resolve_remove_trading_account, request.user, account)
         return Response({'detail': 'pending'})
     
     def account_exists(self, pk):
