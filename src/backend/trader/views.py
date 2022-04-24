@@ -708,6 +708,31 @@ class PendingRefreshData(APIView):
 
 ERROR_FROM_METAAPI = 550
 
+class RefreshAllAccountsData(APIView):
+    """
+    To be called periodically to update all account data
+    If any error occurs, the a response with status
+    ERROR_NOT_ALL_ACCOUNTS_UPDATED will be returned, but that won't
+    stop it from attempting to update the other accounts.
+    """
+    permission_classes = [IsRefreshRequestFromSite]
+
+    def get(self, request, *args, **kwargs):
+        for trader in Trader.objects.all():
+            django_rq.get_queue('low').enqueue(resolve_refresh_all_accounts_data, trader)
+        return Response()
+    
+    @staticmethod
+    def handle_resolve_refresh_account_exception(trader, exc):
+        if isinstance(exc, metaapi.UnknownError):
+            MetaApiError.objects.create(user=trader, error=exc.detail)
+    
+def resolve_refresh_all_accounts_data(trader):
+    try:
+        RefreshData.refresh_account_data(trader)
+    except Exception as exc:
+        RefreshAllAccountsData.handle_resolve_refresh_account_exception(trader, exc)
+
 
 class RemoveTradingAccountView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
@@ -846,4 +871,5 @@ add_trading_account = AddTradingAccountView.as_view()
 pending_add_trading_account = PendingAddTradingAccount.as_view()
 refresh_data = RefreshData.as_view()
 pending_refresh_data = PendingRefreshData.as_view()
+refresh_all_accounts_data = RefreshAllAccountsData.as_view()
 remove_trading_account = RemoveTradingAccountView.as_view()
