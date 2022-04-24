@@ -19,6 +19,7 @@ daphne = "*"
 metaapi-cloud-sdk = "*"
 rq = "*"
 django-rq = "*"
+rq-scheduler = "*"
 
 [dev-packages]
 maildump = "*"

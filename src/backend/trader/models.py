@@ -505,6 +505,38 @@ class Preferences(models.Model):
     current_account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
 
 
+class AccountDataLastRefreshed(models.Model):
+    """
+    Keeps track of the time all account data was last updated, so it can
+    persist between builds
+    """
+    time = models.DateTimeField()
+
+    @staticmethod
+    def last_refresh_time():
+        last_refreshed_time_set = AccountDataLastRefreshed.objects.all()
+        if last_refreshed_time_set .count() == 0:
+            AccountDataLastRefreshed.initialize_last_refreshed()
+            return last_refreshed_time_set[0].time
+        return last_refreshed_time_set[0].time
+    
+    @staticmethod
+    def set_last_refreshed(last_refreshed: datetime):
+        last_refreshed_time_set = AccountDataLastRefreshed.objects.all()
+        if last_refreshed_time_set .count() == 0:
+            instance = AccountDataLastRefreshed.initialize_last_refreshed()
+            instance.time = last_refreshed
+            instance.save()
+        last_refreshed_time_set[0].time = last_refreshed
+        last_refreshed_time_set[0].save()
+    
+    @staticmethod
+    def initialize_last_refreshed():
+        # Initializing to arbitrary long time ago (last year)
+        AccountDataLastRefreshed.objects.create(time=timezone.now() - timezone.timedelta(days=365))
+        return AccountDataLastRefreshed.objects.all()[0]
+
+
 class DeletedImages(models.Model):
     url = models.CharField(max_length=100)
 
