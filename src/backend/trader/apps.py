@@ -6,26 +6,4 @@ class ApisConfig(AppConfig):
 
     def ready(self):
         import trader.signals
-        from django.utils import timezone
-        import datetime
-        import django_rq
-        from trader.models import AccountDataLastRefreshed
-        from trader.scheduled_functions import RefreshAllAccountsData
         
-        ACCOUNT_DATA_REFRESH_INTERVAL = 30
-        scheduler = django_rq.get_scheduler('low')
-        last_refresh_time = AccountDataLastRefreshed.last_refresh_time()
-        if timezone.now() - last_refresh_time >= timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL):
-            django_rq.get_queue('low').enqueue(RefreshAllAccountsData.refresh_all_accounts)
-        next_time_to_be_done = last_refresh_time - timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL)
-        scheduler.schedule(
-            scheduled_time=next_time_to_be_done,
-            func=RefreshAllAccountsData.refresh_all_accounts,
-            interval=ACCOUNT_DATA_REFRESH_INTERVAL*60,
-            # None means forever
-            repeat=None
-        )
-        scheduler.enqueue_in(
-            datetime.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL),
-            RefreshAllAccountsData.refresh_all_accounts
-        )
