@@ -10,7 +10,6 @@ from trader.scheduled_functions import RefreshAllAccountsData
 scheduled = False
 @receiver(connection_created)
 def schedule_account_data_refresh(**kwargs):
-    """
     global scheduled
     if not scheduled:
         ACCOUNT_DATA_REFRESH_INTERVAL = 30
@@ -31,4 +30,3 @@ def schedule_account_data_refresh(**kwargs):
             RefreshAllAccountsData.refresh_all_accounts
         )
         scheduled = True
-    """
