@@ -282,14 +282,10 @@ WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
 if DEBUG:
     RQ_QUEUES = {
         'default': {
-            'HOST': '172.17.0.1',
-            'PORT': 6379,
-            'DB': 0
+            'URL': 'redis://:@172.17.0.1:6379',
         },
         'low': {
-            'HOST': '172.17.0.1',
-            'PORT': 6379,
-            'DB': 0
+            'URL': 'redis://:@172.17.0.1:6379',
         }
     }
 else:

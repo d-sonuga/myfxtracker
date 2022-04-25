@@ -229,5 +229,5 @@ class RefreshAllAccountDataTests(TestCase):
     
 
     def request_refresh_all_accounts(self, valid_authentication=True):
-        from trader.scheduled_functions import RefreshAllAccountsData
-        RefreshAllAccountsData.refresh_all_accounts()
+        from trader.scheduled_functions import refresh_all_accounts_data
+        refresh_all_accounts_data()
