@@ -523,7 +523,7 @@ class AddTradingAccountView(APIView):
         else:
             logger.critical('Unknown error in add account')
             for attr in dir(exc):
-                logger.critical('Unknown error: %s' % getattr(exc, attr))
+                logger.critical('Unknown error: %s - %s' % (attr, getattr(exc, attr)))
             create_add_account_error({'non_field_errors': ['unknown error']})
 
     def account_is_duplicate(self):
