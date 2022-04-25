@@ -292,10 +292,10 @@ if DEBUG:
 else:
     RQ_QUEUES = {
         'default': {
-            'URL': os.getenv('REDIS_TLS_URL')
+            'URL': os.getenv('REDIS_URL')
         },
         'low': {
-            'URL': os.getenv('REDIS_TLS_URL')
+            'URL': os.getenv('REDIS_URL')
         }
     }
 
