@@ -1,4 +1,5 @@
 import datetime
+from charset_normalizer import logging
 from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -25,6 +26,7 @@ from . import metaapi
 from django.db import IntegrityError, connection, transaction
 from .permissions import IsRefreshRequestFromSite, IsTradingAccountOwner
 
+logger = logging.getLogger()
 
 class DeleteTrade(DestroyAPIView):
     serializer_class = TradeSerializer
@@ -516,8 +518,10 @@ class AddTradingAccountView(APIView):
             )):
                 create_add_account_error({'non_field_errors': ['The account already exists.']})
             else:
+                logger.critical('An unknown integrity error occured while adding an account')
                 create_add_account_error({'non_field_errors': ['unknown error']})
         else:
+            logger.critical('Unknown error in add account')
             create_add_account_error({'non_field_errors': ['unknown error']})
 
     def account_is_duplicate(self):
