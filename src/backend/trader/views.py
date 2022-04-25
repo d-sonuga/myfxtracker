@@ -1,5 +1,4 @@
 import datetime
-from charset_normalizer import logging
 from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -25,6 +24,7 @@ from .serializers import AddAccountInfoSerializer
 from . import metaapi
 from django.db import IntegrityError, connection, transaction
 from .permissions import IsRefreshRequestFromSite, IsTradingAccountOwner
+import logging
 
 logger = logging.getLogger()
 
