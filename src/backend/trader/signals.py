@@ -3,8 +3,10 @@ from django.db.backends.signals import connection_created
 from django.utils import timezone
 import datetime
 import django_rq
+from redis import StrictRedis
 from trader.models import AccountDataLastRefreshed
 from trader.scheduled_functions import refresh_all_accounts_data
+from django.conf import settings
         
 # To determine whether or not the scheduler has already been launched
 scheduled = False
@@ -12,6 +14,9 @@ scheduled = False
 def schedule_account_data_refresh(**kwargs):
     global scheduled
     if not scheduled:
+        with StrictRedis.from_url(settings.RQ_QUEUES['default']['URL']) as conn:
+            conn.flushall()
+            conn.close()
         ACCOUNT_DATA_REFRESH_INTERVAL = 30
         scheduler = django_rq.get_scheduler('low')
         last_refresh_time = AccountDataLastRefreshed.last_refresh_time()

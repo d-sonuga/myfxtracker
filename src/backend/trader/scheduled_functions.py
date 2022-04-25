@@ -1,10 +1,12 @@
-from rest_framework.response import Response
+from redis.exceptions import ResponseError as RedisResponseError, ExecAbortError
 from django.utils import timezone
-import django_rq
 from . import metaapi
 from .models import Trader, MetaApiError, AccountDataLastRefreshed
 from .views import RefreshData
+from .redis_utils import low_class_conn
+import logging
 
+logger = logging.getLogger()
 
 """
 To be called periodically to update all account data
@@ -12,7 +14,7 @@ If any error occurs, it will still attempt to update other accounts.
 """
 def refresh_all_accounts_data():
     for trader in Trader.objects.all():
-        django_rq.get_queue('low').enqueue(resolve_refresh_all_accounts_data, trader)
+        low_class_conn.enqueue(resolve_refresh_all_accounts_data, trader)
         AccountDataLastRefreshed.set_last_refreshed(timezone.now())
     
 
