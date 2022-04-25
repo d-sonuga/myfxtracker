@@ -7,6 +7,9 @@ from redis import StrictRedis
 from trader.models import AccountDataLastRefreshed
 from trader.scheduled_functions import refresh_all_accounts_data
 from django.conf import settings
+import logging
+
+logger = logging.getLogger()
         
 # To determine whether or not the scheduler has already been launched
 scheduled = False
@@ -14,6 +17,7 @@ scheduled = False
 def schedule_account_data_refresh(**kwargs):
     global scheduled
     if not scheduled:
+        logger.info('Clearing redis db and scheduling')
         with StrictRedis.from_url(settings.RQ_QUEUES['default']['URL']) as conn:
             conn.flushall()
             conn.close()
