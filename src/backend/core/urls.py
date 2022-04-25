@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
-
+from django.contrib import admin
 
 @csrf_exempt
 def e(request):
@@ -24,7 +24,7 @@ urlpatterns = [
     path('trader/', include('trader.urls')),
     path('users/', include('users.urls')),
     path('aff/', include('affiliate.urls')),
-    path('admin/', include('admin.urls')),
+    path('admin/', admin.site.urls),
     path('pp/', include('paypal_endpoint.urls')),
     path('ps/', include('paystack_endpoint.urls')),
     path('datasource/', include('datasource_endpoint.urls')),

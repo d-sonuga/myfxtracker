@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.admin',
+    'django.contrib.messages',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -46,7 +48,7 @@ INSTALLED_APPS = [
     'users',
     'trader',
     'affiliate',
-    'admin',
+    #'admin',
     'serve',
     'paypal_endpoint',
     'paystack_endpoint',
@@ -70,6 +72,7 @@ MIDDLEWARE += [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
