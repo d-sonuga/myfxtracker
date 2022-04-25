@@ -16,6 +16,7 @@ scheduled = False
 @receiver(connection_created)
 def schedule_account_data_refresh(**kwargs):
     global scheduled
+    logger.info('Db connection created')
     if not scheduled:
         logger.info('Clearing redis db and scheduling')
         if not settings.DEBUG:
