@@ -4,7 +4,7 @@ from django.utils import timezone
 import datetime
 import django_rq
 from trader.models import AccountDataLastRefreshed
-from trader.scheduled_functions import RefreshAllAccountsData
+from trader.scheduled_functions import refresh_all_accounts_data
         
 # To determine whether or not the scheduler has already been launched
 scheduled = False
@@ -16,17 +16,17 @@ def schedule_account_data_refresh(**kwargs):
         scheduler = django_rq.get_scheduler('low')
         last_refresh_time = AccountDataLastRefreshed.last_refresh_time()
         if timezone.now() - last_refresh_time >= timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL):
-            django_rq.get_queue('low').enqueue(RefreshAllAccountsData.refresh_all_accounts)
+            django_rq.get_queue('low').enqueue(refresh_all_accounts_data)
         next_time_to_be_done = last_refresh_time - timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL)
         scheduler.schedule(
             scheduled_time=next_time_to_be_done,
-            func=RefreshAllAccountsData.refresh_all_accounts,
+            func=refresh_all_accounts_data,
             interval=ACCOUNT_DATA_REFRESH_INTERVAL*60,
             # None means forever
             repeat=None
         )
         scheduler.enqueue_in(
             datetime.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL),
-            RefreshAllAccountsData.refresh_all_accounts
+            refresh_all_accounts_data
         )
         scheduled = True
