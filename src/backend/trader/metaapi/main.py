@@ -30,6 +30,7 @@ class MetaApi:
             self._api = api_initializer(settings.METAAPI_TOKEN)
         except Exception as e:
             logger.exception('Error while initializing MetaApi')
+            raise e
             
         self.NO_OF_MAX_RETRIES = 3
         self.SECS_TO_SLEEP_BEFORE_RETRY = 3
@@ -57,6 +58,7 @@ class MetaApi:
                 elif e.details == 'E_SERVER_TIMEZONE':
                     raise CurrentlyUnavailableError
                 else:
+                    logger.exception('Error while adding trading account')
                     raise UnknownError
             else:
                 logger.exception('Error while adding trading account')
