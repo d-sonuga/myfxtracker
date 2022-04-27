@@ -477,10 +477,14 @@ class AddTradingAccountView(APIView):
                 self.data = data
                 self.user = user
         request = classyrequest(data, user)
+        logger.info(f'Initializing metaapi to add trading account for user with id {user.id}')
         mtapi = metaapi.MetaApi()
+        logger.info(f'Adding trading account for user with id {user.id}')
         ma_acc_id, account_name = mtapi.create_account(request.data)
+        logger.info(f'Getting all trading data of newly added account for trader with id {user.id}')
         (account_data, trade_data, deposit_data, withdrawal_data, 
             unknown_transaction_data) = mtapi.get_all_data(ma_acc_id, account_name)
+        logger.info(f'Creating trading account entry in db for user with id {user.id}')
         new_account = Account.objects.create_account(
             request.user,
             account_data,
@@ -492,9 +496,11 @@ class AddTradingAccountView(APIView):
         if Account.objects.filter(user=request.user).count() == 1:
             # If the account just created is the first account the user added,
             # let the time be the last account data updated time
+            logger.info(f'Updating user with id {user.id} last data refresh time')
             traderinfo = request.user.traderinfo
             traderinfo.last_data_refresh_time = new_account.time_added
             traderinfo.save()
+        logger.info(f'Done adding a trading account for user with id {user.id}')
 
     @staticmethod
     def handle_resolve_add_account_exception(user, data, exc):
