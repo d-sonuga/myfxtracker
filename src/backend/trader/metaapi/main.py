@@ -23,17 +23,18 @@ class MetaApi:
     def __init__(self):
         mtapi_module_name = getattr(settings, 'META_API_CLASS_MODULE', 'trader.metaapi.main')
         mtapi_module = import_module(mtapi_module_name)
-        api_initializer: MainMetaApi = MainMetaApi # getattr(mtapi_module, 'MainMetaApi')
-        if asyncio.iscoroutine(api_initializer) or asyncio.iscoroutinefunction(api_initializer):
-            api_initializer = async_to_sync(api_initializer)
+        api_initializer: MainMetaApi = getattr(mtapi_module, 'MainMetaApi')
         try:
-            self._api = api_initializer(token=settings.METAAPI_TOKEN)
+            self._api = async_to_sync(self.initialize_api)(api_initializer, settings.METAAPI_TOKEN)
         except Exception as e:
             logger.exception('Error while initializing MetaApi')
             raise e
             
         self.NO_OF_MAX_RETRIES = 3
         self.SECS_TO_SLEEP_BEFORE_RETRY = 3
+
+    async def initialize_api(self, api_initializer: MainMetaApi, token: str):
+        return api_initializer(token=token)
 
     def create_account(self, account_details: RegisterAccountDetails) -> Tuple[str, str]:
         try:
