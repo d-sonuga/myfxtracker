@@ -23,7 +23,7 @@ class MetaApi:
     def __init__(self):
         mtapi_module_name = getattr(settings, 'META_API_CLASS_MODULE', 'trader.metaapi.main')
         mtapi_module = import_module(mtapi_module_name)
-        api_initializer: MainMetaApi = getattr(mtapi_module, 'MainMetaApi')
+        api_initializer: MainMetaApi = MainMetaApi # getattr(mtapi_module, 'MainMetaApi')
         if asyncio.iscoroutine(api_initializer) or asyncio.iscoroutinefunction(api_initializer):
             api_initializer = async_to_sync(api_initializer)
         try:
