@@ -297,7 +297,7 @@ else:
         'default': {
             'URL': os.getenv('REDIS_URL'),
             # 10 minutes
-            'DEFAULT_TIMEOUT': 60*10
+            'DEFAULT_TIMEOUT': 60*15
         },
         'low': {
             'URL': os.getenv('REDIS_URL'),
