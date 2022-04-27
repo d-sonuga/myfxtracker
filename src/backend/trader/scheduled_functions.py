@@ -7,7 +7,7 @@ from .redis_utils import low_class_conn
 import logging
 import django_rq
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 """
 To be called periodically to update all account data
