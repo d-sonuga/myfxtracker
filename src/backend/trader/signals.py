@@ -18,7 +18,10 @@ def schedule_account_data_refresh(**kwargs):
     global scheduled
     logger.info('Db connection created')
     if not scheduled:
-        logger.info('Scheduling after created connection')
+        logger.info('Clearing redis db and scheduling')
+        with StrictRedis.from_url(settings.RQ_QUEUES['default']['URL']) as conn:
+            conn.flushall()
+            conn.close()
         ACCOUNT_DATA_REFRESH_INTERVAL = 30
         scheduler = django_rq.get_scheduler('low')
         last_refresh_time = AccountDataLastRefreshed.last_refresh_time()
@@ -37,4 +40,4 @@ def schedule_account_data_refresh(**kwargs):
             refresh_all_accounts_data
         )
         scheduled = True
-        logger.info('Logged')
+        logger.info('Scheduled')

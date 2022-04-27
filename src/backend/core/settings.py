@@ -305,16 +305,6 @@ else:
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'loggers': {
-        'rq': {
-            'handlers': [],
-            'level': 'DEBUG'
-        },
-        'django_rq': {
-            'handlers': [],
-            'level': 'DEBUG'
-        }
-    }
 }
 
 #RQ_EXCEPTION_HANDLERS = ['trader.views.handle_resolve_add_account_exception']
