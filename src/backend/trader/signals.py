@@ -18,6 +18,7 @@ def schedule_account_data_refresh(**kwargs):
     global scheduled
     logger.info('Db connection created')
     if not scheduled:
+        scheduled = True
         logger.info('Clearing redis db and scheduling')
         with StrictRedis.from_url(settings.RQ_QUEUES['default']['URL']) as conn:
             conn.flushall()
@@ -40,6 +41,5 @@ def schedule_account_data_refresh(**kwargs):
             datetime.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL),
             refresh_all_accounts_data
         )
-        scheduled = True
         logger.info('Scheduled')
         """
