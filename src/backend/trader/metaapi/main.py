@@ -21,7 +21,7 @@ class MetaApi:
         mtapi_module_name = getattr(settings, 'META_API_CLASS_MODULE', 'trader.metaapi.main')
         mtapi_module = import_module(mtapi_module_name)
         api_initializer: MainMetaApi = getattr(mtapi_module, 'MainMetaApi')
-        if asyncio.iscoroutine(api_initializer):
+        if asyncio.iscoroutine(api_initializer) or asyncio.iscoroutinefunction(api_initializer):
             api_initializer = async_to_sync(api_initializer)
         self._api = api_initializer(settings.METAAPI_TOKEN)
         self.NO_OF_MAX_RETRIES = 3
