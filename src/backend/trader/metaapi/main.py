@@ -14,6 +14,9 @@ from trader.metaapi_types import (
     RegisterAccountDetails, TradeData,
     RawTradeDealData, RawDepositWithdrawalDealData, AccountData
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class MetaApi:
@@ -23,7 +26,11 @@ class MetaApi:
         api_initializer: MainMetaApi = getattr(mtapi_module, 'MainMetaApi')
         if asyncio.iscoroutine(api_initializer) or asyncio.iscoroutinefunction(api_initializer):
             api_initializer = async_to_sync(api_initializer)
-        self._api = api_initializer(settings.METAAPI_TOKEN)
+        try:
+            self._api = api_initializer(settings.METAAPI_TOKEN)
+        except Exception as e:
+            logger.exception('Error while initializing MetaApi')
+            
         self.NO_OF_MAX_RETRIES = 3
         self.SECS_TO_SLEEP_BEFORE_RETRY = 3
 
@@ -52,6 +59,7 @@ class MetaApi:
                 else:
                     raise UnknownError
             else:
+                logger.exception('Error while adding trading account')
                 raise UnknownError
         
     def get_all_data(
@@ -72,6 +80,7 @@ class MetaApi:
             if no_of_retries < self.NO_OF_MAX_RETRIES:
                 time.sleep(self.SECS_TO_SLEEP_BEFORE_RETRY + (no_of_retries * 2))
                 return self.get_all_data(ma_account_id, no_of_retries + 1)
+            logger.exception('Error while getting account data')
             raise UnknownError
         trade_data, deposit_data, withdrawal_data, unrecognized_deals = Transaction.from_raw_data(all_deals)
         return (
@@ -116,12 +125,14 @@ class MetaApi:
                 )))
             return unsaved_account_data
         except Exception:
+            logger.exception('Error while getting unsaved account data')
             raise UnknownError
     
     def remove_account(self, ma_account_id: Account):
         try:
             async_to_sync(self._remove_account)(ma_account_id)
         except Exception:
+            logger.exception('Error while removing trading account')
             raise UnknownError
 
     async def _get_all_data(self, ma_account_id: str, start_time: dt.datetime = None) -> Tuple[
