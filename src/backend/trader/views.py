@@ -471,7 +471,7 @@ class AddTradingAccountView(APIView):
         return Response(reg_account_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @staticmethod
-    def add_account(data, user):
+    def add_account(data: dict, user: Trader):
         class classyrequest:
             def __init__(self, data, user):
                 self.data = data

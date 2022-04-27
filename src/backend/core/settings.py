@@ -306,7 +306,11 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'loggers': {
-        'rq.worker': {
+        'rq': {
+            'handlers': [],
+            'level': 'DEBUG'
+        },
+        'django_rq': {
             'handlers': [],
             'level': 'DEBUG'
         }
