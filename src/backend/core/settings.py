@@ -295,10 +295,14 @@ if DEBUG:
 else:
     RQ_QUEUES = {
         'default': {
-            'URL': os.getenv('REDIS_URL')
+            'URL': os.getenv('REDIS_URL'),
+            # 10 minutes
+            'DEFAULT_TIMEOUT': 60*10
         },
         'low': {
-            'URL': os.getenv('REDIS_URL')
+            'URL': os.getenv('REDIS_URL'),
+            # 20 minutes
+            'DEFAULT_TIMEOUT': 60*20
         }
     }
 

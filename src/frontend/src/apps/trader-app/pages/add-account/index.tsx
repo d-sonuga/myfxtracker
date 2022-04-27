@@ -15,10 +15,6 @@ const AddAccount = ({onAccountAdded, noOfAccounts, userIsOnFreeTrial}: {onAccoun
      */
     const submitValues = (config: SubmitValuesTypes) => {
         const {BASE_URL, ADD_TRADING_ACCOUNT_URL} = HttpConst;
-        /**
-         * The timeout is 10 minutes because the creation of an account
-         * can actually take a long time
-         */
         Http.post({
             url: `${BASE_URL}/${ADD_TRADING_ACCOUNT_URL}/`,
             data: config.values,
