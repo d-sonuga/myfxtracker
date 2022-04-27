@@ -26,7 +26,7 @@ from django.db import IntegrityError, connection, transaction
 from .permissions import IsRefreshRequestFromSite, IsTradingAccountOwner
 import logging
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 class DeleteTrade(DestroyAPIView):
     serializer_class = TradeSerializer
@@ -441,16 +441,21 @@ class AddTradingAccountView(APIView):
     @transaction.atomic
     def post(self, request, *args, **kwargs):
         reg_account_info_serializer = AddAccountInfoSerializer(data=request.data)
+        logger.info(f'Trading account details of user with id {request.user.id} reached backend')
         if reg_account_info_serializer.is_valid():
+            logger.info(f'Trading account details of user with id {request.user.id} validated')
             if self.account_is_duplicate():
+                logger.info(f'Trading account details of user with id {request.user.id} considered duplicate')
                 return Response(
                     {'non_field_errors': ['The account already exists.']},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             if self.account_is_being_resolved():
+                logger.info(f'Trading account of user with id {request.user.id} is being resolved')
                 return Response({'detail': 'pending'}, status=status.HTTP_200_OK)
             if self.add_account_error_exists():
                 error = self.get_add_account_error()
+                logger.info(f'Trading account of user with id {request.user.id} addition encountered error {error}')
                 return Response(error, status=status.HTTP_400_BAD_REQUEST)
             UnresolvedAddAccount.objects.create(
                 user=request.user,
@@ -459,8 +464,10 @@ class AddTradingAccountView(APIView):
                 server=request.data['server'],
                 platform=request.data['platform']
             )
+            logger.info(f'Trading account of user with id {request.user.id} about to be enqueued for addition')
             rq_enqueue(resolve_add_account, request.data, request.user)
             return Response({'detail': 'pending'}, status=status.HTTP_200_OK)
+        logger.info(f'Trading account details of user with id {request.user.id} considered invalid')
         return Response(reg_account_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @staticmethod

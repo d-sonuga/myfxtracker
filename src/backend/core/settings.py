@@ -302,6 +302,17 @@ else:
         }
     }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'loggers': {
+        'rq.worker': {
+            'handlers': [],
+            'level': 'DEBUG'
+        }
+    }
+}
+
 #RQ_EXCEPTION_HANDLERS = ['trader.views.handle_resolve_add_account_exception']
 
 # The key that is used to authenticate requests to refresh all trader
