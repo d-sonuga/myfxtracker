@@ -18,7 +18,11 @@ DEBUG = os.getenv('DEBUG') == 'true'
 ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com',
     'myfxtracker.herokuapp.com',
-    'new.myfxtracker.com'
+    'new.myfxtracker.com',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://myfxtracker.com'
 ]
 
 AUTH_USER_MODEL = 'users.User'
