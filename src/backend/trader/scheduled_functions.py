@@ -3,7 +3,7 @@ from django.utils import timezone
 from . import metaapi
 from .models import Trader, MetaApiError, AccountDataLastRefreshed
 from .views import RefreshData
-from .redis_utils import low_class_conn
+from .redis_utils import rq_enqueue
 import logging
 import django_rq
 
@@ -15,8 +15,9 @@ If any error occurs, it will still attempt to update other accounts.
 """
 def refresh_all_accounts_data():
     for trader in Trader.objects.all():
-        django_rq.get_queue('low', connection=low_class_conn).enqueue(
-            resolve_refresh_all_accounts_data, trader
+        rq_enqueue(
+            resolve_refresh_all_accounts_data, trader,
+            queue_class='low',
         )
         AccountDataLastRefreshed.set_last_refreshed(timezone.now())
     
