@@ -13,9 +13,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True#os.getenv('DEBUG') == 'true'
+DEBUG = os.getenv('DEBUG') == 'true'
 
-ALLOWED_HOSTS = ['*'] if not DEBUG else [
+ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com',
     'myfxtracker.herokuapp.com',
     'new.myfxtracker.com'
@@ -55,10 +55,10 @@ INSTALLED_APPS = [
     'datasource_endpoint'
 ]
 
-if not DEBUG:
+if DEBUG:
     INSTALLED_APPS += ['corsheaders']
 
-if not DEBUG:
+if DEBUG:
     MIDDLEWARE = [
         'corsheaders.middleware.CorsMiddleware',
         'corsheaders.middleware.CorsPostCsrfMiddleware'
@@ -121,13 +121,13 @@ DATABASES = {
         }
     }
 }
-if DEBUG:
+if not DEBUG:
     DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'))
 
 SITE_ID = 1
 
 
-if not DEBUG:
+if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
     CSRF_TRUSTED_ORIGINS = [
@@ -206,7 +206,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-if not DEBUG:
+if DEBUG:
     EMAIL_HOST = '0.0.0.0'
     EMAIL_USE_TLS = False
     EMAIL_PORT = 1025
@@ -241,7 +241,7 @@ ACCOUNT_PASSWORD_MIN_LENGTH = 8
 
 # The login url is the location the user is redirected to after email confirmation
 # A link to this url will be in any confirmation email
-if not DEBUG:
+if DEBUG:
     if os.getenv('TEST') == 'true':
         LOGIN_URL = 'http://frontend:3000/log-in'
     else:
@@ -279,7 +279,7 @@ MEDIA_URL = '/media/'
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
 
 # Queues to use for processing of account adding and interactions with the metaapi servers
-if not DEBUG:
+if DEBUG:
     RQ_QUEUES = {
         'default': {
             'URL': 'redis://:@172.17.0.1:6379',
