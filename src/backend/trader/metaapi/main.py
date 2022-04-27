@@ -27,7 +27,7 @@ class MetaApi:
         if asyncio.iscoroutine(api_initializer) or asyncio.iscoroutinefunction(api_initializer):
             api_initializer = async_to_sync(api_initializer)
         try:
-            self._api = api_initializer(settings.METAAPI_TOKEN)
+            self._api = api_initializer(token=settings.METAAPI_TOKEN)
         except Exception as e:
             logger.exception('Error while initializing MetaApi')
             raise e
