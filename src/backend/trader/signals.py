@@ -10,7 +10,16 @@ from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
-        
+
+
+def clear_redis_db():
+    with StrictRedis.from_url(settings.RQ_QUEUES['default']['URL']) as conn:
+        conn.flushall()
+        conn.close()
+    with StrictRedis.from_url(settings.RQ_QUEUES['low']['URL']) as conn:
+        conn.flushall()
+        conn.close()
+
 # To determine whether or not the scheduler has already been launched
 scheduled = False
 @receiver(connection_created)
@@ -19,16 +28,18 @@ def schedule_account_data_refresh(**kwargs):
     logger.info('Db connection created')
     if not scheduled:
         scheduled = True
-        logger.info('Clearing redis db and scheduling')
-        with StrictRedis.from_url(settings.RQ_QUEUES['default']['URL']) as conn:
-            conn.flushall()
-            conn.close()
+        logger.info('Clearing redis db and getting ready to schedule')
         ACCOUNT_DATA_REFRESH_INTERVAL = 30
+        logger.info('Getting the scheduler')
         scheduler = django_rq.get_scheduler('low')
         last_refresh_time = AccountDataLastRefreshed.last_refresh_time()
-        if timezone.now() - last_refresh_time >= timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL):
+        logger.info('Last refresh time: %s' % last_refresh_time)
+        thirty_mins = timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL)
+        if timezone.now() - last_refresh_time >= thirty_mins:
+            logger.info('Enqueueing the refreshing of all accounts before scheduling')
             django_rq.get_queue('low').enqueue(refresh_all_accounts_data)
-        next_time_to_be_done = last_refresh_time - timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL)
+        next_time_to_be_done = last_refresh_time + thirty_mins
+        logger.info(f'Scheduling general account refreshing to be done at {next_time_to_be_done}')
         scheduler.schedule(
             scheduled_time=next_time_to_be_done,
             func=refresh_all_accounts_data,
@@ -36,8 +47,5 @@ def schedule_account_data_refresh(**kwargs):
             # None means forever
             repeat=None
         )
-        scheduler.enqueue_in(
-            datetime.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL),
-            refresh_all_accounts_data
-        )
-        logger.info('Scheduled')
+        logger.info('Initial scheduling done')
+
