@@ -515,7 +515,10 @@ class AccountDataLastRefreshed(models.Model):
     @staticmethod
     def last_refresh_time():
         last_refreshed_time_set = AccountDataLastRefreshed.objects.all()
-        if last_refreshed_time_set .count() == 0:
+        import logging 
+        logger = logging.getLogger(__name__)
+        logger.info('Account refresh count: %d' % last_refreshed_time_set.count())
+        if last_refreshed_time_set.count() == 0:
             AccountDataLastRefreshed.initialize_last_refreshed()
             return last_refreshed_time_set[0].time
         return last_refreshed_time_set[0].time
@@ -523,12 +526,16 @@ class AccountDataLastRefreshed(models.Model):
     @staticmethod
     def set_last_refreshed(last_refreshed: datetime):
         last_refreshed_time_set = AccountDataLastRefreshed.objects.all()
-        if last_refreshed_time_set .count() == 0:
+        if last_refreshed_time_set.count() == 0:
             instance = AccountDataLastRefreshed.initialize_last_refreshed()
             instance.time = last_refreshed
             instance.save()
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.critical('Saving time %s as last_refreshed' % last_refreshed)
         last_refreshed_time_set[0].time = last_refreshed
         last_refreshed_time_set[0].save()
+        logger.critical('%s now last refreshed' % AccountDataLastRefreshed.objects.all()[0].time)
     
     @staticmethod
     def initialize_last_refreshed():
