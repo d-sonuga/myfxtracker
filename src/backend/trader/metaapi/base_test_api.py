@@ -32,5 +32,5 @@ class BaseTestMetaApi:
     async def get_deals_by_time_range(self, start, end):
         pass
     
-    async def wait_synchronized(self):
+    async def connect(self):
         pass
