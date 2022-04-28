@@ -8,7 +8,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
 from django.utils import timezone
-import datetime
 from django.db.backends.signals import connection_created
 import django_rq
 from trader.models import AccountDataLastRefreshed
@@ -29,9 +28,9 @@ def schedule_account_data_refresh():
     if timezone.now() - last_refresh_time >= thirty_mins:
         logger.critical('Enqueueing the refreshing of all accounts before scheduling')
         django_rq.get_queue('low').enqueue(refresh_all_accounts_data)
-    next_time_to_be_done = last_refresh_time + thirty_mins
-    logger.critical('The time: %s' % timezone.now())
-    logger.critical('The Datetime time: %s' % datetime.datetime.utcnow())
+        next_time_to_be_done = timezone.now() + thirty_mins
+    else:
+        next_time_to_be_done = last_refresh_time + thirty_mins
     logger.critical(f'Scheduling general account refreshing to be done at {next_time_to_be_done}')
     scheduler.schedule(
         scheduled_time=next_time_to_be_done,
@@ -41,7 +40,6 @@ def schedule_account_data_refresh():
         repeat=None
     )
     logger.critical('Initial scheduling done')
-    AccountDataLastRefreshed.set_last_refreshed(timezone.now())
 
 if __name__ == '__main__':
     schedule_account_data_refresh()
