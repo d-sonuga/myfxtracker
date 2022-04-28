@@ -534,9 +534,7 @@ class AddTradingAccountView(APIView):
                 logger.error('An unknown integrity error occured while adding an account')
                 create_add_account_error({'non_field_errors': ['unknown error']})
         else:
-            logger.error('Unknown error in add account')
-            for attr in dir(exc):
-                logger.exception('Unknown error: %s - %s' % (attr, getattr(exc, attr)))
+            logger.exception('Unknown error in add account')
             create_add_account_error({'non_field_errors': ['unknown error']})
 
     def account_is_duplicate(self):
