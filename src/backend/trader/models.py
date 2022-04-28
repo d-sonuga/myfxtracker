@@ -533,8 +533,9 @@ class AccountDataLastRefreshed(models.Model):
         import logging
         logger = logging.getLogger(__name__)
         logger.critical('Saving time %s as last_refreshed' % last_refreshed)
-        last_refreshed_time_set[0].time = last_refreshed
-        last_refreshed_time_set[0].save()
+        instance = last_refreshed_time_set[0]
+        instance.time = last_refreshed
+        instance.save()
         logger.critical('%s now last refreshed' % AccountDataLastRefreshed.objects.all()[0].time)
     
     @staticmethod
