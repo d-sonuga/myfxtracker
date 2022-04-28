@@ -79,11 +79,13 @@ class MetaApi:
     ]:
         try:
             account_info, all_deals = async_to_sync(self._get_all_data)(ma_account_id)
-        except Exception as e:
+        except Exception:
+            logger.exception('Error while getting account data')
+            """
             if no_of_retries < self.NO_OF_MAX_RETRIES:
                 time.sleep(self.SECS_TO_SLEEP_BEFORE_RETRY + (no_of_retries * 2))
                 return self.get_all_data(ma_account_id, no_of_retries + 1)
-            logger.exception('Error while getting account data')
+            """
             raise UnknownError
         trade_data, deposit_data, withdrawal_data, unrecognized_deals = Transaction.from_raw_data(all_deals)
         return (

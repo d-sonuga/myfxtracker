@@ -72,6 +72,6 @@ const AddAccount = ({onAccountAdded, noOfAccounts, userIsOnFreeTrial}: {onAccoun
 }
 
 const TIME_TO_WAIT_BEFORE_NEXT_PENDING_REQUEST = 5000;
-const MAX_NO_OF_FOLLOW_UP_REQUESTS = 120;
+const MAX_NO_OF_FOLLOW_UP_REQUESTS = 180;
 
 export default AddAccount
