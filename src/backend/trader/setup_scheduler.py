@@ -38,6 +38,7 @@ def schedule_account_data_refresh():
         repeat=None
     )
     logger.critical('Initial scheduling done')
+    AccountDataLastRefreshed.set_last_refreshed(timezone.now())
 
 if __name__ == '__main__':
     schedule_account_data_refresh()

@@ -22,7 +22,6 @@ def refresh_all_accounts_data():
             queue_class='low',
         )
     logger.info('Done enqueueing all traders for general account refreshing')
-    AccountDataLastRefreshed.set_last_refreshed(timezone.now())
 
 
 def resolve_refresh_account_data(trader):
