@@ -145,7 +145,7 @@ class MetaApi:
     ]:
         account = await self._api.metatrader_account_api.get_account(account_id=ma_account_id)
         connection = account.get_rpc_connection()
-        await connection.wait_synchronized()
+        await connection.connect()
         account_info = await connection.get_account_information()
         start = dt.datetime.now() - dt.timedelta(days=365*1000) if start_time is None else start_time
         end = dt.datetime.now()
