@@ -14,9 +14,9 @@ To be called periodically to update all account data
 If any error occurs, it will still attempt to update other accounts.
 """
 def refresh_all_accounts_data():
-    logger.info('About to enqueue traders for general trading account data refreshing')
+    logger.critical('About to enqueue traders for general trading account data refreshing')
     for trader in Trader.objects.all():
-        logger.info(f'Enqueueing trader with id {trader.id} for general trading account refreshing')
+        logger.critical(f'Enqueueing trader with id {trader.id} for general trading account refreshing')
         rq_enqueue(
             resolve_refresh_account_data, trader,
             queue_class='low',
@@ -27,7 +27,7 @@ def refresh_all_accounts_data():
 
 def resolve_refresh_account_data(trader):
     try:
-        logger.info(
+        logger.critical(
             'Refreshing account in general '
             f'trading account refresh for trader with id {trader.id}'
         )
@@ -38,7 +38,7 @@ def resolve_refresh_account_data(trader):
             f'accounts specifically for trader with id {trader.id}'
         )
         if isinstance(exc, metaapi.UnknownError):
-            logger.info(
+            logger.critical(
                 f'New MetaApiError with detail {exc.detail} '
                 f'while refreshing trader with id {trader.id}\'s trading account data'
             )
