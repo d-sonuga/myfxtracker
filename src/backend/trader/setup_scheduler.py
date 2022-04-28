@@ -29,6 +29,7 @@ def schedule_account_data_refresh():
         logger.critical('Enqueueing the refreshing of all accounts before scheduling')
         django_rq.get_queue('low').enqueue(refresh_all_accounts_data)
     next_time_to_be_done = last_refresh_time + thirty_mins
+    print(timezone.now())
     logger.critical(f'Scheduling general account refreshing to be done at {next_time_to_be_done}')
     scheduler.schedule(
         scheduled_time=next_time_to_be_done,
