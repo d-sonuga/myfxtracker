@@ -1,6 +1,6 @@
 from django.dispatch import receiver
-from django.db.backends.signals import connection_created
 from django.utils import timezone
+from django.db.backends.signals import connection_created
 import datetime
 import django_rq
 from redis import StrictRedis
@@ -20,8 +20,8 @@ def clear_redis_db():
         conn.flushall()
         conn.close()
 
-@receiver(connection_created)
-def schedule_account_data_refresh(**kwargs):
+def schedule_account_data_refresh(sender, **kwargs):
+    connection_created.disconnect(schedule_account_data_refresh)
     logger.critical('Db connection created')
     logger.critical('Getting ready to schedule')
     # clear_redis_db()
@@ -45,5 +45,4 @@ def schedule_account_data_refresh(**kwargs):
     )
     logger.critical('Initial scheduling done')
     # So the code won't be run every time a connection to the db is made
-    connection_created.disconnect(schedule_account_data_refresh)
 

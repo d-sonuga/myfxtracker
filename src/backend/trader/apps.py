@@ -6,4 +6,7 @@ class ApisConfig(AppConfig):
 
     def ready(self):
         import trader.signals
+        from trader.signals import schedule_account_data_refresh
+        from django.db.backends.signals import connection_created
+        connection_created.connect(schedule_account_data_refresh)
         
