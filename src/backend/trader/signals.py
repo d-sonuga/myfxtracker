@@ -20,32 +20,30 @@ def clear_redis_db():
         conn.flushall()
         conn.close()
 
-# To determine whether or not the scheduler has already been launched
-scheduled = False
 @receiver(connection_created)
 def schedule_account_data_refresh(**kwargs):
-    global scheduled
     logger.critical('Db connection created')
-    if not scheduled:
-        scheduled = True
-        logger.critical('Clearing redis db and getting ready to schedule')
-        ACCOUNT_DATA_REFRESH_INTERVAL = 30
-        logger.critical('Getting the scheduler')
-        scheduler = django_rq.get_scheduler('low')
-        last_refresh_time = AccountDataLastRefreshed.last_refresh_time()
-        logger.critical('Last refresh time: %s' % last_refresh_time)
-        thirty_mins = timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL)
-        if timezone.now() - last_refresh_time >= thirty_mins:
-            logger.critical('Enqueueing the refreshing of all accounts before scheduling')
-            django_rq.get_queue('low').enqueue(refresh_all_accounts_data)
-        next_time_to_be_done = last_refresh_time + thirty_mins
-        logger.critical(f'Scheduling general account refreshing to be done at {next_time_to_be_done}')
-        scheduler.schedule(
-            scheduled_time=next_time_to_be_done,
-            func=refresh_all_accounts_data,
-            interval=ACCOUNT_DATA_REFRESH_INTERVAL*60,
-            # None means forever
-            repeat=None
-        )
-        logger.critical('Initial scheduling done')
+    logger.critical('Getting ready to schedule')
+    # clear_redis_db()
+    ACCOUNT_DATA_REFRESH_INTERVAL = 30
+    logger.critical('Getting the scheduler')
+    scheduler = django_rq.get_scheduler('low')
+    last_refresh_time = AccountDataLastRefreshed.last_refresh_time()
+    logger.critical('Last refresh time: %s' % last_refresh_time)
+    thirty_mins = timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL)
+    if timezone.now() - last_refresh_time >= thirty_mins:
+        logger.critical('Enqueueing the refreshing of all accounts before scheduling')
+        django_rq.get_queue('low').enqueue(refresh_all_accounts_data)
+    next_time_to_be_done = last_refresh_time + thirty_mins
+    logger.critical(f'Scheduling general account refreshing to be done at {next_time_to_be_done}')
+    scheduler.schedule(
+        scheduled_time=next_time_to_be_done,
+        func=refresh_all_accounts_data,
+        interval=ACCOUNT_DATA_REFRESH_INTERVAL*60,
+        # None means forever
+        repeat=None
+    )
+    logger.critical('Initial scheduling done')
+    # So the code won't be run every time a connection to the db is made
+    connection_created.disconnect(schedule_account_data_refresh)
 
