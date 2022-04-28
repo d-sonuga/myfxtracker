@@ -1,30 +1,25 @@
-from django.dispatch import receiver
+import os
+import django
+import sys
+from pathlib import Path
+path = Path(__file__).resolve().parent.parent
+sys.path.append(str(path))
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+django.setup()
+
 from django.utils import timezone
 from django.db.backends.signals import connection_created
-import datetime
 import django_rq
-from redis import StrictRedis
 from trader.models import AccountDataLastRefreshed
 from trader.scheduled_functions import refresh_all_accounts_data
-from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-def clear_redis_db():
-    with StrictRedis.from_url(settings.RQ_QUEUES['default']['URL']) as conn:
-        conn.flushall()
-        conn.close()
-    with StrictRedis.from_url(settings.RQ_QUEUES['low']['URL']) as conn:
-        conn.flushall()
-        conn.close()
-"""
-def schedule_account_data_refresh(sender, **kwargs):
-    connection_created.disconnect(schedule_account_data_refresh)
+def schedule_account_data_refresh():
     logger.critical('Db connection created')
     logger.critical('Getting ready to schedule')
-    # clear_redis_db()
     ACCOUNT_DATA_REFRESH_INTERVAL = 30
     logger.critical('Getting the scheduler')
     scheduler = django_rq.get_scheduler('low')
@@ -44,6 +39,7 @@ def schedule_account_data_refresh(sender, **kwargs):
         repeat=None
     )
     logger.critical('Initial scheduling done')
-    # So the code won't be run every time a connection to the db is made
 
-"""
+if __name__ == '__main__':
+    schedule_account_data_refresh()
+    
