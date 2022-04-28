@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 
 def schedule_account_data_refresh():
-    logger.critical('Db connection created')
     logger.critical('Getting ready to schedule')
     ACCOUNT_DATA_REFRESH_INTERVAL = 30
     logger.critical('Getting the scheduler')
