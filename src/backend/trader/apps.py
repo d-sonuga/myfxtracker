@@ -9,4 +9,4 @@ class ApisConfig(AppConfig):
         from trader.signals import schedule_account_data_refresh
         from django.db.backends.signals import connection_created
         connection_created.connect(schedule_account_data_refresh)
-        
+        connection_created.disconnect(schedule_account_data_refresh)
