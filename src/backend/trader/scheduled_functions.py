@@ -26,7 +26,7 @@ def refresh_all_accounts_data():
         )
     logger.info('Done enqueueing all traders for general account refreshing')
     AccountDataLastRefreshed.set_last_refreshed(timezone.now())
-    django_rq.get_queue(connection=conn, name='low').enqueue_in(timezone.timedelta(minutes=5))
+    django_rq.get_queue(connection=conn, name='low').enqueue_in(timezone.timedelta(minutes=5), refresh_all_accounts_data)
 
 
 def resolve_refresh_account_data(trader):
