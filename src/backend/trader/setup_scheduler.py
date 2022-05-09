@@ -11,6 +11,7 @@ from django.utils import timezone
 import django_rq
 from trader.models import AccountDataLastRefreshed
 from trader.scheduled_functions import refresh_all_accounts_data
+from django.conf import settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def schedule_account_data_refresh():
     logger.critical('Getting ready to schedule')
-    ACCOUNT_DATA_REFRESH_INTERVAL = 5
+    ACCOUNT_DATA_REFRESH_INTERVAL = settings.TRADER_ACCOUNT_DATA_REFRESH_INTERVAL
     LOW_QUEUE = 'low'
     queue = django_rq.get_queue(LOW_QUEUE)
 

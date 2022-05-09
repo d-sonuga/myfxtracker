@@ -330,3 +330,6 @@ META_API_CLASS_MODULE = 'trader.metaapi.main'
 # It will only be programmatically set to true when the test that uses it
 # runs and will be set back to false immediately
 TEST_TRADER_CREATE_ERROR = False
+
+# The interval in minutes in which trader data should be refreshed
+TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRESH_INTERVAL'))
