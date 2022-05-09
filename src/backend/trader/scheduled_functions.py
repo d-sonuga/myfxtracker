@@ -1,3 +1,4 @@
+from redis import StrictRedis
 from redis.exceptions import ResponseError as RedisResponseError, ExecAbortError
 from django.utils import timezone
 from . import metaapi
@@ -6,6 +7,7 @@ from .views import RefreshData
 from .redis_utils import rq_enqueue
 import logging
 import django_rq
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +15,7 @@ logger = logging.getLogger(__name__)
 To be called periodically to update all account data
 If any error occurs, it will still attempt to update other accounts.
 """
+conn = StrictRedis.from_url(settings.RQ_QUEUES['low']['URL'])
 def refresh_all_accounts_data():
     logger.critical('About to enqueue traders for general trading account data refreshing')
     for trader in Trader.objects.all():
@@ -23,6 +26,7 @@ def refresh_all_accounts_data():
         )
     logger.info('Done enqueueing all traders for general account refreshing')
     AccountDataLastRefreshed.set_last_refreshed(timezone.now())
+    django_rq.get_queue(connection=conn, name='low').enqueue_in(timezone.timedelta(minutes=5))
 
 
 def resolve_refresh_account_data(trader):
