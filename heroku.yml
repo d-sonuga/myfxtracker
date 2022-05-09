@@ -2,6 +2,3 @@ build:
   docker:
     web: Dockerfile
     worker: src/Dockerfile
-run:
-  web: ls && bash run.sh
-  worker: ls && bash src/run-worker.sh
