@@ -1,0 +1,14 @@
+{
+  "name": "functional_tests",
+  "version": "1.0.0",
+  "description": "Functional and frontend tests",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sonugademilade8703@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "cypress": "^9.6.0"
+  }
+}
