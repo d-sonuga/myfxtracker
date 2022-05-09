@@ -3,5 +3,5 @@ build:
     web: Dockerfile
     worker: src/Dockerfile
 run:
-  web: bash run.sh
-  worker: bash src/run-worker.sh
+  web: ls && bash run.sh
+  worker: ls && bash src/run-worker.sh
