@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {Formik, Form as FormikForm} from 'formik'
+import {Formik, Form as FormikForm, FormikConfig, FormikProps} from 'formik'
 import {CenterColumnBox} from '@components/containers'
 import {ErrorAlert, InfoAlert} from '@components/alerts'
 import {H4} from '@components/text'
@@ -9,7 +9,7 @@ import {SuccessAlert} from '@components/alerts'
 import {FormPropTypes} from './types'
 
 
-const Form = ({title, initialValues, validationSchema, onSubmit, children}: FormPropTypes) => {
+const Form = ({title, initialValues, validationSchema, onSubmit, children, ...props}: FormPropTypes) => {
     const [successMsg, setSuccessMsg] = useState('');
     const [nonFieldError, setNonFieldError] = useState('');
     const [infoMsg, setInfoMsg] = useState('');
@@ -29,8 +29,9 @@ const Form = ({title, initialValues, validationSchema, onSubmit, children}: Form
                     setSuccessMsg,
                     setNonFieldError,
                     setInfoMsg
-                })}>
-                    {({values, errors, isSubmitting, submitForm}) => (
+                })}
+                {...props}>
+                    {({values, errors, isSubmitting, submitForm, ...others}: FormikProps<any>) => (
                         <FormikForm>
                             {
                                 successMsg.length ?
@@ -67,7 +68,8 @@ const Form = ({title, initialValues, validationSchema, onSubmit, children}: Form
                                     submitForm,
                                     setSuccessMsg,
                                     setNonFieldError,
-                                    setInfoMsg
+                                    setInfoMsg,
+                                    ...others
                                 })}
                             </CenterColumnBox>
                         </FormikForm>

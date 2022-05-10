@@ -9,6 +9,7 @@ import LoadingIcon from '@components/loading-icon'
 import {HttpMsg} from '@services/generic-msg'
 import {Form} from '@apps/info-app/components'
 import {canSubmit, buildErrors} from '@components/forms'
+import { FormikProps } from 'formik'
 
 
 const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes) => {
@@ -49,7 +50,7 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                     thenFunc: () => setSubmitting(false)
                 })
             }}>
-                {({values, errors, isSubmitting, submitForm}) => (
+                {({values, errors, isSubmitting, submitForm}: FormikProps<any>) => (
                     <>
                     <TextInput name='email' placeholder='Email' type='email' data-testid='email' />
                     <TextInput name='password' placeholder='Password' type='password' data-testid='password' />

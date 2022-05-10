@@ -1,18 +1,21 @@
-import {useContext} from 'react'
+import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router'
 import ReactGA from 'react-ga4'
 import {Yup} from '@apps/info-app/components'
 import {Button} from '@components/buttons'
 import {getColor} from '@conf/utils'
 import {FormMsg, HttpMsg} from '@services/generic-msg'
-import {SelectInput, TextInput, Form} from '@components/forms'
+import {FileInput, SelectInput, TextInput, Form} from '@components/forms'
 import LoadingIcon from '@components/loading-icon'
 import {HttpResponseType} from '@services/http'
 import {buildErrors, canSubmit} from '@components/forms'
-import {ToastContext} from '@components/toast'
 import {ConfigConst, RouteConst} from '@conf/const'
 import { RawData } from '@apps/trader-app/models/types'
-
+import {P, SBP} from '@components/text'
+import { ColumnBox, RowBox } from '@components/containers'
+import { FormikProps, validateYupSchema } from 'formik'
+import {getDimen} from '@conf/utils'
+import Context from '@mui/base/TabsUnstyled/TabsContext'
 
 /**
  */
@@ -21,16 +24,19 @@ const AddAccountForm = ({
     submitValues, onAccountAdded, noOfAccounts, userIsOnFreeTrial
 }: {submitValues: Function, onAccountAdded: Function, noOfAccounts: number, userIsOnFreeTrial: boolean}) => {
     const navigate = useNavigate();
+    const [brokerNotSupportedProcessNeeded, setBrokerNotSupportedProcessNeeded] = useState(false);
+    const formInitialValues: FormInitialValues = {
+        name: '',
+        login: '',
+        password: '',
+        server: '',
+        platform: platforms[0],
+        brokerInfo: null
+    }
     return(
         <Form
             title='Add Account'
-            initialValues={{
-                name: '',
-                login: '',
-                password: '',
-                server: '',
-                platform: platforms[0]
-            }}
+            initialValues={formInitialValues}
             validationSchema={Yup.object({
                 name: Yup.string()
                     .required('Please enter the account name'),
@@ -55,7 +61,63 @@ const AddAccountForm = ({
                     .required(FormMsg.fieldRequiredErr('server')),
                 platform: Yup.string()
                     .required(FormMsg.fieldRequiredErr('years spent trading'))
-                    .oneOf(platforms)
+                    .oneOf(platforms),
+                brokerInfo: Yup.mixed()
+                    .test('fileUploaded', 'The file is required', (value) => {
+                        if(!value && brokerNotSupportedProcessNeeded){
+                            return false;
+                        }
+                        return true;
+                    })
+                    .test('fileSize', 'The file is too big', (value) => {
+                        console.log('validSize', value);
+                        if(brokerNotSupportedProcessNeeded){
+                            if(value && value.size >= 500000){
+                                return false;
+                            }
+                        }
+                        return true;
+                    })
+                    .test('correctBrokerInfoFileMt4',
+                        'Should be a .srv file for mt4. Change mt version to 5 to upload .dat file',
+                        (value, context) => {
+                        if(brokerNotSupportedProcessNeeded){
+                            if(value && value.name.endsWith('.dat') && context.parent.platform === 'mt4'){
+                                return false;
+                            }
+                        }
+                        return true;
+                    })
+                    .test('correctBrokerInfoFileMt5',
+                        'Should be a .dat file for mt5. Change mt version to 4 to upload .srv file',
+                        (value, context) => {
+                        if(brokerNotSupportedProcessNeeded){
+                            if(value && value.name.endsWith('.srv') && context.parent.platform === 'mt5'){
+                                return false;
+                            }
+                        }
+                        return true;
+                    })
+                    .test('validSrvFile',
+                        'Should be a .srv file',
+                        (value, context) => {
+                        if(brokerNotSupportedProcessNeeded){
+                            if(value && !value.name.endsWith('.srv') && context.parent.platform === 'mt4'){
+                                return false;
+                            }
+                        }
+                        return true;
+                    })
+                    .test('validDatFile',
+                        'Should be a .dat file',
+                        (value, context) => {
+                        if(brokerNotSupportedProcessNeeded){
+                            if(value && !value.name.endsWith('.dat') && context.parent.platform === 'mt5'){
+                                return false;
+                            }
+                        }
+                        return true;
+                    })
             })}
             onSubmit={({values, setErrors, setSubmitting, setSuccessMsg, setNonFieldError, setInfoMsg}) => {
                 if(userIsOnFreeTrial){
@@ -105,14 +167,15 @@ const AddAccountForm = ({
                             if('server' in errors){
                                 if(errors['server'].includes('not supported')){
                                     errors['server'] = '';
-                                    const serverErrorMsg = 'Your broker is probably not supported. ' +
-                                        'Please ensure the server you entered is precisely correct ' +
-                                        'and try again. If this error persists, please contact support.';
+                                    const serverErrorMsg = 'Unable to detect automatic broker detection.' +
+                                        'Please upload your broker.srv file (mt4) or server.dat file ' +
+                                        '(mt5) in the last field.';
                                     if(errors['non_field_errors'] && errors['non_field_errors'].length){
                                         errors['non_field_errors'] += `\n${serverErrorMsg}`;
                                     } else {
                                         errors['non_field_errors'] = serverErrorMsg;
                                     }
+                                    setBrokerNotSupportedProcessNeeded(true);
                                 }
                             }
                             setErrors(errors);
@@ -136,7 +199,10 @@ const AddAccountForm = ({
                     }
                 })
             }}>
-        {({values, errors, isSubmitting, submitForm}) => (
+        {({values, errors, isSubmitting, submitForm, validateField, validateForm}: FormikProps<any>) => {
+            console.log('form values:', values);
+            console.log('form errors:', errors);
+            return (
             <>
                 <TextInput name='name' placeholder='Account Name' data-testid='name' />
                 <TextInput name='login' placeholder='Login' data-testid='login' />
@@ -146,6 +212,23 @@ const AddAccountForm = ({
                 <SelectInput name='platform' data-testid='platform'
                     placeholder='MetaTrader Platform Version'
                     options={platforms} />
+                <ColumnBox style={{display: brokerNotSupportedProcessNeeded ? 'inline' : 'none'}}>
+                    <P>
+                        File: {values.brokerInfo && values.brokerInfo.name && values.brokerInfo.name.length 
+                                ? values.brokerInfo.name : 'None'}
+                    </P>
+                    <FileInput name='brokerInfo' data-testid='broker-info'
+                        placeholder={
+                            values.brokerInfo && values.brokerInfo.name && values.brokerInfo.name.length ?
+                            'Change Broker Info' : 'Upload Broker Info'
+                        }
+                        accept='.srv, .dat'/> 
+                    <SBP style={{color: getColor('primary-blue'), marginTop: getDimen('padding-xs')}}>
+                        {values.platform === 'mt4' ? 
+                            'Your broker .srv file (mt4)'
+                            : 'Your server .dat file (mt5)'}
+                    </SBP>
+                </ColumnBox>
                 <Button
                     data-testid='submit-button'
                     onClick={canSubmit(errors, values) ? () => submitForm() : () => {}}
@@ -158,16 +241,24 @@ const AddAccountForm = ({
                 }
                 </Button>
             </>
-            )}
+            )}}
         </Form>
     )
 }
 
-const platforms = [
+const platforms: ['mt4', 'mt5'] = [
     'mt4',
     'mt5'
 ];
 
+type FormInitialValues = {
 
+    name: string,
+    login: string,
+    password: string,
+    server: string,
+    platform: 'mt4' | 'mt5',
+    brokerInfo: File | null
+}
 
 export default AddAccountForm

@@ -323,7 +323,7 @@ METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
 # The class that will be used to interact with the MA servers
 # It is changed programmatically during tests for testing specific scenarios
 # It should not be changed manually
-META_API_CLASS_MODULE = 'trader.metaapi.main'
+META_API_CLASS_MODULE = 'trader.metaapi.test_srv_not_found_error'
 
 # To test what happens when an error occurs during user creation
 # Always set to false

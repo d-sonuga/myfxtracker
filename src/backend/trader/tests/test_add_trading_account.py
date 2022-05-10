@@ -183,7 +183,84 @@ class AddTradingAccountTests(TestCase):
                     }
                 }
             })
-    
+
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
+    def test_add_account_good_details_broker_info_file(self):
+        """
+        To test the scenario where the user with no account enters proper, well-formed details
+        of an mt4 account, the MA server doesn't return any errors and the account gets resolved
+        before the pending add account request
+        """
+        test_account_data = AddTradingAccountTestData.good_account_details
+        account_details = test_account_data['register-details']
+        resp = self.request_add_account(account_details)
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {
+            'detail': 'pending'
+        })
+        unresolved_add_account_set = UnresolvedAddAccount.objects.all()
+        self.assertEquals(unresolved_add_account_set.count(), 1)
+        unresolved_account = unresolved_add_account_set[0]
+        self.assertEquals(unresolved_account.user, self.trader)
+        self.assertEquals(unresolved_account.name, account_details['name'])
+        self.assertEquals(unresolved_account.login, account_details['login'])
+        self.assertEquals(unresolved_account.server, account_details['server'])
+        self.assertEquals(unresolved_account.platform, account_details['platform'])
+        self.assertTrue(unresolved_account.time_added - timezone.now() < timedelta(minutes=1))
+        
+        self.resolve_test_account()
+
+        self.assertEquals(UnresolvedAddAccount.objects.all().count(), 0)
+        account_set = Account.objects.filter(user=self.trader)
+        account = account_set[0]
+        self.assert_account_saved_properly(test_account_data, account)
+        self.assertEquals(account_set.count(), 1)
+        resp = self.request_pending_account(account_details)
+        self.assertEquals(resp.status_code, 201)
+        pref = Preferences.objects.get(user=self.trader)
+        current_account_id = pref.current_account.id if pref.current_account is not None else -1
+        self.maxDiff = None
+        self.assertEquals(resp.json(), {
+                'user_data': {
+                    'id': self.trader.id,
+                    'email': self.trader.email,
+                    'is_subscribed': self.trader.is_subscribed,
+                    'on_free': self.trader.on_free,
+                },
+                'trade_data': {
+                    'current_account_id': current_account_id,
+                    'last_data_refresh_time': account.time_added.isoformat().replace('+00:00', 'Z'),
+                    'accounts': {
+                        f'{account.id}': {
+                            'name': account.name,
+                            'trades': [{
+                                'pair': trade.pair,
+                                'action': trade.action,
+                                'profitLoss': float(trade.profit_loss),
+                                'commission': float(trade.commission),
+                                'swap': float(trade.swap),
+                                'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
+                                'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
+                                'openPrice': float(trade.open_price),
+                                'closePrice': float(trade.close_price),
+                                'takeProfit': float(trade.take_profit),
+                                'stopLoss': float(trade.stop_loss)
+                            } for trade in account.get_all_trades()],
+                            'deposits': [{
+                                'account': account.id,
+                                'amount': float(deposit.amount),
+                                'time': deposit.time.isoformat().replace('+00:00', 'Z')
+                            } for deposit in account.get_all_deposits()],
+                            'withdrawals': [{
+                                'account': account.id,
+                                'amount': float(withdrawal.amount),
+                                'time': withdrawal.time.isoformat().replace('+00:00', 'Z')
+                            } for withdrawal in account.get_all_withdrawals()]
+                        }
+                    }
+                }
+            })
+
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
     def test_add_account_good_details_mt4_account_resolved_after_pending_request(self):
         """

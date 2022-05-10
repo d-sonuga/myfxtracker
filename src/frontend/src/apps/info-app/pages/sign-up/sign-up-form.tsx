@@ -9,6 +9,7 @@ import LoadingIcon from '@components/loading-icon'
 import {HttpResponseType} from '@services/http'
 import {Form} from '@apps/info-app/components'
 import {buildErrors, canSubmit} from '@components/forms'
+import { FormikProps } from 'formik'
 
 
 /**
@@ -87,7 +88,7 @@ const SignUpForm = ({submitValues}: {submitValues: Function}) => {
                     thenFunc: () => setSubmitting(false)
                 })
             }}>
-        {({values, errors, isSubmitting, submitForm}) => (
+        {({values, errors, isSubmitting, submitForm}: FormikProps<any>) => (
             <>
                 <TextInput name='email' placeholder='Email' type='email' data-testid='email' />
                 <TextInput name='password1' placeholder='Password' type='password' data-testid='password' />

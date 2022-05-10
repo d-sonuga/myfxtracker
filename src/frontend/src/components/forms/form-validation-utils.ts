@@ -1,4 +1,4 @@
-import {object , string, ref, number} from 'yup'
+import {object, mixed, string, ref, number, reach} from 'yup'
 import {FormikErrors} from 'formik'
 
 
@@ -6,7 +6,9 @@ const Yup = {
     object,
     string,
     ref,
-    number
+    number,
+    mixed,
+    reach
 }
 
 /**
@@ -41,6 +43,8 @@ const buildErrors = (
  * @returns boolean
  */
 const canSubmit = (errors: FormikErrors<any>, values: {[key: string]: string}, notRequired: string[] = []) => {
+    //console.log(values);
+    //console.log(errors);
     if(Object.keys(values).length === 0){
         return false;
     }

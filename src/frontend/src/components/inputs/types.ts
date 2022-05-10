@@ -41,8 +41,16 @@ type ChipSelectInputPropTypes = {
     defaultOption?: 'first' | 'last' | number
 }
 
+type FileInputPropTypes = {
+    name: string,
+    onChange: Function,
+    accept?: string,
+    placeholder?: string
+}
+
 export type {
     InputPropTypes,
     SelectInputPropTypes,
-    ChipSelectInputPropTypes
+    ChipSelectInputPropTypes,
+    FileInputPropTypes
 }

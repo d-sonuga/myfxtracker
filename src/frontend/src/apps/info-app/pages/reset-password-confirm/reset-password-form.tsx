@@ -8,6 +8,7 @@ import {FormConst} from '@conf/const'
 import LoadingIcon from '@components/loading-icon'
 import {buildErrors, canSubmit} from '@components/forms'
 import {Form} from '@apps/info-app/components'
+import { FormikProps } from 'formik'
 
 
 const ResetPasswordConfirmForm = ({submitValues}: {submitValues: Function}) => {
@@ -75,7 +76,7 @@ const ResetPasswordConfirmForm = ({submitValues}: {submitValues: Function}) => {
                     thenFunc: () => setSubmitting(false)
                 })
             }}>
-               {({values, errors, isSubmitting, submitForm}) => (
+               {({values, errors, isSubmitting, submitForm}: FormikProps<any>) => (
                    <>
                     <TextInput name='email' placeholder='Email' data-testid='email' />
                     <TextInput name='newPassword1' placeholder='New Password' type='password'

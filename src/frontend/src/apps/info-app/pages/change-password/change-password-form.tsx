@@ -9,6 +9,7 @@ import LoadingIcon from '@components/loading-icon'
 import {ToastContext} from '@components/toast'
 import {buildErrors, canSubmit} from '@components/forms'
 import {Form} from '@apps/info-app/components'
+import { FormikProps } from 'formik'
 
 
 const ChangePasswordForm = ({submitValues}: {submitValues: Function}) => {
@@ -66,7 +67,7 @@ const ChangePasswordForm = ({submitValues}: {submitValues: Function}) => {
                     thenFunc: () => setSubmitting(false)
                 })
             }}>
-               {({values, errors, isSubmitting, submitForm}) => (
+               {({values, errors, isSubmitting, submitForm}: FormikProps<any>) => (
                    <>
                     <TextInput name='newPassword1' placeholder='New Password'
                         type='password' data-testid='new-password1' />

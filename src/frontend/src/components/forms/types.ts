@@ -1,5 +1,5 @@
 import {ReactNode} from 'react'
-import {FormikValues, FormikHelpers, FormikErrors} from 'formik'
+import {FormikValues, FormikHelpers, FormikErrors, FormikProps, Formik, FormikConfig} from 'formik'
 import {ObjectSchema} from 'yup'
 
 type FormPropTypes = {
@@ -10,7 +10,7 @@ type FormPropTypes = {
     /**
      * The initial values to be used in the form
      */
-    initialValues: {[key: string]: string},
+    initialValues: {[key: string]: any},
     validationSchema: ObjectSchema<any, any, any, any>
     /**
      * The function to be run on submitting the form
@@ -27,7 +27,7 @@ type FormPropTypes = {
     children: {
         (utils: FormUtils): ReactNode
     }
-}
+} & FormikConfig<any>
 
 type FormUtils = {
     values: FormikValues,
@@ -37,7 +37,7 @@ type FormUtils = {
     setSuccessMsg: Function,
     setNonFieldError: Function,
     setInfoMsg: Function
-}
+} & FormikProps<any>
 
 export type {
     FormPropTypes,
