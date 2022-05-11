@@ -16,6 +16,8 @@ import { ColumnBox, RowBox } from '@components/containers'
 import { FormikProps, validateYupSchema } from 'formik'
 import {getDimen} from '@conf/utils'
 import Context from '@mui/base/TabsUnstyled/TabsContext'
+import { filterableGridColumnsSelector } from '@mui/x-data-grid'
+import { FunctionTypeNode } from 'typescript'
 
 /**
  */
@@ -135,73 +137,43 @@ const AddAccountForm = ({
                 }
                 setNonFieldError('');
                 setInfoMsg('Please wait. This could take several minutes.');
-                submitValues({
-                    values,
-                    successFunc: (data: RawData) => {
-                        setNonFieldError('');
-                        /*
-                        ReactGA.event('add_account', {
-                            method: 'site '
+                let processedValues;
+                if(!values.brokerInfo){
+                    processedValues = Promise.resolve(values);
+                } else {
+                    const fileName = values.brokerInfo.name;
+                    processedValues = toBase64(values.brokerInfo)
+                        .then((brokerInfo) => {
+                            return Promise.resolve({
+                                ...values,
+                                brokerInfoContent: brokerInfo,
+                                brokerInfoName: fileName
+                            })
                         })
-                        */
-                        onAccountAdded(data);
-                        navigate(`/${RouteConst.TRADER_APP_ROUTE}/`);
-                    },
-                    errorFunc: (err: any) => {
-                        try {
-                            const errors: {[key: string]: string} = buildErrors(err.response.data, {
-                                login: 'login',
-                                server: 'server',
-                                password: 'password',
-                                platform: 'platform'
-                            });
-                            if(errors['non_field_errors']){
-                                if(errors['non_field_errors'].includes('unknown error')){
-                                    const unknownErrorMsg = 'An unknown error occured. ' +
-                                        'Please, ensure the details you entered are precisely ' +
-                                        'correct and try again. If this error persists, please ' +
-                                        'contact support.';
-                                    errors['non_field_errors'] = unknownErrorMsg;
-                                }
-                            }
-                            if('server' in errors){
-                                if(errors['server'].includes('not supported')){
-                                    errors['server'] = '';
-                                    const serverErrorMsg = 'Unable to detect automatic broker detection.' +
-                                        'Please upload your broker.srv file (mt4) or server.dat file ' +
-                                        '(mt5) in the last field.';
-                                    if(errors['non_field_errors'] && errors['non_field_errors'].length){
-                                        errors['non_field_errors'] += `\n${serverErrorMsg}`;
-                                    } else {
-                                        errors['non_field_errors'] = serverErrorMsg;
-                                    }
-                                    setBrokerNotSupportedProcessNeeded(true);
-                                }
-                            }
-                            setErrors(errors);
-                            if(errors['non_field_errors']){
-                                setNonFieldError(errors['non_field_errors'])
-                            }
-                            setSuccessMsg('')
-                        } catch(err){
+                        .catch((err) => {
                             console.log(err);
-                            setNonFieldError(
-                                'An error occured. ' +
-                                'Please check your credentials and ' +
-                                'make sure they are precisely correct. ' +
-                                'If this error persists, please contact support.'
-                            );
+                            setInfoMsg('');
+                            setSubmitting(false);
+                            setNonFieldError('Sorry. An unexpected error occured.');
+                        })
+                }
+                processedValues.then((values) => {
+                    console.log(values);
+                    submitValues({
+                        values,
+                        successFunc: submitValuesSuccessFunc(setNonFieldError, onAccountAdded, navigate),
+                        errorFunc: submitValuesErrorFunc(
+                            setBrokerNotSupportedProcessNeeded,
+                            setErrors, setNonFieldError, setSuccessMsg
+                        ),
+                        thenFunc: () => {
+                            setSubmitting(false);
+                            setInfoMsg('');
                         }
-                    },
-                    thenFunc: () => {
-                        setSubmitting(false);
-                        setInfoMsg('');
-                    }
+                    })
                 })
             }}>
         {({values, errors, isSubmitting, submitForm, validateField, validateForm}: FormikProps<any>) => {
-            console.log('form values:', values);
-            console.log('form errors:', errors);
             return (
             <>
                 <TextInput name='name' placeholder='Account Name' data-testid='name' />
@@ -223,7 +195,8 @@ const AddAccountForm = ({
                             'Change Broker Info' : 'Upload Broker Info'
                         }
                         accept='.srv, .dat'/> 
-                    <SBP style={{color: getColor('primary-blue'), marginTop: getDimen('padding-xs')}}>
+                    <SBP style={{color: getColor('primary-blue'), marginTop: getDimen('padding-xs'),
+                        marginBottom: getDimen('padding-xs')}}>
                         {values.platform === 'mt4' ? 
                             'Your broker .srv file (mt4)'
                             : 'Your server .dat file (mt5)'}
@@ -244,6 +217,87 @@ const AddAccountForm = ({
             )}}
         </Form>
     )
+}
+
+const submitValuesSuccessFunc = (setNonFieldError: Function, onAccountAdded: Function, navigate: Function) => {
+    return (data: RawData) => {
+        setNonFieldError('');
+        /*
+        ReactGA.event('add_account', {
+            method: 'site '
+        })
+        */
+        onAccountAdded(data);
+        navigate(`/${RouteConst.TRADER_APP_ROUTE}/`);
+    }
+}
+
+const submitValuesErrorFunc = (setBrokerNotSupportedProcessNeeded: Function, 
+    setErrors: Function, setNonFieldError: Function, setSuccessMsg: Function) => {
+    return (err: any) => {
+        try {
+            const errors: {[key: string]: string} = buildErrors(err.response.data, {
+                login: 'login',
+                server: 'server',
+                password: 'password',
+                platform: 'platform'
+            });
+            if(errors['non_field_errors']){
+                if(errors['non_field_errors'].includes('unknown error')){
+                    const unknownErrorMsg = 'An error occured. ' +
+                        'Please, ensure the details you entered are precisely ' +
+                        'correct and try again. If this error persists, please ' +
+                        'contact support.';
+                    errors['non_field_errors'] = unknownErrorMsg;
+                }
+            }
+            if('server' in errors){
+                if(errors['server'].includes('not supported')){
+                    errors['server'] = '';
+                    const serverErrorMsg = 'Unable to perform automatic broker detection. ' +
+                        'Please upload your broker .srv file (mt4) or servers .dat file ' +
+                        '(mt5) in the last field.';
+                    if(errors['non_field_errors'] && errors['non_field_errors'].length){
+                        errors['non_field_errors'] += `\n${serverErrorMsg}`;
+                    } else {
+                        errors['non_field_errors'] = serverErrorMsg;
+                    }
+                    setBrokerNotSupportedProcessNeeded(true);
+                }
+            }
+            setErrors(errors);
+            if(errors['non_field_errors']){
+                setNonFieldError(errors['non_field_errors'])
+            }
+            setSuccessMsg('')
+        } catch(err){
+            console.log(err);
+            setNonFieldError(
+                'An error occured. ' +
+                'Please check your credentials and ' +
+                'make sure they are precisely correct. ' +
+                'If this error persists, please contact support.'
+            );
+        }
+    }
+}
+
+const toBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => {
+            let result = fileReader.result;
+            if(typeof(result) === 'string'){
+                const THE_DATA = 1;
+                result = result.split('data:application/octet-stream;base64,')[THE_DATA];
+            }
+            resolve(result);
+        }
+        fileReader.onerror = (err: any) => {
+            reject(err);
+        }
+    })
 }
 
 const platforms: ['mt4', 'mt5'] = [

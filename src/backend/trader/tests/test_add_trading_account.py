@@ -4,6 +4,7 @@ from django.test.utils import TestContextDecorator
 from django.utils import timezone
 from django.conf import settings
 import django_rq
+from itsdangerous import base64_decode
 from rest_framework.authtoken.models import Token
 from trader.metaapi.main import Transaction
 from trader.models import (
@@ -130,6 +131,8 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(unresolved_account.server, account_details['server'])
         self.assertEquals(unresolved_account.platform, account_details['platform'])
         self.assertTrue(unresolved_account.time_added - timezone.now() < timedelta(minutes=1))
+        self.assertEquals(unresolved_account.broker_info_name, None)
+        self.assertEquals(unresolved_account.broker_info_content, None)
         
         self.resolve_test_account()
 
@@ -188,10 +191,10 @@ class AddTradingAccountTests(TestCase):
     def test_add_account_good_details_broker_info_file(self):
         """
         To test the scenario where the user with no account enters proper, well-formed details
-        of an mt4 account, the MA server doesn't return any errors and the account gets resolved
-        before the pending add account request
+        of an mt4 account and a .srv file, the MA server doesn't return any errors and the
+        account gets resolved
         """
-        test_account_data = AddTradingAccountTestData.good_account_details
+        test_account_data = AddTradingAccountTestData.good_account_with_srv_file_details
         account_details = test_account_data['register-details']
         resp = self.request_add_account(account_details)
         self.assertEquals(resp.status_code, 200)
@@ -207,6 +210,11 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(unresolved_account.server, account_details['server'])
         self.assertEquals(unresolved_account.platform, account_details['platform'])
         self.assertTrue(unresolved_account.time_added - timezone.now() < timedelta(minutes=1))
+        self.assertEquals(unresolved_account.broker_info_name, account_details['brokerInfoName'])
+        self.assertEquals(
+            unresolved_account.broker_info_content.tobytes(),
+            base64_decode(account_details['brokerInfoContent'])
+        )
         
         self.resolve_test_account()
 
@@ -350,6 +358,8 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(unresolved_add_account_set.count(), 1)
         unresolved_account = unresolved_add_account_set[0]
         self.assert_unresolved_add_account_saved_properly(unresolved_account, account_details, self.trader)
+        self.assertEquals(unresolved_account.broker_info_name, None)
+        self.assertEquals(unresolved_account.broker_info_content, None)
         
         resp = self.request_pending_account(account_details)
         self.assertEquals(UnresolvedAddAccount.objects.all().count(), 1)

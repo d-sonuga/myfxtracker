@@ -9,6 +9,7 @@ class MainMetaApi(BaseTestMetaApi):
     no errors
     """
     def __init__(self, token):
+        super().__init__(token)
         self.metatrader_account_api = self
         self.test_data = settings.TEST_DATA if hasattr(settings, 'TEST_DATA') else AddTradingAccountTestData
     

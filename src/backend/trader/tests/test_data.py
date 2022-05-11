@@ -324,20 +324,36 @@ class AddTradingAccountTestData:
             }
         ]}
     }
+    def load_file_content_b64(file):
+        import os
+        mod_dir = os.path.dirname(__file__)
+        file_path = os.path.join(mod_dir, file)
+        f = open(file_path, 'rb')
+        f = f.read()
+        import base64
+        return str(base64.b64encode(f))
+    good_account_with_srv_file_details = {
+        **good_account_details,
+        'register-details': {
+            **good_account_details['register-details'],
+            'brokerInfoName': 'TradersGlobalGroup-Real',
+            'brokerInfoContent': load_file_content_b64('dummy-files/TradersGlobalGroup-Real.srv')
+        }
+    }
     class GoodAccountMT5:
         good_account_details = {
             'register-details': {
                 'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi',
                 'login': 129320,
                 'password': 'password',
-                'server': 'TradersGlobalGroup-Demo',
+                'server': 'TradersGlobalGroup-Real',
                 'platform': 'mt5'
             },
             'account-info': {
                 'platform': 'mt5',
                 'broker': 'Traders Global Group Incorporated',
                 'currency': 'USD',
-                'server': 'TradersGlobalGroup-Demo', 
+                'server': 'TradersGlobalGroup-Real', 
                 'balance': 10823, 
                 'equity': 10823,
                 'margin': 0, 

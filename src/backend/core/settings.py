@@ -306,11 +306,6 @@ else:
         }
     }
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-}
-
 #RQ_EXCEPTION_HANDLERS = ['trader.views.handle_resolve_add_account_exception']
 
 # The key that is used to authenticate requests to refresh all trader
@@ -323,7 +318,7 @@ METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
 # The class that will be used to interact with the MA servers
 # It is changed programmatically during tests for testing specific scenarios
 # It should not be changed manually
-META_API_CLASS_MODULE = 'trader.metaapi.test_srv_not_found_error'
+META_API_CLASS_MODULE = 'trader.metaapi.main'
 
 # To test what happens when an error occurs during user creation
 # Always set to false
@@ -332,4 +327,5 @@ META_API_CLASS_MODULE = 'trader.metaapi.test_srv_not_found_error'
 TEST_TRADER_CREATE_ERROR = False
 
 # The interval in minutes in which trader data should be refreshed
-TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRESH_INTERVAL'))
+THIRTY_MINS = 30
+TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRESH_INTERVAL', THIRTY_MINS))

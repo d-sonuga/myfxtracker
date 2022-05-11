@@ -436,6 +436,8 @@ class UnresolvedAddAccount(models.Model):
     server = models.TextField()
     platform = models.CharField(choices=Account.platform_choices, max_length=5)
     time_added = models.DateTimeField(auto_now_add=True)
+    broker_info_name = models.CharField(max_length=2000, null=True)
+    broker_info_content = models.BinaryField(null=True)
 
 
 class AddAccountError(models.Model):

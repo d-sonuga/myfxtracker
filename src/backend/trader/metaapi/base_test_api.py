@@ -10,6 +10,7 @@ class BaseTestMetaApi:
     """
     def __init__(self, token):
         self.metatrader_account_api = self
+        self.provisioning_profile_api = self
     
     @property
     def id(self):
@@ -33,4 +34,17 @@ class BaseTestMetaApi:
         pass
     
     async def connect(self):
+        pass
+    
+    async def create_provisioning_profile(self, profile):
+        return ProvisioningProfile(self)
+
+    
+class ProvisioningProfile:
+    def __init__(self, test_api) -> None:
+        RANDOM_NUMBER = 2
+        self.test_api = test_api
+        self.id = RANDOM_NUMBER
+    
+    async def upload_file(self, file_name, file):
         pass

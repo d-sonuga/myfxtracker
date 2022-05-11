@@ -1,4 +1,5 @@
 import asyncio
+from itsdangerous import base64_decode
 from metaapi_cloud_sdk import MetaApi as MainMetaApi
 from django.conf import settings
 from django.db import models
@@ -15,6 +16,7 @@ from trader.metaapi_types import (
     RawTradeDealData, RawDepositWithdrawalDealData, AccountData
 )
 import logging
+import base64
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +27,7 @@ class MetaApi:
         mtapi_module = import_module(mtapi_module_name)
         api_initializer: MainMetaApi = getattr(mtapi_module, 'MainMetaApi')
         try:
-            self._api = async_to_sync(self.initialize_api)(api_initializer, settings.METAAPI_TOKEN)
+            self._api: MainMetaApi = async_to_sync(self.initialize_api)(api_initializer, settings.METAAPI_TOKEN)
         except Exception as e:
             logger.exception('Error while initializing MetaApi')
             raise e
@@ -37,8 +39,28 @@ class MetaApi:
         return api_initializer(token=token)
 
     def create_account(self, account_details: RegisterAccountDetails) -> Tuple[str, str]:
-        try:
-            account = async_to_sync(self._api.metatrader_account_api.create_account)(account={
+        async def _create_account():
+            extras = {}
+            logger.info(account_details)
+            if account_details.get('brokerInfoName') and account_details.get('brokerInfoContent'):
+                broker_info_name = account_details.get('brokerInfoName')
+                broker_info_content = account_details.get('brokerInfoContent')
+                provProfile = await self._api.provisioning_profile_api.create_provisioning_profile(profile={
+                    'name': account_details.get('name'),
+                    'version': 4 if account_details.get('platform') == 'mt4' else 5, # MetaTrader version
+                    'brokerTimezone': 'EET',
+                    'brokerDSTSwitchTimezone': 'EET'
+                })
+                filename = 'broker.srv' if broker_info_name.endswith('.srv') else 'servers.dat'
+                with open(broker_info_name, 'wb') as f:
+                    content = base64_decode(broker_info_content)
+                    f.write(content)
+                await provProfile.upload_file(
+                    file_name=filename,
+                    file=broker_info_name
+                )
+                extras = {'provisioningProfileId': provProfile.id}
+            account = await self._api.metatrader_account_api.create_account(account={
                 'login': account_details['login'],
                 'type': 'cloud',
                 'password': account_details['password'],
@@ -47,9 +69,12 @@ class MetaApi:
                 # Have to do this because MA keeps the name up to the first space
                 'name': account_details['name'],
                 'magic': 000000,
-                'platform': account_details['platform']
+                'platform': account_details['platform'],
+                **extras
             })
             return account.id, account_details['name'].strip()
+        try:
+            return async_to_sync(_create_account)()
         except Exception as e:
             if hasattr(e, 'details'):
                 if e.details == 'E_SRV_NOT_FOUND':
@@ -81,11 +106,6 @@ class MetaApi:
             account_info, all_deals = async_to_sync(self._get_all_data)(ma_account_id)
         except Exception:
             logger.exception('Error while getting account data')
-            """
-            if no_of_retries < self.NO_OF_MAX_RETRIES:
-                time.sleep(self.SECS_TO_SLEEP_BEFORE_RETRY + (no_of_retries * 2))
-                return self.get_all_data(ma_account_id, no_of_retries + 1)
-            """
             raise UnknownError
         trade_data, deposit_data, withdrawal_data, unrecognized_deals = Transaction.from_raw_data(all_deals)
         return (

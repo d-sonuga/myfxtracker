@@ -7,6 +7,8 @@ class RegisterAccountDetails(TypedDict):
     password: str
     name: Optional[str]
     platform: str
+    brokerInfoName: Optional[str]
+    brokerInfoContent: Optional[str]
 
 
 class AccountData(TypedDict):

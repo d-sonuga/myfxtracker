@@ -1,6 +1,7 @@
 import datetime
 from django.shortcuts import redirect
 from django.utils import timezone
+from itsdangerous import base64_decode
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -440,6 +441,7 @@ class AddTradingAccountView(APIView):
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):
+        logger.info(request.data)
         reg_account_info_serializer = AddAccountInfoSerializer(data=request.data)
         logger.info(f'Trading account details of user with id {request.user.id} reached backend')
         if reg_account_info_serializer.is_valid():
@@ -457,12 +459,17 @@ class AddTradingAccountView(APIView):
                 error = self.get_add_account_error()
                 logger.info(f'Trading account of user with id {request.user.id} addition encountered error {error}')
                 return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            content = request.data.get('brokerInfoContent')
+            if content:
+                content = base64_decode(content)
             UnresolvedAddAccount.objects.create(
                 user=request.user,
                 name=request.data['name'],
                 login=request.data['login'],
                 server=request.data['server'],
-                platform=request.data['platform']
+                platform=request.data['platform'],
+                broker_info_name=request.data.get('brokerInfoName'),
+                broker_info_content=content
             )
             logger.info(f'Trading account of user with id {request.user.id} about to be enqueued for addition')
             rq_enqueue(resolve_add_account, request.data, request.user)
@@ -532,10 +539,16 @@ class AddTradingAccountView(APIView):
                 create_add_account_error({'non_field_errors': ['The account already exists.']})
             else:
                 logger.exception('An unknown integrity error occured while adding an account')
-                create_add_account_error({'non_field_errors': ['unknown error']})
+                if hasattr(exc, 'detail'):
+                    create_add_account_error({'non_field_errors': [exc.detail]})
+                else:
+                    create_add_account_error({'non_field_errors': ['unknown error']})
         else:
             logger.exception('Unknown error in add account')
-            create_add_account_error({'non_field_errors': ['unknown error']})
+            if hasattr(exc, 'detail'):
+                create_add_account_error({'non_field_errors': [exc.detail]})
+            else:
+                create_add_account_error({'non_field_errors': ['unknown error']})
 
     def account_is_duplicate(self):
         return Account.objects.filter(
