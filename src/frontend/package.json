@@ -25,6 +25,7 @@
     "@udecode/plate-ui-placeholder": "^9.2.1",
     "@udecode/plate-ui-toolbar": "^9.2.1",
     "axios": "^0.24.0",
+    "flutterwave-react-v3": "^1.2.1",
     "formik": "^2.2.9",
     "formik-mui": "^4.0.0-alpha.3",
     "react": "^17.0.2",

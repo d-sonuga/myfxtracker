@@ -9,6 +9,7 @@ import TimeAnalysis from './time-analysis'
 import Settings from './settings'
 import Notebook from './notes'
 export {default as AddAccount} from './add-account'
+export {default as SubscribeNow} from './subscribe-now'
 
 
 export {

@@ -55,6 +55,7 @@ class GlobalData {
         this.getTradeAccountIdOf = this.getTradeAccountIdOf.bind(this);
         this.removeAccount = this.removeAccount.bind(this);
         this.lastDataRefreshTime = this.lastDataRefreshTime.bind(this);
+        this.subscribeUser = this.subscribeUser.bind(this);
     }
     /** Has the data from the backend loaded */
     hasLoaded(): boolean {
@@ -145,6 +146,13 @@ class GlobalData {
         const newGlobalData = new GlobalData(newRawData);
         return newGlobalData;
     }
+    /** Set the user's is subscribed field to true */
+    subscribeUser(): GlobalData {
+        const rawDataClone: RawData = cloneObject(this.rawData);
+        rawDataClone.user_data.is_subscribed = true;
+        rawDataClone.user_data.has_paid = true;
+        return new GlobalData(rawDataClone);
+    }
     /** Are there any accounts? */
     noAccounts(): boolean {
         return this.numberOfAccounts() === 0;
@@ -166,6 +174,10 @@ class GlobalData {
     }
     userIsOnFreeTrial(): boolean {
         return this.rawData.user_data.on_free
+    }
+    userHasPaid(): boolean {
+        const hasPaid = this.rawData.user_data.has_paid;
+        return hasPaid !== undefined && hasPaid
     }
 }
 

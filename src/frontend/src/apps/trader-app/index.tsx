@@ -4,13 +4,16 @@ import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
 import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis, AddAccount,
-    PeriodAnalysis, TimeAnalysis, PairsAnalysis} from '@apps/trader-app/pages'
+    PeriodAnalysis, TimeAnalysis, PairsAnalysis, SubscribeNow} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
 import {Http, useNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
 import {ToastContext} from '@components/toast'
 import refreshAccountData from './services/refresh-account-data'
 import {RawData} from './models/types'
+import {AddAccountPropTypes} from './pages/add-account/types'
+import {SettingsPropTypes} from './pages/settings/types'
+import {NotebookPropTypes} from './pages/notes/types'
 
 const Notebook = lazy(() => import('@apps/trader-app/pages/notes'));
 const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
@@ -40,16 +43,16 @@ const TraderApp = () => {
     }
     /** Function called when refresh account data is called from the data status bar */
     const refreshData = () => refreshAccountData(Toast, setGlobalData, setDataIsRefreshing);
+    /** Function called when a user makes a subscription */
+    const onNewSubscription = () => {
+        const newGlobalData = globalData.subscribeUser();
+        setGlobalData(newGlobalData);
+    }
     const navigate = useNavigate();
     useEffect(() => {
         Http.initNavigate(navigate);
     }, [])
     const noteData = useNoteData();
-    
-    const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
-        TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE, TRADER_ADD_ACCOUNT_ROUTE,
-        TRADER_TIME_ANALYSIS_ROUTE, TRADER_PERIOD_ANALYSIS_ROUTE, TRADER_EXPENSES_ROUTE, TRADER_NOTES_ROUTE
-    } = RouteConst;
     
     return(
         <>
@@ -59,46 +62,30 @@ const TraderApp = () => {
                     <CurrentAccountChangerContext.Provider value={onCurrentAccountChange}>
                         <RefreshDataContext.Provider value={refreshData}>
                         <DataIsRefreshingContext.Provider value={dataIsRefreshing}>
+                        <NewSubscriptionContext.Provider value={onNewSubscription}>
                         {(() => {
-                            if(globalData.hasLoaded()){
-                                if(globalData.noAccounts()){
-                                    if(location.pathname.endsWith(TRADER_SETTINGS_ROUTE)){
-                                        return <Settings removeAccountFromGlobalData={removeAccountFromGlobalData} />
-                                    }
-                                    return (
-                                        <AddAccount
-                                            onAccountAdded={onAccountAdded}
-                                            noOfAccounts={globalData.numberOfAccounts()}
-                                            userIsOnFreeTrial={globalData.userIsOnFreeTrial()} />
-                                    );
-                                } else {
-                                    return (
-                                        <PageLoadingErrorBoundary>
-                                            <Suspense fallback={<PageStillLoading />}>
-                                                <Routes>
-                                                    <Route path={TRADER_OVERVIEW_ROUTE} element={<Overview />} />
-                                                    <Route path={TRADER_JOURNAL_ROUTE} element={<Journal />} />
-                                                    <Route path={TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE} element={<LongShortAnalysis />} />
-                                                    <Route path={TRADER_CASH_AND_GAINS_ROUTE} element={<CashAndGains />} />
-                                                    <Route path={TRADER_PAIRS_ANALYSIS_ROUTE} element={<PairsAnalysis />} />
-                                                    <Route path={TRADER_TIME_ANALYSIS_ROUTE} element={<TimeAnalysis />} />
-                                                    <Route path={TRADER_PERIOD_ANALYSIS_ROUTE} element={<PeriodAnalysis />} />
-                                                    <Route path={TRADER_EXPENSES_ROUTE} element={<Expenses />} />
-                                                    <Route path={TRADER_NOTES_ROUTE} element={<Notebook noteData={noteData} />} />
-                                                    <Route path={TRADER_SETTINGS_ROUTE} element={<Settings removeAccountFromGlobalData={removeAccountFromGlobalData} />} />
-                                                    <Route path={TRADER_ADD_ACCOUNT_ROUTE} element={<AddAccount 
-                                                        onAccountAdded={onAccountAdded}
-                                                        noOfAccounts={globalData.numberOfAccounts()}
-                                                        userIsOnFreeTrial={globalData.userIsOnFreeTrial()} />}
-                                                        />
-                                                </Routes>
-                                            </Suspense>
-                                        </PageLoadingErrorBoundary>
-                                    );
-                                }
-                            }
-                            return <PageStillLoading />
+                            const pageMap = pageMapConfig(
+                                globalData,
+                                {onAccountAdded: onAccountAdded,
+                                    noOfAccounts: globalData.numberOfAccounts(),
+                                    userIsOnFreeTrial: globalData.userIsOnFreeTrial()
+                                },
+                                {removeAccountFromGlobalData: removeAccountFromGlobalData},
+                                {noteData: noteData}
+                            )
+                            return(
+                                <PageLoadingErrorBoundary>
+                                    <Suspense fallback={<PageStillLoading />}>
+                                        <Routes>
+                                            {Object.keys(pageMap).map((route: string, i: number) => (
+                                                <Route path={route} element={pageMap[route]} key={i} />
+                                            ))}
+                                        </Routes>
+                                    </Suspense>
+                                </PageLoadingErrorBoundary>
+                            )
                         })()}
+                        </NewSubscriptionContext.Provider>
                         </DataIsRefreshingContext.Provider>
                         </RefreshDataContext.Provider>
                     </CurrentAccountChangerContext.Provider>
@@ -121,11 +108,93 @@ const CurrentAccountChangerContext = createContext((newCurrentAccountId: number)
  */
 const DataIsRefreshingContext = createContext(false);
 const RefreshDataContext = createContext(() => {});
+const NewSubscriptionContext = createContext(() => {});
+
+/** Returns a mapping of routes to components depending on the state */
+const pageMapConfig = (
+    globalData: GlobalData,
+    addAccountComponentConfig: AddAccountPropTypes,
+    settingsComponentConfig: SettingsPropTypes,
+    notebookProps: NotebookPropTypes
+) => {
+    const addAccountComponent = <AddAccount {...addAccountComponentConfig} />
+    const pageStillLoadingComponent = <PageStillLoading />
+    const subscribeNowComponent = <SubscribeNow 
+        email={globalData.getUserEmail()}
+        userHasPaidOnce={globalData.userHasPaid()}
+        userId={globalData.getUserId()}
+        />
+    if(globalData.hasLoaded()){
+        if (!globalData.userIsOnFreeTrial() && !globalData.userIsSubscribed()){
+            return {
+                [TRADER_OVERVIEW_ROUTE]: subscribeNowComponent,
+                [TRADER_JOURNAL_ROUTE]: subscribeNowComponent,
+                [TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE]: subscribeNowComponent,
+                [TRADER_CASH_AND_GAINS_ROUTE]: subscribeNowComponent,
+                [TRADER_SETTINGS_ROUTE]: <Settings {...settingsComponentConfig} />,
+                [TRADER_PAIRS_ANALYSIS_ROUTE]: subscribeNowComponent,
+                [TRADER_ADD_ACCOUNT_ROUTE]: subscribeNowComponent,
+                [TRADER_TIME_ANALYSIS_ROUTE]: subscribeNowComponent,
+                [TRADER_PERIOD_ANALYSIS_ROUTE]: subscribeNowComponent,
+                [TRADER_EXPENSES_ROUTE]: subscribeNowComponent,
+                [TRADER_NOTES_ROUTE]: subscribeNowComponent,
+            }
+        } else if(globalData.noAccounts()){
+            return {
+                [TRADER_OVERVIEW_ROUTE]: addAccountComponent,
+                [TRADER_JOURNAL_ROUTE]: addAccountComponent,
+                [TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE]: addAccountComponent,
+                [TRADER_CASH_AND_GAINS_ROUTE]: addAccountComponent,
+                [TRADER_SETTINGS_ROUTE]: <Settings {...settingsComponentConfig} />,
+                [TRADER_PAIRS_ANALYSIS_ROUTE]: addAccountComponent,
+                [TRADER_ADD_ACCOUNT_ROUTE]: addAccountComponent,
+                [TRADER_TIME_ANALYSIS_ROUTE]: addAccountComponent,
+                [TRADER_PERIOD_ANALYSIS_ROUTE]: addAccountComponent,
+                [TRADER_EXPENSES_ROUTE]: addAccountComponent,
+                [TRADER_NOTES_ROUTE]: addAccountComponent,
+            }
+        } else {
+            return {
+                [TRADER_OVERVIEW_ROUTE]: <Overview />,
+                [TRADER_JOURNAL_ROUTE]: <Journal />,
+                [TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE]: <LongShortAnalysis />,
+                [TRADER_CASH_AND_GAINS_ROUTE]: <CashAndGains />,
+                [TRADER_SETTINGS_ROUTE]: <Settings {...settingsComponentConfig} />,
+                [TRADER_PAIRS_ANALYSIS_ROUTE]: <PairsAnalysis />,
+                [TRADER_ADD_ACCOUNT_ROUTE]: addAccountComponent,
+                [TRADER_TIME_ANALYSIS_ROUTE]: <TimeAnalysis />,
+                [TRADER_PERIOD_ANALYSIS_ROUTE]: <PeriodAnalysis />,
+                [TRADER_EXPENSES_ROUTE]: <Expenses />,
+                [TRADER_NOTES_ROUTE]: <Notebook {...notebookProps} />,
+            }
+        }
+    } else {
+        return {
+            [TRADER_OVERVIEW_ROUTE]: pageStillLoadingComponent,
+            [TRADER_JOURNAL_ROUTE]: pageStillLoadingComponent,
+            [TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_CASH_AND_GAINS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_SETTINGS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_PAIRS_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_ADD_ACCOUNT_ROUTE]: pageStillLoadingComponent,
+            [TRADER_TIME_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_PERIOD_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_EXPENSES_ROUTE]: pageStillLoadingComponent,
+            [TRADER_NOTES_ROUTE]: pageStillLoadingComponent
+        }
+    }
+}
+
+const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
+    TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE, TRADER_ADD_ACCOUNT_ROUTE,
+    TRADER_TIME_ANALYSIS_ROUTE, TRADER_PERIOD_ANALYSIS_ROUTE, TRADER_EXPENSES_ROUTE, TRADER_NOTES_ROUTE
+} = RouteConst;
 
 export default TraderApp
 export {
     GlobalDataContext,
     CurrentAccountChangerContext,
     DataIsRefreshingContext,
-    RefreshDataContext
+    RefreshDataContext,
+    NewSubscriptionContext
 }

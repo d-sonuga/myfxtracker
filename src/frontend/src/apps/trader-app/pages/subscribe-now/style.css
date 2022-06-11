@@ -1,0 +1,37 @@
+#apps-trader-app-pages-subscribe-now {
+    display: flex;
+    justify-content: space-around;
+    margin-left: var(--dimen-padding-big);
+    margin-right: var(--dimen-padding-big);
+}
+
+.apps-trader-app-pages-subscribe-now-subscription {
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: var(--color-gray);
+    border-style: solid;
+    padding: var(--dimen-padding-md);
+    justify-content: center;
+    text-align: center;
+    border: 0.5px solid rgba(229, 231, 235);
+}
+
+.apps-trader-app-pages-subscribe-now-subscription-price {
+    font-size: 25px;
+    font-weight: 500;
+    justify-content: center;
+}
+
+.apps-trader-app-pages-subscribe-now-heading {
+    text-align: center;
+    justify-content: center;
+}
+
+@media(max-width: 593px){
+    #apps-trader-app-pages-subscribe-now {
+        flex-direction: column;
+    }
+    .apps-trader-app-pages-subscribe-now-subscription-Yearly {
+        margin-top: var(--dimen-padding-md)
+    }
+}

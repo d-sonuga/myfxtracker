@@ -14,6 +14,7 @@
     "cypress-file-upload": "^5.0.8",
     "cypress-localstorage-commands": "^1.7.0",
     "react": "^18.1.0",
+    "react-dom": "^18.1.0",
     "react-scripts": "^5.0.1",
     "typescript": "^4.6.4",
     "webpack": "^5.73.0"

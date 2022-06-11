@@ -1,0 +1,13 @@
+{
+    "user_data": {
+        "id": 2,
+        "email": "sonugademilade8703@gmail.com",
+        "is_subscribed": true,
+        "on_free": false
+    },
+    "trade_data": {
+        "current_account_id": -1,
+        "last_data_refresh_time": null,
+        "accounts": {}
+    }
+}

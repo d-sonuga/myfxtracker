@@ -20,6 +20,7 @@ metaapi-cloud-sdk = "*"
 rq = "*"
 django-rq = "*"
 rq-scheduler = "*"
+rave-python = "*"
 
 [dev-packages]
 maildump = "*"

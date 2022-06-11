@@ -14,6 +14,13 @@ type SubmitValuesTypes = {
     thenFunc: Function
 }
 
+type AddAccountPropTypes = {
+    onAccountAdded: Function,
+    noOfAccounts: number,
+    userIsOnFreeTrial: boolean
+}
+
 export type {
-    SubmitValuesTypes
+    SubmitValuesTypes,
+    AddAccountPropTypes
 }

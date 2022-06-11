@@ -7,11 +7,11 @@ import NoteList from './note-list'
 import NoteEditor from './note-editor'
 import MainToolbar from './main-toolbar'
 import NoNotesFound from './no-notes-found'
-import {NoteData} from './models'
 import {PageStillLoading} from '@apps/trader-app/components'
+import {NotebookPropTypes} from './types'
 
 
-const Notebook = ({noteData}: {noteData: Promise<NoteData[]>}) => {
+const Notebook = ({noteData}: NotebookPropTypes) => {
     // Index of currently chosen note in noteItems
     const [currentNoteIndex, setCurrentNoteIndex] = useState(-1);
     const [isEditing, setIsEditing] = useState(false);

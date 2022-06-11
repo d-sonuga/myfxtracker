@@ -5,10 +5,10 @@ import Http, {HttpErrorType, HttpResponseType} from '@services/http'
 import {getDimen} from '@conf/utils'
 import {ToastContext} from '@components/toast'
 import AddAccountForm from './add-account-form'
-import {SubmitValuesTypes} from './types'
+import {SubmitValuesTypes, AddAccountPropTypes} from './types'
 
 
-const AddAccount = ({onAccountAdded, noOfAccounts, userIsOnFreeTrial}: {onAccountAdded: Function, noOfAccounts: number, userIsOnFreeTrial: boolean}) => {
+const AddAccount = ({onAccountAdded, noOfAccounts, userIsOnFreeTrial}: AddAccountPropTypes) => {
     const Toast = useContext(ToastContext);
     /** The function used by the form to submit values
      * @param config: object used to configure the Http client

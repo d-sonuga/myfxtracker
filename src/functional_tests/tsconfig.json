@@ -2,7 +2,8 @@
     "compilerOptions": {
         "target": "es5",
         "lib": ["es5", "dom"],
-        "types": ["node", "cypress", "cypress-localstorage-commands", "cypress-file-upload"]
+        "types": ["node", "cypress", "cypress-localstorage-commands", "cypress-file-upload"],
+        "jsx": "react-jsx",
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.ts", "**/*.tsx"]
 }
