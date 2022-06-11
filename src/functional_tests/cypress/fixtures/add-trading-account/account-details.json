@@ -1,0 +1,11 @@
+{
+    "name": "Hallow Epsilon",
+    "login": "234322",
+    "server": "FBS-Real",
+    "password": "joutbnriugn",
+    "srvFilePath": "add-trading-account/FBS-Real.srv",
+    "datFilePath": "add-trading-account/FBS-Real.dat",
+    "tooBigSrvFilePath": "add-trading-account/FBS-Real-too-big.srv",
+    "tooBigDatFilePath": "add-trading-account/FBS-Real-too-big.dat",
+    "jpgFilePath": "add-trading-account/wrong-file-format.jpg"
+}

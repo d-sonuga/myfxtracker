@@ -10,9 +10,27 @@
   "author": "sonugademilade8703@gmail.com",
   "license": "ISC",
   "dependencies": {
-    "cypress": "^9.6.0",
+    "cypress": "^10.1.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-localstorage-commands": "^1.7.0",
-    "typescript": "^4.6.4"
+    "react": "^18.1.0",
+    "react-scripts": "^5.0.1",
+    "typescript": "^4.6.4",
+    "webpack": "^5.73.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.42"
   }
 }
