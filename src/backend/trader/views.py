@@ -1,4 +1,6 @@
 import datetime
+from selectors import EpollSelector
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
 from itsdangerous import base64_decode
@@ -14,9 +16,9 @@ from django.conf import settings
 from rest_framework.views import APIView
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import LoginView
-from users.models import Trader, User
+from users.models import SubscriptionInfo, Trader, User
 from trader.models import Note
-from .serializers import (TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
+from .serializers import (RecordNewSubscriptionSerializer, TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
 from .models import AddAccountError, RefreshAccountError, RemoveAccountError, Trade, Deposit, UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, UnresolvedRemoveAccount, Withdrawal, Account, Preferences, MetaApiError
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
@@ -813,6 +815,30 @@ def resolve_remove_trading_account(user, account, post_success_func=None, post_e
             post_error_func()
         RemoveTradingAccountView.handle_resolve_remove_trading_account_exception(user, account, exc)
 
+
+class RecordNewSubscriptionView(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+
+    def post(self, request):
+        serializer = RecordNewSubscriptionSerializer(data=request.data)
+        if serializer.is_valid():
+            if not request.user.subscriptioninfo.is_subscribed:
+                FLUTTERWAVE = SubscriptionInfo.FLUTTERWAVE
+                MONTHLY = SubscriptionInfo.MONTHLY
+                YEARLY = SubscriptionInfo.YEARLY
+                CODE = SubscriptionInfo.CODE
+                if request.data.get('amount') == settings.MONTHLY_PLAN_PRICE:
+                    PLAN_INDEX = MONTHLY
+                else:
+                    PLAN_INDEX = YEARLY
+                request.user.subscriptioninfo.last_billed_time = settings.TIMEFUNC()
+                request.user.subscriptioninfo.is_subscribed = True
+                request.user.subscriptioninfo.payment_method = SubscriptionInfo.PAYMENT_CHOICES[FLUTTERWAVE][CODE]
+                request.user.subscriptioninfo.subscription_plan = SubscriptionInfo.PLAN_CHOICES[PLAN_INDEX][CODE]
+                request.user.subscriptioninfo.save()
+            return HttpResponse()
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 """
 Handles the registration of traders
 When a sign up request for the trader app is sent from the frontend,
@@ -878,3 +904,4 @@ pending_add_trading_account = PendingAddTradingAccount.as_view()
 refresh_data = RefreshData.as_view()
 pending_refresh_data = PendingRefreshData.as_view()
 remove_trading_account = RemoveTradingAccountView.as_view()
+record_new_subscription = RecordNewSubscriptionView.as_view()

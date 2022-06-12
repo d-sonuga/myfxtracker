@@ -1,4 +1,4 @@
-import email
+from django.conf import settings
 from django.db.models.fields import DateField
 from dj_rest_auth.registration.serializers import RegisterSerializer as RestAuthRegisterSerializer
 from rest_framework import serializers
@@ -176,3 +176,11 @@ class AddAccountInfoSerializer(serializers.Serializer):
             raise serializers.ValidationError('A valid platform is required.')
         return platform
     
+
+class RecordNewSubscriptionSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=4, decimal_places=2)
+
+    def validate_amount(self, amount):
+        if float(amount) not in (settings.MONTHLY_PLAN_PRICE, settings.YEARLY_PLAN_PRICE):
+            raise serializers.ValidationError('Invalid plan price')
+        return amount

@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import dj_database_url
+from django.utils import timezone
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -329,3 +330,11 @@ TEST_TRADER_CREATE_ERROR = False
 # The interval in minutes in which trader data should be refreshed
 THIRTY_MINS = 30
 TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRESH_INTERVAL', THIRTY_MINS))
+
+MONTHLY_PLAN_PRICE = 24.99
+YEARLY_PLAN_PRICE = 23.99
+
+# This function is used to get the current time when updating a trader's
+# subscriptioninfo. This setting was used to make the subscriptioninfo updates
+# testable
+TIMEFUNC = timezone.now

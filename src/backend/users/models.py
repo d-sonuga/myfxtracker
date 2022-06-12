@@ -166,9 +166,19 @@ class Affiliate(models.Model):
 
 
 class SubscriptionInfo(models.Model):
+    FLUTTERWAVE = 2
+    CODE = 0
+    VALUE = 1
     PAYMENT_CHOICES = (
         ('pp', 'paypal'),
-        ('ps', 'paystack')
+        ('ps', 'paystack'),
+        ('fl', 'flutterwave')
+    )
+    MONTHLY = 0
+    YEARLY = 1
+    PLAN_CHOICES = (
+        ('m', 'monthly'),
+        ('y', 'yearly')
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_subscribed = models.BooleanField(default=False)
@@ -176,6 +186,8 @@ class SubscriptionInfo(models.Model):
     payment_method = models.CharField(choices=PAYMENT_CHOICES, max_length=5, null=True)
     on_free = models.BooleanField(default=True)
     next_billing_time = models.DateField()
+    last_billed_time = models.DateField(null=True)
+    subscription_plan = models.CharField(choices=PLAN_CHOICES, max_length=5, null=True)
 
     def subscription_has_expired(self, today=date.today()):
         return self.next_billing_time - today <= timedelta(days=0)
