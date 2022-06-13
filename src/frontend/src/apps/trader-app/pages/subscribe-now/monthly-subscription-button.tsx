@@ -13,7 +13,7 @@ const MonthlySubscriptionButton = React.forwardRef<HTMLButtonElement, Subscripti
     const {email, userId, ...others} = props;
     const config = {
         public_key: 'FLWPUBK_TEST-abbddb271c00020e17219254c27054e5-X',
-        payment_plan: '20974',
+        payment_plan: '21030',
         tx_ref: `user-${userId}-date-${Date.now().toString()}`,
         amount: 24.99,
         currency: 'USD',

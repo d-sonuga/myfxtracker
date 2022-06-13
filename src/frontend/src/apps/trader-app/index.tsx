@@ -10,6 +10,7 @@ import {Http, useNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
 import {ToastContext} from '@components/toast'
 import refreshAccountData from './services/refresh-account-data'
+import makeFollowUpSubscriptionRequests from './services/follow-up-post-subscription-actions'
 import {RawData} from './models/types'
 import {AddAccountPropTypes} from './pages/add-account/types'
 import {SettingsPropTypes} from './pages/settings/types'
@@ -25,6 +26,8 @@ const TraderApp = () => {
     const [globalData, setGlobalData] = useGlobalData();
     /** Is the data currently being refreshed */
     const [dataIsRefreshing, setDataIsRefreshing] = useState(false);
+    /** Keep page on loading page indefinitely */
+    const [keepPageLoading, setKeepPageLoading] = useState(false);
     const Toast = useContext(ToastContext);
     /** Function called by account selector to change current account */
     const onCurrentAccountChange = (newCurrentAccountId: number) => {
@@ -44,9 +47,31 @@ const TraderApp = () => {
     /** Function called when refresh account data is called from the data status bar */
     const refreshData = () => refreshAccountData(Toast, setGlobalData, setDataIsRefreshing);
     /** Function called when a user makes a subscription */
-    const onNewSubscription = () => {
+    const onNewSubscription = (postActionsPending: boolean, data: {[key: string]: any}) => {
         const newGlobalData = globalData.subscribeUser();
         setGlobalData(newGlobalData);
+        /**
+         * When postActionsPending are set, a loading icons has to be set
+         * and the backend has to be continuously queried for progress.
+         * The account data also has to be refreshed, since the setting of the postActionsPending
+         * variable means that the account needs to be reconnected for data
+         */
+        if(postActionsPending){
+            Toast.info('Please wait. This might take a while')
+            setKeepPageLoading(true);
+            // To reconnect the user's account
+            makeFollowUpSubscriptionRequests(
+                Toast,
+                data,
+                () => {
+                    // Need to refresh data now
+                    refreshAccountData(Toast, setGlobalData, setDataIsRefreshing, () => {
+                        setKeepPageLoading(false);
+                    });
+                }
+            )
+        }
+
     }
     const navigate = useNavigate();
     useEffect(() => {
@@ -66,6 +91,7 @@ const TraderApp = () => {
                         {(() => {
                             const pageMap = pageMapConfig(
                                 globalData,
+                                keepPageLoading,
                                 {onAccountAdded: onAccountAdded,
                                     noOfAccounts: globalData.numberOfAccounts(),
                                     userIsOnFreeTrial: globalData.userIsOnFreeTrial()
@@ -108,17 +134,33 @@ const CurrentAccountChangerContext = createContext((newCurrentAccountId: number)
  */
 const DataIsRefreshingContext = createContext(false);
 const RefreshDataContext = createContext(() => {});
-const NewSubscriptionContext = createContext(() => {});
+const NewSubscriptionContext = createContext((postActionsPending: boolean, data: {[key: string]: any}) => {});
 
 /** Returns a mapping of routes to components depending on the state */
 const pageMapConfig = (
     globalData: GlobalData,
+    keepPageLoading: boolean,
     addAccountComponentConfig: AddAccountPropTypes,
     settingsComponentConfig: SettingsPropTypes,
     notebookProps: NotebookPropTypes
 ) => {
-    const addAccountComponent = <AddAccount {...addAccountComponentConfig} />
     const pageStillLoadingComponent = <PageStillLoading />
+    if(keepPageLoading){
+        return {
+            [TRADER_OVERVIEW_ROUTE]: pageStillLoadingComponent,
+            [TRADER_JOURNAL_ROUTE]: pageStillLoadingComponent,
+            [TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_CASH_AND_GAINS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_SETTINGS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_PAIRS_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_ADD_ACCOUNT_ROUTE]: pageStillLoadingComponent,
+            [TRADER_TIME_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_PERIOD_ANALYSIS_ROUTE]: pageStillLoadingComponent,
+            [TRADER_EXPENSES_ROUTE]: pageStillLoadingComponent,
+            [TRADER_NOTES_ROUTE]: pageStillLoadingComponent,
+        }
+    }
+    const addAccountComponent = <AddAccount {...addAccountComponentConfig} />
     const subscribeNowComponent = <SubscribeNow 
         email={globalData.getUserEmail()}
         userHasPaidOnce={globalData.userHasPaid()}

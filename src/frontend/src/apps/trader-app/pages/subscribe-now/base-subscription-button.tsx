@@ -4,7 +4,7 @@ import saveSubscriptionStatus from './save-subscription-status'
 import {BaseSubscriptionButtonPropTypes} from './types'
 
 const BaseSubscriptionButton = React.forwardRef<HTMLButtonElement, BaseSubscriptionButtonPropTypes>((props, ref) => {
-    const {config, abortSubscription, onSubscriptionFinished} = props;
+    const {config, abortSubscription, onSubscriptionFinished, onSubscriptionRecordFailed} = props;
     const handleFlutterPayment = useFlutterwave(config);
     return(
         <button style={{display: 'none'}}
@@ -14,7 +14,13 @@ const BaseSubscriptionButton = React.forwardRef<HTMLButtonElement, BaseSubscript
                     callback: (resp: FlutterWaveTypes.FlutterWaveResponse) => {
                         console.log('in callback', resp);
                         saveSubscriptionStatus(resp)
-                            .then(() => onSubscriptionFinished())
+                            .then((postActionsPending: boolean) => {
+                                onSubscriptionFinished(postActionsPending, {amount: resp.amount})
+                            })
+                            .catch((err) => {
+                                console.log(err);
+                                onSubscriptionRecordFailed();
+                            })
                         closePaymentModal();
                     },
                     onClose: () => {

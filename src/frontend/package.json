@@ -75,6 +75,7 @@
     "@types/recharts": "^1.8.23",
     "babel-plugin-lodash": "^3.3.4",
     "customize-cra": "^1.0.0",
+    "cypress": "^10.1.0",
     "react-app-rewired": "^2.1.10",
     "react-styleguidist": "^11.1.8",
     "source-map-explorer": "^2.5.2",

@@ -9,18 +9,38 @@ import LoadingIcon from '@components/loading-icon'
 import MonthlySubscriptionButton from './monthly-subscription-button'
 import YearlySubscriptionButton from './yearly-subscription-button'
 import {NewSubscriptionContext} from '@apps/trader-app'
+import {ToastContext} from '@components/toast'
 
 
 const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) => {
     const [subscribing, setSubscribing] = useState('');
-    const onNewSubscription = useContext(NewSubscriptionContext)
+    const onNewSubscription = useContext(NewSubscriptionContext);
+    const Toast = useContext(ToastContext)
     const monthlySubscriptionTrigger = React.createRef<HTMLButtonElement>();
     const yearlySubscriptionTrigger = React.createRef<HTMLButtonElement>();
     const abortSubscription = () => {
         setSubscribing('');
     }
-    const onSubscriptionFinished = () => {
-        onNewSubscription();
+    /**
+     * @param postActionsPending this is set when the record subscription response returns a 
+     * successful pending response because of some actions that the backend needed to take after
+     * recording the user as subscribed (such as reconnecting the user's trading account).
+     * In such a scenario the page loading page must be shown and user has to be alerted that
+     * this could take a while
+     */
+    const onSubscriptionFinished = (postActionsPending: boolean, data: {[key: string]: any}) => {
+        onNewSubscription(postActionsPending, data);
+    }
+    const onSubscriptionRecordFailed = () => {
+        setSubscribing('none')
+        Toast.error('Your subscription was successful, but something went wrong on our end. Please contact support.');
+    }
+    /**
+     * This is called when the timer started after a subscription button is clicked
+     * reaches a timeout
+     */
+    const onFlutterwaveModalTimeout = () => {
+
     }
     return(
         <div style={{marginTop: getDimen('padding-xxbig')}}>
@@ -28,17 +48,18 @@ const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) =
             <div id='apps-trader-app-pages-subscribe-now'>
                 <MonthlySubscriptionButton email={email}
                     ref={monthlySubscriptionTrigger} userId={userId}
-                    abortSubscription={abortSubscription} onSubscriptionFinished={onSubscriptionFinished} />
+                    abortSubscription={abortSubscription} onSubscriptionFinished={onSubscriptionFinished}
+                    onSubscriptionRecordFailed={onSubscriptionRecordFailed} />
                 <Subscription name='Monthly' price='24.99' subscribing={subscribing} subscribe={() => {
                     setSubscribing('Monthly');
                     if(monthlySubscriptionTrigger && monthlySubscriptionTrigger.current){
-                        console.log('herrrrreeeggdds');
                         monthlySubscriptionTrigger.current.click();
                     }
                 }} />
                 <YearlySubscriptionButton email={email} ref={yearlySubscriptionTrigger}
                     userId={userId} abortSubscription={abortSubscription}
-                    onSubscriptionFinished={onSubscriptionFinished} />
+                    onSubscriptionFinished={onSubscriptionFinished}
+                    onSubscriptionRecordFailed={onSubscriptionRecordFailed} />
                 <Subscription name='Yearly' price='23.99' subscribing={subscribing} subscribe={() => {
                     setSubscribing('Yearly');
                     if(yearlySubscriptionTrigger && yearlySubscriptionTrigger.current){

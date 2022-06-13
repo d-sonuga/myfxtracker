@@ -13,6 +13,16 @@ const DataStatusBar = () => {
     const globalData = useContext(GlobalDataContext);
     const dataIsRefreshing = useContext(DataIsRefreshingContext);
     const refreshData = useContext(RefreshDataContext);
+    const dataHasRefreshedBefore = () => {
+        // If the data has never been refreshed, the last refreshed time 
+        // will be set to an impossibly long time ago, about 100 years
+        const currentYear = (new Date()).getFullYear();
+        const lastDataRefreshTimeYear = globalData.lastDataRefreshTime().getFullYear();
+        return currentYear - lastDataRefreshTimeYear < 1;
+    }
+    const lastDataRefreshDisplay = dataHasRefreshedBefore() ?
+        format(globalData.lastDataRefreshTime())
+        : 'Never'
     return(
         <>
             <RowBox style={{
@@ -24,7 +34,7 @@ const DataStatusBar = () => {
                 <SBP style={{
                     color: getColor('dark-gray'),
                     marginRight: getDimen('padding-xs')
-                }}>Data Last Refreshed: {format(globalData.lastDataRefreshTime())}</SBP>
+                }}>Data Last Refreshed: {lastDataRefreshDisplay}</SBP>
                 <Button 
                     variant='outlined'
                     size='small'

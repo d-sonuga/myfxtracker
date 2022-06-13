@@ -1,4 +1,6 @@
+from datetime import datetime
 from django.conf import settings
+from django.utils import timezone
 from trader.tests.test_data import AddTradingAccountTestData
 from .base_test_api import BaseTestMetaApi
 
@@ -17,7 +19,14 @@ class MainMetaApi(BaseTestMetaApi):
         return self.test_data.good_account_details['account-info']
 
     async def get_deals_by_time_range(self, start, end):
-        return self.test_data.good_account_details['deals']
+        all_deals = self.test_data.good_account_details['deals']
+        deals = []
+        for deal in all_deals:
+            time = datetime.fromisoformat(deal.get('time'))
+            if start <= time < end:
+                deals.append(deal)
+        return {'deals': deals}
+
 
     async def remove(self, *args, **kwargs):
         pass

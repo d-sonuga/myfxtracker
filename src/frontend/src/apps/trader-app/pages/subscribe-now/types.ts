@@ -15,7 +15,8 @@ type SubscriptionButtonPropTypes = Omit<BaseSubscriptionButtonPropTypes, 'config
 type BaseSubscriptionButtonPropTypes = {
     config: FlutterwaveConfig,
     abortSubscription: Function,
-    onSubscriptionFinished: Function
+    onSubscriptionFinished: Function,
+    onSubscriptionRecordFailed: Function
 }
 
 export type {
