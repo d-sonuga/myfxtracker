@@ -145,6 +145,7 @@ class Account(models.Model):
     ma_account_id = models.CharField(max_length=200)
     # The time the account got added in the database
     time_added = models.DateTimeField(default=timezone.now)
+    deployed = models.BooleanField(default=True)
 
     objects = AccountManager()
 
@@ -477,6 +478,20 @@ class UnresolvedRemoveAccount(models.Model):
 class RemoveAccountError(models.Model):
     user = models.ForeignKey(Trader, on_delete=models.CASCADE)
     account = models.OneToOneField(Account, on_delete=models.CASCADE)
+    error = models.JSONField(encoder=DjangoJSONEncoder)
+
+    def consume_error(self):
+        error = self.error
+        self.delete()
+        return error
+
+
+class UnresolvedDeployAccount(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+
+
+class DeployAccountError(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
     error = models.JSONField(encoder=DjangoJSONEncoder)
 
     def consume_error(self):

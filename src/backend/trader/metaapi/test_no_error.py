@@ -21,3 +21,6 @@ class MainMetaApi(BaseTestMetaApi):
 
     async def remove(self, *args, **kwargs):
         pass
+
+    async def redeploy(self, *args, **kwargs):
+        pass

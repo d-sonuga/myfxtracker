@@ -153,11 +153,18 @@ class MetaApi:
             logger.exception('Error while getting unsaved account data')
             raise UnknownError
     
-    def remove_account(self, ma_account_id: Account):
+    def remove_account(self, ma_account_id: str):
         try:
             async_to_sync(self._remove_account)(ma_account_id)
         except Exception:
             logger.exception('Error while removing trading account')
+            raise UnknownError
+    
+    def redeploy_account(self, ma_account_id: str):
+        try:
+            async_to_sync(self._redeploy_account)(ma_account_id)
+        except Exception:
+            logger.exception('Error while deploying trading account')
             raise UnknownError
 
     async def _get_all_data(self, ma_account_id: str, start_time: dt.datetime = None) -> Tuple[
@@ -172,13 +179,16 @@ class MetaApi:
         all_deals = await connection.get_deals_by_time_range(start, end)
         return account_info, all_deals
 
-
     async def _get_all_unsaved_data(self, ma_account_id: str, latest_saved_trade_close_time: dt.datetime):
         return await self._get_all_data(ma_account_id, latest_saved_trade_close_time)
 
     async def _remove_account(self, ma_account_id: str):
         account = await self._api.metatrader_account_api.get_account(account_id=ma_account_id)
         await account.remove()
+
+    async def _redeploy_account(self, ma_account_id: str):
+        account = await self._api.metatrader_account_api.get_account(account_id=ma_account_id)
+        await account.redeploy()
 
 
 class Transaction:

@@ -20,7 +20,9 @@ from users.models import SubscriptionInfo, Trader, User
 from trader.models import Note
 from .serializers import (RecordNewSubscriptionSerializer, TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
-from .models import AddAccountError, RefreshAccountError, RemoveAccountError, Trade, Deposit, UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, UnresolvedRemoveAccount, Withdrawal, Account, Preferences, MetaApiError
+from .models import (AddAccountError, RefreshAccountError, RemoveAccountError, Trade, Deposit,
+                    UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, UnresolvedRemoveAccount,
+                    Withdrawal, Account, Preferences, MetaApiError, UnresolvedDeployAccount, DeployAccountError)
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
 import datetime as dt
 from .serializers import AddAccountInfoSerializer
@@ -701,9 +703,12 @@ class RefreshData(APIView):
 
     @staticmethod
     def handle_resolve_refresh_account_exception(trader, exc):
+        logger.exception('Unknown error in refresh account')
         if isinstance(exc, metaapi.UnknownError):
             MetaApiError.objects.create(user=trader, error=exc.detail)
             RefreshAccountError.objects.create(user=trader, error={'detail': exc.detail})
+        else:
+            RefreshAccountError.objects.create(user=trader, error={'detail': 'unknown error'})
 
 def resolve_refresh_account_data(trader):
     try:
@@ -799,8 +804,12 @@ class RemoveTradingAccountView(APIView):
     
     @staticmethod
     def handle_resolve_remove_trading_account_exception(user, account, exc):
-        MetaApiError.objects.create(user=user, error=exc.detail)
-        RemoveAccountError.objects.create(user=user, account=account, error={'detail': exc.detail})
+        logger.exception('Unknown error occured in remove trading account')
+        if isinstance(exc, metaapi.UnknownError):
+            MetaApiError.objects.create(user=user, error=exc.detail)
+            RemoveAccountError.objects.create(user=user, account=account, error={'detail': exc.detail})
+        else:
+            RemoveAccountError.objects.create(user=user, account=account, error={'detail': 'unknown error'})
         UnresolvedRemoveAccount.objects.get(user=user, account=account).delete()
         
 
@@ -824,20 +833,78 @@ class RecordNewSubscriptionView(APIView):
         if serializer.is_valid():
             if not request.user.subscriptioninfo.is_subscribed:
                 FLUTTERWAVE = SubscriptionInfo.FLUTTERWAVE
-                MONTHLY = SubscriptionInfo.MONTHLY
-                YEARLY = SubscriptionInfo.YEARLY
-                CODE = SubscriptionInfo.CODE
-                if request.data.get('amount') == settings.MONTHLY_PLAN_PRICE:
-                    PLAN_INDEX = MONTHLY
-                else:
-                    PLAN_INDEX = YEARLY
-                request.user.subscriptioninfo.last_billed_time = settings.TIMEFUNC()
-                request.user.subscriptioninfo.is_subscribed = True
-                request.user.subscriptioninfo.payment_method = SubscriptionInfo.PAYMENT_CHOICES[FLUTTERWAVE][CODE]
-                request.user.subscriptioninfo.subscription_plan = SubscriptionInfo.PLAN_CHOICES[PLAN_INDEX][CODE]
-                request.user.subscriptioninfo.save()
-            return HttpResponse()
+                self.record_trader_as_subscribed(payment_method=FLUTTERWAVE)
+                if self.user_has_undeployed_accounts():
+                    UnresolvedDeployAccount.objects.create(user=request.user)
+                    rq_enqueue(resolve_deploy_account, request.user)
+                    return Response({'status': 'pending'})
+            if self.account_deployment_is_being_resolved():
+                return Response({'status': 'pending'})
+            if self.deploy_account_error_exists():
+                error = self.get_deploy_account_error()
+                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'status': 'not pending'})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    
+    def record_trader_as_subscribed(self, payment_method: int):
+        request = self.request
+        MONTHLY = SubscriptionInfo.MONTHLY
+        YEARLY = SubscriptionInfo.YEARLY
+        CODE = SubscriptionInfo.CODE
+        if request.data.get('amount') == settings.MONTHLY_PLAN_PRICE:
+            PLAN_INDEX = MONTHLY
+        else:
+            PLAN_INDEX = YEARLY
+        request.user.subscriptioninfo.last_billed_time = settings.TIMEFUNC()
+        request.user.subscriptioninfo.is_subscribed = True
+        request.user.subscriptioninfo.payment_method = SubscriptionInfo.PAYMENT_CHOICES[payment_method][CODE]
+        request.user.subscriptioninfo.subscription_plan = SubscriptionInfo.PLAN_CHOICES[PLAN_INDEX][CODE]
+        request.user.subscriptioninfo.save()
+    
+    def user_has_undeployed_accounts(self):
+        return Account.objects.filter(user=self.request.user)
+
+    def account_deployment_is_being_resolved(self):
+        return UnresolvedDeployAccount.objects.filter(
+            user=self.request.user
+        ).count() != 0
+    
+    def deploy_account_error_exists(self):
+        return DeployAccountError.objects.filter(
+            user=self.request.user
+        ).exists()
+    
+    def get_deploy_account_error(self):
+        return DeployAccountError.objects.get(
+            user=self.request.user
+        ).consume_error()
+    
+    @staticmethod
+    @transaction.atomic
+    def deploy_account(trader: Trader):
+        mtapi = metaapi.MetaApi()
+        for account in Account.objects.filter(user=trader):
+            mtapi.redeploy_account(account.ma_account_id)
+            account.deployed = True
+            account.save()
+
+    @staticmethod
+    def handle_resolve_deploy_account_exception(trader, exc):
+        logger.exception('An unknown error occured while redeploying account in record new subscription')
+        if isinstance(exc, metaapi.UnknownError):
+            MetaApiError.objects.create(user=trader, error=exc.detail)
+            DeployAccountError.objects.create(user=trader, error={'detail': exc.detail})
+        else:
+            DeployAccountError.objects.create(user=trader, error={'detail': 'unknown error'})
+
+def resolve_deploy_account(trader):
+    try:
+        RecordNewSubscriptionView.deploy_account(trader)
+    except Exception as exc:
+        RecordNewSubscriptionView.handle_resolve_deploy_account_exception(trader, exc)
+    finally:
+        UnresolvedDeployAccount.objects.get(user=trader).delete()
 
 """
 Handles the registration of traders

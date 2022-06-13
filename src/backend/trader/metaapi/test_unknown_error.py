@@ -21,3 +21,6 @@ class MainMetaApi(BaseTestMetaApi):
 
     async def remove(self):
         raise Exception
+
+    async def redeploy(self):
+        raise Exception

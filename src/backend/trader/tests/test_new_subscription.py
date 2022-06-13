@@ -1,5 +1,4 @@
-from multiprocessing import dummy
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.conf import settings
 from users.models import SubscriptionInfo, Trader
 from rest_framework.authtoken.models import Token
@@ -15,6 +14,7 @@ def dummy_timefunc():
 def other_dummy_timefunc():
     return other_dummy_time
 
+@tag('now')
 class NewSubscriptionTests(TestCase):
     def setUp(self) -> None:
         test_data = subscription_test_data
@@ -33,6 +33,7 @@ class NewSubscriptionTests(TestCase):
         self.assert_trader_not_recorded_as_subscribed()
         resp = self.make_request(amount=settings.MONTHLY_PLAN_PRICE)
         self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'status': 'not pending'})
         self.assert_trader_recorded_as_subscribed()
     
     @override_settings(TIMEFUNC=dummy_timefunc)
@@ -45,6 +46,7 @@ class NewSubscriptionTests(TestCase):
         self.assert_trader_not_recorded_as_subscribed()
         resp = self.make_request(amount=settings.YEARLY_PLAN_PRICE)
         self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'status': 'not pending'})
         self.assert_trader_recorded_as_subscribed(plan='yearly')
     
     @override_settings(TIMEFUNC=other_dummy_timefunc)
@@ -58,6 +60,7 @@ class NewSubscriptionTests(TestCase):
         last_billed_time = self.trader.subscriptioninfo.last_billed_time
         resp = self.make_request(amount=settings.MONTHLY_PLAN_PRICE)
         self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'status': 'not pending'})
         self.trader = Trader.objects.get(id=self.trader.id)
         self.assertEquals(last_billed_time.date(), self.trader.subscriptioninfo.last_billed_time)
 
@@ -67,6 +70,11 @@ class NewSubscriptionTests(TestCase):
     
     def test_user_attempts_to_subscribe_with_invalid_amount(self):
         resp = self.make_request(amount=0)
+        self.assertEquals(resp.status_code, 400)
+        self.assertEquals(resp.json(), {'amount': ['Invalid plan price']})
+
+    def test_user_attempts_to_subscribe_with_invalid_amount(self):
+        resp = self.make_request(amount='')
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp.json(), {'amount': ['Invalid plan price']})
     
