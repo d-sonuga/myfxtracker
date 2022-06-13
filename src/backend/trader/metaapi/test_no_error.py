@@ -19,17 +19,13 @@ class MainMetaApi(BaseTestMetaApi):
         return self.test_data.good_account_details['account-info']
 
     async def get_deals_by_time_range(self, start, end):
-        all_deals = self.test_data.good_account_details['deals']
-        deals = []
-        for deal in all_deals:
-            time = datetime.fromisoformat(deal.get('time'))
-            if start <= time < end:
-                deals.append(deal)
-        return {'deals': deals}
-
+        return self.test_data.good_account_details['deals']
 
     async def remove(self, *args, **kwargs):
         pass
 
     async def redeploy(self, *args, **kwargs):
+        pass
+
+    async def undeploy(self, *args, **kwargs):
         pass

@@ -13,7 +13,6 @@ from .test_add_trading_account import test_mtapi_error
 from .test_data import RefreshAccountDataTestData
 
 
-@tag('now')
 class ReSubscriptionTests(TestCase):
     def setUp(self) -> None:
         FLUTTERWAVE = SubscriptionInfo.FLUTTERWAVE

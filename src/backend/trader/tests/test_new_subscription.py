@@ -14,7 +14,6 @@ def dummy_timefunc():
 def other_dummy_timefunc():
     return other_dummy_time
 
-@tag('now')
 class NewSubscriptionTests(TestCase):
     def setUp(self) -> None:
         test_data = subscription_test_data

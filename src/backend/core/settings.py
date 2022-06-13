@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'serve',
     'paypal_endpoint',
     'paystack_endpoint',
+    'flutterwave_endpoint',
     'datasource_endpoint'
 ]
 
@@ -338,3 +339,11 @@ YEARLY_PLAN_PRICE = 23.99
 # subscriptioninfo. This setting was used to make the subscriptioninfo updates
 # testable
 TIMEFUNC = timezone.now
+
+# This string is checked against the 'verif-hash' header in Flutterwave
+# webhooks for webhook validation
+FLUTTERWAVE_VERIF_HASH = os.getenv('FLUTTERWAVE_VERIF_HASH')
+
+# Used by the Flutterwave API for authentication
+RAVE_PUBLIC_KEY = os.getenv('RAVE_PUBLIC_KEY')
+RAVE_SECRET_KEY = os.getenv('RAVE_SECRET_KEY')

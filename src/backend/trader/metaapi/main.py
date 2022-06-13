@@ -166,6 +166,13 @@ class MetaApi:
         except Exception:
             logger.exception('Error while deploying trading account')
             raise UnknownError
+        
+    def undeploy_account(self, ma_account_id: str):
+        try:
+            async_to_sync(self._undeploy_account)(ma_account_id)
+        except Exception:
+            logger.exception('Error while undeploying a trading account')
+            raise UnknownError
 
     async def _get_all_data(self, ma_account_id: str, start_time: dt.datetime = None) -> Tuple[
         AccountData, List[Union[RawTradeDealData, RawDepositWithdrawalDealData]]
@@ -189,6 +196,10 @@ class MetaApi:
     async def _redeploy_account(self, ma_account_id: str):
         account = await self._api.metatrader_account_api.get_account(account_id=ma_account_id)
         await account.redeploy()
+    
+    async def _undeploy_account(self, ma_account_id: str):
+        account = await self._api.metatrader_account_api.get_account(account_id=ma_account_id)
+        await account.undeploy()
 
 
 class Transaction:
