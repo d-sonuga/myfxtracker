@@ -3,7 +3,7 @@ from .views import (add_trade, add_deposit, add_withdrawal, update_trade, get_in
             add_account, DeleteTrade, DeleteAccount, set_account_pref, add_trading_account,
             send_weekly_reports, sign_up, login, logout, delete_account, refresh_data,
             get_all_notes, save_note, update_note, delete_note, redirect_to_signup,
-            remove_trading_account, pending_add_trading_account,
+            remove_trading_account, pending_add_trading_account, cancel_subscription,
             pending_refresh_data, record_new_subscription, create_tester_accounts)
 
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('pending-refresh-data/', pending_refresh_data),
     path('remove-trading-account/<int:pk>/', remove_trading_account),
     path('record-new-subscription/', record_new_subscription),
+    path('cancel-subscription/', cancel_subscription),
     path('create-tester-accounts/', create_tester_accounts),
 
     path('add_trade/', add_trade),

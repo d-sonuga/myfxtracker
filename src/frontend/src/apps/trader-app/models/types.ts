@@ -15,10 +15,12 @@ type UserData = {
     on_free: boolean,
     logins_after_ask?: number,
     current_feedback_question?: number,
+    subscription_plan: 'none' | 'monthly' | 'yearly',
+    days_left_before_free_trial_expires: number,
     /**
      * Tells whether or not the user has ever subscribed
      * Used to determine whether to show a 'Free Trial Is Over' message
-     * or a 'Subscrption Has Expired'
+     * or a 'Subscription Has Expired'
      */
     has_paid?: boolean
 }
@@ -37,5 +39,6 @@ type UseGlobalDataType = {
 
 export type {
     RawData,
-    UseGlobalDataType
+    UseGlobalDataType,
+    UserData
 }

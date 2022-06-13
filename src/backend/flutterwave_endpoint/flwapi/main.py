@@ -17,7 +17,7 @@ class FlApi:
         subscr_id = self.get_trader_subscription_id(related_subscriptions)
         resp = self._api.Subscriptions.cancel(subscr_id)
         successful_subscription_cancel = lambda: (
-            not resp.get('error') == False
+            resp.get('error') == False
             and resp.get('returnedData')['status'] == 'success'
             and resp['returnedData']['data']['status'] == 'cancelled'
         )
@@ -26,8 +26,8 @@ class FlApi:
         
     
     def get_trader_subscription_id(self, related_subscriptions):
-        data = related_subscriptions.get('returnedData')['plansubscriptions']
-        trader_data = [subscription_data for subscription_data in data if data.get('status') == 'active']
+        data = related_subscriptions.get('returnedData')['data']['plansubscriptions']
+        trader_data = [subscription_data for subscription_data in data if subscription_data.get('status') == 'active']
         if len(trader_data) > 1:
             raise FlutterwaveError('multiple active subscriptions')
         else:

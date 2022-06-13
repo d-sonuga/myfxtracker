@@ -11,7 +11,7 @@ from trader.models import (
     Account, Deposit, Preferences, MetaApiError, Trade,
     UnknownTransaction, Withdrawal, UnresolvedAddAccount, AddAccountError
 )
-from users.models import Trader
+from users.models import Trader, SubscriptionInfo
 from trader import metaapi
 from .test_data import AddTradingAccountRegisterDetails, AddTradingAccountTestData, SignUpDetails
 
@@ -145,6 +145,7 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(resp.status_code, 201)
         pref = Preferences.objects.get(user=self.trader)
         current_account_id = pref.current_account.id if pref.current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader)
         self.maxDiff = None
         self.assertEquals(resp.json(), {
                 'user_data': {
@@ -152,6 +153,8 @@ class AddTradingAccountTests(TestCase):
                     'email': self.trader.email,
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -227,6 +230,7 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(resp.status_code, 201)
         pref = Preferences.objects.get(user=self.trader)
         current_account_id = pref.current_account.id if pref.current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader)
         self.maxDiff = None
         self.assertEquals(resp.json(), {
                 'user_data': {
@@ -234,6 +238,8 @@ class AddTradingAccountTests(TestCase):
                     'email': self.trader.email,
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -300,6 +306,7 @@ class AddTradingAccountTests(TestCase):
         resp = self.request_pending_account(account_details)
         pref = Preferences.objects.get(user=self.trader)
         current_account_id = pref.current_account.id if pref.current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader)
         self.maxDiff = None
         self.assertEquals(resp.json(), {
                 'user_data': {
@@ -307,6 +314,8 @@ class AddTradingAccountTests(TestCase):
                     'email': self.trader.email,
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -375,6 +384,7 @@ class AddTradingAccountTests(TestCase):
         resp = self.request_pending_account(account_details)
         pref = Preferences.objects.get(user=self.trader)
         current_account_id = pref.current_account.id if pref.current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader)
         self.maxDiff = None
         self.assertEquals(resp.json(), {
                 'user_data': {
@@ -382,6 +392,8 @@ class AddTradingAccountTests(TestCase):
                     'email': self.trader.email,
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -738,6 +750,24 @@ class AddTradingAccountTests(TestCase):
 
     def resolve_test_account(self):
         django_rq.get_worker().work(burst=True)
+
+    def format_subscription_plan(self, trader: Trader):
+        MONTHLY = SubscriptionInfo.MONTHLY
+        YEARLY = SubscriptionInfo.YEARLY
+        CODE = SubscriptionInfo.CODE
+        if not trader.is_subscribed:
+            return 'none'
+        elif trader.subscription_plan == SubscriptionInfo.PLAN_CHOICES[MONTHLY][CODE]:
+            return 'monthly'
+        elif trader.subscription_plan == SubscriptionInfo.PLAN_CHOICES[YEARLY][CODE]:
+            return 'yearly'
+
+    def days_left_before_free_trial_expires(self, trader: Trader):
+        day_of_free_trial_over = trader.date_joined + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD)
+        days_left_before_free_trial_expires = day_of_free_trial_over - timezone.now()
+        if days_left_before_free_trial_expires.days < 0:
+            return 0
+        return days_left_before_free_trial_expires.days
 
     def request_add_account(self, data: AddTradingAccountRegisterDetails, headers=None):
         request_headers = headers if headers is not None else self.valid_headers

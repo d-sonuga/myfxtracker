@@ -347,3 +347,5 @@ FLUTTERWAVE_VERIF_HASH = os.getenv('FLUTTERWAVE_VERIF_HASH')
 # Used by the Flutterwave API for authentication
 RAVE_PUBLIC_KEY = os.getenv('RAVE_PUBLIC_KEY')
 RAVE_SECRET_KEY = os.getenv('RAVE_SECRET_KEY')
+
+FREE_TRIAL_PERIOD = 7

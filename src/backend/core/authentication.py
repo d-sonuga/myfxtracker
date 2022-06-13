@@ -14,4 +14,4 @@ class UserAuthentication(TokenAuthentication):
                     return (Trader.objects.get(id=user.id), auth)
                 return user, auth
         except Exception as e:
-            raise 
+            raise e

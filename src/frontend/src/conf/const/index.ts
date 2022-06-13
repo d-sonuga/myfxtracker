@@ -31,6 +31,7 @@ const HttpConst = {
     PENDING_REFRESH_DATA_URL: 'trader/pending-refresh-data',
     REMOVE_TRADING_ACCOUNT_URL: 'trader/remove-trading-account',
     RECORD_NEW_SUBSCRIPTION_URL: 'trader/record-new-subscription',
+    CANCEL_SUBSCRIPTION_URL: 'trader/cancel-subscription',
     FEEDBACK_FORM_URL: 'https://forms.gle/SWAdgLtd64Vzmyso9'
 }
 

@@ -21,7 +21,7 @@ MONTHLY = SubscriptionInfo.MONTHLY
 CODE = SubscriptionInfo.CODE
 FLUTTERWAVE_VERIF_HASH = 'zl4hr9ufhp49fh4ufb4uz'
 
-@tag('now')
+
 class BillingWebhookTests(TestCase):
     def setUp(self) -> None:
         self.trader = Trader.objects.create(**test_data.trader_details)

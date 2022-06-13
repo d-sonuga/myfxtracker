@@ -1,8 +1,10 @@
 import datetime
 from selectors import EpollSelector
+import statistics
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
+from flutterwave_endpoint.models import FlutterwaveError
 from itsdangerous import base64_decode
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
@@ -20,8 +22,8 @@ from users.models import SubscriptionInfo, Trader, User
 from trader.models import Note
 from .serializers import (RecordNewSubscriptionSerializer, TradeSerializer, DepositSerializer, AccountSerializer, PrefSerializer,
                           WithdrawalSerializer, switch_db_str, Choice, NoteSerializer)
-from .models import (AddAccountError, RefreshAccountError, RemoveAccountError, Trade, Deposit,
-                    UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, UnresolvedRemoveAccount,
+from .models import (AddAccountError, RefreshAccountError, RemoveAccountError, Trade, Deposit, UnsubscriptionError,
+                    UnknownTransaction, UnresolvedAddAccount, UnresolvedRefreshAccount, UnresolvedRemoveAccount, UnresolvedUnsubscription,
                     Withdrawal, Account, Preferences, MetaApiError, UnresolvedDeployAccount, DeployAccountError)
 from .permissions import IsOwner, IsAccountOwner, IsTraderOrAdmin, IsTrader
 import datetime as dt
@@ -387,12 +389,29 @@ class GetInitData(APIView):
             else -1
         )
         last_data_refresh_time = request.user.last_data_refresh_time
+        MONTHLY = SubscriptionInfo.MONTHLY
+        CODE = SubscriptionInfo.CODE
+        subscription_plan = 'none'
+        if request.user.is_subscribed:
+            subscription_plan = (
+                'monthly'
+                if request.user.subscription_plan == SubscriptionInfo.PLAN_CHOICES[MONTHLY][CODE]
+                else 'yearly'
+            )
+        day_of_free_trial_expiring = request.user.date_joined + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD)
+        no_of_days_for_free_trial_to_expire = (
+            0
+            if (day_of_free_trial_expiring - timezone.now()).days <= 0
+            else (day_of_free_trial_expiring - timezone.now()).days
+        )
         init_data = {
             'user_data': {
                 'id': request.user.id,
                 'email': request.user.email,
                 'is_subscribed': request.user.subscriptioninfo.is_subscribed,
                 'on_free': request.user.subscriptioninfo.on_free,
+                'subscription_plan': subscription_plan,
+                'days_left_before_free_trial_expires': no_of_days_for_free_trial_to_expire
             },
             'trade_data': {
                 'current_account_id': current_account_id,
@@ -906,6 +925,71 @@ def resolve_deploy_account(trader):
     finally:
         UnresolvedDeployAccount.objects.get(user=trader).delete()
 
+from flutterwave_endpoint import flwapi
+
+class CancelSubscriptionView(APIView):
+    permission_classes = [IsAuthenticated, IsTrader]
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_subscribed:
+            return Response({'detail': 'not pending'})
+        if self.unsubscription_is_being_resolved():
+            return Response({'detail': 'pending'})
+        if self.unsubscription_error_exists():
+            error = self.get_unsubscription_error()
+            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        rq_enqueue(resolve_unsubscription, request.user)
+        UnresolvedUnsubscription.objects.create(user=request.user)
+        return Response({'detail': 'pending'})
+    
+    def unsubscription_is_being_resolved(self):
+        return UnresolvedUnsubscription.objects.filter(
+            user=self.request.user
+        ).exists()
+
+    def unsubscription_error_exists(self):
+        return UnsubscriptionError.objects.filter(
+            user=self.request.user
+        ).exists()
+
+    def get_unsubscription_error(self):
+        return UnsubscriptionError.objects.get(
+            user=self.request.user
+        ).consume_error()
+
+    @staticmethod
+    @transaction.atomic
+    def unsubscribe_user(trader: Trader):
+        mtapi = metaapi.MetaApi()
+        for account in Account.objects.filter(user=trader):
+            mtapi.undeploy_account(account.ma_account_id)
+            account.deployed = False
+            account.save()
+        flapi = flwapi.FlApi()
+        flapi.cancel_subscription(trader.email)
+        trader.subscriptioninfo.is_subscribed = False
+        trader.subscriptioninfo.save()
+    
+    @staticmethod
+    def handle_unsubscribe_exception(trader, exc):
+        logger.exception('An unknown error occured while redeploying account in record new subscription')
+        if isinstance(exc, metaapi.UnknownError):
+            MetaApiError.objects.create(user=trader, error=exc.detail)
+            UnsubscriptionError.objects.create(user=trader, error={'detail': exc.detail})
+        elif isinstance(exc, flwapi.PlanStatusError):
+            FlutterwaveError.objects.create(err_type=exc.type, err_data=exc.err)
+            UnsubscriptionError.objects.create(user=trader, error={'detail': exc.type})
+        else:
+            UnsubscriptionError.objects.create(user=trader, error={'detail': 'unknown error'})
+
+def resolve_unsubscription(trader: Trader):
+    try:
+        CancelSubscriptionView.unsubscribe_user(trader)
+    except Exception as exc:
+        CancelSubscriptionView.handle_unsubscribe_exception(trader, exc)
+    finally:
+        UnresolvedUnsubscription.objects.get(user=trader).delete()
+
 """
 Handles the registration of traders
 When a sign up request for the trader app is sent from the frontend,
@@ -972,3 +1056,4 @@ refresh_data = RefreshData.as_view()
 pending_refresh_data = PendingRefreshData.as_view()
 remove_trading_account = RemoveTradingAccountView.as_view()
 record_new_subscription = RecordNewSubscriptionView.as_view()
+cancel_subscription = CancelSubscriptionView.as_view()

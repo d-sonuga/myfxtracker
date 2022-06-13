@@ -500,6 +500,20 @@ class DeployAccountError(models.Model):
         return error
 
 
+class UnresolvedUnsubscription(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+
+
+class UnsubscriptionError(models.Model):
+    user = models.ForeignKey(Trader, on_delete=models.CASCADE)
+    error = models.JSONField(encoder=DjangoJSONEncoder)
+
+    def consume_error(self):
+        error = self.error
+        self.delete()
+        return error
+
+
 class NoteManager(models.Manager):
     def create(self, **kwargs):
         if kwargs.get('lastEdited'):

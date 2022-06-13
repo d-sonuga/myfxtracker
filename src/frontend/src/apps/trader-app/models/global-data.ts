@@ -28,7 +28,7 @@
 */
 
 import {AccountData} from 'calculator/dist'
-import {RawData} from './types'
+import {RawData, UserData} from './types'
 import {cloneObject} from './utils'
 
 class GlobalData {
@@ -169,6 +169,12 @@ class GlobalData {
     getUserDsUsername(): string {
         return this.rawData.user_data.ds_username;
     }
+    getUserSubscriptionPlan(): UserData['subscription_plan'] {
+        return this.rawData.user_data.subscription_plan
+    }
+    getDaysLeftBeforeFreeTrialExpires(): number {
+        return this.rawData.user_data.days_left_before_free_trial_expires
+    }
     userIsSubscribed(): boolean {
         return this.rawData.user_data.is_subscribed
     }
@@ -181,7 +187,7 @@ class GlobalData {
     }
 }
 
-const initialEmptyRawData = {
+const initialEmptyRawData: RawData = {
     user_data: {
         id: -1,
         email: '',
@@ -189,11 +195,11 @@ const initialEmptyRawData = {
         is_subscribed: false,
         on_free: false,
         logins_after_ask: -1,
-        current_feedback_question: -1
+        current_feedback_question: -1,
+        subscription_plan: 'none',
+        days_left_before_free_trial_expires: 7
     },
     trade_data: {
-        // This no_of_trades should be X-ed out of here
-        no_of_trades: -1,
         current_account_id: -1,
         last_data_refresh_time: new Date(1900, 0, 1),
         accounts: {}

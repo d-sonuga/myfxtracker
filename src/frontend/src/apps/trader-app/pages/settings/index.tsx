@@ -6,12 +6,12 @@ import EmailSection from './email-section'
 import ChangePasswordSection from './change-password-section'
 import DeleteAccountSection from './delete-account'
 import AccountsSection from './accounts-section'
+import SubscriptionSection from './subscription-section'
 import './style.css'
 
 
 const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: Function}) => {
     const globalData = useContext(GlobalDataContext);
-    console.log(globalData);
     return(
         <PageContainer showDataStatusBar={false}>
             <PageHeading heading='Settings' dontShowSelector={true} />
@@ -29,6 +29,12 @@ const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: F
                         accounts={globalData.getAllAccounts()}
                         removeAccountFromData={removeAccountFromGlobalData}
                         />
+                </div>
+                <div>
+                    <H5>Subscription</H5>
+                    <SubscriptionSection 
+                        subscriptionPlan={globalData.getUserSubscriptionPlan()}
+                        daysLeftBeforeFreeTrialExpires={globalData.getDaysLeftBeforeFreeTrialExpires()} />
                 </div>
             </div>
         </PageContainer>

@@ -1,11 +1,17 @@
+from calendar import month
+from ctypes import Union
+from locale import MON_1
+from time import time
+from typing import Literal
 from django.test import TestCase
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from trader.models import Account, Preferences
-from users.models import Trader
+from users.models import Trader, SubscriptionInfo
 from .test_data import InitDataTestData
 from .test_data import AddTradingAccountTestData
 from trader.metaapi import Transaction
+from django.conf import settings
 
 """
 Adding last_data_refresh_time to init_data
@@ -34,6 +40,7 @@ class InitDataTest(TestCase):
     
     def test_trader_with_no_data(self):
         resp = self.client.get('/trader/get-init-data/', **self.no_data_headers)
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader_with_no_data)
         self.assertEquals(resp.status_code, 200)
         self.assertDictEqual(
             resp.json(),
@@ -42,7 +49,9 @@ class InitDataTest(TestCase):
                     'id': self.trader_with_no_data.id,
                     'email': self.trader_with_no_data.email,
                     'is_subscribed': self.trader_with_no_data.is_subscribed,
-                    'on_free': self.trader_with_no_data.on_free
+                    'on_free': self.trader_with_no_data.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader_with_no_data),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': -1,
@@ -69,6 +78,7 @@ class InitDataTest(TestCase):
         pref.current_account = account
         pref.save()
         resp = self.client.get('/trader/get-init-data/', **self.with_data_headers)
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader_with_data)
         self.assertEquals(resp.status_code, 200)
         self.maxDiff = None
         self.assertDictEqual(
@@ -78,7 +88,9 @@ class InitDataTest(TestCase):
                     'id': self.trader_with_data.id,
                     'email': self.trader_with_data.email,
                     'is_subscribed': self.trader_with_data.is_subscribed,
-                    'on_free': self.trader_with_data.on_free
+                    'on_free': self.trader_with_data.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader_with_data),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': pref.current_account.id,
@@ -115,3 +127,165 @@ class InitDataTest(TestCase):
             }
         )
     
+    def test_trader_with_data_added_account_after_last_general_data_refresh_and_is_subscribed_to_monthly(self):
+        """
+        To test the scenario where a trader with data requests for his init data
+        And this trader's account was added after the last data refresh
+        """
+        self.subscribe_trader(self.trader_with_data, 'monthly')
+        test_data = AddTradingAccountTestData.good_account_details
+        account = Account.objects.create_account(
+            self.trader_with_data,
+            test_data['account-info'],
+            *Transaction.from_raw_data(test_data['deals'].copy())
+        )
+        account.time_added = timezone.now()
+        account.save()
+        pref = Preferences.objects.get(user=self.trader_with_data)
+        pref.current_account = account
+        pref.save()
+        resp = self.client.get('/trader/get-init-data/', **self.with_data_headers)
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader_with_data)
+        self.assertEquals(resp.status_code, 200)
+        self.maxDiff = None
+        self.assertDictEqual(
+            resp.json(),
+            {
+                'user_data': {
+                    'id': self.trader_with_data.id,
+                    'email': self.trader_with_data.email,
+                    'is_subscribed': self.trader_with_data.is_subscribed,
+                    'on_free': self.trader_with_data.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader_with_data),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                },
+                'trade_data': {
+                    'current_account_id': pref.current_account.id,
+                    'last_data_refresh_time': self.trader_with_data.last_data_refresh_time.isoformat().replace('+00:00', 'Z'),
+                    'accounts': {
+                        f'{account.id}': {
+                            'name': account.name,
+                            'trades': [{
+                                'pair': trade.pair,
+                                'action': trade.action,
+                                'profitLoss': float(trade.profit_loss),
+                                'commission': float(trade.commission),
+                                'swap': float(trade.swap),
+                                'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
+                                'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
+                                'openPrice': float(trade.open_price),
+                                'closePrice': float(trade.close_price),
+                                'takeProfit': float(trade.take_profit),
+                                'stopLoss': float(trade.stop_loss)
+                            } for trade in account.get_all_trades()],
+                            'deposits': [{
+                                'account': account.id,
+                                'amount': float(deposit.amount),
+                                'time': deposit.time.isoformat().replace('+00:00', 'Z')
+                            } for deposit in account.get_all_deposits()],
+                            'withdrawals': [{
+                                'account': account.id,
+                                'amount': float(withdrawal.amount),
+                                'time': withdrawal.time.isoformat().replace('+00:00', 'Z')
+                            } for withdrawal in account.get_all_withdrawals()]
+                        }
+                    }
+                }
+            }
+        )
+
+    def test_trader_with_data_added_account_after_last_general_data_refresh_and_is_subscribed_to_yearly(self):
+        """
+        To test the scenario where a trader with data requests for his init data
+        And this trader's account was added after the last data refresh
+        """
+        self.subscribe_trader(self.trader_with_data, 'yearly')
+        test_data = AddTradingAccountTestData.good_account_details
+        account = Account.objects.create_account(
+            self.trader_with_data,
+            test_data['account-info'],
+            *Transaction.from_raw_data(test_data['deals'].copy())
+        )
+        account.time_added = timezone.now()
+        account.save()
+        pref = Preferences.objects.get(user=self.trader_with_data)
+        pref.current_account = account
+        pref.save()
+        resp = self.client.get('/trader/get-init-data/', **self.with_data_headers)
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader_with_data)
+        self.assertEquals(resp.status_code, 200)
+        self.maxDiff = None
+        self.assertDictEqual(
+            resp.json(),
+            {
+                'user_data': {
+                    'id': self.trader_with_data.id,
+                    'email': self.trader_with_data.email,
+                    'is_subscribed': self.trader_with_data.is_subscribed,
+                    'on_free': self.trader_with_data.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader_with_data),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                },
+                'trade_data': {
+                    'current_account_id': pref.current_account.id,
+                    'last_data_refresh_time': self.trader_with_data.last_data_refresh_time.isoformat().replace('+00:00', 'Z'),
+                    'accounts': {
+                        f'{account.id}': {
+                            'name': account.name,
+                            'trades': [{
+                                'pair': trade.pair,
+                                'action': trade.action,
+                                'profitLoss': float(trade.profit_loss),
+                                'commission': float(trade.commission),
+                                'swap': float(trade.swap),
+                                'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
+                                'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
+                                'openPrice': float(trade.open_price),
+                                'closePrice': float(trade.close_price),
+                                'takeProfit': float(trade.take_profit),
+                                'stopLoss': float(trade.stop_loss)
+                            } for trade in account.get_all_trades()],
+                            'deposits': [{
+                                'account': account.id,
+                                'amount': float(deposit.amount),
+                                'time': deposit.time.isoformat().replace('+00:00', 'Z')
+                            } for deposit in account.get_all_deposits()],
+                            'withdrawals': [{
+                                'account': account.id,
+                                'amount': float(withdrawal.amount),
+                                'time': withdrawal.time.isoformat().replace('+00:00', 'Z')
+                            } for withdrawal in account.get_all_withdrawals()]
+                        }
+                    }
+                }
+            }
+        )
+
+    def subscribe_trader(self, trader: Trader, plan: Literal['yearly'] | Literal['monthly']):
+        FLUTTERWAVE = SubscriptionInfo.FLUTTERWAVE
+        CODE = SubscriptionInfo.CODE
+        PLAN_INDEX = SubscriptionInfo.MONTHLY
+        if plan != 'monthly':
+            PLAN_INDEX = SubscriptionInfo.YEARLY
+        trader.subscriptioninfo.is_subscribed = True
+        trader.subscriptioninfo.payment_method = SubscriptionInfo.PAYMENT_CHOICES[FLUTTERWAVE][CODE]
+        trader.subscriptioninfo.subscription_plan = SubscriptionInfo.PLAN_CHOICES[PLAN_INDEX][CODE]
+        trader.subscriptioninfo.save()
+    
+    def format_subscription_plan(self, trader: Trader):
+        MONTHLY = SubscriptionInfo.MONTHLY
+        YEARLY = SubscriptionInfo.YEARLY
+        CODE = SubscriptionInfo.CODE
+        if not trader.is_subscribed:
+            return 'none'
+        elif trader.subscription_plan == SubscriptionInfo.PLAN_CHOICES[MONTHLY][CODE]:
+            return 'monthly'
+        elif trader.subscription_plan == SubscriptionInfo.PLAN_CHOICES[YEARLY][CODE]:
+            return 'yearly'
+    
+    def days_left_before_free_trial_expires(self, trader: Trader):
+        day_of_free_trial_over = trader.date_joined + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD)
+        days_left_before_free_trial_expires = day_of_free_trial_over - timezone.now()
+        if days_left_before_free_trial_expires.days < 0:
+            return 0
+        return days_left_before_free_trial_expires.days

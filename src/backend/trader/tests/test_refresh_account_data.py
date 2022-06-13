@@ -1,10 +1,13 @@
+from ast import Subscript
 from datetime import timedelta
+from re import A
 from django.test import TestCase, override_settings
 from django.utils import timezone
+from django.conf import settings
 import django_rq
 from rest_framework.authtoken.models import Token
 from trader.metaapi.main import Transaction
-from users.models import Trader
+from users.models import SubscriptionInfo, Trader
 from trader.models import Account, Preferences, UnresolvedRefreshAccount, RefreshAccountError
 from trader import metaapi
 from typing import List
@@ -189,6 +192,7 @@ class RefreshAccountDataTests(TestCase):
         account = Account.objects.get(user=trader)
         self.assert_account_data_updated(account, test_data, prev_account_state)
         pref_current_account = Preferences.objects.get(user=trader).current_account
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(trader)
         current_account_id = pref_current_account.id if pref_current_account is not None else -1
         self.assertEquals(resp.json(), {
                 'user_data': {
@@ -196,6 +200,8 @@ class RefreshAccountDataTests(TestCase):
                     'email': trader.email,
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -271,12 +277,15 @@ class RefreshAccountDataTests(TestCase):
         self.assert_account_data_updated(account, test_data, prev_account_state)
         pref_current_account = Preferences.objects.get(user=trader).current_account
         current_account_id = pref_current_account.id if pref_current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(trader)
         self.assertEquals(resp.json(), {
                 'user_data': {
                     'id': trader.id,
                     'email': trader.email,
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -370,12 +379,15 @@ class RefreshAccountDataTests(TestCase):
         self.assert_account_data_didnt_update(account, prev_account_state)
         pref_current_account = Preferences.objects.get(user=trader).current_account
         current_account_id = pref_current_account.id if pref_current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(trader)
         self.assertEquals(resp.json(), {
                 'user_data': {
                     'id': trader.id,
                     'email': trader.email,
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -451,12 +463,15 @@ class RefreshAccountDataTests(TestCase):
         self.assert_accounts_updated(accounts, per_account_test_data, prev_account_states)
         pref_current_account = Preferences.objects.get(user=trader).current_account
         current_account_id = pref_current_account.id if pref_current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(trader)
         self.assertEquals(resp.json(), {
                 'user_data': {
                     'id': trader.id,
                     'email': trader.email,
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -635,6 +650,25 @@ class RefreshAccountDataTests(TestCase):
         self.assertEquals(account.leverage, prev_account_state['leverage'])
         self.assertEquals(account.credit, prev_account_state['credit'])
         self.assertEquals(account.margin_mode, prev_account_state['margin-mode'])
+
+    def format_subscription_plan(self, trader: Trader):
+        MONTHLY = SubscriptionInfo.MONTHLY
+        YEARLY = SubscriptionInfo.YEARLY
+        CODE = SubscriptionInfo.CODE
+        if not trader.is_subscribed:
+            return 'none'
+        elif trader.subscription_plan == SubscriptionInfo.PLAN_CHOICES[MONTHLY][CODE]:
+            return 'monthly'
+        elif trader.subscription_plan == SubscriptionInfo.PLAN_CHOICES[YEARLY][CODE]:
+            return 'yearly'
+        
+    def days_left_before_free_trial_expires(self, trader: Trader):
+        day_of_free_trial_over = trader.date_joined + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD)
+        days_left_before_free_trial_expires = day_of_free_trial_over - timezone.now()
+        if days_left_before_free_trial_expires.days < 0:
+            return 0
+        return days_left_before_free_trial_expires.days
+
 
     def request_refresh(self, *args, **kwargs):
         return self.client.get('/trader/refresh-data/', *args, **kwargs)

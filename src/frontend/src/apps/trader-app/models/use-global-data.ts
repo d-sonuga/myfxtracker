@@ -34,9 +34,11 @@ const noAccountsRawData  = {
         email: 'newuser@email.com',
         ds_username: 'dsusername',
         is_subscribed: false,
+        subscription_plan: 'none',
         on_free: true,
         logins_after_ask: 2,
-        current_feedback_question: 1
+        current_feedback_question: 1,
+        days_left_before_free_trial_expires: 3
     },
     trade_data: {
         no_of_trades: 0,
@@ -137,9 +139,11 @@ const dummyRawData: RawData = {
         email: 'sonugademilade8703@gmail.com',
         ds_username: 'dsusername',
         is_subscribed: false,
+        subscription_plan: 'none',
         on_free: true,
         logins_after_ask: 2,
-        current_feedback_question: 1
+        current_feedback_question: 1,
+        days_left_before_free_trial_expires: 4
     },
     trade_data: {
         current_account_id: 2,

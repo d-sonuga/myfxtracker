@@ -24,3 +24,9 @@ class MainMetaApi(BaseTestMetaApi):
 
     async def redeploy(self):
         raise Exception
+    
+    async def undeploy(self):
+        raise Exception
+    
+    async def get_account(self, *args, **kwargs):
+        return self
