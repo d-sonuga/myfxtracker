@@ -5,8 +5,8 @@ class Rave:
         self.Subscriptions = self
     
     def fetch(self, *args, **kwargs):
-        raise PlanStatusError(type='unknown', err={'detail': 'unknown'})
+        raise PlanStatusError(type='unknown', err={'detail': 'unknown error'})
 
     def cancel(self, *args, **kwargs):
-        raise PlanStatusError(type='unknown', err={'detail': 'unknown'})
+        raise PlanStatusError(type='unknown', err={'detail': 'unknown error'})
         

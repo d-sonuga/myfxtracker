@@ -14,7 +14,6 @@ MONTHLY = SubscriptionInfo.MONTHLY
 CODE = SubscriptionInfo.CODE
 
 
-@tag('now')
 class CancelSubscriptionTests(TestCase):
     def setUp(self) -> None:
         test_data = subscription_test_data

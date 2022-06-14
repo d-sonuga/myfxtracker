@@ -308,6 +308,14 @@ class DeleteAccountView(APIView):
                         account
                     )
             return Response({'detail': 'pending'})
+        if request.user.is_subscribed:
+            if self.unsubscription_error_exists():
+                error = self.get_unsubscription_error()
+                return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            if not self.unsubscription_is_being_resolved():
+                UnresolvedUnsubscription.objects.create(user=self.request.user)
+                rq_enqueue(resolve_unsubscription, self.request.user)
+            return Response({'detail': 'pending'})
         request.user.delete()
         return Response({'detail': 'removed'})
         
@@ -326,6 +334,22 @@ class DeleteAccountView(APIView):
         error = remove_account_error_set[0].consume_error()
         remove_account_error_set.delete()
         return error
+
+    def unsubscription_is_being_resolved(self):
+        return UnresolvedUnsubscription.objects.filter(
+            user=self.request.user
+        ).exists()
+    
+    def unsubscription_error_exists(self):
+        return UnsubscriptionError.objects.filter(
+            user=self.request.user
+        ).exists()
+    
+    def get_unsubscription_error(self):
+        return UnsubscriptionError.objects.get(
+            user=self.request.user
+        ).consume_error()
+
 
 class NoteViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsTrader]
@@ -972,7 +996,7 @@ class CancelSubscriptionView(APIView):
     
     @staticmethod
     def handle_unsubscribe_exception(trader, exc):
-        logger.exception('An unknown error occured while redeploying account in record new subscription')
+        logger.exception('An unknown error occured while cancelling subscription')
         if isinstance(exc, metaapi.UnknownError):
             MetaApiError.objects.create(user=trader, error=exc.detail)
             UnsubscriptionError.objects.create(user=trader, error={'detail': exc.detail})
