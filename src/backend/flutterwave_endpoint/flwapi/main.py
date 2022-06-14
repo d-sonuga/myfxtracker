@@ -13,8 +13,11 @@ class FlApi:
         self._api: Rave = getattr(flapi_module, 'Rave')(settings.RAVE_PUBLIC_KEY)
         
     def cancel_subscription(self, trader_email: str):
+        logger.info(f'Fetching subscriptions of user {trader_email}')
         related_subscriptions = self._api.Subscriptions.fetch(subscription_email=trader_email)
+        logger.info(f'Extracting subscription id of fetched subscriptions of user {trader_email}')
         subscr_id = self.get_trader_subscription_id(related_subscriptions)
+        logger.info(f'Making request to cancel subscription of user {trader_email}')
         resp = self._api.Subscriptions.cancel(subscr_id)
         successful_subscription_cancel = lambda: (
             resp.get('error') == False
@@ -39,4 +42,4 @@ class FlutterwaveError(Exception):
 
     def __init__(self, detail: str):
         self.detail = detail
-    
+

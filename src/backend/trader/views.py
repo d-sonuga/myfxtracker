@@ -287,6 +287,7 @@ class Logout(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def delete(self, request):
+        logger.info(f'Logging out user with an id of {request.user.id}')
         request.user.auth_token.delete()
         return Response()
 
@@ -295,11 +296,17 @@ class DeleteAccountView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def delete(self, request):
+        logger.info(f'Request to delete account by {request.user.id}')
         if request.user.account_set.exists():
+            logger.info(f'User {request.user.id}, who requested an account deletion, '
+                'still has unremoved accounts')
             if self.account_removal_error_exists():
+                logger.info(f'Sending remove account error as delete account '
+                    'response to user {request.user.id}')
                 error = self.get_account_removal_error()
                 return Response(error, status=status.HTTP_400_BAD_REQUEST)
             if not self.accounts_are_being_removed():
+                logger.info(f'Proceeding to remove trading accounts of user {request.user.id}')
                 for account in Account.objects.filter(user=request.user):
                     UnresolvedRemoveAccount.objects.create(user=request.user, account=account)
                     rq_enqueue(
@@ -308,14 +315,20 @@ class DeleteAccountView(APIView):
                         account
                     )
             return Response({'detail': 'pending'})
+        logger.info(f'User {request.user.id}, who requested an account deletion, is still subscribed')
         if request.user.is_subscribed:
             if self.unsubscription_error_exists():
+                logger.info(f'Sending unsubscription error as delete account '
+                    'response to user {request.user.id}')
                 error = self.get_unsubscription_error()
                 return Response(error, status=status.HTTP_400_BAD_REQUEST)
             if not self.unsubscription_is_being_resolved():
+                logger.info(f'Proceeding to unsubscribe user {request.user.id} '
+                    'before finally deleting the account')
                 UnresolvedUnsubscription.objects.create(user=self.request.user)
                 rq_enqueue(resolve_unsubscription, self.request.user)
             return Response({'detail': 'pending'})
+        logger.info(f'Account of user {request.user.id} is now deleting')
         request.user.delete()
         return Response({'detail': 'removed'})
         
@@ -405,6 +418,7 @@ class GetInitData(APIView):
     
     @staticmethod
     def build_init_data(request):
+        logger.info(f'Building init data of user {request.user.id}')
         accounts = Account.objects.filter(user=request.user)
         trader_pref = Preferences.objects.get(user=request.user)
         current_account_id = (
@@ -573,6 +587,7 @@ class AddTradingAccountView(APIView):
                 metaapi.UnknownError
             )
         ):
+            logger.info(f'Encountered a MetaApi error while adding account for user {user.id}')
             MetaApiError.objects.create(user=user, error=exc.detail)
             if isinstance(exc, metaapi.BrokerNotSupportedError):
                 create_add_account_error({'server': [exc.detail]})
@@ -653,12 +668,16 @@ class PendingAddTradingAccount(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def post(self, request, *args, **kwargs):
+        logger.info(f'Received follow up request for add account from user {request.user.id}')
         if self.account_is_being_resolved():
+            logger.info(f'User {request.user.id}\'s account is still being added, returning pending response')
             return Response({'detail': 'pending'}, status=status.HTTP_200_OK)
         if self.account_has_been_added():
+            logger.info(f'User {request.user.id}\'s account has been successfully added, returning init data')
             resp_data = GetInitData.build_init_data(request)
             return Response(resp_data, status=status.HTTP_201_CREATED)
         if self.add_account_error_exists():
+            logger.info(f'User {request.user.id}\'s add account resolved with an error, returning error')
             error = self.get_add_account_error()
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
         return Response({'detail': 'account details not found'}, status=status.HTTP_400_BAD_REQUEST)
@@ -705,11 +724,15 @@ class RefreshData(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
     
     def get(self, request, *args, **kwargs):
+        logger.info(f'Received refresh data request from user {request.user.id}')
         if self.refresh_account_data_is_being_resolved():
+            logger.info(f'User {request.user.id} account data is still being refreshed, returning pending')
             return Response({'detail': 'pending'})
         if self.refresh_account_error_exists():
+            logger.info(f'User {request.user.id} account data refresh resolved with an error, returning error')
             error = self.get_refresh_account_error()
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        logger.info(f'Placing refresh account data request on queue for user {request.user.id}')
         UnresolvedRefreshAccount.objects.create(user=request.user)
         rq_enqueue(resolve_refresh_account_data, request.user)
         return Response({'detail': 'pending'})
@@ -766,11 +789,16 @@ class PendingRefreshData(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def get(self, request, *args, **kwargs):
+        logger.info(f'Received follow up request for refreshing data from user {request.user.id}')
         if self.refresh_account_data_is_being_resolved():
+            logger.info(f'User {request.user.id}\'s account data is still being refreshed, returning pending')
             return Response({'detail': 'pending'})
         if self.refresh_account_error_exists():
+            logger.info(f'User {request.user.id}\'s account data refresh was '
+                'resolved with an error, returning error')
             error = self.get_refresh_account_error()
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        logger.info(f'User {request.user.id}\'s account data has been refreshed, returning init data')
         updated_data = GetInitData.build_init_data(request)
         return Response(updated_data)
     
@@ -794,16 +822,26 @@ class RemoveTradingAccountView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
     
     def delete(self, request, pk, *args, **kwargs):
+        logger.info(f'Received request from user {request.user.id} to remove trading account {pk}')
         if not self.account_exists(pk):
+            logger.info(f'Trading account {pk} requested for removal by user {request.user.id} either '
+                'has already been removed or never existed, returning removed')
             return Response({'detail': 'removed'})
         if not self.user_is_account_owner(pk):
+            logger.info(f'User {request.user.id} requested trading account removal '
+                'for a trading account that is for someone else, returning unauthorized')
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         account = Account.objects.get(id=pk)
         if self.account_removal_is_being_resolved(account):
+            logger.info(f'Trading account {pk} of user {request.user.id} is '
+                'still being removed, returning pending')
             return Response({'detail': 'pending'})
         if self.remove_account_error_exists(account):
+            logger.info(f'Trading account removal of account {pk} of user {request.user.id} '
+                'resolved with an error, returning error')
             error = self.get_remove_account_error(account)
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        logger.info(f'Placing request to remove trading account {pk} of user {request.user.id} on queue')
         UnresolvedRemoveAccount.objects.create(user=request.user, account=account)
         rq_enqueue(resolve_remove_trading_account, request.user, account)
         return Response({'detail': 'pending'})
@@ -872,21 +910,33 @@ class RecordNewSubscriptionView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def post(self, request):
+        logger.info(f'Received request to record new subscription from user {request.user.id}')
         serializer = RecordNewSubscriptionSerializer(data=request.data)
         if serializer.is_valid():
+            logger.info(f'Data submitted by user {request.user.id} to record new subscription validated')
             if not request.user.subscriptioninfo.is_subscribed:
+                logger.info(f'Recording user {request.user.id} as subscribed')
                 FLUTTERWAVE = SubscriptionInfo.FLUTTERWAVE
                 self.record_trader_as_subscribed(payment_method=FLUTTERWAVE)
                 if self.user_has_undeployed_accounts():
+                    logger.info(f'Placing request to redeploy trading accounts '
+                        f'of user {request.user.id} on queue')
                     UnresolvedDeployAccount.objects.create(user=request.user)
                     rq_enqueue(resolve_deploy_account, request.user)
                     return Response({'status': 'pending'})
             if self.account_deployment_is_being_resolved():
+                logger.info(f'User {request.user.id}\'s trading account are being redeployed, returning pending')
                 return Response({'status': 'pending'})
             if self.deploy_account_error_exists():
+                logger.info(f'User {request.user.id}\'s trading account redeployment '
+                    'resolved with an error, returning error')
                 error = self.get_deploy_account_error()
                 return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            logger.info(f'User {request.user.id} is already recorded as subscribed, '
+                'and there are no accounts to redploy, returning not pending')
             return Response({'status': 'not pending'})
+        logger.info(f'Data submitted by user {request.user.id} to record new '
+            'subscription has errors, returning errors')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     
@@ -955,13 +1005,19 @@ class CancelSubscriptionView(APIView):
     permission_classes = [IsAuthenticated, IsTrader]
 
     def get(self, request, *args, **kwargs):
+        logger.info(f'Received request to cancel subscription from user {request.user.id}')
         if not request.user.is_subscribed:
+            logger.info(f'User {request.user.id} is already recorded as unsubscribed, either it had always'
+                'been that way or a previous request to unsubscribe has been resolved, returning not pending')
             return Response({'detail': 'not pending'})
         if self.unsubscription_is_being_resolved():
+            logger.info(f'user{request.user.id}\'s unsubscription is still being resolved, returning pending')
             return Response({'detail': 'pending'})
         if self.unsubscription_error_exists():
+            logger.info(f'User {request.user.id}\'s unsubscription resolved with errors, returning errors')
             error = self.get_unsubscription_error()
             return Response(error, status=status.HTTP_400_BAD_REQUEST)
+        logger.info(f'Placing request to cancel user {request.user.id}\'s subscription on queue')
         rq_enqueue(resolve_unsubscription, request.user)
         UnresolvedUnsubscription.objects.create(user=request.user)
         return Response({'detail': 'pending'})

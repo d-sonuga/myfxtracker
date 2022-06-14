@@ -21,6 +21,7 @@ MONTHLY = SubscriptionInfo.MONTHLY
 
 class HandleWebhookView(View):
     def post(self, request, *args, **kwargs):
+        logger.info('Received webhook from Flutterwave')
         if request.headers.get('verif-hash') != settings.FLUTTERWAVE_VERIF_HASH:
             return HttpResponse(status=401)
         request_body = request.body.decode()
