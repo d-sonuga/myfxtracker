@@ -188,6 +188,7 @@ class SubscriptionInfo(models.Model):
     next_billing_time = models.DateField()
     last_billed_time = models.DateField(null=True)
     subscription_plan = models.CharField(choices=PLAN_CHOICES, max_length=5, null=True)
+    time_of_free_trial_start = models.DateTimeField(null=True)
 
     def subscription_has_expired(self, today=date.today()):
         return self.next_billing_time - today <= timedelta(days=0)

@@ -117,6 +117,7 @@ class AddTradingAccountTests(TestCase):
         """
         test_account_data = AddTradingAccountTestData.good_account_details
         account_details = test_account_data['register-details']
+        self.assertIsNone(self.trader.time_of_free_trial_start)
         resp = self.request_add_account(account_details)
         self.assertEquals(resp.status_code, 200)
         self.assertEquals(resp.json(), {
@@ -141,6 +142,8 @@ class AddTradingAccountTests(TestCase):
         account = account_set[0]
         self.assert_account_saved_properly(test_account_data, account)
         self.assertEquals(account_set.count(), 1)
+        self.trader = Trader.objects.get(id=self.trader.id)
+        self.assertEquals(self.trader.time_of_free_trial_start, account.time_added)
         resp = self.request_pending_account(account_details)
         self.assertEquals(resp.status_code, 201)
         pref = Preferences.objects.get(user=self.trader)
