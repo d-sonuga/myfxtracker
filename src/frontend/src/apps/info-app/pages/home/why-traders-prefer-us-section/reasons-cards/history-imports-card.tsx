@@ -7,7 +7,8 @@ const HistoryImportsCard = () => {
         <BaseReasonCard
             img={<img src={historyImportsImg} alt='' />}
             heading='History Imports'
-            content='Import and view trade analytics from your trading account as far back as a year ago.'
+            content='MyFxTracker automatically imports your trading history 
+            and displays your account data from the very first trade to date.'
             />
     );
 }

@@ -9,7 +9,7 @@ const LogoAndSocial = () => {
     return(
         <ColumnBox className='apps-info-app-home-footer-logo-and-social-container'>
             <Logo />
-            <BP style={{textTransform: 'capitalize', textAlign: 'left'}}>#1 automated trading forex journal</BP>
+            <BP style={{textTransform: 'capitalize', textAlign: 'left'}}>#1 automated forex trading journal</BP>
             <SocialMediaIcons />
         </ColumnBox>
     )

@@ -8,7 +8,7 @@ const SeamlessProcessCard = () => {
             img={<img src={seamlessProcessImg} alt='' />}
             heading='Seamless process'
             content='Easily connect your Metatrader to MyFxTracker and view your
-            analytics in as little as 5 minutes.' />
+            analytics in less than 5 minutes.' />
     );
 }
 

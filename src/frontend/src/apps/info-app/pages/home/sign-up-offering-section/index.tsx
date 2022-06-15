@@ -1,10 +1,10 @@
 import {useNavigate} from 'react-router'
 import {CenterRowBox, CenterColumnBox} from '@components/containers'
 import {H5, P} from '@components/text'
-import {getDimen} from '@conf/utils'
+import {getColor, getDimen} from '@conf/utils'
 import ButtonWithArrow from '../../../components/button-with-arrow'
 import './style.css'
-import { RouteConst } from '@conf/const'
+import {RouteConst} from '@conf/const'
 
 
 const SignUpOfferingSection = () => {
@@ -17,12 +17,12 @@ const SignUpOfferingSection = () => {
                 </H5>
                 <P style={{textAlign: 'center', marginBottom: getDimen('padding-xs')}}>
                     We guarantee your satisfaction on MyFxTracker with a full refund.
-                    We will refund your subscription fee ($24.99) in full at any month you are dissatisfied.
+                    We will refund your subscription fee in full at any month you are dissatisfied.
                 </P>
                 <ButtonWithArrow 
                     onClick={() => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`)}
                     style={{maxWidth: '350px'}}>
-                    Try MyFxTracker free for 14 days
+                    Try MyFxTracker free for 7 days
                 </ButtonWithArrow>
             </CenterColumnBox>
         </CenterRowBox>

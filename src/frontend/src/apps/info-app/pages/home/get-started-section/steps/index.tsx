@@ -28,7 +28,7 @@ const Steps = () => {
                                     textAlign: 'left'
                                 }}>0{(i + 1).toString()}</H3>
                                 {i !== steps.length - 1 ?
-                                    <VerticalDivider height={100} marginLeft='0px' marginRight={getDimen('padding-md')} />
+                                    <VerticalDivider height={60} marginLeft='0px' marginRight={getDimen('padding-md')} />
                                     : null
                                 }
                             </CenterColumnBox>
@@ -43,9 +43,9 @@ const Steps = () => {
 }
 
 const steps = [
-    'Create your account',
-    'Download MyFxTracker EA',
-    'Connect to your Metatrader account'
+    'Sign Up for MyFxTracker',
+    'Connect Your MetaTrader',
+    'Start Tracking Your Performance'
 ]
 
 export default Steps

@@ -6,10 +6,10 @@ const UnlimitedAccountsCard = () => {
     return(
         <BaseFeatureCard
             imgSrc={unlimitedAccountsImg}
-            header='Unlimited Accounts'
-            content='Maximise profitability on all of your trading accounts.
-            MyFxTracker easily lets you connect and track your performance on as many
-            trading accounts as you have.' />
+            header='Multiple Accounts'
+            content='Maximise profitability on multiple trading accounts.
+            MyFxTracker easily lets you connect and track your performance on up to
+            3 accounts.' />
     );
 }
 

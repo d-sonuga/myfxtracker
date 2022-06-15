@@ -19,7 +19,7 @@ const PriceProposal = () => {
             </RowBox>
             <ButtonWithArrow
                 onClick={() => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`)}>
-                    Get 14 days free
+                    Get 7 days free
             </ButtonWithArrow>
         </ColumnBox>
     )

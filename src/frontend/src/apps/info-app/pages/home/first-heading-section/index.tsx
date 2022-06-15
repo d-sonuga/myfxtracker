@@ -1,7 +1,8 @@
 import {useNavigate} from 'react-router'
-import {CenterBox} from '@components/containers'
-import {H1, P} from '@components/text'
-import ButtonWithArrow from '../../../components/button-with-arrow'
+import {CenterBox, CenterColumnBox} from '@components/containers'
+import {H1, P, SBP} from '@components/text'
+import {getColor} from '@conf/utils'
+import ButtonWithArrow from '@apps/info-app/components/button-with-arrow'
 import firstHeadingSectionStyle from './style'
 import './style.css'
 
@@ -18,11 +19,12 @@ const FirstHeadingSection = () => {
                     <P style={textStyle}>Connect your Metatrader account and use our 
                     advanced analytics to increase your profitability today.</P>
                 </CenterBox>
-                <CenterBox>
-                    <ButtonWithArrow onClick={() => navigate('/sign-up')}>
-                        Get 14 days free
+                <CenterColumnBox>
+                    <ButtonWithArrow onClick={() => navigate('/sign-up')} size='large'>
+                        Get 7 days free
                     </ButtonWithArrow>
-                </CenterBox>
+                    <SBP style={{color: getColor('gray')}}>*No credit card required</SBP>
+                </CenterColumnBox>
             </CenterBox>
         </div>
     );
