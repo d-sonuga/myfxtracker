@@ -277,8 +277,6 @@ PAYSTACK_PUBLIC_KEY = 'pk_test_6c33b872ddac420b2fb9196f66e7cf5fc788c231'
 PAYSTACK_BASE_URL = 'https://api.paystack.co'
 # Paystack endpoint
 
-SUBSCRIPTION_COST = 20
-
 MEDIA_ROOT = 'media'
 MEDIA_URL = '/media/'
 
@@ -320,7 +318,7 @@ METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
 # The class that will be used to interact with the MA servers
 # It is changed programmatically during tests for testing specific scenarios
 # It should not be changed manually
-META_API_CLASS_MODULE = 'trader.metaapi.main'
+META_API_CLASS_MODULE = 'trader.metaapi.test_no_error'
 
 # To test what happens when an error occurs during user creation
 # Always set to false
@@ -333,7 +331,7 @@ THIRTY_MINS = 30
 TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRESH_INTERVAL', THIRTY_MINS))
 
 MONTHLY_PLAN_PRICE = 24.99
-YEARLY_PLAN_PRICE = 23.99
+YEARLY_PLAN_PRICE = 287.88
 
 # This function is used to get the current time when updating a trader's
 # subscriptioninfo. This setting was used to make the subscriptioninfo updates

@@ -56,6 +56,7 @@ class GlobalData {
         this.removeAccount = this.removeAccount.bind(this);
         this.lastDataRefreshTime = this.lastDataRefreshTime.bind(this);
         this.subscribeUser = this.subscribeUser.bind(this);
+        this.unsubscribeUser = this.unsubscribeUser.bind(this);
     }
     /** Has the data from the backend loaded */
     hasLoaded(): boolean {
@@ -147,10 +148,18 @@ class GlobalData {
         return newGlobalData;
     }
     /** Set the user's is subscribed field to true */
-    subscribeUser(): GlobalData {
+    subscribeUser(subscriptionPlan: UserData['subscription_plan']): GlobalData {
         const rawDataClone: RawData = cloneObject(this.rawData);
         rawDataClone.user_data.is_subscribed = true;
         rawDataClone.user_data.has_paid = true;
+        rawDataClone.user_data.subscription_plan = subscriptionPlan;
+        return new GlobalData(rawDataClone);
+    }
+    /** Set the user's is subscribed field to false */
+    unsubscribeUser(): GlobalData {
+        const rawDataClone: RawData = cloneObject(this.rawData);
+        rawDataClone.user_data.is_subscribed = false;
+        rawDataClone.user_data.subscription_plan = 'none';
         return new GlobalData(rawDataClone);
     }
     /** Are there any accounts? */
@@ -172,7 +181,7 @@ class GlobalData {
     getUserSubscriptionPlan(): UserData['subscription_plan'] {
         return this.rawData.user_data.subscription_plan
     }
-    getDaysLeftBeforeFreeTrialExpires(): number {
+    getDaysLeftBeforeFreeTrialExpires(): number | string {
         return this.rawData.user_data.days_left_before_free_trial_expires
     }
     userIsSubscribed(): boolean {

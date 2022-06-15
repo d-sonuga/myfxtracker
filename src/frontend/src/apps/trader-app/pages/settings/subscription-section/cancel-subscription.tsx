@@ -11,25 +11,25 @@ import {ToastFuncType} from '@components/toast/types'
  */
 const cancelSubscription = (
     Toast: ToastFuncType,
-    navigate: Function,
+    onSubscriptionCancel: Function,
     thenFunc: Function,
     followUpNo: number = 0
 ) => {
     const {BASE_URL, CANCEL_SUBSCRIPTION_URL} = HttpConst;
-    setTimeout(() => Http.delete({
+    setTimeout(() => Http.get({
         url: `${BASE_URL}/${CANCEL_SUBSCRIPTION_URL}/`,
         successFunc: (resp: any) => {
             if('detail' in resp.data){
                 if(resp.data['detail'] === 'not pending'){
                     const {TRADER_APP_ROUTE} = RouteConst;
-                    navigate(`/${TRADER_APP_ROUTE}`);
+                    onSubscriptionCancel();
                     thenFunc();
                 } else {
                     if(followUpNo >= MAX_NO_OF_FOLLOW_UP_REQUESTS){
                         Toast.error('Sorry. Something went wrong.');
                         thenFunc();
                     } else {
-                        cancelSubscription(Toast, navigate, thenFunc, followUpNo + 1);
+                        cancelSubscription(Toast, onSubscriptionCancel, thenFunc, followUpNo + 1);
                     }
                 }
             } else {

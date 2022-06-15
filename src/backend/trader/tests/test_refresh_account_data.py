@@ -1,11 +1,12 @@
 from ast import Subscript
 from datetime import timedelta
 from re import A
-from django.test import TestCase, override_settings
+from django.test import TestCase, override_settings, tag
 from django.utils import timezone
 from django.conf import settings
 import django_rq
 from rest_framework.authtoken.models import Token
+from trader.tests.test_init_data import InitDataTest
 from trader.metaapi.main import Transaction
 from users.models import SubscriptionInfo, Trader
 from trader.models import Account, Preferences, UnresolvedRefreshAccount, RefreshAccountError
@@ -80,12 +81,6 @@ class RefreshAccountDataTests(TestCase):
             test_data.original_account_info,
             *Transaction.from_raw_data(test_data.original_deals)
         )
-        for deal in test_data.new_deals['deals']:
-            deal['id'] = str(int(deal['id']) * 5)
-            if deal.get('orderId'):
-                deal['orderId'] = str(int(deal['orderId']) * 5)
-            if deal.get('positionId'):
-                deal['positionId'] = str(int(deal['positionId']) * 5)
         return trader, valid_headers
     
     def setup_trader_with_one_account_and_no_new_data(self):
@@ -124,23 +119,8 @@ class RefreshAccountDataTests(TestCase):
             test_data.account1_data['original_account_info'],
             *Transaction.from_raw_data(test_data.account1_data['original_deals'])
         )
-        for deal in test_data.account1_data['new_deals']['deals']:
-            deal['id'] = str(int(deal['id']) * 5)
-            if deal.get('orderId'):
-                deal['orderId'] = str(int(deal['orderId']) * 5)
-            if deal.get('positionId'):
-                deal['positionId'] = str(int(deal['positionId']) * 5)
         (trade_data, deposit_data, withdrawal_data,
             unknown_transaction_data) = Transaction.from_raw_data(test_data.account2_data['original_deals'])
-        for trade in trade_data:
-            trade.id = str(int(trade.id) * 3)
-            trade.order_id = str(int(trade.order_id) + 1)
-            trade.position_id = str(int(trade.position_id) + 1)
-        deposit_data = [{**deposit, 'id': str(int(deposit['id']) + 1)} for deposit in deposit_data]
-        withdrawal_data = [
-            {**withdrawal, 'id': str(int(withdrawal['id']) + 2)}
-            for withdrawal in withdrawal_data
-        ]
         Account.objects.create_account(
             trader,
             test_data.account2_data['original_account_info'],
@@ -149,12 +129,6 @@ class RefreshAccountDataTests(TestCase):
             withdrawal_data,
             unknown_transaction_data
         )
-        for deal in test_data.account2_data['new_deals']['deals']:
-            deal['id'] = str(int(deal['id']) * 5)
-            if deal.get('orderId'):
-                deal['orderId'] = str(int(deal['orderId']) * 5)
-            if deal.get('positionId'):
-                deal['positionId'] = str(int(deal['positionId']) * 5)
         return trader, valid_headers
     
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_refresh_account_no_error')
@@ -556,6 +530,67 @@ class RefreshAccountDataTests(TestCase):
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp.json(), {'detail': metaapi.UnknownError.detail})
     
+    @tag('rrg')
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_refresh_account_no_error')
+    def test_request_refresh_account_when_account_is_undeployed(self):
+        self.maxDiff = None
+        trader, valid_headers = self.setup_trader_with_one_account()
+        accounts = Account.objects.filter(user=trader)
+        for account in accounts:
+            account.deployed = False
+            account.save()
+        resp = self.request_refresh(**valid_headers)
+        self.resolve_refresh_account()
+        resp = self.request_pending_refresh(**valid_headers)
+        pref_current_account = Preferences.objects.get(user=trader).current_account
+        current_account_id = pref_current_account.id if pref_current_account is not None else -1
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(trader)
+        self.assertEquals(resp.json(), {
+            'user_data': {
+                    'id': trader.id,
+                    'email': trader.email,
+                    'is_subscribed': trader.is_subscribed,
+                    'on_free': trader.on_free,
+                    'subscription_plan': self.format_subscription_plan(trader),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                },
+                'trade_data': {
+                    'current_account_id': current_account_id,
+                    'last_data_refresh_time': (
+                        Trader.objects.get(id=trader.id).last_data_refresh_time.isoformat()
+                            .replace('+00:00', 'Z')
+                    ),
+                    'accounts': {
+                        f'{account.id}': {
+                            'name': account.name,
+                            'trades': [{
+                                'pair': trade.pair,
+                                'action': trade.action,
+                                'profitLoss': float(trade.profit_loss),
+                                'commission': float(trade.commission),
+                                'swap': float(trade.swap),
+                                'openTime': trade.open_time.isoformat().replace('+00:00', 'Z'),
+                                'closeTime': trade.close_time.isoformat().replace('+00:00', 'Z'),
+                                'openPrice': float(trade.open_price),
+                                'closePrice': float(trade.close_price),
+                                'takeProfit': float(trade.take_profit),
+                                'stopLoss': float(trade.stop_loss)
+                            } for trade in account.get_all_trades()],
+                            'deposits': [{
+                                'account': account.id,
+                                'amount': float(deposit.amount),
+                                'time': deposit.time.isoformat().replace('+00:00', 'Z')
+                            } for deposit in account.get_all_deposits()],
+                            'withdrawals': [{
+                                'account': account.id,
+                                'amount': float(withdrawal.amount),
+                                'time': withdrawal.time.isoformat().replace('+00:00', 'Z')
+                            } for withdrawal in account.get_all_withdrawals()]
+                        } for account in accounts
+                    }
+                }
+        })
+    
     def test_request_refresh_account_unauthorized(self):
         """
         To test the scenario where an unauthorized fellow requests a refresh
@@ -663,11 +698,7 @@ class RefreshAccountDataTests(TestCase):
             return 'yearly'
         
     def days_left_before_free_trial_expires(self, trader: Trader):
-        day_of_free_trial_over = trader.date_joined + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD)
-        days_left_before_free_trial_expires = day_of_free_trial_over - timezone.now()
-        if days_left_before_free_trial_expires.days < 0:
-            return 0
-        return days_left_before_free_trial_expires.days
+        return InitDataTest().days_left_before_free_trial_expires(trader)
 
 
     def request_refresh(self, *args, **kwargs):

@@ -7,15 +7,16 @@ import {HttpConst} from '@conf/const'
 import {MutableRefObject} from 'react'
 import {SubscriptionButtonPropTypes} from './types'
 import BaseSubscriptionButton from './base-subscription-button'
+import {YEARLY_SUBSCRIPTION_PRICE} from './const'
 
 
 const YearlySubscriptionButton = React.forwardRef<HTMLButtonElement, SubscriptionButtonPropTypes>((props, ref) => {
     const {email, userId, ...others} = props;
     const config = {
         public_key: 'FLWPUBK_TEST-abbddb271c00020e17219254c27054e5-X',
-        payment_plan: '21029',
+        payment_plan: '21087',
         tx_ref: `user-${userId}-date-${Date.now().toString()}`,
-        amount: 23.99,
+        amount: YEARLY_SUBSCRIPTION_PRICE,
         currency: 'USD',
         payment_options: 'card',
         customer: {

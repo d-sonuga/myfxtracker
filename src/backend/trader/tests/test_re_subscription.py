@@ -40,7 +40,7 @@ class ReSubscriptionTests(TestCase):
         django_rq.get_queue().empty()
     
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
-    def test_user_resubscribes_and_has_undeployed_accounts1(self):
+    def test_user_resubscribes_and_has_an_undeployed_account1(self):
         """
         To test the scenario where a user re-subscribes after the subscription got cancelled
         from a failed payment, the user has undeployed accounts and the background worker
@@ -70,7 +70,7 @@ class ReSubscriptionTests(TestCase):
         self.assertEquals(resp.json(), {'status': 'not pending'})
 
     @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
-    def test_user_resubscribes_and_has_undeployed_accounts2(self):
+    def test_user_resubscribes_and_has_an_undeployed_account2(self):
         """
         To test the scenario where a user re-subscribes after the subscription got cancelled
         from a failed payment, the user has undeployed accounts and the background worker
@@ -102,6 +102,53 @@ class ReSubscriptionTests(TestCase):
         resp = self.make_request()
         self.assertEquals(resp.status_code, 200)
         self.assertEquals(resp.json(), {'status': 'not pending'})
+    
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
+    def test_user_resubscribed_and_has_multiple_undeployed_accounts(self):
+        self.setup_trader_with_multiple_accounts(self.trader)
+        for account in self.trader.account_set.all():
+            account.deployed = False
+            account.save()
+        self.assertEquals(UnresolvedDeployAccount.objects.all().count(), 0)
+        self.assertEquals(DeployAccountError.objects.all().count(), 0)
+        resp = self.make_request()
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'status': 'pending'})
+        self.assertEquals(UnresolvedDeployAccount.objects.all().count(), 1)
+        self.assertEquals(DeployAccountError.objects.all().count(), 0)
+        trader = Trader.objects.get(id=self.trader.id)
+        self.assertTrue(trader.is_subscribed)
+
+        self.resolve_deploy_trading_accounts()
+
+        self.assertEquals(UnresolvedDeployAccount.objects.all().count(), 0)
+        self.assertEquals(DeployAccountError.objects.all().count(), 0)
+        self.assertEquals(MetaApiError.objects.all().count(), 0)
+        trader = Trader.objects.get(id=self.trader.id)
+        for account in Account.objects.filter(user=trader):
+            self.assertTrue(account.deployed)
+
+        resp = self.make_request()
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'status': 'not pending'})
+    
+    def setup_trader_with_multiple_accounts(self, trader):
+        test_data = RefreshAccountDataTestData.MoreThanOneAccountUserData
+        Account.objects.create_account(
+            trader,
+            test_data.account1_data['original_account_info'],
+            *Transaction.from_raw_data(test_data.account1_data['original_deals'])
+        )
+        (trade_data, deposit_data, withdrawal_data,
+            unknown_transaction_data) = Transaction.from_raw_data(test_data.account2_data['original_deals'])
+        Account.objects.create_account(
+            trader,
+            test_data.account2_data['original_account_info'],
+            trade_data,
+            deposit_data,
+            withdrawal_data,
+            unknown_transaction_data
+        )
     
 
     @test_mtapi_error(META_API_CLASS_MODULE='trader.metaapi.test_unknown_error')

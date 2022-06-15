@@ -14,7 +14,7 @@ import NoOfAccountsLeftToAddStatus from './no-of-accounts-left-to-add-status'
 import removeAccount from './remove-account'
 
 
-const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial}: AccountsSectionPropTypes) => {
+const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial, userIsSubscribed}: AccountsSectionPropTypes) => {
     const navigate = useNavigate();
     const [accountToDelete, setAccountToDelete] = useState<AccountDataWithId>(defaultAccountData);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -22,6 +22,7 @@ const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial}: A
     const maxNoOfAccounts = userIsOnFreeTrial ?
         ConfigConst.MAX_NO_OF_TRADING_ACCOUNT_FREE_TRIAL_TRADER
         : ConfigConst.MAX_NO_OF_TRADING_ACCOUNT_SUBSCRIBED_TRADER;
+    const userCanAddAccount = accounts.length < maxNoOfAccounts && (userIsOnFreeTrial || userIsSubscribed);
     return(
         <ColumnBox>
             <Dialog
@@ -65,11 +66,11 @@ const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial}: A
             <div style={{marginTop: getDimen('padding-xs')}}>
                 <NoOfAccountsLeftToAddStatus
                     noOfAccounts={accounts.length}
-                    maxAccounts={maxNoOfAccounts} />
+                    maxAccounts={maxNoOfAccounts}
+                    userCanAddAccount={userCanAddAccount} />
                 <AddAccountButton
-                    noOfAccounts={accounts.length}
-                    navigate={navigate}
-                    maxAccounts={maxNoOfAccounts} />
+                    userCanAddAccount={userCanAddAccount}
+                    navigate={navigate} />
             </div>
         </ColumnBox>
     )

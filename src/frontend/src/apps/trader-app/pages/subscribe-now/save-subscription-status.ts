@@ -1,5 +1,5 @@
 import {FlutterWaveTypes} from 'flutterwave-react-v3'
-import {Http, HttpResponseType} from '@apps/trader-app/services'
+import {Http, HttpResponseType, HttpErrorType} from '@apps/trader-app/services'
 import {HttpConst} from '@conf/const'
 
 const saveSubscriptionStatus = (resp: FlutterWaveTypes.FlutterWaveResponse): Promise<boolean> => {
@@ -14,7 +14,7 @@ const saveSubscriptionStatus = (resp: FlutterWaveTypes.FlutterWaveResponse): Pro
                     resolve(false);
                 }
             },
-            errorFunc: (err: any) => {
+            errorFunc: (err: HttpErrorType) => {
                 console.log(err);
                 reject();
             }

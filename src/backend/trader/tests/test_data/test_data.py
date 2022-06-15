@@ -186,7 +186,7 @@ class AddTradingAccountTestData:
         },
         'deals': {'deals': [
             {
-                "id": "1542994",
+                "id": "1542994323",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BALANCE", 
                 "time": "2022-01-14T17:54:34+00:00", 
@@ -198,7 +198,7 @@ class AddTradingAccountTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1590889", 
+                "id": "1590889323", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BUY", 
                 "time": "2022-01-17T05:30:14+00:00", 
@@ -219,7 +219,7 @@ class AddTradingAccountTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1590889", 
+                "id": "1590889323", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_SELL", 
                 "time": "2022-01-17T11:30:22+00:00", 
@@ -240,7 +240,7 @@ class AddTradingAccountTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1645835", 
+                "id": "1645835323", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_SELL", 
                 "time": "2022-01-17T11:48:00+00:00", 
@@ -261,7 +261,7 @@ class AddTradingAccountTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1645835",
+                "id": "1645835323",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BUY", 
                 "time": "2022-01-17T15:37:38+00:00", 
@@ -281,7 +281,7 @@ class AddTradingAccountTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1759325",
+                "id": "1759325323",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BUY", 
                 "time": "2022-01-18T06:18:27+00:00", 
@@ -302,7 +302,7 @@ class AddTradingAccountTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1759325", 
+                "id": "1759325323", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_SELL", 
                 "time": "2022-01-18T08:44:34+00:00", 
@@ -666,7 +666,7 @@ class RefreshAccountDataTestData:
             'investorMode': False, 
             'marginMode': 'ACCOUNT_MARGIN_MODE_RETAIL_HEDGING', 
             'type': 'ACCOUNT_TRADE_MODE_CONTEST',
-            'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
+            'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z222'
         }
         new_account_info = {
             'platform': 'mt4',
@@ -685,11 +685,11 @@ class RefreshAccountDataTestData:
             'investorMode': False, 
             'marginMode': 'ACCOUNT_MARGIN_MODE_RETAIL_HEDGING', 
             'type': 'ACCOUNT_TRADE_MODE_CONTEST',
-            'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z'
+            'ma_account_id': 'nfmarozf,ewifhmzoieulf,nO48TU8WER9E-UD.Z222'
         }
         original_deals = {'deals': [
             {
-                "id": "1542994",
+                "id": "1542994222",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BALANCE", 
                 "time": "2022-01-14T17:54:34+00:00", 
@@ -701,7 +701,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1590889", 
+                "id": "1590889222", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BUY", 
                 "time": "2022-01-17T05:30:14+00:00", 
@@ -711,8 +711,8 @@ class RefreshAccountDataTestData:
                 "profit": 0, 
                 "symbol": "GBPJPY", 
                 "magic": 0, 
-                "orderId": "1590889", 
-                "positionId": "1590889", 
+                "orderId": "1590889222", 
+                "positionId": "1590889222", 
                 "reason": "DEAL_REASON_EXPERT", 
                 "entryType": "DEAL_ENTRY_IN", 
                 "volume": 0.57, 
@@ -721,7 +721,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1590889", 
+                "id": "1590889222", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_SELL", 
                 "time": "2022-01-17T11:30:22+00:00", 
@@ -731,8 +731,8 @@ class RefreshAccountDataTestData:
                 "profit": -18.93, 
                 "symbol": "GBPJPY", 
                 "magic": 0, 
-                "orderId": "1590889", 
-                "positionId": "1590889", 
+                "orderId": "1590889222", 
+                "positionId": "1590889222", 
                 "reason": "DEAL_REASON_EXPERT", 
                 "entryType": "DEAL_ENTRY_OUT", 
                 "volume": 0.57, 
@@ -741,7 +741,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1645835", 
+                "id": "1645835222", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_SELL", 
                 "time": "2022-01-17T11:48:00+00:00", 
@@ -751,8 +751,8 @@ class RefreshAccountDataTestData:
                 "profit": 0, 
                 "symbol": "GBPJPY", 
                 "magic": 0, 
-                "orderId": "1645835", 
-                "positionId": "1645835", 
+                "orderId": "1645835222", 
+                "positionId": "1645835222", 
                 "reason": "DEAL_REASON_CLIENT", 
                 "entryType": "DEAL_ENTRY_IN", 
                 "volume": 0.47, 
@@ -761,7 +761,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1645835",
+                "id": "1645835222",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BUY", 
                 "time": "2022-01-17T15:37:38+00:00", 
@@ -770,8 +770,8 @@ class RefreshAccountDataTestData:
                 "swap": 0, "profit": 12.31, 
                 "symbol": "GBPJPY", 
                 "magic": 0, 
-                "orderId": "1645835", 
-                "positionId": "1645835", 
+                "orderId": "1645835222", 
+                "positionId": "1645835222", 
                 "reason": "DEAL_REASON_CLIENT", 
                 "entryType": "DEAL_ENTRY_OUT", 
                 "volume": 0.47, 
@@ -780,7 +780,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1759325",
+                "id": "1759325222",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BUY", 
                 "time": "2022-01-18T06:18:27+00:00", 
@@ -790,8 +790,8 @@ class RefreshAccountDataTestData:
                 "profit": 0, 
                 "symbol": "GBPJPY", 
                 "magic": 0, 
-                "orderId": "1759325", 
-                "positionId": "1759325", 
+                "orderId": "1759325222", 
+                "positionId": "1759325222", 
                 "reason": "DEAL_REASON_EXPERT", 
                 "entryType": "DEAL_ENTRY_IN", 
                 "volume": 0.55, 
@@ -801,7 +801,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             }, 
             {
-                "id": "1759325", 
+                "id": "1759325222", 
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_SELL", 
                 "time": "2022-01-18T08:44:34+00:00", 
@@ -811,8 +811,8 @@ class RefreshAccountDataTestData:
                 "profit": -85.81, 
                 "symbol": "GBPJPY", 
                 "magic": 0, 
-                "orderId": "1759325", 
-                "positionId": "1759325", 
+                "orderId": "1759325222", 
+                "positionId": "1759325222", 
                 "reason": "DEAL_REASON_EXPERT", 
                 "entryType": "DEAL_ENTRY_OUT", 
                 "volume": 0.55, 
@@ -824,7 +824,7 @@ class RefreshAccountDataTestData:
         ]}
         new_deals = {'deals': [
             {
-                "id": "1797524",
+                "id": "1797524222",
                 "platform": "mt4",
                 "type": "DEAL_TYPE_SELL",
                 "time": "2022-01-18T09:00:22+00:00",
@@ -834,8 +834,8 @@ class RefreshAccountDataTestData:
                 "profit": 0,
                 "symbol": "GBPJPY",
                 "magic": 0,
-                "orderId": "1797524",
-                "positionId": "1797524",
+                "orderId": "1797524222",
+                "positionId": "1797524222",
                 "reason": "DEAL_REASON_CLIENT",
                 "entryType": "DEAL_ENTRY_IN",
                 "volume": 0.41,
@@ -843,7 +843,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1797524",
+                "id": "1797524222",
                 "platform": "mt4",
                 "type": "DEAL_TYPE_BUY",
                 "time": "2022-01-18T10:55:45+00:00",
@@ -853,8 +853,8 @@ class RefreshAccountDataTestData:
                 "profit": 112.96,
                 "symbol": "GBPJPY",
                 "magic": 0,
-                "orderId": "1797524",
-                "positionId": "1797524",
+                "orderId": "1797524222",
+                "positionId": "1797524222",
                 "reason": "DEAL_REASON_CLIENT",
                 "entryType": "DEAL_ENTRY_OUT",
                 "volume": 0.41,
@@ -862,7 +862,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1967874",
+                "id": "1967874222",
                 "platform": "mt4",
                 "type": "DEAL_TYPE_BUY",
                 "time": "2022-01-18T23:34:51+00:00",
@@ -872,8 +872,8 @@ class RefreshAccountDataTestData:
                 "profit": 0,
                 "symbol": "GBPJPY",
                 "magic": 0,
-                "orderId": "1967874",
-                "positionId": "1967874",
+                "orderId": "1967874222",
+                "positionId": "1967874222",
                 "reason": "DEAL_REASON_CLIENT",
                 "entryType": "DEAL_ENTRY_IN",
                 "volume": 0.5,
@@ -885,7 +885,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1967874",
+                "id": "1967874222",
                 "platform": "mt4",
                 "type": "DEAL_TYPE_SELL",
                 "time": "2022-01-19T01:16:19+00:00",
@@ -895,8 +895,8 @@ class RefreshAccountDataTestData:
                 "profit": 100.63, 
                 "symbol": "GBPJPY", 
                 "magic": 0, 
-                "orderId": "1967874", 
-                "positionId": "1967874", 
+                "orderId": "1967874222", 
+                "positionId": "1967874222", 
                 "reason": "DEAL_REASON_CLIENT", 
                 "entryType": "DEAL_ENTRY_OUT", 
                 "volume": 0.5, 
@@ -908,7 +908,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1511134",
+                "id": "1511134222",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BALANCE", 
                 "time": "2022-01-14T17:54:34+00:00", 
@@ -920,7 +920,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "1111194",
+                "id": "1111194222",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BALANCE", 
                 "time": "2022-01-14T17:54:34+00:00", 
@@ -932,7 +932,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "9999999",
+                "id": "9999999222",
                 "platform": "mt4", 
                 "type": "DEAL_TYPE_BALANCE", 
                 "time": "2022-01-14T17:54:34+00:00", 
@@ -944,7 +944,7 @@ class RefreshAccountDataTestData:
                 "accountCurrencyExchangeRate": 1
             },
             {
-                "id": "9999999",
+                "id": "9999999222",
                 "platform": "mt4", 
                 # intentionally unknown to test what happens when a deal with an unexpected deal type lands
                 "type": "DEAL_TYPE_UNKNOWN-", 

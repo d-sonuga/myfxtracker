@@ -1,12 +1,9 @@
 import React from 'react'
-import {ColumnBox} from '@components/containers'
-import {H6, P} from '@components/text'
 import logo from '@visuals/images/logo.png'
 import {HttpConst} from '@conf/const'
-import {MutableRefObject} from 'react'
 import {SubscriptionButtonPropTypes} from './types'
-import saveSubscriptionStatus from './save-subscription-status'
 import BaseSubscriptionButton from './base-subscription-button'
+import {MONTHLY_SUBSCRIPTION_PRICE} from './const'
 
 
 const MonthlySubscriptionButton = React.forwardRef<HTMLButtonElement, SubscriptionButtonPropTypes>((props, ref) => {
@@ -15,7 +12,7 @@ const MonthlySubscriptionButton = React.forwardRef<HTMLButtonElement, Subscripti
         public_key: 'FLWPUBK_TEST-abbddb271c00020e17219254c27054e5-X',
         payment_plan: '21030',
         tx_ref: `user-${userId}-date-${Date.now().toString()}`,
-        amount: 24.99,
+        amount: MONTHLY_SUBSCRIPTION_PRICE,
         currency: 'USD',
         payment_options: 'card',
         customer: {

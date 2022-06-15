@@ -26,6 +26,7 @@ const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: F
                     <H5>Accounts</H5>
                     <AccountsSection 
                         userIsOnFreeTrial={globalData.userIsOnFreeTrial()}
+                        userIsSubscribed={globalData.userIsSubscribed()}
                         accounts={globalData.getAllAccounts()}
                         removeAccountFromData={removeAccountFromGlobalData}
                         />

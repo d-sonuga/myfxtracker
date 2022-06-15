@@ -436,12 +436,16 @@ class GetInitData(APIView):
                 if request.user.subscription_plan == SubscriptionInfo.PLAN_CHOICES[MONTHLY][CODE]
                 else 'yearly'
             )
-        day_of_free_trial_expiring = request.user.date_joined + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD)
-        no_of_days_for_free_trial_to_expire = (
-            0
-            if (day_of_free_trial_expiring - timezone.now()).days <= 0
-            else (day_of_free_trial_expiring - timezone.now()).days
-        )
+        if request.user.time_of_free_trial_start:
+            day_of_free_trial_expiring = (request.user.time_of_free_trial_start 
+                + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD))
+            no_of_days_for_free_trial_to_expire = (
+                0
+                if (day_of_free_trial_expiring - timezone.now()).days <= 0
+                else (day_of_free_trial_expiring - timezone.now()).days
+            )
+        else:
+            no_of_days_for_free_trial_to_expire = 'free trial not started'
         init_data = {
             'user_data': {
                 'id': request.user.id,
@@ -755,15 +759,16 @@ class RefreshData(APIView):
     def refresh_account_data(trader: Trader):
         mtapi = metaapi.MetaApi()
         for account, unsaved_data in mtapi.get_all_unsaved_data(trader):
-            (account_info, unsaved_trade_data, unsaved_deposit_data,
-                unsaved_withdrawal_data, unsaved_unknown_transaction_data) = unsaved_data
-            account.update_account(
-                account_info,
-                unsaved_trade_data,
-                unsaved_deposit_data,
-                unsaved_withdrawal_data,
-                unsaved_unknown_transaction_data
-            )
+            if account.deployed:
+                (account_info, unsaved_trade_data, unsaved_deposit_data,
+                    unsaved_withdrawal_data, unsaved_unknown_transaction_data) = unsaved_data
+                account.update_account(
+                    account_info,
+                    unsaved_trade_data,
+                    unsaved_deposit_data,
+                    unsaved_withdrawal_data,
+                    unsaved_unknown_transaction_data
+                )
         trader.traderinfo.last_data_refresh_time = timezone.now()
         trader.traderinfo.save()
 

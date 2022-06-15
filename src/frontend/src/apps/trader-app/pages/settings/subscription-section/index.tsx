@@ -9,11 +9,13 @@ import cancelSubscription from './cancel-subscription'
 import {ToastContext} from '@components/toast'
 import {useNavigate} from 'react-router-dom'
 import {RouteConst} from '@conf/const'
+import {SubscriptionCancelContext} from '@apps/trader-app'
 
 
-const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires}: {subscriptionPlan: UserData['subscription_plan'], daysLeftBeforeFreeTrialExpires: number}) => {
+const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires}: {subscriptionPlan: UserData['subscription_plan'], daysLeftBeforeFreeTrialExpires: number | string}) => {
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [subscriptionIsCancelling, setSubscriptionIsCancelling] = useState(false);
+    const onSubscriptionCancel = useContext(SubscriptionCancelContext)
     const Toast = useContext(ToastContext);
     const navigate = useNavigate();
     const format = (plan: UserData['subscription_plan']): string => {
@@ -29,13 +31,13 @@ const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires}:
     return(
         <ColumnBox>
             <Dialog
-                title='Delete Account?'
+                title='Cancel Subscription?'
                 okButtonColor='error'
                 okButtonContent={subscriptionIsCancelling ? <LoadingIcon /> : 'Cancel Subscription'}
                 okButtonProps={{'data-testid': 'confirm-delete-account-button'}}
                 onOkClick={() => {
                     setSubscriptionIsCancelling(true);
-                    cancelSubscription(Toast, navigate, () => {
+                    cancelSubscription(Toast, onSubscriptionCancel, () => {
                         setDialogIsOpen(false);
                         setSubscriptionIsCancelling(false)
                     })
@@ -66,8 +68,11 @@ const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires}:
 }
 
 
-const FreeTrialInfo = ({daysLeftBeforeFreeTrialExpires, navigate}: {daysLeftBeforeFreeTrialExpires: number, navigate: Function}) => {
+const FreeTrialInfo = ({daysLeftBeforeFreeTrialExpires, navigate}: {daysLeftBeforeFreeTrialExpires: number | string, navigate: Function}) => {
     const {TRADER_APP_ROUTE} = RouteConst;
+    if(typeof(daysLeftBeforeFreeTrialExpires) === 'string' && daysLeftBeforeFreeTrialExpires.includes('not started')){
+        return <P>Your free trial has not yet started</P>
+    }
     if(daysLeftBeforeFreeTrialExpires !== 0){
         return(
             <P>You have {daysLeftBeforeFreeTrialExpires.toString()}&nbsp;

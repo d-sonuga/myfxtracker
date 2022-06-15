@@ -6,6 +6,7 @@ import {RouteConst} from '@conf/const'
 import {Overview, CashAndGains, Expenses, Settings, LongShortAnalysis, AddAccount,
     PeriodAnalysis, TimeAnalysis, PairsAnalysis, SubscribeNow} from '@apps/trader-app/pages'
 import {GlobalData, useGlobalData} from '@apps/trader-app/models'
+import {UserData} from '@apps/trader-app/models/types'
 import {Http, useNoteData} from '@apps/trader-app/services'
 import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pages'
 import {ToastContext} from '@components/toast'
@@ -47,8 +48,8 @@ const TraderApp = () => {
     /** Function called when refresh account data is called from the data status bar */
     const refreshData = () => refreshAccountData(Toast, setGlobalData, setDataIsRefreshing);
     /** Function called when a user makes a subscription */
-    const onNewSubscription = (postActionsPending: boolean, data: {[key: string]: any}) => {
-        const newGlobalData = globalData.subscribeUser();
+    const onNewSubscription = (postActionsPending: boolean, data: {[key: string]: any}, subscriptionPlan: UserData['subscription_plan']) => {
+        const newGlobalData = globalData.subscribeUser(subscriptionPlan);
         setGlobalData(newGlobalData);
         /**
          * When postActionsPending are set, a loading icons has to be set
@@ -71,7 +72,13 @@ const TraderApp = () => {
                 }
             )
         }
-
+    }
+    /** Function called when user successfully cancels subscription */
+    const onSubscriptionCancel = () => {
+        const {TRADER_APP_ROUTE} = RouteConst;
+        const newGlobalData = globalData.unsubscribeUser();
+        setGlobalData(newGlobalData);
+        navigate(`/${TRADER_APP_ROUTE}`);
     }
     const navigate = useNavigate();
     useEffect(() => {
@@ -88,6 +95,7 @@ const TraderApp = () => {
                         <RefreshDataContext.Provider value={refreshData}>
                         <DataIsRefreshingContext.Provider value={dataIsRefreshing}>
                         <NewSubscriptionContext.Provider value={onNewSubscription}>
+                        <SubscriptionCancelContext.Provider value={onSubscriptionCancel}>
                         {(() => {
                             const pageMap = pageMapConfig(
                                 globalData,
@@ -111,6 +119,7 @@ const TraderApp = () => {
                                 </PageLoadingErrorBoundary>
                             )
                         })()}
+                        </SubscriptionCancelContext.Provider>
                         </NewSubscriptionContext.Provider>
                         </DataIsRefreshingContext.Provider>
                         </RefreshDataContext.Provider>
@@ -134,7 +143,8 @@ const CurrentAccountChangerContext = createContext((newCurrentAccountId: number)
  */
 const DataIsRefreshingContext = createContext(false);
 const RefreshDataContext = createContext(() => {});
-const NewSubscriptionContext = createContext((postActionsPending: boolean, data: {[key: string]: any}) => {});
+const NewSubscriptionContext = createContext((postActionsPending: boolean, data: {[key: string]: any}, subscriptionPlan: UserData['subscription_plan']) => {});
+const SubscriptionCancelContext = createContext(() => {});
 
 /** Returns a mapping of routes to components depending on the state */
 const pageMapConfig = (
@@ -238,5 +248,6 @@ export {
     CurrentAccountChangerContext,
     DataIsRefreshingContext,
     RefreshDataContext,
-    NewSubscriptionContext
+    NewSubscriptionContext,
+    SubscriptionCancelContext
 }

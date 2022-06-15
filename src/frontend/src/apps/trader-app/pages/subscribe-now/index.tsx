@@ -2,7 +2,7 @@ import {ColumnBox, RowBox} from '@components/containers'
 import {P, H6, H5, H4, H3, H2, BP} from '@components/text'
 import {SubscribeNowPropTypes} from './types'
 import './style.css'
-import {getColor, getDimen} from '@conf/utils'
+import {getDimen} from '@conf/utils'
 import {Button} from '@components/buttons'
 import React, {useContext, useRef, useState} from 'react'
 import LoadingIcon from '@components/loading-icon'
@@ -10,6 +10,8 @@ import MonthlySubscriptionButton from './monthly-subscription-button'
 import YearlySubscriptionButton from './yearly-subscription-button'
 import {NewSubscriptionContext} from '@apps/trader-app'
 import {ToastContext} from '@components/toast'
+import {YEARLY_SUBSCRIPTION_PRICE} from './const'
+import {UserData} from '@apps/trader-app/models/types'
 
 
 const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) => {
@@ -29,18 +31,15 @@ const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) =
      * this could take a while
      */
     const onSubscriptionFinished = (postActionsPending: boolean, data: {[key: string]: any}) => {
-        onNewSubscription(postActionsPending, data);
+        let subscriptionPlan: UserData['subscription_plan'] = 'monthly';
+        if(data.amount === YEARLY_SUBSCRIPTION_PRICE){
+            subscriptionPlan = 'yearly';
+        }
+        onNewSubscription(postActionsPending, data, subscriptionPlan);
     }
     const onSubscriptionRecordFailed = () => {
         setSubscribing('none')
         Toast.error('Your subscription was successful, but something went wrong on our end. Please contact support.');
-    }
-    /**
-     * This is called when the timer started after a subscription button is clicked
-     * reaches a timeout
-     */
-    const onFlutterwaveModalTimeout = () => {
-
     }
     return(
         <div style={{marginTop: getDimen('padding-xxbig')}}>

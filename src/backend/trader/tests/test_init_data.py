@@ -1,7 +1,3 @@
-from calendar import month
-from ctypes import Union
-from locale import MON_1
-from time import time
 from typing import Literal
 from django.test import TestCase
 from django.utils import timezone
@@ -284,7 +280,10 @@ class InitDataTest(TestCase):
             return 'yearly'
     
     def days_left_before_free_trial_expires(self, trader: Trader):
-        day_of_free_trial_over = trader.date_joined + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD)
+        if not trader.time_of_free_trial_start:
+            return 'free trial not started'
+        day_of_free_trial_over = (trader.time_of_free_trial_start 
+            + timezone.timedelta(days=settings.FREE_TRIAL_PERIOD))
         days_left_before_free_trial_expires = day_of_free_trial_over - timezone.now()
         if days_left_before_free_trial_expires.days < 0:
             return 0

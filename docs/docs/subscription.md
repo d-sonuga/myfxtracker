@@ -6,6 +6,11 @@
 * When a subscription is cancelled or when a charge fails or succeeds, a
   webhook notification is sent
 
+### Webhooks
+The webhook events that are sent for new subscriptions and for re-billing of subscriptions
+are the same: 'charge.completed'
+But the event for cancelling is 'subscription.cancelled'
+
 ### Things to consider
 * User's free trial isn't over
 * User's free trial is over
@@ -109,16 +114,26 @@ Specific frontend and backend flows to handle
 * If any error goes on with the Flutterwave flow,
     * The Flutterwave modal will handle and display the error
 * Else if user cancels payment,
-    * Close the dialog
     * Remove loading icon from selected button and enable the other
 * Else if not error occurs in Flutterwave modal flow,
     * The modal will close and trigger a callback that will initiate an attempt to save the info on the backend
     * If the backend responds successfully,
-        * Close the dialog
         * Change the user's frontend status to subscribed
         * Allow the user access to all the pages
+        * Check the body of the response to see if it is says 'pending' (meaning that accounts are 
+          being redeployed)
+        * If it does,
+          * Show the user a page loading icon and a 'please wait, this might take a while' message
+          * Make follow up requests at certain intervals to see if the thing has been resolved
+          * If a follow up request returns a success 'not pending',
+            * Initiate a referesh account operation
+            * Make the necessary follow up requests for that
+          * Else, if it still returns 'pending',
+            * Repeat follow up requests until a timeout
+        * If it doesn't,
+          * Continue
     * Else if request timesout,
-        * Alert the user that the request is taking longer than expect, please wait
+        * Alert the user that the request is taking longer than expected, please wait
         * Retry the request with a higher timeout number
         * If after 3 timeouts, the request timesout, alert the user of the disconnection from the server
     * Else if user disconnects from network right after Flutterwave modal closes,
@@ -131,22 +146,87 @@ Specific frontend and backend flows to handle
         * Alert user that an unknown error occured, contact support
 
 ##### Backend Perspective
+###### First request to record subscription
 * A request arrives with the amount and user id of the trader who successfully subscribed
-* If the last billing time has not been recorded in the last 1 hour (that is, if the webhook has not
-  been processed)
-    * The user's last billing time is changed to the current time (will be updated the the more precise
-    time when the webhook lands)
-    * The user's subscribed status is renewed
-    * The user's subscription type is set to monthly or yearly depending on the amount of money
-    * Check the db to see if the user has any accounts in it, related to the user
-    * If there are any, they must have been undeployed, so put a procedure on a queue to deploy it
-      and return a successful 'pending' response
-    * Else, there are no undeployed accounts, so return a successful 'not pending' response
-* Check the db to see if the user has any accounts in it, related to the user
-* If there are any, they must have been undeployed, so put a procedure on a queue to deploy it
-    and return a successful 'pending' response
-* Else, there are no undeployed accounts, so return a successful 'not pending' response
-* Else, return a successful response
+* Check the user's is_subscribed field in the db to see if this process has already been done, and the
+  user is just sending follow up requests for re-deploying of his accounts
+* If the is_subscribed field is false, (then this is the user's first request to subscribe)
+  * If the next time has not been recorded in the last 1 hour (that is, if the webhook has not
+    been processed (that is, if the last billed time (a column in the SubscriptionInfo table) is not within 1 hour))
+      * The user's last billed time is changed to the current time (will be updated to the more precise
+      time when the webhook lands)
+      * The user's subscribed status is renewed
+      * The user's subscription type is set to monthly or yearly depending on the amount of money
+      * Continue to the next section
+  * Check the db to see if the user has any accounts in it, related to the user
+  * If there are any, (they must have been undeployed)
+    * Put a procedure on a queue to deploy it
+    * Create an entry in the UnresolvedDeployAccount table with the user id
+    * Return a successful 'pending' response
+  * Else If there aren't any (there are no undeployed accounts),
+    * Return a successful 'not pending' response
+* Else If the is_subscribed field is set to true, (then this must have been for a follow up request to monitor
+  the state of the redeployment of the user's accounts)
+    * A request arrives with the amount and user id of the trader who successfully subscribed
+    * The UnresolvedDeployAccount table is checked in the db to see if it has a row containing the user id
+    * If it does,
+      * Return a successful 'pending' response
+    * Else If it doesn't,
+      * Check the DeployAccountError table to see if the user's id is in it
+      * If it is there,
+        * Return an error with the message of whatever was in the table
+        * Delete the error from the table
+      * Else If there isn't,
+        * Return successful 'not pending' response
+      
+###### Flutterwave webhook for new subscription arrives
+* Webhook of completed charge reaches backend
+* A sample webhook looks like this:
+  {
+    "event": "charge.completed",
+    "data": {
+      "id": 3479452,
+      "tx_ref": "user-1-date-1655118816524",
+      "flw_ref": "FLW-MOCK-d03a652eca9bae8bc62893c22a69f8a4",
+      "device_fingerprint": "8a9f902753da6e97a6d799774fbca1f4",
+      "amount": 23.99,
+      "currency": "USD",
+      "charged_amount": 23.99,
+      "app_fee": 0.92,
+      "merchant_fee": 0,
+      "processor_response": "Approved. Successful",
+      "auth_model": "VBVSECURECODE",
+      "ip": "169.239.48.195",
+      "narration": "CARD Transaction ",
+      "status": "successful",
+      "payment_type": "card",
+      "created_at": "2022-06-13T11:13:50.000Z",
+      "account_id": 753905,
+      "customer": {
+        "id": 1655705,
+        "name": "Anonymous customer",
+        "phone_number": null,
+        "email": "sonugademilade8703@gmail.com",
+        "created_at": "2022-06-13T11:13:50.000Z"
+      },
+      "card": {
+        "first_6digits": "553188",
+        "last_4digits": "2950",
+        "issuer": "MASTERCARD  CREDIT",
+        "country": "NG",
+        "type": "MASTERCARD",
+        "expiry": "09/32"
+      }
+    },
+    "event.type": "CARD_TRANSACTION"
+  }
+* Webhook is verified with by checking the veri-hash header in the payload against
+  the secret hash specified by you and kept in an environment variable
+* The user is specified by the value in tx_ref, which has the following format: 'user-{user_id}-date-{timestamp}'
+* The user's last billed time is changed to the 'created_at' time specified in the webhook
+* The user's subscribed status is renewed
+* The user's subscription type is set to monthly or yearly depending on the amount of money
+
 
 #### User's re-billing succeeds
 Ref: https://developer.flutterwave.com/docs/recurring-payments/payment-plans/#webhooks
@@ -203,6 +283,8 @@ Ref: https://developer.flutterwave.com/docs/recurring-payments/payment-plans/#we
 * The user's 'subscribed' status is set to false in the db
 * A procedure to undeploy the user's account is placed on a queue
     * Any errors in this procedure should be logged and saved to the db
+    * Procedure to cancel user's subscription is carried out so as to allow
+      the user to re-subscribe from the frontend
 * A HTTP 200 response is returned, as any other response is treated as a failure by Flutterwave
 
 #### User cancels subscription on settings page
@@ -229,7 +311,7 @@ Ref: https://developer.flutterwave.com/docs/recurring-payments/payment-plans/#we
 
 ##### Backend Perspective
 * A request reaches the backend to unsubscribe
-* The PendingUnsubscription table is checked to see if the user has an entry in it
+* The UnresolvedUnsubscription table is checked to see if the user has an entry in it
 * If the user does, send back a 'pending' request
 * Else If the user doesn't, create an entry and carry out the following procedure on a background queue,
   and return a successful 'pending' response
@@ -257,24 +339,41 @@ Ref: https://developer.flutterwave.com/docs/recurring-payments/payment-plans/#we
     * Else if a PlanStatusError e is thrown, save the e.type string and e.err JSON object in the db
       along with the time of the error and log it and return server error 'error occured'
     * Else if the cancel was successful, return a successful response
-* Else, return error 'was not subscribed'
+* Else, return successful 'not pending' response
 
 #### User cancels subscription off settings page
 No need to worry about as long as cancelling subscriptions from email is disabled
 Ref: https://developer.flutterwave.com/docs/recurring-payments/payment-plans
 
 #### User deletes account
-* The procedure for cancelling subscriptions should be followed
+* The procedure for cancelling subscriptions should be followed after undeploying of trading accounts
 * If anything goes wrong along the way, return an error 'contact support'
+##### Scenarios to consider
+* No error occurs and the account undeployment, subscription cancelling 
 
 #### User manages to load subscribe page when already subscribed
 * The buttons to make a subscription should be disabled
 
 #### How to figure out if user's free trial is over and undeploy the account
-* A procedure will be scheduled to run at the end of every day
+Note: A user's free trial starts only when the user has added a trading account to track
+But what if the user deletes the account immediately afterwards, or what if the user deletes the
+account every free trial period and adds it back afterwards.
+To circumvent this, a 'time_of_free_trial_start' column is in the SubscriptionInfo table and this
+column will remain null for every user until they add their first account and afterwards, it will remain
+the same.
+It is this column that will be checked to determine whether or not a free trial is over.
+* A procedure will be scheduled to run every 1 day
 * In the procedure, every user with attribute on_free set to true is loaded from the db and the period
-  between the user's free trial start (when an account is connected) and current time is checked to see
-  if the difference is greater than or equal to the free trial period
+  between the user's 'time_of_free_trial_start' and current time is checked to see
+  if the difference is greater than the free trial period
 * If if is greater than or equal to, the user's 'on_free' is set to false and the account is undeployed
   (and has to be redeployed when the user subscribes)
 * Else, do nothing
+
+
+## New Deployment Checklist Items
+* Set the following environment variables:
+  * FLUTTERWAVE_VERIF_HASH, generated by you and has to be set in a webhook setting
+    on the Flutterwave dashboard
+  * RAVE_PUBLIC_KEY, from Flutterwave
+  * RAVE_SECRET_KEY, from Flutterwave

@@ -178,7 +178,7 @@ class AddAccountInfoSerializer(serializers.Serializer):
     
 
 class RecordNewSubscriptionSerializer(serializers.Serializer):
-    amount = serializers.DecimalField(max_digits=4, decimal_places=2)
+    amount = serializers.DecimalField(max_digits=5, decimal_places=2)
 
     def validate_amount(self, amount):
         if float(amount) not in (settings.MONTHLY_PLAN_PRICE, settings.YEARLY_PLAN_PRICE):

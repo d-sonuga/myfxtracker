@@ -10,7 +10,9 @@ class FlApi:
     def __init__(self):
         flapi_module_name = getattr(settings, 'FLAPI_CLASS_MODULE', 'flutterwave_endpoint.flwapi.main')
         flapi_module = import_module(flapi_module_name)
-        self._api: Rave = getattr(flapi_module, 'Rave')(settings.RAVE_PUBLIC_KEY)
+        import os
+        logger.critical(f'HALO {os.getenv("RAVE_SECRET_KEY")}')
+        self._api = getattr(flapi_module, 'Rave')(settings.RAVE_PUBLIC_KEY, settings.RAVE_SECRET_KEY)
         
     def cancel_subscription(self, trader_email: str):
         logger.info(f'Fetching subscriptions of user {trader_email}')
@@ -31,6 +33,8 @@ class FlApi:
     def get_trader_subscription_id(self, related_subscriptions):
         data = related_subscriptions.get('returnedData')['data']['plansubscriptions']
         trader_data = [subscription_data for subscription_data in data if subscription_data.get('status') == 'active']
+        logger.critical(trader_data)
+        logger.critical(len(trader_data))
         if len(trader_data) > 1:
             raise FlutterwaveError('multiple active subscriptions')
         else:
