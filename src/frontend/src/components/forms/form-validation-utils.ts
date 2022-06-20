@@ -1,5 +1,6 @@
 import {object, mixed, string, ref, number, reach} from 'yup'
 import {FormikErrors} from 'formik'
+import { PermissionsObj } from '@apps/trader-app/services/types';
 
 
 const Yup = {

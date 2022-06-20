@@ -6,9 +6,11 @@ import {getDimen} from '@conf/utils'
 import {ToastContext} from '@components/toast'
 import AddAccountForm from './add-account-form'
 import {SubmitValuesTypes, AddAccountPropTypes} from './types'
+import { PermissionsContext } from '@apps/trader-app'
 
 
 const AddAccount = ({onAccountAdded, noOfAccounts, userIsOnFreeTrial}: AddAccountPropTypes) => {
+    const permissions = useContext(PermissionsContext)
     const Toast = useContext(ToastContext);
     /** The function used by the form to submit values
      * @param config: object used to configure the Http client
@@ -66,7 +68,8 @@ const AddAccount = ({onAccountAdded, noOfAccounts, userIsOnFreeTrial}: AddAccoun
                 submitValues={submitValues}
                 onAccountAdded={onAccountAdded}
                 noOfAccounts={noOfAccounts}
-                userIsOnFreeTrial={userIsOnFreeTrial} />
+                userIsOnFreeTrial={userIsOnFreeTrial}
+                permissions={permissions} />
         </CenterColumnBox>
     )
 }

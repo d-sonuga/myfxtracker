@@ -2,9 +2,10 @@ import {Divider, List, Slide,} from '@mui/material'
 import {useRef} from 'react'
 import NoteListItem from './note-list-item'
 import Note from '../models'
+import { PermissionsObj } from '@apps/trader-app/services/types'
 
 
-const NoteList = ({noteItems, onNoteSelect, isEditing, removeNoteFromList}: {noteItems: Note[], onNoteSelect: Function, isEditing: boolean, removeNoteFromList: Function}) => {
+const NoteList = ({noteItems, onNoteSelect, isEditing, removeNoteFromList, permissions}: {noteItems: Note[], onNoteSelect: Function, isEditing: boolean, removeNoteFromList: Function, permissions: PermissionsObj}) => {
     const listContainerRef = useRef<HTMLDivElement>(null);
     return(
         <div ref={listContainerRef}>
@@ -20,7 +21,9 @@ const NoteList = ({noteItems, onNoteSelect, isEditing, removeNoteFromList}: {not
                                 onClick={() => {
                                     onNoteSelect(i);
                                 }}
-                                removeNoteFromList={removeNoteFromList} />
+                                removeNoteFromList={removeNoteFromList}
+                                permissions={permissions}
+                                 />
                             <Divider />
                         </>
                     ))}

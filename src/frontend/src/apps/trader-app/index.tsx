@@ -1,5 +1,5 @@
 import {createContext, useEffect, Suspense, lazy, useState, useContext} from 'react'
-import {Route, useLocation, useNavigate} from 'react-router-dom'
+import {Route, useLocation, useNavigate, Navigate} from 'react-router-dom'
 import {TraderAppContainer, TraderAppNavbar} from '@apps/trader-app/components'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
@@ -12,10 +12,12 @@ import {PageLoadingErrorBoundary, PageStillLoading} from '@components/generic-pa
 import {ToastContext} from '@components/toast'
 import refreshAccountData from './services/refresh-account-data'
 import makeFollowUpSubscriptionRequests from './services/follow-up-post-subscription-actions'
+import permissionFuncs, { defaultPermissions } from './services/permissions'
 import {RawData} from './models/types'
 import {AddAccountPropTypes} from './pages/add-account/types'
 import {SettingsPropTypes} from './pages/settings/types'
 import {NotebookPropTypes} from './pages/notes/types'
+import { PermissionsObj } from './services/types'
 
 const Notebook = lazy(() => import('@apps/trader-app/pages/notes'));
 const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
@@ -85,6 +87,13 @@ const TraderApp = () => {
         Http.initNavigate(navigate);
     }, [])
     const noteData = useNoteData();
+    const permissions: PermissionsObj = (() => {
+        let permissions: PermissionsObj = {...defaultPermissions};
+        permissionFuncs.forEach((permissionFunc: Function) => {
+            permissions[permissionFunc.name as keyof(PermissionsObj)] = permissionFunc(globalData);
+        })
+        return permissions;
+    })()
     
     return(
         <>
@@ -96,6 +105,7 @@ const TraderApp = () => {
                         <DataIsRefreshingContext.Provider value={dataIsRefreshing}>
                         <NewSubscriptionContext.Provider value={onNewSubscription}>
                         <SubscriptionCancelContext.Provider value={onSubscriptionCancel}>
+                        <PermissionsContext.Provider value={permissions}>
                         {(() => {
                             const pageMap = pageMapConfig(
                                 globalData,
@@ -119,6 +129,7 @@ const TraderApp = () => {
                                 </PageLoadingErrorBoundary>
                             )
                         })()}
+                        </PermissionsContext.Provider>
                         </SubscriptionCancelContext.Provider>
                         </NewSubscriptionContext.Provider>
                         </DataIsRefreshingContext.Provider>
@@ -145,6 +156,7 @@ const DataIsRefreshingContext = createContext(false);
 const RefreshDataContext = createContext(() => {});
 const NewSubscriptionContext = createContext((postActionsPending: boolean, data: {[key: string]: any}, subscriptionPlan: UserData['subscription_plan']) => {});
 const SubscriptionCancelContext = createContext(() => {});
+const PermissionsContext = createContext<PermissionsObj>(defaultPermissions)
 
 /** Returns a mapping of routes to components depending on the state */
 const pageMapConfig = (
@@ -176,22 +188,11 @@ const pageMapConfig = (
         userHasPaidOnce={globalData.userHasPaid()}
         userId={globalData.getUserId()}
         />
+    const subscribeNowRouteComponent = !globalData.userIsOnFreeTrial() && !globalData.userIsSubscribed() ?
+        subscribeNowComponent
+        : <Navigate to={`/${TRADER_APP_ROUTE}/${TRADER_OVERVIEW_ROUTE}`} />
     if(globalData.hasLoaded()){
-        if (!globalData.userIsOnFreeTrial() && !globalData.userIsSubscribed()){
-            return {
-                [TRADER_OVERVIEW_ROUTE]: subscribeNowComponent,
-                [TRADER_JOURNAL_ROUTE]: subscribeNowComponent,
-                [TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE]: subscribeNowComponent,
-                [TRADER_CASH_AND_GAINS_ROUTE]: subscribeNowComponent,
-                [TRADER_SETTINGS_ROUTE]: <Settings {...settingsComponentConfig} />,
-                [TRADER_PAIRS_ANALYSIS_ROUTE]: subscribeNowComponent,
-                [TRADER_ADD_ACCOUNT_ROUTE]: subscribeNowComponent,
-                [TRADER_TIME_ANALYSIS_ROUTE]: subscribeNowComponent,
-                [TRADER_PERIOD_ANALYSIS_ROUTE]: subscribeNowComponent,
-                [TRADER_EXPENSES_ROUTE]: subscribeNowComponent,
-                [TRADER_NOTES_ROUTE]: subscribeNowComponent,
-            }
-        } else if(globalData.noAccounts()){
+        if(globalData.noAccounts()){
             return {
                 [TRADER_OVERVIEW_ROUTE]: addAccountComponent,
                 [TRADER_JOURNAL_ROUTE]: addAccountComponent,
@@ -204,6 +205,7 @@ const pageMapConfig = (
                 [TRADER_PERIOD_ANALYSIS_ROUTE]: addAccountComponent,
                 [TRADER_EXPENSES_ROUTE]: addAccountComponent,
                 [TRADER_NOTES_ROUTE]: addAccountComponent,
+                [TRADER_SUBSCRIBE_NOW_ROUTE]: subscribeNowRouteComponent
             }
         } else {
             return {
@@ -218,6 +220,7 @@ const pageMapConfig = (
                 [TRADER_PERIOD_ANALYSIS_ROUTE]: <PeriodAnalysis />,
                 [TRADER_EXPENSES_ROUTE]: <Expenses />,
                 [TRADER_NOTES_ROUTE]: <Notebook {...notebookProps} />,
+                [TRADER_SUBSCRIBE_NOW_ROUTE]: subscribeNowRouteComponent
             }
         }
     } else {
@@ -232,14 +235,16 @@ const pageMapConfig = (
             [TRADER_TIME_ANALYSIS_ROUTE]: pageStillLoadingComponent,
             [TRADER_PERIOD_ANALYSIS_ROUTE]: pageStillLoadingComponent,
             [TRADER_EXPENSES_ROUTE]: pageStillLoadingComponent,
-            [TRADER_NOTES_ROUTE]: pageStillLoadingComponent
+            [TRADER_NOTES_ROUTE]: pageStillLoadingComponent,
+            [TRADER_SUBSCRIBE_NOW_ROUTE]: pageStillLoadingComponent
         }
     }
 }
 
 const {TRADER_OVERVIEW_ROUTE, TRADER_JOURNAL_ROUTE, TRADER_LONG_AND_SHORT_ANALYSIS_ROUTE,
     TRADER_CASH_AND_GAINS_ROUTE, TRADER_SETTINGS_ROUTE, TRADER_PAIRS_ANALYSIS_ROUTE, TRADER_ADD_ACCOUNT_ROUTE,
-    TRADER_TIME_ANALYSIS_ROUTE, TRADER_PERIOD_ANALYSIS_ROUTE, TRADER_EXPENSES_ROUTE, TRADER_NOTES_ROUTE
+    TRADER_TIME_ANALYSIS_ROUTE, TRADER_PERIOD_ANALYSIS_ROUTE, TRADER_EXPENSES_ROUTE, TRADER_NOTES_ROUTE,
+    TRADER_SUBSCRIBE_NOW_ROUTE, TRADER_APP_ROUTE
 } = RouteConst;
 
 export default TraderApp
@@ -249,5 +254,6 @@ export {
     DataIsRefreshingContext,
     RefreshDataContext,
     NewSubscriptionContext,
-    SubscriptionCancelContext
+    SubscriptionCancelContext,
+    PermissionsContext
 }

@@ -9,7 +9,7 @@ import {SuccessAlert} from '@components/alerts'
 import {FormPropTypes} from './types'
 
 
-const Form = ({title, initialValues, validationSchema, onSubmit, children, ...props}: FormPropTypes) => {
+const Form = ({title, initialValues, validationSchema, onSubmit, underTitleComponent, children, ...props}: FormPropTypes) => {
     const [successMsg, setSuccessMsg] = useState('');
     const [nonFieldError, setNonFieldError] = useState('');
     const [infoMsg, setInfoMsg] = useState('');
@@ -33,6 +33,7 @@ const Form = ({title, initialValues, validationSchema, onSubmit, children, ...pr
                 {...props}>
                     {({values, errors, isSubmitting, submitForm, ...others}: FormikProps<any>) => (
                         <FormikForm>
+                            {underTitleComponent}
                             {
                                 successMsg.length ?
                                     <SuccessAlert
@@ -67,9 +68,10 @@ const Form = ({title, initialValues, validationSchema, onSubmit, children, ...pr
                                     isSubmitting,
                                     submitForm,
                                     setSuccessMsg,
+                                    nonFieldError,
                                     setNonFieldError,
                                     setInfoMsg,
-                                    ...others
+                                    ...others,
                                 })}
                             </CenterColumnBox>
                         </FormikForm>

@@ -21,6 +21,7 @@ type FormPropTypes = {
             Pick<FormikHelpers<FormikValues>, 'setErrors' | 'setSubmitting'>
         ): void
     },
+    underTitleComponent?: ReactNode,
     /**
      * The fields and submit button to be displayed in the form
      */
@@ -35,6 +36,7 @@ type FormUtils = {
     isSubmitting: boolean,
     submitForm: Function
     setSuccessMsg: Function,
+    nonFieldError: string,
     setNonFieldError: Function,
     setInfoMsg: Function
 } & FormikProps<any>

@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {usePlateStore} from '@udecode/plate-core'
 import {PageContainer, PageHeading} from '@apps/trader-app/components'
 import {ColumnBox} from '@components/containers'
@@ -9,9 +9,12 @@ import MainToolbar from './main-toolbar'
 import NoNotesFound from './no-notes-found'
 import {PageStillLoading} from '@apps/trader-app/components'
 import {NotebookPropTypes} from './types'
+import { PermissionsContext } from '@apps/trader-app'
+import { BP } from '@components/text'
 
 
 const Notebook = ({noteData}: NotebookPropTypes) => {
+    const permissions = useContext(PermissionsContext);
     // Index of currently chosen note in noteItems
     const [currentNoteIndex, setCurrentNoteIndex] = useState(-1);
     const [isEditing, setIsEditing] = useState(false);
@@ -66,6 +69,7 @@ const Notebook = ({noteData}: NotebookPropTypes) => {
                     isEditing={isEditing}
                     showAllNotes={showAllNotes}
                     createNewNote={createNewNote}
+                    permissions={permissions}
                     />
                 {noteItems.length === 0 ?
                     <NoNotesFound />
@@ -91,6 +95,7 @@ const Notebook = ({noteData}: NotebookPropTypes) => {
                                     setIsEditing(true);
                                     setCurrentNoteIndex(noteIndex);
                                 }}
+                                permissions={permissions}
                             />
                     
                 }

@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react'
+import {useContext, useEffect, useState} from 'react'
 import {useNavigate} from 'react-router'
 import ReactGA from 'react-ga4'
 import {Yup} from '@apps/info-app/components'
@@ -8,23 +8,23 @@ import {FormMsg, HttpMsg} from '@services/generic-msg'
 import {FileInput, SelectInput, TextInput, Form} from '@components/forms'
 import LoadingIcon from '@components/loading-icon'
 import {HttpResponseType} from '@services/http'
-import {buildErrors, canSubmit} from '@components/forms'
+import {buildErrors, canSubmit as baseCanSubmit} from '@components/forms'
 import {ConfigConst, RouteConst} from '@conf/const'
-import { RawData } from '@apps/trader-app/models/types'
+import {RawData} from '@apps/trader-app/models/types'
 import {P, SBP} from '@components/text'
-import { ColumnBox, RowBox } from '@components/containers'
-import { FormikProps, validateYupSchema } from 'formik'
+import {ColumnBox} from '@components/containers'
+import {FormikErrors, FormikProps} from 'formik'
 import {getDimen} from '@conf/utils'
-import Context from '@mui/base/TabsUnstyled/TabsContext'
-import { filterableGridColumnsSelector } from '@mui/x-data-grid'
-import { FunctionTypeNode } from 'typescript'
+import {AddAccountFormPropTypes} from './types'
+import { PermissionsObj } from '@apps/trader-app/services/types'
+import { FormUtils } from '@components/forms/types'
 
 /**
  */
 
 const AddAccountForm = ({
-    submitValues, onAccountAdded, noOfAccounts, userIsOnFreeTrial
-}: {submitValues: Function, onAccountAdded: Function, noOfAccounts: number, userIsOnFreeTrial: boolean}) => {
+    submitValues, onAccountAdded, noOfAccounts, userIsOnFreeTrial, permissions
+}: AddAccountFormPropTypes) => {
     const navigate = useNavigate();
     const [brokerNotSupportedProcessNeeded, setBrokerNotSupportedProcessNeeded] = useState(false);
     const formInitialValues: FormInitialValues = {
@@ -172,8 +172,17 @@ const AddAccountForm = ({
                         }
                     })
                 })
-            }}>
-        {({values, errors, isSubmitting, submitForm, validateField, validateForm}: FormikProps<any>) => {
+            }}
+            underTitleComponent={(() => {
+                if(!permissions.canAddAccount){
+                    return(
+                        <P style={{textAlign: 'center', marginBottom: getDimen('padding-xs')}}>
+                            You cannot add any accounts
+                        </P>
+                    )
+                }
+            })()}>
+        {({values, errors, isSubmitting, submitForm}: FormUtils) => {
             return (
             <>
                 <TextInput name='name' placeholder='Account Name' data-testid='name' />
@@ -204,8 +213,8 @@ const AddAccountForm = ({
                 </ColumnBox>
                 <Button
                     data-testid='submit-button'
-                    onClick={canSubmit(errors, values) ? () => submitForm() : () => {}}
-                    disabled={!canSubmit(errors, values)}>
+                    onClick={canSubmit(errors, values, permissions) ? () => submitForm() : () => {}}
+                    disabled={!canSubmit(errors, values, permissions)}>
                 {isSubmitting ?
                     <LoadingIcon
                         color={getColor('white')} 
@@ -217,6 +226,14 @@ const AddAccountForm = ({
             )}}
         </Form>
     )
+}
+
+const canSubmit = (
+    errors: FormikErrors<any>,
+    values: {[key: string]: any},
+    permissions: PermissionsObj
+): boolean => {
+    return permissions.canAddAccount && baseCanSubmit(errors, values)
 }
 
 const submitValuesSuccessFunc = (setNonFieldError: Function, onAccountAdded: Function, navigate: Function) => {
