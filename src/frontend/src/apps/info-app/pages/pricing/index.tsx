@@ -1,25 +1,27 @@
-import {CenterColumnBox, ColumnBox} from '@components/containers'
+import {CenterColumnBox} from '@components/containers'
 import {InfoAppNavbar} from '@apps/info-app/components'
-import {H4, P} from '@components/text'
+import {H4} from '@components/text'
 import {getDimen} from '@conf/utils'
 import Features from './features'
 import PriceProposal from './price-proposal'
+import {PricingPagePropTypes} from './types'
 import './style.css'
 
 
-const PricingPage = () => {
+const PricingPage = ({navbar, subscribeContent, subscribeAction, style}: PricingPagePropTypes) => {
     return(
         <>
-            <InfoAppNavbar />
-            <CenterColumnBox className='apps-info-app-pricing-container'>
+            {navbar}
+            <CenterColumnBox className='apps-info-app-pricing-container' style={style}>
                 <H4 style={{
                         textTransform: 'capitalize',
                         marginBottom: getDimen('padding-md'),
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        ...style
                 }}>Pricing</H4>
                 <div className='apps-info-app-pricing-container-content'>
                     <Features />
-                    <PriceProposal />
+                    <PriceProposal subscribeContent={subscribeContent} subscribeAction={subscribeAction} />
                 </div>
             </CenterColumnBox>
         </>

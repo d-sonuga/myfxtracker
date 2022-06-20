@@ -8,7 +8,10 @@ const ButtonWithArrow = ({onClick, children, style, ...others}: ButtonTypes.Butt
     return(
         <Button onClick={onClick} style={style} {...others}>
             <span style={{marginRight: getDimen('padding-xs')}}>{children}</span>
-            <ArrowIcon />
+            {typeof(children) === 'string' ?
+                <ArrowIcon />
+                : null
+            }
         </Button>
     );
 }

@@ -4,5 +4,5 @@
     padding: 15px 20px;
     background-color: var(--color-yellow);
     margin-bottom: var(--dimen-padding-xs);
-    margin-top: var(--dimen-padding-big);
+    margin-top: var(--dimen-padding-xs);
 }

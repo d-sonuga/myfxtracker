@@ -1,10 +1,12 @@
-import {Route} from 'react-router-dom'
+import {Route, useNavigate} from 'react-router-dom'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
 import {HomePage, SignUpPage, LoginPage, ResetPasswordPage, ResetPasswordConfirmPage,
     FAQPage, PricingPage, ChangePasswordPage} from './pages'
+import { InfoAppNavbar } from './components'
 
 const InfoApp = () => {
+    const navigate = useNavigate();
     const {INFO_HOME_ROUTE, INFO_SIGN_UP_ROUTE, INFO_CHANGE_PASSWORD_ROUTE, INFO_RESET_PASSWORD_ROUTE,
         INFO_LOGIN_ROUTE, INFO_FAQ_ROUTE, INFO_PRICING_ROUTE} = RouteConst;
     return(
@@ -17,7 +19,20 @@ const InfoApp = () => {
                 <Route path={INFO_RESET_PASSWORD_ROUTE} element={<ResetPasswordPage />} />
                 <Route path={`${INFO_RESET_PASSWORD_ROUTE}/:token`} element={<ResetPasswordConfirmPage />} />
                 <Route path={INFO_FAQ_ROUTE} element={<FAQPage />} />
-                <Route path={INFO_PRICING_ROUTE} element={<PricingPage />} />
+                <Route path={INFO_PRICING_ROUTE}
+                    element={
+                        <PricingPage
+                            navbar={<InfoAppNavbar />}
+                            subscribeContent={{
+                                monthly: 'Get 7 days free',
+                                yearly: 'Get 7 days free'
+                            }}
+                            subscribeAction={{
+                                monthly: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
+                                yearly: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
+                            }}
+                        />} 
+                    />
             </Routes>
         </div>
     );
