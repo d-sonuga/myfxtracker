@@ -14,7 +14,9 @@ The Dockerfiles in the backend and frontend directories are used for the develop
 To run the functional tests, you need to run 3 containers: 1 for the frontend, backend and
 the selenium server each and connect them to the same network where they have frontend, backend
 and firefox as their hostnames respectively. In the backend container, you have to run
-maildump and set the environment variable TEST to true
+maildump and set the environment variable TEST to true.
+### Update
+Functional testing is nearly non existent right now
 
 ## Deployment
 For deployment, only a python container is used.

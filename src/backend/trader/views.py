@@ -938,7 +938,7 @@ class RecordNewSubscriptionView(APIView):
                 error = self.get_deploy_account_error()
                 return Response(error, status=status.HTTP_400_BAD_REQUEST)
             logger.info(f'User {request.user.id} is already recorded as subscribed, '
-                'and there are no accounts to redploy, returning not pending')
+                'and there are no accounts to redeploy, returning not pending')
             return Response({'status': 'not pending'})
         logger.info(f'Data submitted by user {request.user.id} to record new '
             'subscription has errors, returning errors')

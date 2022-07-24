@@ -1,5 +1,4 @@
-import { FlutterwaveConfig } from 'flutterwave-react-v3/dist/types'
-import {MutableRefObject} from 'react'
+import {FlutterwaveConfig} from 'flutterwave-react-v3/dist/types'
 
 type SubscribeNowPropTypes = {
     userHasPaidOnce: boolean,

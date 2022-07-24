@@ -3,10 +3,11 @@ import {Tabs, Tab} from '@mui/material'
 import {ColumnBox, RowBox} from '@components/containers'
 import {H5, BP} from '@components/text'
 import {ButtonWithArrow} from '@apps/info-app/components'
-import './style.css'
 import {SyntheticEvent, useState} from 'react'
 import {getDimen} from '@conf/utils'
 import {PriceProposalPropTypes} from '../types'
+import {PlanInfoPropTypes} from './types'
+import './style.css'
 
 
 const PriceProposal = ({subscribeContent, subscribeAction, subscribeEnabled}: PriceProposalPropTypes) => {
@@ -23,15 +24,15 @@ const PriceProposal = ({subscribeContent, subscribeAction, subscribeEnabled}: Pr
             </Tabs>
             <PlanInfo
                 show={currentTabIndex === MONTHLY}
-                price={29.99}
+                price={29.95}
                 subscribeButtonContent={subscribeContent.monthly}
                 subscribeButtonAction={subscribeAction.monthly}
                 subscribeButtonEnabled={subscribeEnabled ? subscribeEnabled.monthly : true}
                 />
             <PlanInfo
                 show={currentTabIndex === YEARLY}
-                price={24.99}
-                extraInfo='You get save 2 months'
+                price={24.95}
+                extraInfo={['Annually, you have 16% off which is 2 months free ', 'You save $60 a year']}
                 subscribeButtonContent={subscribeContent.yearly}
                 subscribeButtonAction={subscribeAction.yearly}
                 subscribeButtonEnabled={subscribeEnabled ? subscribeEnabled.yearly : true}
@@ -40,16 +41,13 @@ const PriceProposal = ({subscribeContent, subscribeAction, subscribeEnabled}: Pr
     )
 }
 
-const PlanInfo = ({show, price, extraInfo, subscribeButtonContent, subscribeButtonAction, subscribeButtonEnabled}: {show: boolean, price: number, extraInfo?: string, subscribeButtonContent: ReactNode, subscribeButtonAction: Function, subscribeButtonEnabled: boolean}) => {
+const PlanInfo = ({show, price, extraInfo, subscribeButtonContent, subscribeButtonAction, subscribeButtonEnabled}: PlanInfoPropTypes) => {
     return(
         <ColumnBox style={{
             width: 'fit-content',
             display: show ? 'block' : 'none'
         }}>
-            {extraInfo ?
-                <BP style={{marginTop: getDimen('padding-xs')}}>You save 2 months</BP>
-                : null
-            }
+            {renderExtraInfo(extraInfo)}
             <RowBox className='apps-info-app-pages-pricing-price'>
                 <sup>$</sup>
                 <RowBox style={{alignItems: 'baseline'}}>
@@ -65,6 +63,18 @@ const PlanInfo = ({show, price, extraInfo, subscribeButtonContent, subscribeButt
             </ButtonWithArrow>
         </ColumnBox>
     )
+}
+
+const renderExtraInfo = (extraInfo: PlanInfoPropTypes['extraInfo']): ReactNode =>  {
+    if(extraInfo === undefined){
+        return null;
+    }
+    if(typeof(extraInfo) === 'string'){
+        return <BP style={{marginTop: getDimen('padding-xs'), width: '100%'}}>{extraInfo}</BP>
+    }
+    return extraInfo.map((info) => (
+        <BP style={{marginTop: getDimen('padding-xs'), maxWidth: '200px'}}>{info}</BP>
+    ));
 }
 
 export default PriceProposal

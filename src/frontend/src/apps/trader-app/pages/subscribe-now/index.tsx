@@ -1,9 +1,5 @@
-import {ColumnBox, RowBox} from '@components/containers'
-import {P, H6, H5, H4, H3, H2, BP} from '@components/text'
 import {SubscribeNowPropTypes} from './types'
-import './style.css'
 import {getDimen} from '@conf/utils'
-import {Button} from '@components/buttons'
 import React, {useContext, useRef, useState} from 'react'
 import LoadingIcon from '@components/loading-icon'
 import MonthlySubscriptionButton from './monthly-subscription-button'
@@ -12,7 +8,8 @@ import {NewSubscriptionContext} from '@apps/trader-app'
 import {ToastContext} from '@components/toast'
 import {YEARLY_SUBSCRIPTION_PRICE} from './const'
 import {UserData} from '@apps/trader-app/models/types'
-import { PricingPage } from '@apps/info-app/pages'
+import {PricingPage} from '@apps/info-app/pages'
+import './style.css'
 
 
 const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) => {

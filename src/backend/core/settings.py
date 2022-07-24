@@ -330,8 +330,8 @@ TEST_TRADER_CREATE_ERROR = False
 THIRTY_MINS = 30
 TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRESH_INTERVAL', THIRTY_MINS))
 
-MONTHLY_PLAN_PRICE = 24.99
-YEARLY_PLAN_PRICE = 287.88
+MONTHLY_PLAN_PRICE = 29.95
+YEARLY_PLAN_PRICE = 299.4
 
 # This function is used to get the current time when updating a trader's
 # subscriptioninfo. This setting was used to make the subscriptioninfo updates
