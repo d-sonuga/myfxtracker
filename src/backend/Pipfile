@@ -21,6 +21,7 @@ rq = "*"
 django-rq = "*"
 rq-scheduler = "*"
 rave-python = "*"
+itsdangerous = "*"
 
 [dev-packages]
 maildump = "*"
