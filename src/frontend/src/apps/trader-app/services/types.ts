@@ -1,3 +1,5 @@
+import {GlobalData} from '../models'
+
 type PermissionsObj = {
     canAddAccount: boolean,
     canRefreshAccount: boolean,
@@ -5,6 +7,9 @@ type PermissionsObj = {
     canModifyNotes: boolean
 }
 
+type PermissionFuncs = Record<string, (globalData: GlobalData) => boolean>
+
 export type {
-    PermissionsObj
+    PermissionsObj,
+    PermissionFuncs
 }

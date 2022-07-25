@@ -1,22 +1,32 @@
 import {GlobalData} from '../models'
-import { PermissionsObj } from './types';
+import {PermissionsObj, PermissionFuncs} from './types'
 
-const canAddAccount = (globalData: GlobalData): boolean => {
+/**
+ * Couldn't use anonymous functions here because the name properties are needed
+ */
+
+function canAddAccount(globalData: GlobalData): boolean {
+    console.log('In permissions func: (isSubscribed: ',
+        globalData.userIsSubscribed(),
+        ', onFreeTrial: ',
+        globalData.userIsOnFreeTrial(),
+        ')'
+    );
     if(globalData.userIsSubscribed() || globalData.userIsOnFreeTrial()){
         return true;
     }
     return false;
 }
 
-const canRefreshAccount = (globalData: GlobalData): boolean => {
+function canRefreshAccount(globalData: GlobalData): boolean {
     return canAddAccount(globalData);
 }
 
-const canCreateNote = (globalData: GlobalData): boolean => {
+function canCreateNote(globalData: GlobalData): boolean {
     return canAddAccount(globalData);
 }
 
-const canModifyNotes = (globalData: GlobalData): boolean => {
+function canModifyNotes(globalData: GlobalData): boolean {
     return canAddAccount(globalData);
 }
 
@@ -27,12 +37,12 @@ const defaultPermissions: PermissionsObj = {
     canModifyNotes: false
 }
 
-const permissionFuncs = [
-    canAddAccount,
-    canRefreshAccount,
-    canCreateNote,
-    canModifyNotes
-]
+const permissionFuncs: PermissionFuncs = {
+    'canAddAccount': canAddAccount,
+    'canRefreshAccount': canRefreshAccount,
+    'canCreateNote': canCreateNote,
+    'canModifyNotes': canModifyNotes
+}
 
 export default permissionFuncs
 export {

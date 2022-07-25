@@ -446,6 +446,8 @@ class GetInitData(APIView):
             )
         else:
             no_of_days_for_free_trial_to_expire = 'free trial not started'
+        logger.critical(f'User with id of {request.user.id} '
+            f'on_free: {request.user.subscriptioninfo.on_free} is getting some init data')
         init_data = {
             'user_data': {
                 'id': request.user.id,

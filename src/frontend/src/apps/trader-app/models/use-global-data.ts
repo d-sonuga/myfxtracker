@@ -2,19 +2,21 @@
  * Hook to set global data in TraderApp
  */
 
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useContext} from 'react'
 import {GlobalData} from '@apps/trader-app/models'
 import {Http, HttpErrorType, HttpResponseType} from '@apps/trader-app/services'
 import {HttpConst} from '@conf/const'
 import {RawData, UseGlobalDataType} from './types'
 import {AccountData} from 'calculator/dist'
-import permissionFuncs, { defaultPermissions } from '../services/permissions'
-import { PermissionsObj } from '../services/types'
+import permissionFuncs, {defaultPermissions} from '../services/permissions'
+import {PermissionsObj} from '../services/types'
+import {ToastContext} from '@components/toast'
 
 
 const useGlobalData: UseGlobalDataType = () => {
     const [globalData, baseSetGlobalData] = useState<GlobalData>(new GlobalData(null));
     const [permissions, setPermissions] = useState<PermissionsObj>(defaultPermissions);
+    const Toast = useContext(ToastContext);
     useEffect(() => {
         /* The real thing to be used.
             Going to use dummy data just for development*/
@@ -25,14 +27,17 @@ const useGlobalData: UseGlobalDataType = () => {
             successFunc: (resp: HttpResponseType) => {
                 setGlobalData(new GlobalData(resp.data));
             },
-            errorFunc: (err: HttpErrorType) => {}
+            errorFunc: (err: HttpErrorType) => {
+                Toast.error('Sorry. Something went wrong');
+                console.log(err);
+            }
         })
     }, [])
     const createPermissions = (globalData: GlobalData) => {
-        console.log('building permissions')
+        console.log('building permissions');
         let permissions: PermissionsObj = {...defaultPermissions};
-        permissionFuncs.forEach((permissionFunc: Function) => {
-            permissions[permissionFunc.name as keyof(PermissionsObj)] = permissionFunc(globalData);
+        Object.keys(permissionFuncs).forEach((funcName: string) => {
+            permissions[funcName as keyof(PermissionsObj)] = permissionFuncs[funcName](globalData);
         })
         console.log('built permissions', permissions);
         return permissions;
