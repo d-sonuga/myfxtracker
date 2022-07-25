@@ -8,10 +8,13 @@ import {Http, HttpErrorType, HttpResponseType} from '@apps/trader-app/services'
 import {HttpConst} from '@conf/const'
 import {RawData, UseGlobalDataType} from './types'
 import {AccountData} from 'calculator/dist'
+import permissionFuncs, { defaultPermissions } from '../services/permissions'
+import { PermissionsObj } from '../services/types'
 
 
 const useGlobalData: UseGlobalDataType = () => {
-    const [globalData, setGlobalData] = useState<GlobalData>(new GlobalData(null));
+    const [globalData, baseSetGlobalData] = useState<GlobalData>(new GlobalData(null));
+    const [permissions, setPermissions] = useState<PermissionsObj>(defaultPermissions);
     useEffect(() => {
         /* The real thing to be used.
             Going to use dummy data just for development*/
@@ -25,7 +28,20 @@ const useGlobalData: UseGlobalDataType = () => {
             errorFunc: (err: HttpErrorType) => {}
         })
     }, [])
-    return [globalData, setGlobalData];
+    const createPermissions = (globalData: GlobalData) => {
+        console.log('building permissions')
+        let permissions: PermissionsObj = {...defaultPermissions};
+        permissionFuncs.forEach((permissionFunc: Function) => {
+            permissions[permissionFunc.name as keyof(PermissionsObj)] = permissionFunc(globalData);
+        })
+        console.log('built permissions', permissions);
+        return permissions;
+    }
+    const setGlobalData = (arg: GlobalData) => {
+        baseSetGlobalData(arg);
+        setPermissions(createPermissions(arg));
+    }
+    return [globalData, setGlobalData, permissions];
 }
 
 const noAccountsRawData  = {

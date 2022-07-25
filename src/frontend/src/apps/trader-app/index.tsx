@@ -26,7 +26,7 @@ const Journal = lazy(() => import('@apps/trader-app/pages/journal'));
 const TraderApp = () => {
     const location = useLocation();
     /** User and trade data from the backend. Globally required by most trader app pages */
-    const [globalData, setGlobalData] = useGlobalData();
+    const [globalData, setGlobalData, permissions] = useGlobalData();
     /** Is the data currently being refreshed */
     const [dataIsRefreshing, setDataIsRefreshing] = useState(false);
     /** Keep page on loading page indefinitely */
@@ -87,13 +87,17 @@ const TraderApp = () => {
         Http.initNavigate(navigate);
     }, [])
     const noteData = useNoteData();
+    /*
     const permissions: PermissionsObj = (() => {
+        console.log('building permissions')
         let permissions: PermissionsObj = {...defaultPermissions};
         permissionFuncs.forEach((permissionFunc: Function) => {
             permissions[permissionFunc.name as keyof(PermissionsObj)] = permissionFunc(globalData);
         })
+        console.log('built permissions', permissions);
         return permissions;
     })()
+    */
     
     return(
         <>

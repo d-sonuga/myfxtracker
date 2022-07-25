@@ -174,7 +174,7 @@ const AddAccountForm = ({
                 })
             }}
             underTitleComponent={(() => {
-                console.log(permissions);
+                console.log('In add account form', permissions);
                 if(!permissions.canAddAccount){
                     return(
                         <P style={{textAlign: 'center', marginBottom: getDimen('padding-xs')}}>

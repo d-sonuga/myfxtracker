@@ -1,6 +1,7 @@
 import React from 'react'
 import {AccountData} from 'calculator'
 import {GlobalData} from '.'
+import { PermissionsObj } from '../services/types'
 
 type RawData = {
     user_data: UserData,
@@ -34,7 +35,7 @@ type TradeData = {
 }
 
 type UseGlobalDataType = {
-    (): [GlobalData, React.Dispatch<React.SetStateAction<GlobalData>>]
+    (): [GlobalData, (gd: GlobalData) => void, PermissionsObj]
 }
 
 export type {
