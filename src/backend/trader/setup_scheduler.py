@@ -3,7 +3,7 @@ import django
 import sys
 from pathlib import Path
 
-from users.models import Trader
+from ..users.models import Trader
 path = Path(__file__).resolve().parent.parent
 sys.path.append(str(path))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
