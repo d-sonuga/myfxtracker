@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga4'
 import Http from '@services/http'
 import {HttpConst} from '@conf/const'
 import {ToastFuncType} from '@components/toast/types'
@@ -10,6 +11,7 @@ import {ToastFuncType} from '@components/toast/types'
  * @param thenFunc function to be executed after attempt to delete, whether it ends in success or error
  */
 const removeAccount = (
+    userId:number,
     accountId: number,
     removeAccountFromData: Function,
     Toast: ToastFuncType,
@@ -22,24 +24,34 @@ const removeAccount = (
         successFunc: (resp: any) => {
             if('detail' in resp.data){
                 if(resp.data['detail'] === 'removed'){
+                    ReactGA.event('remove_account_success', {
+                        'user_id': userId
+                    });
                     removeAccountFromData(accountId);
                     thenFunc();
                 } else {
                     if(followUpNo >= MAX_NO_OF_FOLLOW_UP_REQUESTS){
                         Toast.error('Sorry. Something went wrong.');
+                        ReactGA.event('remove_account_fail', {
+                            'user_id': userId
+                        });
                         thenFunc();
                     } else {
-                        removeAccount(accountId, removeAccountFromData, Toast, thenFunc, followUpNo + 1);
+                        removeAccount(userId, accountId, removeAccountFromData, Toast, thenFunc, followUpNo + 1);
                     }
                 }
             } else {
-                console.log('elseblock', resp.data);
+                ReactGA.event('remove_account_fail', {
+                    'user_id': userId
+                })
                 Toast.error('Sorry. Something went wrong.');
                 thenFunc();
             }
         },
         errorFunc: (error: any) => {
-            console.log('errfunc', error);
+            ReactGA.event('remove_account_fail', {
+                'user_id': userId
+            });
             Toast.error('Sorry. Something went wrong.');
         },
     }), firstRequest(followUpNo) ? 0 : TIME_TO_WAIT_BEFORE_NEXT_PENDING_REQUEST);

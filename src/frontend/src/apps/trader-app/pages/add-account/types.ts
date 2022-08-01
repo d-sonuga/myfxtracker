@@ -19,7 +19,8 @@ type SubmitValuesTypes = {
 type AddAccountPropTypes = {
     onAccountAdded: Function,
     noOfAccounts: number,
-    userIsOnFreeTrial: boolean
+    userIsOnFreeTrial: boolean,
+    userId: number
 }
 
 type AddAccountFormPropTypes = {

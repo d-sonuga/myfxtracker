@@ -33,9 +33,15 @@ const handleResolveRequest = (axiosPromise: Promise<any>, config: HandleResolveR
         .catch((err) => {
             if(err.message === 'Network Error') {
                 Http.toast.error(HttpMsg.noConnectionErr());
+                if(config.networkErrorFunc){
+                    return config.networkErrorFunc(err);
+                }
             } else if(err.message === 
                 `timeout of ${config.timeout ? config.timeout : defaultConfig.timeout}ms exceeded`) {
                     Http.toast.error(HttpMsg.connectionTimeOutErr())
+                    if(config.timeoutErrorFunc){
+                        return config.timeoutErrorFunc(err);
+                    }
             } else {
                 return config.errorFunc(err);
             }
@@ -66,6 +72,7 @@ const post = (config: HttpPostConfigType) => {
         config.data,
         {
             headers: getDefaultHeaders(config.noToken),
+
             ...defaultConfig,
             timeout: config.timeout ? config.timeout : defaultConfig.timeout,
             ...Object.assign({}, config.extras ? config.extras : {})

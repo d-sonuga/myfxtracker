@@ -1,5 +1,6 @@
 import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router'
+import ReactGA from 'react-ga4'
 import {Button} from '@components/buttons'
 import {ColumnBox} from '@components/containers'
 import {H6, P} from '@components/text'
@@ -9,7 +10,7 @@ import deleteAccount from './delete-account'
 import LoadingIcon from '@components/loading-icon'
 
 
-const DeleteAccountSection = () => {
+const DeleteAccountSection = ({userId}: {userId: number}) => {  
     const navigate = useNavigate();
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [accountIsDeleting, setAccountIsDeleting] = useState(false);
@@ -22,12 +23,21 @@ const DeleteAccountSection = () => {
                 okButtonContent={accountIsDeleting ? <LoadingIcon /> : 'Delete Account'}
                 okButtonProps={{'data-testid': 'confirm-delete-account-button'}}
                 onOkClick={() => {
+                    ReactGA.event('delete_account_attempt', {
+                        'user_id': userId
+                    });
                     setAccountIsDeleting(true);
-                    deleteAccount(Toast, navigate, () => {
-                    setDialogIsOpen(false);
-                    setAccountIsDeleting(false)
-                })}}
-                onCancelClick={() => setDialogIsOpen(false)}
+                    deleteAccount(userId, Toast, navigate, () => {
+                        setDialogIsOpen(false);
+                        setAccountIsDeleting(false)
+                    })}
+                }
+                onCancelClick={() => {
+                    ReactGA.event('delete_account_abort', {
+                        'user_id': userId
+                    });
+                    setDialogIsOpen(false)
+                }}
                 showCancelButton={!accountIsDeleting}
                 onClose={() => {
                     if(!accountIsDeleting){

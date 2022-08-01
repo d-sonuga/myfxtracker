@@ -1,4 +1,5 @@
 import {useNavigate} from 'react-router'
+import ReactGA from 'react-ga4'
 import {H5, P} from '@components/text'
 import ButtonWithArrow from '@apps/info-app/components/button-with-arrow'
 import './style.css'
@@ -13,7 +14,13 @@ const SignUpPrompt = () => {
                 Onboarding is hassle free and can be done in less than 5 minutes
             </P>
             <div>
-                <ButtonWithArrow onClick={() => navigate('/sign-up')}>Get 7 days free</ButtonWithArrow>
+                <ButtonWithArrow
+                    onClick={() => {
+                        ReactGA.event('call_to_action_sign_up');
+                        navigate('/sign-up');
+                    }}>
+                    Get 7 days free
+                </ButtonWithArrow>
             </div>
         </div>
     );

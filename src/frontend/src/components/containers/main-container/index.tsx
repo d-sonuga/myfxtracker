@@ -6,6 +6,7 @@
 
 import React, {useEffect, ReactNode, useState, Fragment} from 'react'
 import ReactGA from 'react-ga4'
+import TagManager from 'react-gtm-module'
 import {ErrorToast, SuccessToast, InfoToast, ToastContext} from '@components/toast'
 import Http from'@services/http'
 import {ConfigConst} from '@conf/const'
@@ -19,7 +20,17 @@ const MainContainer = ({children}: {children: ReactNode}) => {
 
     useEffect(() => {
         Http.init(Toast);
-        ReactGA.initialize(ConfigConst.GA_MEASUREMENT_ID);
+        ReactGA.initialize(
+            ConfigConst.GA_MEASUREMENT_ID,
+            {
+                gtagOptions: {
+                    'debug_mode': process.env.NODE_ENV !== 'production'
+                }
+            }
+        );
+        TagManager.initialize({
+            gtmId: 'GTM-PZXXP93'
+        });
     });
 
     /**

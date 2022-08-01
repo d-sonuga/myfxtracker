@@ -1,10 +1,11 @@
 import {Link} from 'react-router-dom'
 import {useNavigate} from 'react-router'
+import ReactGA from 'react-ga4'
 import {ColumnBox, RowBox} from '@components/containers'
 import {SP} from '@components/text'
-import Http from '@services/http'
+import Http, { HttpErrorType, HttpResponseType } from '@services/http'
 import {getColor, getDimen} from '@conf/utils'
-import {HttpConst} from '@conf/const'
+import {ConfigConst, HttpConst} from '@conf/const'
 import {FormPageContainer} from '@apps/info-app/components'
 import LoginForm from './login-form'
 import {SubmitValuesTypes} from './types'
@@ -18,12 +19,25 @@ const LoginPage = () => {
      const navigate = useNavigate();
      const submitValues = (config: SubmitValuesTypes) => {
         const {BASE_URL, LOGIN_URL} = HttpConst;
+        ReactGA.event('log_in_attempt');
         Http.post({
             url: `${BASE_URL}/${LOGIN_URL}/`,
             noToken: true,
             data: config.values,
-            successFunc: config.successFunc,
-            errorFunc: config.errorFunc,
+            successFunc: (resp: HttpResponseType) => {
+                ReactGA.event('log_in_success');
+                config.successFunc(resp)
+            },
+            errorFunc: (err: HttpErrorType) => {
+                ReactGA.event('log_in_fail');
+                config.errorFunc(err);
+            },
+            networkErrorFunc: (err: HttpErrorType) => {
+                ReactGA.event('log_in_fail');
+            },
+            timeoutErrorFunc: (err: HttpErrorType) => {
+                ReactGA.event('log_in_fail')
+            },
             thenFunc: config.thenFunc
         });
     }

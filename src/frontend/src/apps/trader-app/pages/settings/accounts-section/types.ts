@@ -4,7 +4,8 @@ type AccountsSectionPropTypes = {
     accounts: AccountDataWithId[],
     removeAccountFromData: Function,
     userIsOnFreeTrial: boolean,
-    userIsSubscribed: boolean
+    userIsSubscribed: boolean,
+    userId: number
 }
 
 type AccountDataWithId = AccountData & {id: number}

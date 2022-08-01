@@ -1,4 +1,5 @@
 import {useNavigate} from 'react-router'
+import ReactGA from 'react-ga4'
 import {CenterBox, CenterColumnBox} from '@components/containers'
 import {H1, P, SBP} from '@components/text'
 import {getColor} from '@conf/utils'
@@ -20,7 +21,12 @@ const FirstHeadingSection = () => {
                     advanced analytics to increase your profitability today.</P>
                 </CenterBox>
                 <CenterColumnBox>
-                    <ButtonWithArrow onClick={() => navigate('/sign-up')} size='large'>
+                    <ButtonWithArrow
+                        onClick={() => {
+                            ReactGA.event('call_to_action_sign_up');
+                            navigate('/sign-up');
+                        }}
+                        size='large'>
                         Get 7 days free
                     </ButtonWithArrow>
                     <SBP style={{color: getColor('gray')}}>*No credit card required</SBP>

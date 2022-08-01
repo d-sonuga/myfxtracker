@@ -240,11 +240,10 @@ const canSubmit = (
 const submitValuesSuccessFunc = (setNonFieldError: Function, onAccountAdded: Function, navigate: Function) => {
     return (data: RawData) => {
         setNonFieldError('');
-        /*
         ReactGA.event('add_account', {
             method: 'site '
-        })
-        */
+        });
+        //ReactGA.
         onAccountAdded(data);
         navigate(`/${RouteConst.TRADER_APP_ROUTE}/`);
     }

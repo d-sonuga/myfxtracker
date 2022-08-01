@@ -1,5 +1,6 @@
 import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router'
+import ReactGA from 'react-ga4'
 import {Button} from '@components/buttons'
 import {ColumnBox, RowBox} from '@components/containers'
 import {H6, P} from '@components/text'
@@ -14,7 +15,7 @@ import NoOfAccountsLeftToAddStatus from './no-of-accounts-left-to-add-status'
 import removeAccount from './remove-account'
 
 
-const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial, userIsSubscribed}: AccountsSectionPropTypes) => {
+const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial, userIsSubscribed, userId}: AccountsSectionPropTypes) => {
     const navigate = useNavigate();
     const [accountToDelete, setAccountToDelete] = useState<AccountDataWithId>(defaultAccountData);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -28,7 +29,10 @@ const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial, us
             <Dialog
                 title='Remove Account'
                 onOkClick={() => {
-                    removeAccount(accountToDelete.id, removeAccountFromData, Toast, () => {
+                    ReactGA.event('remove_account_attempt', {
+                        'user_id': userId
+                    });
+                    removeAccount(userId, accountToDelete.id, removeAccountFromData, Toast, () => {
                         setIsDeleting(false);
                         setAccountToDelete(defaultAccountData);
                     });
@@ -37,6 +41,9 @@ const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial, us
                 okButtonContent={isDeleting ? <LoadingIcon /> : 'ok'}
                 showCancelButton={!isDeleting}
                 onCancelClick={() => {
+                    ReactGA.event('remove_account_abort', {
+                        'user_id': userId
+                    });
                     setAccountToDelete(defaultAccountData);
                     setIsDeleting(false);
                 }}

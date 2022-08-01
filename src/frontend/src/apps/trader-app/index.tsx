@@ -116,7 +116,8 @@ const TraderApp = () => {
                                 keepPageLoading,
                                 {onAccountAdded: onAccountAdded,
                                     noOfAccounts: globalData.numberOfAccounts(),
-                                    userIsOnFreeTrial: globalData.userIsOnFreeTrial()
+                                    userIsOnFreeTrial: globalData.userIsOnFreeTrial(),
+                                    userId: globalData.getUserId()
                                 },
                                 {removeAccountFromGlobalData: removeAccountFromGlobalData},
                                 {noteData: noteData}

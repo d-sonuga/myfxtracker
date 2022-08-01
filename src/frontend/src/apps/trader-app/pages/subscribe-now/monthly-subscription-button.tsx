@@ -29,7 +29,7 @@ const MonthlySubscriptionButton = React.forwardRef<HTMLButtonElement, Subscripti
     };
     
     return(
-        <BaseSubscriptionButton config={config} ref={ref} {...others} />
+        <BaseSubscriptionButton config={config} ref={ref} userId={userId} {...others} />
     )
 })
 

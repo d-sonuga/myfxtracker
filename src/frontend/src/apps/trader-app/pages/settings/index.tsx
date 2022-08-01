@@ -20,11 +20,12 @@ const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: F
                 <div>
                     <EmailSection email={globalData.getUserEmail()} />
                     <ChangePasswordSection />
-                    <DeleteAccountSection />
+                    <DeleteAccountSection userId={globalData.getUserId()} />
                 </div>
                 <div>
                     <H5>Accounts</H5>
-                    <AccountsSection 
+                    <AccountsSection
+                        userId={globalData.getUserId()}
                         userIsOnFreeTrial={globalData.userIsOnFreeTrial()}
                         userIsSubscribed={globalData.userIsSubscribed()}
                         accounts={globalData.getAllAccounts()}
@@ -35,7 +36,8 @@ const Settings = ({removeAccountFromGlobalData}: {removeAccountFromGlobalData: F
                     <H5>Subscription</H5>
                     <SubscriptionSection 
                         subscriptionPlan={globalData.getUserSubscriptionPlan()}
-                        daysLeftBeforeFreeTrialExpires={globalData.getDaysLeftBeforeFreeTrialExpires()} />
+                        daysLeftBeforeFreeTrialExpires={globalData.getDaysLeftBeforeFreeTrialExpires()}
+                        userId={globalData.getUserId()} />
                 </div>
             </div>
         </PageContainer>

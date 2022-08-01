@@ -1,4 +1,5 @@
 import {useNavigate} from 'react-router'
+import ReactGA from 'react-ga4'
 import {CenterRowBox, CenterColumnBox} from '@components/containers'
 import {H5, P} from '@components/text'
 import {getColor, getDimen} from '@conf/utils'
@@ -19,8 +20,11 @@ const SignUpOfferingSection = () => {
                     We guarantee your satisfaction on MyFxTracker with a full refund.
                     We will refund your subscription fee in full at any month you are dissatisfied.
                 </P>
-                <ButtonWithArrow 
-                    onClick={() => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`)}
+                <ButtonWithArrow
+                    onClick={() => {
+                        ReactGA.event('call_to_action_sign_up');
+                        navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`);
+                    }}
                     style={{maxWidth: '350px'}}>
                     Try MyFxTracker free for 7 days
                 </ButtonWithArrow>

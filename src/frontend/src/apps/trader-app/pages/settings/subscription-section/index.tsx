@@ -1,4 +1,5 @@
 import {useContext, useState} from 'react'
+import ReactGA from 'react-ga4'
 import {UserData} from '@apps/trader-app/models/types'
 import {ColumnBox, RowBox} from '@components/containers'
 import {H6, P} from '@components/text'
@@ -12,7 +13,7 @@ import {RouteConst} from '@conf/const'
 import {SubscriptionCancelContext} from '@apps/trader-app'
 
 
-const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires}: {subscriptionPlan: UserData['subscription_plan'], daysLeftBeforeFreeTrialExpires: number | string}) => {
+const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires, userId}: {subscriptionPlan: UserData['subscription_plan'], daysLeftBeforeFreeTrialExpires: number | string, userId: number}) => {
     const [dialogIsOpen, setDialogIsOpen] = useState(false);
     const [subscriptionIsCancelling, setSubscriptionIsCancelling] = useState(false);
     const onSubscriptionCancel = useContext(SubscriptionCancelContext)
@@ -59,6 +60,7 @@ const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires}:
             <RowBox>
                 {subscriptionPlan === 'none' ?
                     <FreeTrialInfo navigate={navigate}
+                        userId={userId}
                         daysLeftBeforeFreeTrialExpires={daysLeftBeforeFreeTrialExpires} />
                     : <Button color='error' onClick={() => setDialogIsOpen(true)}>Cancel Subscription</Button>
                 }
@@ -68,8 +70,8 @@ const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires}:
 }
 
 
-const FreeTrialInfo = ({daysLeftBeforeFreeTrialExpires, navigate}: {daysLeftBeforeFreeTrialExpires: number | string, navigate: Function}) => {
-    const {TRADER_APP_ROUTE} = RouteConst;
+const FreeTrialInfo = ({daysLeftBeforeFreeTrialExpires, navigate, userId}: {daysLeftBeforeFreeTrialExpires: number | string, navigate: Function, userId: number}) => {
+    const {TRADER_APP_ROUTE, TRADER_SUBSCRIBE_NOW_ROUTE} = RouteConst;
     if(typeof(daysLeftBeforeFreeTrialExpires) === 'string' && daysLeftBeforeFreeTrialExpires.includes('not started')){
         return <P>Your free trial has not yet started</P>
     }
@@ -82,7 +84,12 @@ const FreeTrialInfo = ({daysLeftBeforeFreeTrialExpires, navigate}: {daysLeftBefo
         return(
             <ColumnBox>
                 <P>Your free trial has expired</P>
-                <Button onClick={() => navigate(`/${TRADER_APP_ROUTE}`)}>Subscribe</Button>
+                <Button onClick={() => {
+                    ReactGA.event('call_to_action_subscribe', {
+                        'user_id': userId
+                    })
+                    navigate(`/${TRADER_APP_ROUTE}/${TRADER_SUBSCRIBE_NOW_ROUTE}`);
+                }}>Subscribe</Button>
             </ColumnBox>
         )
     }

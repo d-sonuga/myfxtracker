@@ -1,7 +1,8 @@
 import {Link} from 'react-router-dom'
+import ReactGA from 'react-ga4'
 import {RowBox} from '@components/containers'
 import {SP} from '@components/text'
-import Http from '@services/http'
+import Http, { HttpErrorType, HttpResponseType } from '@services/http'
 import {getColor, getDimen} from '@conf/utils'
 import {HttpConst, RouteConst} from '@conf/const'
 import {FormPageContainer} from '@apps/info-app/components'
@@ -15,12 +16,25 @@ const SignUpPage = () => {
      */
     const submitValues = (config: SubmitValuesTypes) => {
         const {BASE_URL, SIGN_UP_URL} = HttpConst;
+        ReactGA.event('sign_up_attempt');
         Http.post({
             url: `${BASE_URL}/${SIGN_UP_URL}/`,
             noToken: true,
             data: config.values,
-            successFunc: config.successFunc,
-            errorFunc: config.errorFunc,
+            successFunc: (resp: HttpResponseType) => {
+                ReactGA.event('sign_up_success');
+                config.successFunc(resp);
+            },
+            errorFunc: (err: HttpErrorType) => {
+                ReactGA.event('sign_up_fail');
+                config.errorFunc(err);
+            },
+            networkErrorFunc: (err: HttpErrorType) => {
+                ReactGA.event('sign_up_fail');
+            },
+            timeoutErrorFunc: (err: HttpErrorType) => {
+                ReactGA.event('sign_up_fail');
+            },
             thenFunc: config.thenFunc
         });
     }

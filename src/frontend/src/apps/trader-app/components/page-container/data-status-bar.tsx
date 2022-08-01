@@ -1,5 +1,6 @@
 import {useContext} from 'react'
 import {useNavigate} from 'react-router-dom'
+import ReactGA from 'react-ga4'
 import {Grid, createTheme, ThemeProvider} from '@mui/material'
 import {Divider} from '@mui/material'
 import {format} from 'timeago.js'
@@ -116,6 +117,9 @@ const DataStatusBar = () => {
                                         size='small'
                                         style={{marginRight: getDimen('padding-xs')}}
                                         onClick={() => {
+                                            ReactGA.event('call_to_action_subscribe', {
+                                                'user_id': globalData.getUserId()
+                                            });
                                             navigate(`/${TRADER_APP_ROUTE}/${TRADER_SUBSCRIBE_NOW_ROUTE}`)
                                         }}>
                                             Subscribe Now

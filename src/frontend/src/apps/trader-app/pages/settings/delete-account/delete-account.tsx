@@ -1,3 +1,4 @@
+import ReactGA from 'react-ga4'
 import Http from '@services/http'
 import {HttpConst, RouteConst} from '@conf/const'
 import {ToastFuncType} from '@components/toast/types'
@@ -10,6 +11,7 @@ import {ToastFuncType} from '@components/toast/types'
  * @param followUpNo number of times request has been remade
  */
 const deleteAccount = (
+    userId: number,
     Toast: ToastFuncType,
     navigate: Function,
     thenFunc: Function,
@@ -21,25 +23,35 @@ const deleteAccount = (
         successFunc: (resp: any) => {
             if('detail' in resp.data){
                 if(resp.data['detail'] === 'removed'){
+                    ReactGA.event('delete_account_success', {
+                        'user_id': userId
+                    });
                     const {INFO_LOGIN_ROUTE} = RouteConst;
                     navigate(`/${INFO_LOGIN_ROUTE}`);
                     thenFunc();
                 } else {
                     if(followUpNo >= MAX_NO_OF_FOLLOW_UP_REQUESTS){
+                        ReactGA.event('delete_account_fail', {
+                            'user_id': userId
+                        });
                         Toast.error('Sorry. Something went wrong.');
                         thenFunc();
                     } else {
-                        deleteAccount(Toast, navigate, thenFunc, followUpNo + 1);
+                        deleteAccount(userId, Toast, navigate, thenFunc, followUpNo + 1);
                     }
                 }
             } else {
-                console.log('elseblock', resp.data);
+                ReactGA.event('delete_account_fail', {
+                    'user_id': userId
+                });
                 Toast.error('Sorry. Something went wrong.');
                 thenFunc();
             }
         },
         errorFunc: (error: any) => {
-            console.log('errfunc', error);
+            ReactGA.event('delete_account_fail', {
+                'user_id': userId
+            });
             Toast.error('Sorry. Something went wrong.');
             thenFunc();
         },

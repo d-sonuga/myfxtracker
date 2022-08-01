@@ -46,7 +46,9 @@ type HttpClientType = {
 interface HttpRequestConfigType {
     url: string, 
     successFunc: Function,
-    errorFunc: Function, 
+    errorFunc: Function,
+    networkErrorFunc?: Function,
+    timeoutErrorFunc?: Function,
     thenFunc?: Function,
     noToken?: boolean, 
     timeout?: number,

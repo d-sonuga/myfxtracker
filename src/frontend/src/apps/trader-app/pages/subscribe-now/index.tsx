@@ -1,6 +1,7 @@
 import {SubscribeNowPropTypes} from './types'
 import {getDimen} from '@conf/utils'
 import React, {useContext, useRef, useState} from 'react'
+import ReactGA from 'react-ga4'
 import LoadingIcon from '@components/loading-icon'
 import MonthlySubscriptionButton from './monthly-subscription-button'
 import YearlySubscriptionButton from './yearly-subscription-button'
@@ -62,11 +63,19 @@ const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) =
                 subscribeAction={{
                     monthly: () => {
                         setSubscribing('Monthly');
+                        ReactGA.event('subscribe_attempt', {
+                            'user_id': userId,
+                            'pricing_plan': 'monthly'
+                        });
                         if(monthlySubscriptionTrigger && monthlySubscriptionTrigger.current){
                             monthlySubscriptionTrigger.current.click();
                         }
                     },
                     yearly: () => {
+                        ReactGA.event('subscribe_attempt', {
+                            'user_id': userId,
+                            'pricing_plan': 'yearly'
+                        });
                         setSubscribing('Yearly');
                         if(yearlySubscriptionTrigger && yearlySubscriptionTrigger.current){
                             yearlySubscriptionTrigger.current.click();

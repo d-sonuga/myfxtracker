@@ -23,7 +23,8 @@ const Sidebar = ({links, onCloseSidebar}: SidebarPropTypes) => {
                             <li>
                                 <Link 
                                     onClick={onCloseSidebar}
-                                    to={linkInfo[LINK_INDEX]}>
+                                    to={linkInfo[LINK_INDEX]}
+                                    className='components-navbar-link'>
                                     <BP>{linkInfo[LABEL_INDEX]}</BP>
                                 </Link>
                             </li>

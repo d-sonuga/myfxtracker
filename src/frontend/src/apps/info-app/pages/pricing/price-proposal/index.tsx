@@ -1,4 +1,5 @@
 import {ReactNode} from 'react'
+import ReactGA from 'react-ga4'
 import {Tabs, Tab} from '@mui/material'
 import {ColumnBox, RowBox} from '@components/containers'
 import {H5, BP} from '@components/text'
@@ -14,6 +15,9 @@ const PriceProposal = ({subscribeContent, subscribeAction, subscribeEnabled}: Pr
     const [MONTHLY, YEARLY] = [0, 1];
     const [currentTabIndex, setCurrentTabIndex] = useState(YEARLY);
     const onPlanInfoChange = (event: SyntheticEvent, newTabIndex: number) => {
+        ReactGA.event('viewing_price', {
+            'pricing_plan': newTabIndex === 0 ? 'monthly' : 'yearly'
+        })
         setCurrentTabIndex(newTabIndex);
     }
     return(

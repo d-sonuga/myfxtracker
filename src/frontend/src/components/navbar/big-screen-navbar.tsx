@@ -44,7 +44,8 @@ const LogoAndLinks = ({links, showLogo}: {links: Array<Array<string>>, showLogo?
                             style={{
                                 marginLeft: getDimen('padding-xs'),
                                 textDecoration: 'none'
-                            }}>
+                            }}
+                            className='components-navbar-link'>
                                 <BP style={{
                                     color: getColor('dark-gray'),
                                     textAlign: 'center',
