@@ -19,7 +19,7 @@ const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) =
     const Toast = useContext(ToastContext)
     const monthlySubscriptionTrigger = React.createRef<HTMLButtonElement>();
     const yearlySubscriptionTrigger = React.createRef<HTMLButtonElement>();
-    const subscriptionIsOngoing = () => {
+    const subscriptionIsOngoing = (subscribing: string) => {
         return subscribing.length !== 0
     }
     const abortSubscription = () => {
@@ -40,9 +40,10 @@ const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) =
         onNewSubscription(postActionsPending, data, subscriptionPlan);
     }
     const onSubscriptionRecordFailed = () => {
-        setSubscribing('none')
-        Toast.error('Your subscription was successful, but something went wrong on our end. Please contact support.');
+        setSubscribing('none');
+        Toast.error('Something went wrong on our end. Please contact support.');
     }
+    
     return(
         <>
             <PricingPage navbar={null} 
@@ -55,10 +56,10 @@ const SubscribeNow = ({userHasPaidOnce, email, userId}: SubscribeNowPropTypes) =
                         :'Subscribe Now'
                 }}
                 subscribeEnabled={{
-                    monthly: (subscriptionIsOngoing() && subscribing.toLowerCase()) === 'monthly' ||
-                        !subscriptionIsOngoing(),
-                    yearly: (subscriptionIsOngoing() && subscribing.toLowerCase()) === 'yearly' ||
-                        !subscriptionIsOngoing()
+                    monthly: (subscriptionIsOngoing(subscribing) && subscribing.toLowerCase()) === 'monthly' ||
+                        !subscriptionIsOngoing(subscribing),
+                    yearly: (subscriptionIsOngoing(subscribing) && subscribing.toLowerCase()) === 'yearly' ||
+                        !subscriptionIsOngoing(subscribing)
                 }}
                 subscribeAction={{
                     monthly: () => {

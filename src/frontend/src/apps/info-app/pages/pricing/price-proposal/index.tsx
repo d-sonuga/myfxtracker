@@ -28,18 +28,18 @@ const PriceProposal = ({subscribeContent, subscribeAction, subscribeEnabled}: Pr
             </Tabs>
             <PlanInfo
                 show={currentTabIndex === MONTHLY}
-                price={29.95}
+                price={19.95}
                 subscribeButtonContent={subscribeContent.monthly}
                 subscribeButtonAction={subscribeAction.monthly}
-                subscribeButtonEnabled={subscribeEnabled ? subscribeEnabled.monthly : true}
+                subscribeButtonEnabled={subscribeEnabled.monthly}
                 />
             <PlanInfo
                 show={currentTabIndex === YEARLY}
-                price={24.95}
-                extraInfo={['Annually, you have 16% off which is 2 months free ', 'You save $60 a year']}
+                price={16.6625}
+                extraInfo={['Annually, you have 16% off ', 'You save $39.45 a year']}
                 subscribeButtonContent={subscribeContent.yearly}
                 subscribeButtonAction={subscribeAction.yearly}
-                subscribeButtonEnabled={subscribeEnabled ? subscribeEnabled.yearly : true}
+                subscribeButtonEnabled={subscribeEnabled.yearly}
                 />
         </ColumnBox>
     )

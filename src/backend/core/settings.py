@@ -318,7 +318,7 @@ METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
 # The class that will be used to interact with the MA servers
 # It is changed programmatically during tests for testing specific scenarios
 # It should not be changed manually
-META_API_CLASS_MODULE = 'trader.metaapi.main'
+META_API_CLASS_MODULE = 'trader.metaapi.test_no_error'
 
 # To test what happens when an error occurs during user creation
 # Always set to false
@@ -330,8 +330,8 @@ TEST_TRADER_CREATE_ERROR = False
 THIRTY_MINS = 30
 TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRESH_INTERVAL', THIRTY_MINS))
 
-MONTHLY_PLAN_PRICE = 29.95
-YEARLY_PLAN_PRICE = 299.4
+MONTHLY_PLAN_PRICE = 19.95
+YEARLY_PLAN_PRICE = 199.95
 
 # This function is used to get the current time when updating a trader's
 # subscriptioninfo. This setting was used to make the subscriptioninfo updates

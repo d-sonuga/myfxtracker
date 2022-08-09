@@ -31,7 +31,11 @@ const InfoApp = () => {
                                 monthly: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
                                 yearly: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
                             }}
-                        />} 
+                            subscribeEnabled={{
+                                monthly: true,
+                                yearly: true
+                            }}
+                        />}
                     />
             </Routes>
         </div>

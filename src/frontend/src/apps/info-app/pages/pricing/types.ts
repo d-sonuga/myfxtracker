@@ -10,7 +10,7 @@ type PricingPagePropTypes = {
         monthly: Function,
         yearly: Function
     },
-    subscribeEnabled?: {
+    subscribeEnabled: {
         monthly: boolean,
         yearly: boolean
     },
