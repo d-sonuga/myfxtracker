@@ -45,6 +45,9 @@ def schedule_update_status_of_free_trial_users():
             if no_of_days_user_has_been_active > settings.FREE_TRIAL_PERIOD:
                 user.subscriptioninfo.on_free = False
                 user.subscriptioninfo.save()
+    # Import needed to stop RQ from thowing a
+    # 'Functions from the __main__ module cannot be processed' error 
+    from trader.setup_scheduler import schedule_update_status_of_free_trial_users
     django_rq.get_queue(LOW_QUEUE).enqueue_in(
         timezone.timedelta(days=1),
         schedule_update_status_of_free_trial_users
