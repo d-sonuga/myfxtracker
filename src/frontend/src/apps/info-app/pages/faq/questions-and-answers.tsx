@@ -25,7 +25,7 @@ const questionsAndAnswers = [
     },
     {
         'question': 'How much do I have to pay to use MyFxTracker?',
-        'answer': 'You can get full access to all the features of MyFxTracker for just $24.99 per month.'
+        'answer': 'You can get full access to all the features of MyFxTracker for just $19.95 per month.'
     },
     {
         'question': 'How is MyFxTracker different?',
