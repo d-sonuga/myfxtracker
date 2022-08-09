@@ -3,13 +3,13 @@ import logo from '@visuals/images/logo.png'
 import {HttpConst} from '@conf/const'
 import {SubscriptionButtonPropTypes} from './types'
 import BaseSubscriptionButton from './base-subscription-button'
-import {YEARLY_SUBSCRIPTION_PRICE} from './const'
+import {YEARLY_SUBSCRIPTION_PRICE, FLUTTERWAVE_PUBLIC_KEY} from './const'
 
 
 const YearlySubscriptionButton = React.forwardRef<HTMLButtonElement, SubscriptionButtonPropTypes>((props, ref) => {
     const {email, userId, ...others} = props;
     const config = {
-        public_key: 'FLWPUBK_TEST-abbddb271c00020e17219254c27054e5-X',
+        public_key: FLUTTERWAVE_PUBLIC_KEY,
         payment_plan: '25387',
         tx_ref: `user-${userId}-date-${Date.now().toString()}`,
         amount: YEARLY_SUBSCRIPTION_PRICE,
