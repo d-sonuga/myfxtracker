@@ -3,7 +3,6 @@ import django
 import sys
 from pathlib import Path
 
-from ..users.models import Trader
 path = Path(__file__).resolve().parent.parent
 sys.path.append(str(path))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
@@ -13,6 +12,7 @@ from django.utils import timezone
 import django_rq
 from trader.models import AccountDataLastRefreshed
 from trader.scheduled_functions import refresh_all_accounts_data
+from users.models import Trader
 from django.conf import settings
 import logging
 
