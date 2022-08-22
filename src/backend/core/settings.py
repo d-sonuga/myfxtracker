@@ -20,6 +20,7 @@ ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com',
     'myfxtracker.herokuapp.com',
     'new.myfxtracker.com',
+    'test-myfxtracker.herokuapp.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
