@@ -167,13 +167,14 @@ class AffiliateManager(models.Manager):
         user.set_password(kwargs['password'])
         user.is_affiliate = True
         user.save()
-        return user
+        affiliate = Affiliate.objects.create(user=user)
+        return affiliate
 
 class Affiliate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    payment_email = models.EmailField()
-    amount_earned = models.DecimalField(max_digits=10, decimal_places=2)
-    next_payout = models.DecimalField(max_digits=10, decimal_places=2)
+    #payment_email = models.EmailField()
+    #amount_earned = models.DecimalField(max_digits=10, decimal_places=2)
+    #next_payout = models.DecimalField(max_digits=10, decimal_places=2)
 
     objects = AffiliateManager()
 

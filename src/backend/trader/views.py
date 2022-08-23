@@ -1100,6 +1100,22 @@ But when there are errors, the response is of the following format:
     'non_field_errors': [list of non field errors]
 }
 """
+from users.models import Affiliate
+class SignUpView(RegisterView):
+    def post(self, request, **kwargs):
+        return super().post(request, **kwargs)
+
+    def perform_create(self, serializer):
+        new_trader = super().perform_create(serializer)
+        ref = self.request.data.get('ref')
+        if ref:
+            affiliate_set = Affiliate.objects.filter(user__username=ref)
+            if affiliate_set.count() != 0:
+                affiliate = affiliate_set[0]
+                new_trader.subscriptioninfo.referrer = affiliate
+                new_trader.subscriptioninfo.save()
+        return new_trader
+                
 
 def create_tester_accounts(request):
     """
@@ -1128,7 +1144,7 @@ def create_tester_accounts(request):
     return HttpResponse()
 
 login = LoginView.as_view()
-sign_up = RegisterView.as_view()
+sign_up = SignUpView.as_view()
 logout = Logout.as_view()
 delete_account = DeleteAccountView.as_view()
 get_all_notes = NoteViewSet.as_view({'get': 'list'})
