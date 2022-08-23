@@ -161,7 +161,7 @@ class SignUpTests(TestCase):
         with a valid affiliate username
         """
         affiliate = Affiliate.objects.create_affiliate(**SignUpDetails.affiliate_details)
-        user_details = SignUpDetails.good_details
+        user_details = SignUpDetails.good_details_with_affiliate
         trader_set = Trader.objects.filter(email=user_details['email'])
         self.assertEquals(trader_set.count(), 0)
         resp = self.make_request(user_details)
