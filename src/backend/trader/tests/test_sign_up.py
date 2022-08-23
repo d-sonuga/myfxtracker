@@ -169,5 +169,18 @@ class SignUpTests(TestCase):
         new_trader = Trader.objects.get(email=user_details['email'])
         self.assertEquals(new_trader.referrer, affiliate)
     
+    def test_user_signs_up_with_invalid_affiliate_username(self):
+        """
+        To test the case where the user signs up through an affiliate link
+        with an invalid affiliate username
+        """
+        user_details = SignUpDetails.good_details_with_affiliate
+        trader_set = Trader.objects.filter(email=user_details['email'])
+        self.assertEquals(trader_set.count(), 0)
+        resp = self.make_request(user_details)
+        self.assertEquals(resp.status_code, 201)
+        new_trader = Trader.objects.get(email=user_details['email'])
+        self.assertEquals(new_trader.referrer, None)
+
     def make_request(self, user_details):
         return self.client.post('/trader/sign-up/', user_details)
