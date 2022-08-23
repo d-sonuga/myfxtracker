@@ -33,7 +33,7 @@ from django.test import TestCase, override_settings, tag
 from django.core import mail
 from django.conf import settings
 from trader.models import Preferences
-from users.models import Trader
+from users.models import Trader, Affiliate
 from allauth.account.models import EmailAddress
 from .test_data import SignUpDetails
 
@@ -154,3 +154,18 @@ class SignUpTests(TestCase):
         except Exception:
             pass
         self.assertEquals(trader_set.count(), 0)
+
+    def test_user_signs_up_with_valid_affiliate_username(self):
+        """
+        To test the case where the user signs up through an affiliate link
+        with a valid affiliate username
+        """
+        affiliate = Affiliate.objects.create_affiliate(SignUpDetails.affiliate_details)
+        user_details = SignUpDetails.good_details
+        trader_set = Trader.objects.filter(email=user_details['email'])
+        self.assertEquals(trader_set.count(), 0)
+        resp = self.make_request()
+        self.assertEquals(resp.status_code, 200)
+        new_trader = Trader.objects.get(email=user_details['email'])
+        self.assertEquals(new_trader.referrer, affiliate)
+        

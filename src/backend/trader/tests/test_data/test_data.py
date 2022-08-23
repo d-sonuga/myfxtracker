@@ -20,6 +20,15 @@ class SignUpDetails:
         'password2': 'password',
         **other_values
     }
+    # To test the scenario where the user signs up with an affiliate link
+    affiliate_details = {
+        'username': 'aff-username',
+        'password': 'a-password'
+    }
+    good_details_with_affiliate = {
+        **good_details,
+        'ref': affiliate_details['username']
+    }
     bad_details_only_email = {
         'email': 'sonugademilade8703@gmail.com',
         'howYouHeard': 'On social media',
