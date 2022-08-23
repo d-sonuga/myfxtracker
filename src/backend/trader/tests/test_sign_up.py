@@ -164,7 +164,10 @@ class SignUpTests(TestCase):
         user_details = SignUpDetails.good_details
         trader_set = Trader.objects.filter(email=user_details['email'])
         self.assertEquals(trader_set.count(), 0)
-        resp = self.make_request()
-        self.assertEquals(resp.status_code, 200)
+        resp = self.make_request(user_details)
+        self.assertEquals(resp.status_code, 201)
         new_trader = Trader.objects.get(email=user_details['email'])
         self.assertEquals(new_trader.referrer, affiliate)
+    
+    def make_request(self, user_details):
+        return self.client.post('/trader/sign-up/', user_details)
