@@ -160,7 +160,7 @@ class SignUpTests(TestCase):
         To test the case where the user signs up through an affiliate link
         with a valid affiliate username
         """
-        affiliate = Affiliate.objects.create_affiliate(SignUpDetails.affiliate_details)
+        affiliate = Affiliate.objects.create_affiliate(**SignUpDetails.affiliate_details)
         user_details = SignUpDetails.good_details
         trader_set = Trader.objects.filter(email=user_details['email'])
         self.assertEquals(trader_set.count(), 0)
@@ -168,4 +168,3 @@ class SignUpTests(TestCase):
         self.assertEquals(resp.status_code, 200)
         new_trader = Trader.objects.get(email=user_details['email'])
         self.assertEquals(new_trader.referrer, affiliate)
-        

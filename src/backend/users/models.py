@@ -158,11 +158,24 @@ class DatasourceUsername(models.Model):
         return self.traderinfo.user.subscriptioninfo.subscription_has_expired()
 
 
+class AffiliateManager(models.Manager):
+    def create_affiliate(self, **kwargs):
+        """
+        Takes affiliate username and password as kwargs
+        """
+        user = User.objects.create(username=kwargs['username'])
+        user.set_password(kwargs['password'])
+        user.is_affiliate = True
+        user.save()
+        return user
+
 class Affiliate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     payment_email = models.EmailField()
     amount_earned = models.DecimalField(max_digits=10, decimal_places=2)
     next_payout = models.DecimalField(max_digits=10, decimal_places=2)
+
+    objects = AffiliateManager()
 
 
 class SubscriptionInfo(models.Model):
