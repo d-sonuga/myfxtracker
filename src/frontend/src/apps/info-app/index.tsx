@@ -14,6 +14,7 @@ const InfoApp = () => {
             <Routes>
                 <Route path={INFO_HOME_ROUTE} element={<HomePage />} />
                 <Route path={INFO_SIGN_UP_ROUTE} element={<SignUpPage />} />
+                <Route path={`${INFO_SIGN_UP_ROUTE}:ref`} element={<SignUpPage />} />
                 <Route path={INFO_LOGIN_ROUTE} element={<LoginPage />} />
                 <Route path={INFO_CHANGE_PASSWORD_ROUTE} element={<ChangePasswordPage />} />
                 <Route path={INFO_RESET_PASSWORD_ROUTE} element={<ResetPasswordPage />} />

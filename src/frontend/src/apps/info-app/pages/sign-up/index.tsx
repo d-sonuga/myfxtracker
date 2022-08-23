@@ -1,4 +1,4 @@
-import {Link} from 'react-router-dom'
+import {Link, useParams} from 'react-router-dom'
 import ReactGA from 'react-ga4'
 import {RowBox} from '@components/containers'
 import {SP} from '@components/text'
@@ -11,6 +11,8 @@ import {SubmitValuesTypes} from './types'
 
 
 const SignUpPage = () => {
+    let params = useParams();
+    console.log(params);
     /** The function used by the form to submit values
      * @param config: object used to configure the Http client
      */
@@ -20,7 +22,7 @@ const SignUpPage = () => {
         Http.post({
             url: `${BASE_URL}/${SIGN_UP_URL}/`,
             noToken: true,
-            data: config.values,
+            data: {...config.values, 'ref': params.ref},
             successFunc: (resp: HttpResponseType) => {
                 ReactGA.event('sign_up_success');
                 config.successFunc(resp);
