@@ -62,7 +62,10 @@ Scenario 3
 * The submit button is disabled, so nothing happens
 
 #### Payment plan for students
-A payment plan will be created manually with Flutterwave for the affiliate with $150 dollars per year
+A payment plan will be created manually with Flutterwave for the affiliate with 150 dollars per year
+The payment plan will only be available to students whose referrer is WBA
+So the init data sent on trader log ins should now have referrer information to determine
+whether or not to display the new WBA plan
 
 #### For the affiliate to receive payments
 The payments will be sent manually for now.
