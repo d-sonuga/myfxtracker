@@ -446,6 +446,11 @@ class GetInitData(APIView):
             )
         else:
             no_of_days_for_free_trial_to_expire = 'free trial not started'
+        referrer = request.user.subscriptioninfo.referrer
+        if referrer:
+            referrer_username = referrer.user.username
+        else:
+            referrer_username = ''
         logger.critical(f'User with id of {request.user.id} '
             f'on_free: {request.user.subscriptioninfo.on_free} is getting some init data')
         init_data = {
@@ -455,7 +460,8 @@ class GetInitData(APIView):
                 'is_subscribed': request.user.subscriptioninfo.is_subscribed,
                 'on_free': request.user.subscriptioninfo.on_free,
                 'subscription_plan': subscription_plan,
-                'days_left_before_free_trial_expires': no_of_days_for_free_trial_to_expire
+                'days_left_before_free_trial_expires': no_of_days_for_free_trial_to_expire,
+                'referrer_username': referrer_username
             },
             'trade_data': {
                 'current_account_id': current_account_id,

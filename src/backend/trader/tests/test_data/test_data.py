@@ -159,6 +159,14 @@ class InitDataTestData:
         'email': 'withnodata@gmail.com',
         'password': 'password'
     }
+    trader_referred_from_affiliate = {
+        'email': 'withnodata1@gmail.com',
+        'password': 'password'
+    }
+    affiliate_details = {
+        'username': 'theaffiliate',
+        'password': 'password'
+    }
     trader_with_data = {
         'email': 'withdata@gmail.com',
         'password': 'password'

@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from trader.models import Account, Preferences
-from users.models import Trader, SubscriptionInfo
+from users.models import Affiliate, Trader, SubscriptionInfo
 from .test_data import InitDataTestData
 from .test_data import AddTradingAccountTestData
 from trader.metaapi import Transaction
@@ -22,12 +22,21 @@ class InitDataTest(TestCase):
     def setUp(self) -> None:
         self.test_data = InitDataTestData
         self.trader_with_no_data = Trader.objects.create(**self.test_data.trader_with_no_data)
+        self.affiliate = Affiliate.objects.create_affiliate(**self.test_data.affiliate_details)
+        self.trader_referred_from_affiliate = Trader.objects.create(**self.test_data.trader_referred_from_affiliate)
+        self.trader_referred_from_affiliate.subscriptioninfo.referrer = self.affiliate
+        self.trader_referred_from_affiliate.subscriptioninfo.save()
         self.trader_with_data = Trader.objects.create(**self.test_data.trader_with_data)
         no_data_token = Token.objects.create(user=self.trader_with_no_data).key
+        referred_from_affiliate_token = Token.objects.create(user=self.trader_referred_from_affiliate).key
         with_data_token = Token.objects.create(user=self.trader_with_data).key
         self.no_data_headers = {
             'Content-Type': 'application/json',
             'HTTP_AUTHORIZATION': f'Token {no_data_token}'
+        }
+        self.referred_from_affiliate_headers = {
+            'Content-Type': 'application/json',
+            'HTTP_AUTHORIZATION': f'Token {referred_from_affiliate_token}'
         }
         self.with_data_headers = {
             'Content-Type': 'application/json',
@@ -47,7 +56,8 @@ class InitDataTest(TestCase):
                     'is_subscribed': self.trader_with_no_data.is_subscribed,
                     'on_free': self.trader_with_no_data.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader_with_no_data),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': -1,
@@ -86,7 +96,8 @@ class InitDataTest(TestCase):
                     'is_subscribed': self.trader_with_data.is_subscribed,
                     'on_free': self.trader_with_data.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader_with_data),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': pref.current_account.id,
@@ -153,7 +164,8 @@ class InitDataTest(TestCase):
                     'is_subscribed': self.trader_with_data.is_subscribed,
                     'on_free': self.trader_with_data.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader_with_data),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': pref.current_account.id,
@@ -220,7 +232,8 @@ class InitDataTest(TestCase):
                     'is_subscribed': self.trader_with_data.is_subscribed,
                     'on_free': self.trader_with_data.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader_with_data),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': pref.current_account.id,
@@ -253,6 +266,30 @@ class InitDataTest(TestCase):
                             } for withdrawal in account.get_all_withdrawals()]
                         }
                     }
+                }
+            }
+        )
+
+    def test_trader_with_referred_from_affiliate(self):
+        resp = self.client.get('/trader/get-init-data/', **self.referred_from_affiliate_headers)
+        days_left_before_free_trial_expires = self.days_left_before_free_trial_expires(self.trader_referred_from_affiliate)
+        self.assertEquals(resp.status_code, 200)
+        self.assertDictEqual(
+            resp.json(),
+            {
+                'user_data': {
+                    'id': self.trader_referred_from_affiliate.id,
+                    'email': self.trader_referred_from_affiliate.email,
+                    'is_subscribed': self.trader_referred_from_affiliate.is_subscribed,
+                    'on_free': self.trader_referred_from_affiliate.on_free,
+                    'subscription_plan': self.format_subscription_plan(self.trader_referred_from_affiliate),
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': self.affiliate.user.username
+                },
+                'trade_data': {
+                    'current_account_id': -1,
+                    'last_data_refresh_time': self.trader_referred_from_affiliate.last_data_refresh_time.isoformat().replace('+00:00', 'Z'),
+                    'accounts': {}
                 }
             }
         )
