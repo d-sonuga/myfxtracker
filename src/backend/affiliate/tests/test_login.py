@@ -14,5 +14,14 @@ class LoginTests(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn('key', resp.json())
     
+    def test_login_invalid_affiliate_details(self):
+        """
+        To test the case where the affiliate details are not associated with
+        a valid affiliate in the db
+        """
+        resp = self.make_request(LoginTestData.affiliate_details)
+        self.assertEqual(resp.status_code, 400)
+        self.assertNotIn('key', resp.json())
+
     def make_request(self, data):
         return self.client.post('/aff/login/', data)
