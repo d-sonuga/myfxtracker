@@ -1,6 +1,7 @@
 from django.test import TestCase
 from rest_framework.authtoken.models import Token
 from .test_data.login_test_data import LoginTestData
+from .test_data.init_data_test_data import InitDataTestData
 from trader.tests.test_data import LoginDetails
 from users.models import Affiliate, Trader, SubscriptionInfo
 
@@ -48,6 +49,21 @@ class InitDataTests(TestCase):
         To test the scenario where an init data request is made with a
         token belonging to a valid affiliate with some referred users
         """
+        for details in InitDataTestData.users_details():
+            trader = Trader.objects.create(**details)
+            trader.subscriptioninfo.referrer = self.affiliate
+            trader.subscriptioninfo.save()
+        
+        resp = self.make_request(self.affiliate_token_header)
+        self.assertEquals(resp.status_code, 200)
+        referred_users_subscription_info = SubscriptionInfo.objects.filter(referrer=self.affiliate)
+        referred_users = [si.user for si in referred_users_subscription_info]
+        self.assertEqual(resp.json(), {
+            'username': self.affiliate.user.username,
+            'no_of_sign_ups': len(referred_users),
+            'no_of_subscribers': referred_users_subscription_info.filter(is_subscribed=True).count(),
+            'bank_account_number': self.affiliate.bank_account_number
+        })
     
     def test_init_data_non_affiliate_token(self):
         """

@@ -121,4 +121,16 @@ class LoginView(APIView):
             return Response({'key': token.key})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class GetInitData(APIView):
+    def get(self, request, **kwargs):
+        referred_users_subscription_info = SubscriptionInfo.objects.filter(referrer=request.user.affiliate)
+        return Response({
+            'username': request.user.username,
+            'no_of_sign_ups': referred_users_subscription_info.count(),
+            'no_of_subscribers': referred_users_subscription_info.filter(is_subscribed=True).count(),
+            'bank_account_number': request.user.affiliate.bank_account_number
+        })
+
 login = LoginView.as_view()
+get_init_data = GetInitData.as_view()

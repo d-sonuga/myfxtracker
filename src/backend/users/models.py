@@ -197,7 +197,7 @@ class SubscriptionInfo(models.Model):
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_subscribed = models.BooleanField(default=False)
-    referrer = models.OneToOneField(Affiliate, on_delete=models.SET_NULL, default=None, null=True)
+    referrer = models.ForeignKey(Affiliate, on_delete=models.SET_NULL, default=None, null=True)
     payment_method = models.CharField(choices=PAYMENT_CHOICES, max_length=5, null=True)
     on_free = models.BooleanField(default=True)
     next_billing_time = models.DateField()
