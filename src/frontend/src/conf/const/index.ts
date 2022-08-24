@@ -13,6 +13,7 @@ const HttpConst = {
         : process.env.REACT_APP_PROD_BASE_URL,
     SIGN_UP_URL: 'trader/sign-up',
     LOGIN_URL: 'trader/login',
+    AFF_LOGIN_URL: 'aff/login',
     CHANGE_PASSWORD_URL: 'users/password-change',
     RESET_PASSWORD_URL: 'users/password-reset',
     RESET_PASSWORD_CONFIRM_URL: 'users/password-reset/confirm',
@@ -40,6 +41,7 @@ const HttpConst = {
 const RouteConst = {
     INFO_APP_ROUTE: '',
     TRADER_APP_ROUTE: `app`,
+    AFF_APP_ROUTE: `aff`,
     /** 
      * All info routes are prefixed by '/'
      * So a trading route of 'faq/' should be read as '/faq/'
@@ -66,7 +68,13 @@ const RouteConst = {
     TRADER_SETTINGS_ROUTE: 'settings',
     TRADER_NOTES_ROUTE: 'notes',
     TRADER_ADD_ACCOUNT_ROUTE: 'add-account',
-    TRADER_SUBSCRIBE_NOW_ROUTE: 'subscribe-now'
+    TRADER_SUBSCRIBE_NOW_ROUTE: 'subscribe-now',
+    /**
+     * All affiliate routes are prefixed by 'aff/'
+     * So an affiliate route of 'log-in/' should be read as 'aff/log-in/'
+     */
+    AFF_OVERVIEW_ROUTE: '',
+    AFF_LOG_IN_ROUTE: 'log-in/'
 }
 
 const ConfigConst = {
