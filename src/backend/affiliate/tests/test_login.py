@@ -1,5 +1,5 @@
 from django.test import TestCase
-from test_data.login_test_data import LoginTestData
+from .test_data.login_test_data import LoginTestData
 from users.models import Affiliate
 
 
