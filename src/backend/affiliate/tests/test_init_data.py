@@ -70,12 +70,26 @@ class InitDataTests(TestCase):
         To test the scenario where an init data request is made with a token
         belonging to a non affiliate
         """
+        resp = self.make_request(self.trader_token_header)
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(resp.json(), {'detail': 'You do not have permission to perform this action.'})
 
     def test_init_data_invalid_token(self):
         """
         To test the scenario where an init data request is made with
         an invalid token
         """
+        resp = self.make_request(self.invalid_token_header)
+        self.assertEqual(resp.status_code, 401)
+        self.assertEqual(resp.json(), {'detail': 'Invalid token.'})
     
+    def test_init_data_no_token(self):
+        """
+        To test the scenario where an init data request is made with no token
+        """
+        resp = self.make_request(self.no_token_header)
+        self.assertEqual(resp.status_code, 401)
+        #self.assertEqual(resp.json(), {'detail': 'You do not have permission to perform this action.'})
+
     def make_request(self, header):
         return self.client.get('/aff/get-init-data', **header)

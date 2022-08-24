@@ -123,6 +123,7 @@ class LoginView(APIView):
 
 
 class GetInitData(APIView):
+    permission_classes = [IsAuthenticated, IsAffiliate]
     def get(self, request, **kwargs):
         referred_users_subscription_info = SubscriptionInfo.objects.filter(referrer=request.user.affiliate)
         return Response({
