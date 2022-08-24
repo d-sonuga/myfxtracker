@@ -1,8 +1,9 @@
 import {ChangeEventHandler, MutableRefObject} from 'react'
 import {ComponentPropTypes} from '@components/types'
+import { TextFieldProps } from '@mui/material'
 
 
-type InputPropTypes = ComponentPropTypes & {
+type InputPropTypes = ComponentPropTypes & TextFieldProps & {
     /**
      * The input's placeholder, value to be used when
      * no value has been inputted

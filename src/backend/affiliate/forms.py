@@ -23,12 +23,23 @@ class SignUpForm(forms.Form):
         return password
 
 
-class LogInForm(forms.Form):
+class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField()
-
-    def clean_password(self):
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if Affiliate.objects.filter(user__username=username).count() == 0:
+            raise ValidationError('The username is invalid')
+        return username
+    
+    def clean(self):
+        username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-        if len(password) < 8:
-            raise ValidationError('Password should be at least 8 characters')
-        return password
+        affiliate_set = Affiliate.objects.filter(user__username=username)
+        if affiliate_set.count() == 0:
+            raise ValidationError('Username does not exist')
+        affiliate = affiliate_set[0]
+        if not affiliate.user.check_password(password):
+            raise ValidationError('Invalid password')
+        return super().clean()

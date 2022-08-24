@@ -1,21 +1,23 @@
+from affiliate.serializers import LoginSerializer
 from users.models import User
 from django.contrib.auth.hashers import check_password
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 import json
 from users.models import SubscriptionInfo
 from .models import Affiliate
-from .forms import SignUpForm, LogInForm
+from .forms import SignUpForm, LoginForm
 from .permissions import IsAffiliate
 
 
+"""
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAffiliate])
 def get_init_data(request):
-    """
     Returns a user's accounts and related info
     Format of init data
     {
@@ -28,7 +30,6 @@ def get_init_data(request):
             'subscribed': 'users subscribed'
         }
     }
-    """
     affiliate_set = Affiliate.objects.filter(user=request.user)
     if affiliate_set.count() == 0:
         return Response({'detail': 'not affiliate'}, status=status.HTTP_400_BAD_REQUEST)
@@ -49,7 +50,6 @@ def get_init_data(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def sign_up(request):
-    """
     Either user is already a trader or is not
     Either affiliate with the given info already exists or it doesn't
 
@@ -59,7 +59,6 @@ def sign_up(request):
         create and set is_affiliate to true, is_trader to false
     If user is affiliate already
         don't create
-    """
     form = SignUpForm(request.data)
     if form.is_valid(): 
         username = form.cleaned_data.get('username').lower()
@@ -107,3 +106,19 @@ def login(request):
         return Response({'token': token.key}, status=status.HTTP_200_OK)
     else:
         return Response(json.loads(form.errors.as_json()), status=status.HTTP_400_BAD_REQUEST)
+
+class LoginView(APIView):
+
+
+login = LoginView.as_view()
+"""
+from rest_framework.authtoken.models import Token
+class LoginView(APIView):
+    def post(self, request, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+        if serializer.is_valid():
+            token, _ = Token.objects.get_or_create(user=serializer.validated_data['affiliate'].user)
+            return Response({'key': token.key})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+login = LoginView.as_view()
