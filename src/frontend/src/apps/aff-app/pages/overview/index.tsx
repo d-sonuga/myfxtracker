@@ -9,15 +9,18 @@ import { ReactNode } from 'react'
 import { getDimen } from '@conf/utils'
 import { Grid, GridProps } from '@mui/material'
 import { Input } from '@components/inputs'
+import {AffiliateData} from './../../use-affiliate-data'
 
 
-const Overview = () => {
-    const noOfSignUps = (32).toString();
-    const noOfSubscribers = (1).toString();
-    const payout = '$32';
-    const username = 'wba';
+const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
+    const noOfSignUps = affiliateData.getNoOfSignUps().toString();
+    const noOfSubscribers = affiliateData.getNoOfSubscribers().toString();
+    const payout = `$${affiliateData.getNoOfSubscribers() * 5}`;
+    const username = affiliateData.getUsername();
     const signUpLink = `https://myfxtracker.com/sign-up/${username}`;
-    const bankAccountNumber = '403984393029949';
+    let rawBankAccountNumber = affiliateData.getBankAccountNumber();
+    const bankAccountNumber = rawBankAccountNumber !== undefined && rawBankAccountNumber !== null ?
+        rawBankAccountNumber.toString() : '0';
     return(
         <>
         <Container spacing={1} sx={{
