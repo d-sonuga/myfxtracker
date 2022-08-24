@@ -9,8 +9,8 @@ class InitDataTests(TestCase):
     def setUp(self) -> None:
         self.affiliate = Affiliate.objects.create_affiliate(**LoginTestData.affiliate_details)
         self.trader = Trader.objects.create(**LoginDetails.good_details)
-        self.affiliate_token = Token.objects.create(user=self.affiliate.user)
-        self.trader_token = Token.objects.create(user=self.trader)
+        self.affiliate_token = Token.objects.create(user=self.affiliate.user).key
+        self.trader_token = Token.objects.create(user=self.trader).key
         self.trader_token_header = {
             'Content-Type': 'application/json',
             'HTTP_AUTHORIZATION': f'Token {self.trader_token}'
@@ -39,7 +39,7 @@ class InitDataTests(TestCase):
         self.assertEqual(resp.json(), {
             'username': self.affiliate.user.username,
             'no_of_sign_ups': len(referred_users),
-            'no_of_subscribers': referred_users_subscription_info.filter(is_subscribed=True),
+            'no_of_subscribers': referred_users_subscription_info.filter(is_subscribed=True).count(),
             'bank_account_number': self.affiliate.bank_account_number
         })
     
@@ -62,4 +62,4 @@ class InitDataTests(TestCase):
         """
     
     def make_request(self, header):
-        return self.client.get('/aff/get-init-data', header)
+        return self.client.get('/aff/get-init-data', **header)
