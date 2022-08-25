@@ -66,6 +66,9 @@ A payment plan will be created manually with Flutterwave for the affiliate with 
 The payment plan will only be available to students whose referrer is WBA
 So the init data sent on trader log ins should now have referrer information to determine
 whether or not to display the new WBA plan
+To integrate this payment plan:
+* Create plan on Flutterwave dashboard
+* Create plan option for students who signed up through wba
 
 #### For the affiliate to receive payments
 The payments will be sent manually for now.
