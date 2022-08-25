@@ -120,6 +120,7 @@ class SignUpTests(TestCase):
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp_body['password1'], ['Password must be a minimum of 8 characters.'])
     
+    @override_settings(ACCOUNT_EMAIL_VERIFICATION='mandatory')
     def test_email_sent(self):
         self.assertEquals(len(mail.outbox), 0)
         self.client.post('/trader/sign-up/', SignUpDetails.good_details)
