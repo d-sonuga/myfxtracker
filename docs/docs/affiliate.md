@@ -69,6 +69,7 @@ whether or not to display the new WBA plan
 To integrate this payment plan:
 * Create plan on Flutterwave dashboard
 * Create plan option for students who signed up through wba
+* Add plan info on the backend
 
 #### For the affiliate to receive payments
 The payments will be sent manually for now.
