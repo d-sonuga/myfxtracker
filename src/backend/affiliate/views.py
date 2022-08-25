@@ -12,7 +12,9 @@ from users.models import SubscriptionInfo
 from .models import Affiliate
 from .forms import SignUpForm, LoginForm
 from .permissions import IsAffiliate
+import logging
 
+logger = logging.getLogger(__name__)
 
 """
 @api_view(['GET'])
@@ -154,6 +156,16 @@ class AffiliateViewSet(ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated, IsAffiliate]
+
+    def delete(self, request):
+        logger.info(f'Logging out affiliate with an id of {request.user.id}')
+        request.user.auth_token.delete()
+        return Response()
+
+
 login = LoginView.as_view()
 get_init_data = GetInitData.as_view()
 change_bank_account_number = AffiliateViewSet.as_view({'post': 'update'})
+logout = LogoutView.as_view()
