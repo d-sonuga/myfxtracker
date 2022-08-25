@@ -6,14 +6,13 @@ import {H5, BP} from '@components/text'
 import {ButtonWithArrow} from '@apps/info-app/components'
 import {SyntheticEvent, useState} from 'react'
 import {getDimen} from '@conf/utils'
-import {PriceProposalPropTypes} from '../types'
+import {PriceProposalPropTypes, Plan} from '../types'
 import {PlanInfoPropTypes} from './types'
 import './style.css'
 
 
-const PriceProposal = ({subscribeContent, subscribeAction, subscribeEnabled}: PriceProposalPropTypes) => {
-    const [MONTHLY, YEARLY] = [0, 1];
-    const [currentTabIndex, setCurrentTabIndex] = useState(YEARLY);
+const PriceProposal = ({plans, defaultPlanIndex}: PriceProposalPropTypes) => {
+    const [currentTabIndex, setCurrentTabIndex] = useState(defaultPlanIndex);
     const onPlanInfoChange = (event: SyntheticEvent, newTabIndex: number) => {
         ReactGA.event('viewing_price', {
             'pricing_plan': newTabIndex === 0 ? 'monthly' : 'yearly'
@@ -23,29 +22,33 @@ const PriceProposal = ({subscribeContent, subscribeAction, subscribeEnabled}: Pr
     return(
         <ColumnBox>
             <Tabs value={currentTabIndex} onChange={onPlanInfoChange}>
-                <Tab label='Monthly' />
-                <Tab label='Yearly' />
+                {plans.map((plan: Plan, i: number) => (
+                    <Tab label={plan.name} />
+                ))}
             </Tabs>
-            <PlanInfo
-                show={currentTabIndex === MONTHLY}
-                price={19.95}
-                subscribeButtonContent={subscribeContent.monthly}
-                subscribeButtonAction={subscribeAction.monthly}
-                subscribeButtonEnabled={subscribeEnabled.monthly}
-                />
-            <PlanInfo
-                show={currentTabIndex === YEARLY}
-                price={16.6625}
-                extraInfo={['Annually, you have 16% off ', 'You save $39.45 a year']}
-                subscribeButtonContent={subscribeContent.yearly}
-                subscribeButtonAction={subscribeAction.yearly}
-                subscribeButtonEnabled={subscribeEnabled.yearly}
-                />
+            {plans.map((plan: Plan, i: number) => (
+                <PlanInfo
+                    key={i}
+                    show={currentTabIndex === i}
+                    price={plan.price}
+                    subscribeButtonContent={plan.subscribeButtonContent}
+                    subscribeButtonAction={plan.subscribeButtonAction}
+                    subscribeButtonEnabled={plan.subscribeButtonEnabled}
+                    />
+            ))}
         </ColumnBox>
     )
 }
 
 const PlanInfo = ({show, price, extraInfo, subscribeButtonContent, subscribeButtonAction, subscribeButtonEnabled}: PlanInfoPropTypes) => {
+    const formatPrice = (price: number) => {
+        let strPrice = price.toString();
+        const priceIsOnlyOneDecimalPlace = () => strPrice.split('.').length > 1 && strPrice.split('.')[1].length === 1;
+        if(priceIsOnlyOneDecimalPlace()){
+            return price.toFixed(2)
+        }
+        return price.toString()
+    }
     return(
         <ColumnBox style={{
             width: 'fit-content',
@@ -55,7 +58,7 @@ const PlanInfo = ({show, price, extraInfo, subscribeButtonContent, subscribeButt
             <RowBox className='apps-info-app-pages-pricing-price'>
                 <sup>$</sup>
                 <RowBox style={{alignItems: 'baseline'}}>
-                    <H5>{price.toString()} &nbsp;</H5>
+                    <H5>{formatPrice(price)} &nbsp;</H5>
                     <BP>per month</BP>
                 </RowBox>
             </RowBox>

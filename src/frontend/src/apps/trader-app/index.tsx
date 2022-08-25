@@ -188,10 +188,12 @@ const pageMapConfig = (
         }
     }
     const addAccountComponent = <AddAccount {...addAccountComponentConfig} />
+    const referrerUsername = globalData.getReferrerUsername();
     const subscribeNowComponent = <SubscribeNow 
         email={globalData.getUserEmail()}
         userHasPaidOnce={globalData.userHasPaid()}
         userId={globalData.getUserId()}
+        referrerUsername={referrerUsername === undefined ? '' : referrerUsername}
         />
     const subscribeNowRouteComponent = !globalData.userIsOnFreeTrial() && !globalData.userIsSubscribed() ?
         subscribeNowComponent

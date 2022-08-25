@@ -1,21 +1,21 @@
 import React from 'react'
 import {SubscriptionButtonPropTypes} from './types'
 import BaseSubscriptionButton from './base-subscription-button'
-import {YEARLY_PLAN_PRICE, YEARLY_PLAN_ID} from './const'
+import {WBA_PLAN_ID, WBA_PLAN_PRICE} from './const'
 
 
-const YearlySubscriptionButton = React.forwardRef<HTMLButtonElement, SubscriptionButtonPropTypes>((props, ref) => {
+const WbaSubscriptionButton = React.forwardRef<HTMLButtonElement, SubscriptionButtonPropTypes>((props, ref) => {
     const {email, userId, ...others} = props;
     const config = {
-        planId: YEARLY_PLAN_ID,
+        planId: WBA_PLAN_ID,
         txRef: `user-${userId}-date-${Date.now().toString()}`,
-        amount: YEARLY_PLAN_PRICE,
+        amount: WBA_PLAN_PRICE,
         email,
-        title: 'MyFxTracker-Yearly'
+        title: 'MyFxTracker-wba'
     };
     return(
         <BaseSubscriptionButton config={config} ref={ref} userId={userId} {...others} />
     )
 })
 
-export default YearlySubscriptionButton
+export default WbaSubscriptionButton

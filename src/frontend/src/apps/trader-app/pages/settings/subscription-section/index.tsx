@@ -27,6 +27,8 @@ const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires, 
                 return 'Monthly'
             case 'yearly':
                 return 'Yearly'
+            case 'wba-yearly':
+                return 'Wba-Yearly'
         }
     }
     return(

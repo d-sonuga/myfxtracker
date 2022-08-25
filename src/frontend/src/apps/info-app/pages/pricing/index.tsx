@@ -8,7 +8,7 @@ import {PricingPagePropTypes} from './types'
 import './style.css'
 
 
-const PricingPage = ({navbar, subscribeContent, subscribeAction, style, subscribeEnabled}: PricingPagePropTypes) => {
+const PricingPage = ({navbar, style, ...props}: PricingPagePropTypes) => {
     return(
         <>
             {navbar}
@@ -21,7 +21,7 @@ const PricingPage = ({navbar, subscribeContent, subscribeAction, style, subscrib
                 }}>Pricing</H4>
                 <div className='apps-info-app-pricing-container-content'>
                     <Features />
-                    <PriceProposal subscribeEnabled={subscribeEnabled} subscribeContent={subscribeContent} subscribeAction={subscribeAction} />
+                    <PriceProposal {...props} />
                 </div>
             </CenterColumnBox>
         </>

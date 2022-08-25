@@ -12,11 +12,12 @@ type UserData = {
     id: number,
     email: string,
     ds_username: string,
+    referrer_username?: string,
     is_subscribed: boolean,
     on_free: boolean,
     logins_after_ask?: number,
     current_feedback_question?: number,
-    subscription_plan: 'none' | 'monthly' | 'yearly',
+    subscription_plan: 'none' | 'monthly' | 'yearly' | 'wba-yearly',
     days_left_before_free_trial_expires: number | string,
     /**
      * Tells whether or not the user has ever subscribed

@@ -2,24 +2,23 @@ import {ReactNode} from 'react'
 
 type PricingPagePropTypes = {
     navbar: ReactNode,
-    subscribeContent: {
-        monthly: ReactNode,
-        yearly: ReactNode
-    },
-    subscribeAction: {
-        monthly: Function,
-        yearly: Function
-    },
-    subscribeEnabled: {
-        monthly: boolean,
-        yearly: boolean
-    },
+    plans: Plan[],
+    defaultPlanIndex: number,
     style?: {[key: string]: any}
 }
 
 type PriceProposalPropTypes = Omit<PricingPagePropTypes, 'navbar'>
 
+type Plan = {
+    name: string,
+    price: number,
+    subscribeButtonContent: ReactNode,
+    subscribeButtonAction: Function,
+    subscribeButtonEnabled: boolean
+}
+
 export type {
     PricingPagePropTypes,
-    PriceProposalPropTypes
+    PriceProposalPropTypes,
+    Plan
 }

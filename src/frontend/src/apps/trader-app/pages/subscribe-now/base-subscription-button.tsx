@@ -1,12 +1,34 @@
 import React from 'react'
 import ReactGA from 'react-ga4'
 import {useFlutterwave, closePaymentModal, FlutterWaveTypes} from 'flutterwave-react-v3'
+import { FlutterwaveConfig } from 'flutterwave-react-v3/dist/types'
+import {HttpConst} from '@conf/const'
+import logo from '@visuals/images/logo.png'
 import saveSubscriptionStatus from './save-subscription-status'
+import {FLUTTERWAVE_PUBLIC_KEY} from './const'
 import {BaseSubscriptionButtonPropTypes} from './types'
 
 const BaseSubscriptionButton = React.forwardRef<HTMLButtonElement, BaseSubscriptionButtonPropTypes>((props, ref) => {
     const {config, abortSubscription, onSubscriptionFinished, onSubscriptionRecordFailed, userId} = props;
-    const handleFlutterPayment = useFlutterwave(config);
+    const baseConfig: FlutterwaveConfig = {
+        public_key: FLUTTERWAVE_PUBLIC_KEY,
+        payment_plan: config.planId,
+        tx_ref: `user-${userId}-date-${Date.now().toString()}`,
+        amount: config.amount,
+        currency: 'USD',
+        payment_options: 'card',
+        customer: {
+            email: config.email,
+            name: '',
+            phonenumber: ''
+        },
+        customizations: {
+            title: config.title,
+            description: '',
+            logo: `${HttpConst.BASE_URL}${logo}`
+        }
+    };
+    const handleFlutterPayment = useFlutterwave(baseConfig);
     return(
         <button style={{display: 'none'}}
             ref={ref}

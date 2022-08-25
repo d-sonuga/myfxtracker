@@ -3,7 +3,8 @@ import {FlutterwaveConfig} from 'flutterwave-react-v3/dist/types'
 type SubscribeNowPropTypes = {
     userHasPaidOnce: boolean,
     email: string,
-    userId: number
+    userId: number,
+    referrerUsername: string
 }
 
 type SubscriptionButtonPropTypes = Omit<BaseSubscriptionButtonPropTypes, 'config'> & {
@@ -12,7 +13,13 @@ type SubscriptionButtonPropTypes = Omit<BaseSubscriptionButtonPropTypes, 'config
 }
 
 type BaseSubscriptionButtonPropTypes = {
-    config: FlutterwaveConfig,
+    config: {
+        planId: string,
+        amount: number,
+        email: string,
+        title: string,
+        txRef: string
+    },
     abortSubscription: Function,
     onSubscriptionFinished: Function,
     onSubscriptionRecordFailed: Function,

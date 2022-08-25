@@ -24,20 +24,24 @@ const InfoApp = () => {
                     element={
                         <PricingPage
                             navbar={<InfoAppNavbar />}
-                            subscribeContent={{
-                                monthly: 'Get 7 days free',
-                                yearly: 'Get 7 days free'
-                            }}
-                            subscribeAction={{
-                                monthly: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
-                                yearly: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
-                            }}
-                            subscribeEnabled={{
-                                monthly: true,
-                                yearly: true
-                            }}
-                        />}
-                    />
+                            plans={[
+                                {
+                                    name: 'Monthly',
+                                    price: 19.95,
+                                    subscribeButtonContent: 'Get 7 days free',
+                                    subscribeButtonAction: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
+                                    subscribeButtonEnabled: true
+                                },
+                                {
+                                    name: 'Yearly',
+                                    price: 16.6625,
+                                    subscribeButtonContent: 'Get 7 days free',
+                                    subscribeButtonAction: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
+                                    subscribeButtonEnabled: true
+                                }
+                            ]}
+                            defaultPlanIndex={1}
+                    />} />
             </Routes>
         </div>
     );

@@ -184,6 +184,9 @@ class GlobalData {
     getDaysLeftBeforeFreeTrialExpires(): number | string {
         return this.rawData.user_data.days_left_before_free_trial_expires
     }
+    getReferrerUsername(): string | undefined {
+        return this.rawData.user_data.referrer_username
+    }
     userIsSubscribed(): boolean {
         return this.rawData.user_data.is_subscribed
     }
