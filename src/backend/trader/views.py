@@ -958,10 +958,15 @@ class RecordNewSubscriptionView(APIView):
         MONTHLY = SubscriptionInfo.MONTHLY
         YEARLY = SubscriptionInfo.YEARLY
         CODE = SubscriptionInfo.CODE
-        if request.data.get('amount') == settings.MONTHLY_PLAN_PRICE:
+        amount = request.data.get('amount')
+        if amount == settings.MONTHLY_PLAN_PRICE:
             PLAN_INDEX = MONTHLY
-        else:
+        elif amount == settings.YEARLY_PLAN_PRICE:
             PLAN_INDEX = YEARLY
+        elif amount == settings.WBA_PLAN_PRICE:
+            PLAN_INDEX = SubscriptionInfo.WBA_YEARLY
+        else:
+            raise Exception(f'Attempt to record subscription with unknown plan price {amount}')
         request.user.subscriptioninfo.last_billed_time = settings.TIMEFUNC()
         request.user.subscriptioninfo.is_subscribed = True
         request.user.subscriptioninfo.payment_method = SubscriptionInfo.PAYMENT_CHOICES[payment_method][CODE]
@@ -1108,9 +1113,6 @@ But when there are errors, the response is of the following format:
 """
 from users.models import Affiliate
 class SignUpView(RegisterView):
-    def post(self, request, **kwargs):
-        return super().post(request, **kwargs)
-
     def perform_create(self, serializer):
         new_trader = super().perform_create(serializer)
         ref = self.request.data.get('ref')

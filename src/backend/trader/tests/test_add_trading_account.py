@@ -157,7 +157,8 @@ class AddTradingAccountTests(TestCase):
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -242,7 +243,8 @@ class AddTradingAccountTests(TestCase):
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -318,7 +320,8 @@ class AddTradingAccountTests(TestCase):
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -396,7 +399,8 @@ class AddTradingAccountTests(TestCase):
                     'is_subscribed': self.trader.is_subscribed,
                     'on_free': self.trader.on_free,
                     'subscription_plan': self.format_subscription_plan(self.trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,

@@ -47,6 +47,18 @@ class NewSubscriptionTests(TestCase):
         self.assertEquals(resp.status_code, 200)
         self.assertEquals(resp.json(), {'status': 'not pending'})
         self.assert_trader_recorded_as_subscribed(plan='yearly')
+
+    @override_settings(TIMEFUNC=dummy_timefunc)
+    def test_user_subscribes_for_wba_yearly_subscription_successfully(self):
+        """
+        To test the scenario where a user that was on free trial subscribes to the Wba-Yearly
+        plan successfully
+        """
+        self.assert_trader_not_recorded_as_subscribed()
+        resp = self.make_request(amount=settings.WBA_PLAN_PRICE)
+        self.assertEquals(resp.status_code, 200)
+        self.assertEquals(resp.json(), {'status': 'not pending'})
+        self.assert_trader_recorded_as_subscribed(plan='wba')
     
     @override_settings(TIMEFUNC=other_dummy_timefunc)
     def test_user_subscribes_for_monthly_subscription_successfully_webhook_arrives_first(self):
@@ -96,9 +108,12 @@ class NewSubscriptionTests(TestCase):
         FLUTTERWAVE, CODE = SubscriptionInfo.FLUTTERWAVE, SubscriptionInfo.CODE
         PLAN_INDEX = SubscriptionInfo.MONTHLY
         YEARLY = SubscriptionInfo.YEARLY
+        WBA_YEARLY = SubscriptionInfo.WBA_YEARLY
         if plan:
             if 'ye' in plan.lower():
                 PLAN_INDEX = YEARLY
+            elif 'wba' in plan.lower():
+                PLAN_INDEX = WBA_YEARLY
         if not time:
             time = dummy_time
         if not trader:

@@ -181,6 +181,6 @@ class RecordNewSubscriptionSerializer(serializers.Serializer):
     amount = serializers.DecimalField(max_digits=5, decimal_places=2)
 
     def validate_amount(self, amount):
-        if float(amount) not in (settings.MONTHLY_PLAN_PRICE, settings.YEARLY_PLAN_PRICE):
+        if float(amount) not in settings.PLAN_PRICES:
             raise serializers.ValidationError('Invalid plan price')
         return amount

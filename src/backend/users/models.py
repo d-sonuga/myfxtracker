@@ -191,9 +191,11 @@ class SubscriptionInfo(models.Model):
     )
     MONTHLY = 0
     YEARLY = 1
+    WBA_YEARLY = 2
     PLAN_CHOICES = (
         ('m', 'monthly'),
-        ('y', 'yearly')
+        ('y', 'yearly'),
+        ('w', 'wba-yearly')
     )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     is_subscribed = models.BooleanField(default=False)

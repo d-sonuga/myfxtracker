@@ -175,7 +175,8 @@ class RefreshAccountDataTests(TestCase):
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
                     'subscription_plan': self.format_subscription_plan(trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -259,7 +260,8 @@ class RefreshAccountDataTests(TestCase):
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
                     'subscription_plan': self.format_subscription_plan(trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -361,7 +363,8 @@ class RefreshAccountDataTests(TestCase):
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
                     'subscription_plan': self.format_subscription_plan(trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -445,7 +448,8 @@ class RefreshAccountDataTests(TestCase):
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
                     'subscription_plan': self.format_subscription_plan(trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,
@@ -552,7 +556,8 @@ class RefreshAccountDataTests(TestCase):
                     'is_subscribed': trader.is_subscribed,
                     'on_free': trader.on_free,
                     'subscription_plan': self.format_subscription_plan(trader),
-                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires
+                    'days_left_before_free_trial_expires': days_left_before_free_trial_expires,
+                    'referrer_username': ''
                 },
                 'trade_data': {
                     'current_account_id': current_account_id,

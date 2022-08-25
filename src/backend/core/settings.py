@@ -335,6 +335,13 @@ TRADER_ACCOUNT_DATA_REFRESH_INTERVAL = int(os.getenv('TRADER_ACCOUNT_DATA_REFRES
 
 MONTHLY_PLAN_PRICE = 19.95
 YEARLY_PLAN_PRICE = 199.95
+WBA_PLAN_PRICE = 150.00
+
+PLAN_PRICES = [
+    MONTHLY_PLAN_PRICE,
+    YEARLY_PLAN_PRICE,
+    WBA_PLAN_PRICE
+]
 
 # This function is used to get the current time when updating a trader's
 # subscriptioninfo. This setting was used to make the subscriptioninfo updates
