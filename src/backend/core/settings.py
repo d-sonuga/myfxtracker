@@ -321,6 +321,8 @@ METAAPI_TOKEN = os.getenv('METAAPI_TOKEN')
 # It should not be changed manually
 META_API_CLASS_MODULE = 'trader.metaapi.test_no_error' if DEBUG else 'trader.metaapi.main'
 
+FLAPI_CLASS_MODULE = 'flutterwave_endpoint.flwapi.test_no_error' if DEBUG else 'flutterwave_endpoint.flwapi.main'
+
 # To test what happens when an error occurs during user creation
 # Always set to false
 # It will only be programmatically set to true when the test that uses it
