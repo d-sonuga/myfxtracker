@@ -133,5 +133,27 @@ class GetInitData(APIView):
             'bank_account_number': request.user.affiliate.bank_account_number
         })
 
+
+from rest_framework.viewsets import ModelViewSet
+from .serializers import AffiliateSerializer
+
+class AffiliateViewSet(ModelViewSet):
+    serializer_class = AffiliateSerializer
+    permission_classes = [IsAuthenticated, IsAffiliate]
+    def get_queryset(self):
+        return self.request.user.affiliate
+
+    def update(self, request, *args, **kwargs):
+        affiliate = Affiliate.objects.get(user=request.user)
+        serializer = self.serializer_class(affiliate, data={
+            'bank_account_number': request.data.get('bank_account_number')
+        }, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 login = LoginView.as_view()
 get_init_data = GetInitData.as_view()
+change_bank_account_number = AffiliateViewSet.as_view({'post': 'update'})

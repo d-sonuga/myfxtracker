@@ -22,3 +22,9 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError('Unable to log in with provided credentials')
         attrs['affiliate'] = affiliate
         return attrs
+
+
+class AffiliateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Affiliate
+        fields = '__all__'
