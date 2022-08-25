@@ -89,7 +89,7 @@ class InitDataTests(TestCase):
         """
         resp = self.make_request(self.no_token_header)
         self.assertEqual(resp.status_code, 401)
-        #self.assertEqual(resp.json(), {'detail': 'You do not have permission to perform this action.'})
+        self.assertEqual(resp.json(), {'detail': 'Authentication credentials were not provided.'})
 
     def make_request(self, header):
-        return self.client.get('/aff/get-init-data', **header)
+        return self.client.get('/aff/get-init-data/', **header)
