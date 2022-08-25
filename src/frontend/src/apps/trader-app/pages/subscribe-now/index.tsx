@@ -9,7 +9,7 @@ import {NewSubscriptionContext} from '@apps/trader-app'
 import {ToastContext} from '@components/toast'
 import {UserData} from '@apps/trader-app/models/types'
 import {PricingPage} from '@apps/info-app/pages'
-import { WBA_PLAN_PRICE, AFFILIATE_WBA_USERNAME, MONTHLY_PLAN_PRICE, YEARLY_PLAN_PRICE } from '@apps/trader-app/const'
+import { WBA_PLAN_PRICE, AFFILIATE_WBA_USERNAME, MONTHLY_PLAN_PRICE, YEARLY_PLAN_PRICE, YEARLY_PLAN_PER_MONTH_PRICE, WBA_PLAN_PER_MONTH_PRICE } from '@apps/trader-app/const'
 import WbaSubscriptionButton from './wba-subscription-button'
 import './style.css'
 
@@ -56,7 +56,7 @@ const SubscribeNow = ({userHasPaidOnce, email, userId, referrerUsername}: Subscr
                     plans={[
                         {
                             name: 'Wba-Yearly',
-                            price: WBA_PLAN_PRICE / 12,
+                            price: WBA_PLAN_PER_MONTH_PRICE,
                             subscribeButtonContent: subscribing.toLowerCase() === 'wba-yearly' ?
                                 <LoadingIcon />
                                 :'Subscribe Now',
@@ -113,7 +113,7 @@ const SubscribeNow = ({userHasPaidOnce, email, userId, referrerUsername}: Subscr
                     },
                     {
                         name: 'Yearly',
-                        price: YEARLY_PLAN_PRICE,
+                        price: YEARLY_PLAN_PER_MONTH_PRICE,
                         subscribeButtonContent: subscribing.toLowerCase() === 'yearly' ?
                             <LoadingIcon />
                             :'Subscribe Now',

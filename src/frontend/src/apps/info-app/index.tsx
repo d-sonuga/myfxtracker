@@ -4,6 +4,7 @@ import {RouteConst} from '@conf/const'
 import {HomePage, SignUpPage, LoginPage, ResetPasswordPage, ResetPasswordConfirmPage,
     FAQPage, PricingPage, ChangePasswordPage} from './pages'
 import { InfoAppNavbar } from './components'
+import { MONTHLY_PLAN_PRICE, YEARLY_PLAN_PER_MONTH_PRICE, YEARLY_PLAN_PRICE } from '@apps/trader-app/const'
 
 const InfoApp = () => {
     const navigate = useNavigate();
@@ -27,14 +28,14 @@ const InfoApp = () => {
                             plans={[
                                 {
                                     name: 'Monthly',
-                                    price: 19.95,
+                                    price: MONTHLY_PLAN_PRICE,
                                     subscribeButtonContent: 'Get 7 days free',
                                     subscribeButtonAction: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
                                     subscribeButtonEnabled: true
                                 },
                                 {
                                     name: 'Yearly',
-                                    price: 16.6625,
+                                    price: YEARLY_PLAN_PER_MONTH_PRICE,
                                     subscribeButtonContent: 'Get 7 days free',
                                     subscribeButtonAction: () => navigate(`/${RouteConst.INFO_SIGN_UP_ROUTE}`),
                                     subscribeButtonEnabled: true
