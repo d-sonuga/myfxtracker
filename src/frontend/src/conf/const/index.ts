@@ -15,6 +15,7 @@ const HttpConst = {
     LOGIN_URL: 'trader/login',
     AFF_LOGIN_URL: 'aff/login',
     AFF_INIT_DATA_URL: 'aff/get-init-data',
+    AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL: 'aff/change-bank-account-number',
     CHANGE_PASSWORD_URL: 'users/password-change',
     RESET_PASSWORD_URL: 'users/password-reset',
     RESET_PASSWORD_CONFIRM_URL: 'users/password-reset/confirm',

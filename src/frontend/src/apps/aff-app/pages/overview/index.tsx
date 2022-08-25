@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useState, useContext } from 'react'
 import Navbar from '@components/navbar'
 import Card from '@mui/material/Card'
 import List from '@mui/material/List'
@@ -9,7 +9,11 @@ import { ReactNode } from 'react'
 import { getDimen } from '@conf/utils'
 import { Grid, GridProps } from '@mui/material'
 import { Input } from '@components/inputs'
+import {Http, HttpResponseType, HttpErrorType} from '@apps/trader-app/services'
+import {HttpConst} from '@conf/const'
 import {AffiliateData} from './../../use-affiliate-data'
+import { ToastContext } from '@components/toast'
+import LoadingIcon from '@components/loading-icon'
 
 
 const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
@@ -21,6 +25,21 @@ const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
     let rawBankAccountNumber = affiliateData.getBankAccountNumber();
     const bankAccountNumber = rawBankAccountNumber !== undefined && rawBankAccountNumber !== null ?
         rawBankAccountNumber.toString() : '0';
+    const saveNewBankAccountNumber = (newAccountNumber: string): Promise<void> => {
+        const {BASE_URL, AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL} = HttpConst;
+        return new Promise((resolve, reject) => (
+            Http.post({
+                url: `${BASE_URL}/${AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL}/`,
+                data: {bank_account_number: newAccountNumber},
+                successFunc: (resp: HttpResponseType) => {
+                    resolve()
+                },
+                errorFunc: (err: HttpErrorType) => {
+                    reject()
+                }
+            })
+        ))
+    }
     return(
         <>
         <Container spacing={1} sx={{
@@ -52,7 +71,8 @@ const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
                 <DetailsCard
                     username={username}
                     signUpLink={signUpLink}
-                    bankAccountNumber={bankAccountNumber} />
+                    bankAccountNumber={bankAccountNumber}
+                    saveNewBankAccountNumber={saveNewBankAccountNumber} />
             </Grid>
         </Container>
         <Grid container sx={{
@@ -72,14 +92,15 @@ const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
     )
 }
 
-const DetailsCard = ({username, signUpLink, bankAccountNumber}: {username: string, signUpLink: string, bankAccountNumber: string}) => {
+const DetailsCard = ({username, signUpLink, bankAccountNumber, saveNewBankAccountNumber}: {username: string, signUpLink: string, bankAccountNumber: string, saveNewBankAccountNumber: (s: string) => Promise<void>}) => {
     return(
         <InfoCard
             title='Your Details'
             listItems={[
                 <InfoListItem name='Username' value={username} />,
                 <InfoListItem name='Sign Up Link' value={signUpLink} />,
-                <EditableInfoListItem name='Bank Account number' value={bankAccountNumber} />
+                <EditableInfoListItem name='Bank Account number' value={bankAccountNumber}
+                    saveNewValue={saveNewBankAccountNumber} />
             ]}
         />
     )
@@ -120,10 +141,12 @@ const InfoListItem = ({name, value}: {name: string, value: string}) => {
     )
 }
 
-const EditableInfoListItem = ({name, value}: {name: string, value: string}) => {
+const EditableInfoListItem = ({name, value, saveNewValue}: {name: string, value: string, saveNewValue: (s: string) => Promise<void>}) => {
     const [editing, setIsEditing] = useState(false);
     const [oldValue, setOldValue] = useState(value);
     const [innerValue, setInnerValue] = useState(value);
+    const [isSaving, setIsSaving] = useState(false);
+    const Toast = useContext(ToastContext);
     return(
         <ListItemText sx={{padding: getDimen('padding-xs')}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
@@ -135,7 +158,7 @@ const EditableInfoListItem = ({name, value}: {name: string, value: string}) => {
                                 hiddenLabel
                                 size='small' value={innerValue} onChange={(e) => {
                                     const newValue = e.target.value;
-                                    if(isInteger(newValue)){
+                                    if(isInteger(newValue) && !isSaving){
                                         setInnerValue(newValue);
                                     }
                                 }}
@@ -143,16 +166,28 @@ const EditableInfoListItem = ({name, value}: {name: string, value: string}) => {
                                 />
                             <Button
                                 size='small' color='primary' variant='outlined'
+                                style={{marginRight: '5px'}}
                                 onClick={() => {
-                                    setOldValue(innerValue);
-                                    // Call function to save on the backend
-                                }}>Save</Button>
-                            <Button
-                                size='small' color='error' variant='outlined'
-                                onClick={() => {
-                                    setIsEditing(false);
-                                    setInnerValue(oldValue);
-                                }}>Cancel</Button>
+                                    setIsSaving(true);
+                                    saveNewValue(innerValue)
+                                        .then(() => setOldValue(innerValue))
+                                        .catch(() => {
+                                            Toast.error('Something went wrong')
+                                        })
+                                        .finally(() => {
+                                            setIsSaving(false);
+                                            setIsEditing(false);
+                                        })
+                                }}>{isSaving ? <LoadingIcon /> : 'Save'}</Button>
+                            {!isSaving ?
+                                    <Button
+                                    size='small' color='error' variant='outlined'
+                                    onClick={() => {
+                                        setIsEditing(false);
+                                        setInnerValue(oldValue);
+                                    }}>Cancel</Button>
+                                : null
+                            }
                         </>
                         : <>
                         {value}
