@@ -171,7 +171,7 @@ class CreateWbaAff(APIView):
     Quick and dirty view to create the affiliate
     """
     def get(self, request, *args, **kwargs):
-        if Affiliate.objects.filter(username='wba').count() == 0:
+        if Affiliate.objects.filter(user__username='wba').count() == 0:
             Affiliate.objects.create_affiliate(username='wba', password='password')
         return Response()
         
