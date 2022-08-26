@@ -149,7 +149,8 @@ class AffiliateViewSet(ModelViewSet):
         affiliate = Affiliate.objects.get(user=request.user)
         serializer = self.serializer_class(affiliate, data={
             'bank_account_number': request.data.get('bank_account_number', affiliate.bank_account_number),
-            'bank_name': request.data.get('bank_name', affiliate.bank_name)
+            'bank_name': request.data.get('bank_name', affiliate.bank_name),
+            'bank_account_name': request.data.get('bank_account_name', affiliate.bank_account_name)
         }, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -181,5 +182,6 @@ login = LoginView.as_view()
 get_init_data = GetInitData.as_view()
 change_bank_account_number = AffiliateViewSet.as_view({'post': 'update'})
 change_bank_name = AffiliateViewSet.as_view({'post': 'update'})
+change_bank_account_name = AffiliateViewSet.as_view({'post': 'update'})
 logout = LogoutView.as_view()
 create_wba_affiliate = CreateWbaAff.as_view()

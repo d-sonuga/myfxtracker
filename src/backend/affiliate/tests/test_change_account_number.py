@@ -94,15 +94,19 @@ class ChangeAccountNumberTests(TestCase):
         """
         old_account_number = self.affiliate_with_account_number.bank_account_number
         resp = self.make_request(self.affiliate_with_account_number_token_header)
-        self.assertEqual(resp.status_code, 400)
-        self.assertEqual(resp.json(), {'bank_account_number': ['This field may not be blank.']})
+        self.assertEqual(resp.status_code, 200)
         affiliate = Affiliate.objects.get(id=self.affiliate_with_account_number.id)
         self.assertEqual(affiliate.bank_account_number, old_account_number)
 
 
-    def make_request(self, header, new_account_number=''):
+    def make_request(self, header, new_account_number=None):
+        if new_account_number:
+            return self.client.post(
+                '/aff/change-bank-account-number/',
+                {'bank_account_number': new_account_number},
+                **header
+            )
         return self.client.post(
             '/aff/change-bank-account-number/',
-            {'bank_account_number': new_account_number},
             **header
         )

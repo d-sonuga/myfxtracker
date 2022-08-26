@@ -199,6 +199,7 @@ class Affiliate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bank_account_number = IntegerAsCharField(max_length=50, null=True, blank=True)
     bank_name = models.CharField(max_length=50, null=True, blank=True)
+    bank_account_name = models.CharField(max_length=50, null=True, blank=True)
     #payment_email = models.EmailField()
     #amount_earned = models.DecimalField(max_digits=10, decimal_places=2)
     #next_payout = models.DecimalField(max_digits=10, decimal_places=2)

@@ -11,8 +11,7 @@ class ChangeAccountNumberTestData:
         'bank_name': 'SomeBankSomewhere'
     }
 
-    
-    affiliate_details_with_account_number = {
+    affiliate_details_with_account_name = {
         'username': 'another-aff-username',
         'password': 'greetingsfromtheotherside',
         'bank_account_name': 'SomeAccountName'
