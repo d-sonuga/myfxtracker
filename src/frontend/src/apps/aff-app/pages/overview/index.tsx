@@ -15,6 +15,7 @@ import {HttpConst, RouteConst} from '@conf/const'
 import {AffiliateData} from './../../use-affiliate-data'
 import { ToastContext } from '@components/toast'
 import LoadingIcon from '@components/loading-icon'
+import {getColor} from '@conf/utils'
 
 
 const Overview = ({affiliateData, setNewBankAccountNumber}: {affiliateData: AffiliateData, setNewBankAccountNumber: (n: number) => void}) => {
@@ -32,6 +33,7 @@ const Overview = ({affiliateData, setNewBankAccountNumber}: {affiliateData: Affi
     const Toast = useContext(ToastContext);
     const saveNewBankAccountNumber = (newAccountNumber: string): Promise<void> => {
         const {BASE_URL, AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL} = HttpConst;
+        console.log(newAccountNumber);
         return new Promise((resolve, reject) => (
             Http.post({
                 url: `${BASE_URL}/${AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL}/`,
@@ -40,7 +42,13 @@ const Overview = ({affiliateData, setNewBankAccountNumber}: {affiliateData: Affi
                     resolve()
                 },
                 errorFunc: (err: HttpErrorType) => {
-                    reject()
+                    reject('error')
+                },
+                timeoutErrorFunc: () => {
+                    reject('timeout')
+                },
+                networkErrorFunc: () => {
+                    reject('network')
                 }
             })
         ))
@@ -199,15 +207,17 @@ const EditableInfoListItem = ({name, value, saveNewValue, setNewBankAccountNumbe
                                         .then(() => {
                                             setNewBankAccountNumber(parseInt(innerValue));
                                         })
-                                        .catch(() => {
+                                        .catch((reason: 'network' | 'error' | 'timeout') => {
                                             setInnerValue(value);
-                                            Toast.error('Something went wrong');
+                                            if(reason === 'error'){
+                                                Toast.error('Something went wrong');
+                                            }
                                         })
                                         .finally(() => {
                                             setIsSaving(false);
                                             setIsEditing(false);
                                         })
-                                }}>{isSaving ? <LoadingIcon /> : 'Save'}</Button>
+                                }}>{isSaving ? <LoadingIcon color={getColor('gray')} /> : 'Save'}</Button>
                             {!isSaving ?
                                     <Button
                                     size='small' color='error' variant='outlined'

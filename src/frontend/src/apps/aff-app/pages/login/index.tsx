@@ -9,9 +9,10 @@ import {ConfigConst, HttpConst} from '@conf/const'
 import {FormPageContainer} from '@apps/info-app/components'
 import LoginForm from './login-form'
 import {SubmitValuesTypes} from './types'
+import {AffiliateData} from '@apps/aff-app/use-affiliate-data'
 
 
-const LoginPage = () => {
+const LoginPage = ({setAffiliateData}: {setAffiliateData: (data: AffiliateData) => void}) => {
     /** 
      * The function used by the form to submit values
      * @param config: object used to configure the Http client
@@ -40,6 +41,7 @@ const LoginPage = () => {
                     submitValues={submitValues}
                     storageService={localStorage}
                     navigate={navigate}
+                    setAffiliateData={setAffiliateData}
                     />
             } />
     );

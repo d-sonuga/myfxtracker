@@ -10,7 +10,11 @@ const handleRequest = (httpMethod: Function, config: any): Promise<any> => {
         ...config,
         errorFunc: (err: HttpErrorType) => {
             if(err.response.status === 401 || err.response.status === 403){
-                Http.navigate(LOGIN_ROUTE);
+                if(Http.unauthorizedRedirectRoute !== undefined){
+                    Http.navigate(Http.unauthorizedRedirectRoute);
+                } else {
+                    Http.navigate(LOGIN_ROUTE);
+                }
             } else {
                 return config.errorFunc(err);
             }
@@ -42,15 +46,18 @@ const Http: TraderHttpClient = {
     post,
     delete: httpDelete,
     navigate: (route: string) => {},
-    initNavigate: function(navigate: NavigateFunc){
+    unauthorizedRedirectRoute: undefined,
+    initNavigate: function(navigate: NavigateFunc, unauthorizedRedirectRoute?: string){
         this.navigate = navigate;
+        this.unauthorizedRedirectRoute = unauthorizedRedirectRoute;
     }
 }
 
 type TraderHttpClient = HttpClientType & {
     navigate: NavigateFunc,
+    unauthorizedRedirectRoute?: string,
     initNavigate: {
-        (navigate: NavigateFunc): void
+        (navigate: NavigateFunc, unauthorizedRedirectRoute?: string): void
     }
 }
 

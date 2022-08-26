@@ -15,11 +15,11 @@ const AffApp = () => {
     }
     const navigate = useNavigate();
     useEffect(() => {
-        Http.initNavigate(navigate);
+        Http.initNavigate(navigate, `/${AFF_APP_ROUTE}/${AFF_LOG_IN_ROUTE}/`);
     }, [])
     return(
         <Routes>
-            <Route path={`${AFF_LOG_IN_ROUTE}`} element={<Login />} />
+            <Route path={`${AFF_LOG_IN_ROUTE}`} element={<Login setAffiliateData={setAffiliateData} />} />
             <Route path={`${AFF_OVERVIEW_ROUTE}`} element={<Overview affiliateData={affiliateData} setNewBankAccountNumber={setNewBankAccountNumber} />} />
         </Routes>
     )

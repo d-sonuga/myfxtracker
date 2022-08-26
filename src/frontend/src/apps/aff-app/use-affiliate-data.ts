@@ -5,22 +5,14 @@ import {Http, HttpResponseType, HttpErrorType} from '@apps/trader-app/services'
 import lodash from 'lodash'
 import { useEffect } from 'react'
 import { ToastContext } from '@components/toast'
+import { ToastFuncType } from '@components/toast/types'
 
 const useAffiliateData = (): UseAffiliateDataType => {
     const [data, setData] = useState(new AffiliateData(initEmptyRawData));
     const Toast = useContext(ToastContext);
 
     useEffect(() => {
-        const {BASE_URL, AFF_INIT_DATA_URL} = HttpConst;
-        Http.get({
-            url: `${BASE_URL}/${AFF_INIT_DATA_URL}/`,
-            successFunc: (resp: HttpResponseType) => {
-                setData(new AffiliateData(resp.data));
-            },
-            errorFunc: (err: HttpErrorType) => {
-                Toast.error('Sorry. Something went wrong.');
-            }
-        })
+        AffiliateData.refreshData(setData, Toast);
     }, [])
     return [data, setData]
 }
@@ -57,6 +49,18 @@ class AffiliateData {
         const rawDataClone = lodash.clone(this.rawData);
         rawDataClone.bank_account_number = newBankAccountNumber;
         return new AffiliateData(rawDataClone)
+    }
+    static refreshData(setData: (data: AffiliateData) => void, Toast: ToastFuncType): void {
+        const {BASE_URL, AFF_INIT_DATA_URL} = HttpConst;
+        Http.get({
+            url: `${BASE_URL}/${AFF_INIT_DATA_URL}/`,
+            successFunc: (resp: HttpResponseType) => {
+                setData(new AffiliateData(resp.data));
+            },
+            errorFunc: (err: HttpErrorType) => {
+                Toast.error('Sorry. Something went wrong.');
+            }
+        })
     }
 }
 

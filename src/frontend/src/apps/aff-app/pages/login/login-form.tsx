@@ -9,10 +9,14 @@ import LoadingIcon from '@components/loading-icon'
 import {HttpMsg} from '@services/generic-msg'
 import {Form} from '@apps/info-app/components'
 import {canSubmit, buildErrors} from '@components/forms'
+import { AffiliateData } from '@apps/aff-app/use-affiliate-data'
 import { FormikProps } from 'formik'
+import { useContext } from 'react'
+import { ToastContext } from '@components/toast'
 
 
-const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes) => {
+const LoginForm = ({submitValues, storageService, navigate, setAffiliateData}: LoginFormPropTypes & {setAffiliateData: (data: AffiliateData) => void}) => {
+    const Toast = useContext(ToastContext);
     return(
         <Form
             title='Log In'
@@ -29,7 +33,8 @@ const LoginForm = ({submitValues, storageService, navigate}: LoginFormPropTypes)
                     values,
                     successFunc: (resp: HttpResponseType) => {
                         storageService.setItem(ConfigConst.TOKEN_KEY, resp.data.key);
-                        navigate(`/${RouteConst.AFF_OVERVIEW_ROUTE}`);
+                        AffiliateData.refreshData(setAffiliateData, Toast);
+                        navigate(`/${RouteConst.AFF_APP_ROUTE}/${RouteConst.AFF_OVERVIEW_ROUTE}`);
                         setNonFieldError('');
                     },
                     errorFunc: (err: HttpErrorType) => {
