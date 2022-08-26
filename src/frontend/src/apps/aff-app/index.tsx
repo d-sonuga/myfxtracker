@@ -13,6 +13,14 @@ const AffApp = () => {
         const newAffiliateData = affiliateData.setBankAccountNumber(newNumber);
         setAffiliateData(newAffiliateData);
     }
+    const setNewBankAccountName = (newName: string): void => {
+        const newAffiliateData = affiliateData.setBankAccountName(newName);
+        setAffiliateData(newAffiliateData);
+    }
+    const setNewBankName = (newName: string): void => {
+        const newAffiliateData = affiliateData.setBankName(newName);
+        setAffiliateData(newAffiliateData);
+    }
     const navigate = useNavigate();
     useEffect(() => {
         Http.initNavigate(navigate, `/${AFF_APP_ROUTE}/${AFF_LOG_IN_ROUTE}/`);
@@ -20,7 +28,12 @@ const AffApp = () => {
     return(
         <Routes>
             <Route path={`${AFF_LOG_IN_ROUTE}`} element={<Login setAffiliateData={setAffiliateData} />} />
-            <Route path={`${AFF_OVERVIEW_ROUTE}`} element={<Overview affiliateData={affiliateData} setNewBankAccountNumber={setNewBankAccountNumber} />} />
+            <Route path={`${AFF_OVERVIEW_ROUTE}`} element={
+                <Overview affiliateData={affiliateData} 
+                    setNewBankAccountNumber={setNewBankAccountNumber}
+                    setNewBankAccountName={setNewBankAccountName}
+                    setNewBankName={setNewBankName} />
+                    } />
         </Routes>
     )
 }

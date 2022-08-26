@@ -18,26 +18,62 @@ import LoadingIcon from '@components/loading-icon'
 import {getColor} from '@conf/utils'
 
 
-const Overview = ({affiliateData, setNewBankAccountNumber}: {affiliateData: AffiliateData, setNewBankAccountNumber: (n: number) => void}) => {
+const Overview = ({affiliateData, setNewBankAccountNumber, setNewBankAccountName, setNewBankName}: {affiliateData: AffiliateData, setNewBankAccountNumber: (n: number) => void, setNewBankAccountName: (s: string) => void, setNewBankName: (s: string) => void}) => {
     const noOfSignUps = affiliateData.getNoOfSignUps().toString();
     const noOfSubscribers = affiliateData.getNoOfSubscribers().toString();
     const payout = `$${affiliateData.getNoOfSubscribers() * 5}`;
     const username = affiliateData.getUsername();
     const signUpLink = `https://myfxtracker.com/sign-up/${username}`;
-    const formatBankAccountNumber = (rawBankAccountNumber?: number | null): string => {
-        const bankAccountNumber = rawBankAccountNumber !== undefined && rawBankAccountNumber !== null ?
-            rawBankAccountNumber.toString() : '0';
-        return bankAccountNumber
-    }
     const navigate = useNavigate();
     const Toast = useContext(ToastContext);
     const saveNewBankAccountNumber = (newAccountNumber: string): Promise<void> => {
         const {BASE_URL, AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL} = HttpConst;
-        console.log(newAccountNumber);
         return new Promise((resolve, reject) => (
             Http.post({
                 url: `${BASE_URL}/${AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL}/`,
                 data: {bank_account_number: newAccountNumber},
+                successFunc: (resp: HttpResponseType) => {
+                    resolve()
+                },
+                errorFunc: (err: HttpErrorType) => {
+                    reject('error')
+                },
+                timeoutErrorFunc: () => {
+                    reject('timeout')
+                },
+                networkErrorFunc: () => {
+                    reject('network')
+                }
+            })
+        ))
+    }
+    const saveNewBankAccountName = (newAccountName: string): Promise<void> => {
+        const {BASE_URL, AFF_CHANGE_BANK_ACCOUNT_NAME_URL} = HttpConst;
+        return new Promise((resolve, reject) => (
+            Http.post({
+                url: `${BASE_URL}/${AFF_CHANGE_BANK_ACCOUNT_NAME_URL}/`,
+                data: {bank_account_name: newAccountName},
+                successFunc: (resp: HttpResponseType) => {
+                    resolve()
+                },
+                errorFunc: (err: HttpErrorType) => {
+                    reject('error')
+                },
+                timeoutErrorFunc: () => {
+                    reject('timeout')
+                },
+                networkErrorFunc: () => {
+                    reject('network')
+                }
+            })
+        ))
+    }
+    const saveNewBankName = (newBankName: string): Promise<void> => {
+        const {BASE_URL, AFF_CHANGE_BANK_NAME_URL} = HttpConst;
+        return new Promise((resolve, reject) => (
+            Http.post({
+                url: `${BASE_URL}/${AFF_CHANGE_BANK_NAME_URL}/`,
+                data: {bank_name: newBankName},
                 successFunc: (resp: HttpResponseType) => {
                     resolve()
                 },
@@ -95,12 +131,28 @@ const Overview = ({affiliateData, setNewBankAccountNumber}: {affiliateData: Affi
                     sm: 'flex-start'
                 }
             }}>
-                <DetailsCard
-                    username={username}
-                    signUpLink={signUpLink}
-                    bankAccountNumber={formatBankAccountNumber(affiliateData.getBankAccountNumber())}
-                    saveNewBankAccountNumber={saveNewBankAccountNumber}
-                    setNewBankAccountNumber={setNewBankAccountNumber} />
+                <InfoCard
+                    title='Your Details'
+                    listItems={[
+                        <InfoListItem name='Username' value={username} />,
+                        <InfoListItem name='Sign Up Link' value={signUpLink} />,
+                        <EditableInfoListItem name='Bank Name' value={affiliateData.getBankName()}
+                            blank={true}
+                            type='string'
+                            saveNewValue={saveNewBankName}
+                            setNewValue={setNewBankName} />,
+                        <EditableInfoListItem name='Bank Account Name' value={affiliateData.getBankAccountName()}
+                            blank={true}
+                            type='string'
+                            saveNewValue={saveNewBankAccountName}
+                            setNewValue={setNewBankAccountName} />,
+                        <EditableInfoListItem name='Bank Account Number' value={affiliateData.getBankAccountNumber().toString()}
+                            blank={false}
+                            type='integer'
+                            saveNewValue={saveNewBankAccountNumber}
+                            setNewValue={(s: string) => setNewBankAccountNumber(parseInt(s))} />
+                    ]}
+                />
             </Grid>
         </Container>
         <Grid container sx={{
@@ -123,21 +175,6 @@ const Overview = ({affiliateData, setNewBankAccountNumber}: {affiliateData: Affi
                     }}>Log Out</Button>
         </Grid>
         </>
-    )
-}
-
-const DetailsCard = ({username, signUpLink, bankAccountNumber, saveNewBankAccountNumber, setNewBankAccountNumber}: {username: string, signUpLink: string, bankAccountNumber: string, saveNewBankAccountNumber: (s: string) => Promise<void>, setNewBankAccountNumber: (n: number) => void}) => {
-    return(
-        <InfoCard
-            title='Your Details'
-            listItems={[
-                <InfoListItem name='Username' value={username} />,
-                <InfoListItem name='Sign Up Link' value={signUpLink} />,
-                <EditableInfoListItem name='Bank Account number' value={bankAccountNumber}
-                    saveNewValue={saveNewBankAccountNumber}
-                    setNewBankAccountNumber={setNewBankAccountNumber} />
-            ]}
-        />
     )
 }
 
@@ -176,7 +213,7 @@ const InfoListItem = ({name, value}: {name: string, value: string}) => {
     )
 }
 
-const EditableInfoListItem = ({name, value, saveNewValue, setNewBankAccountNumber}: {name: string, value: string, saveNewValue: (s: string) => Promise<void>, setNewBankAccountNumber: (n: number) => void}) => {
+const EditableInfoListItem = ({name, value, saveNewValue, setNewValue, blank, type}: {name: string, value: string, saveNewValue: (s: string) => Promise<void>, setNewValue: (n: string) => void, blank: boolean, type: 'string' | 'integer'}) => {
     const [editing, setIsEditing] = useState(false);
     const [innerValue, setInnerValue] = useState(value);
     const [isSaving, setIsSaving] = useState(false);
@@ -192,8 +229,15 @@ const EditableInfoListItem = ({name, value, saveNewValue, setNewBankAccountNumbe
                                 hiddenLabel
                                 size='small' value={innerValue} onChange={(e) => {
                                     const newValue = e.target.value;
-                                    if(isInteger(newValue) && !isSaving){
-                                        setInnerValue(newValue);
+                                    if(!isSaving){
+                                        if(!blank && newValue.trim() === ''){
+                                            return;
+                                        }
+                                        if(type === 'integer' && isInteger(newValue)){
+                                            setInnerValue(newValue);
+                                        } else {
+                                            setInnerValue(newValue);
+                                        }
                                     }
                                 }}
                                 style={{marginRight: getDimen('padding-xs')}} 
@@ -205,7 +249,7 @@ const EditableInfoListItem = ({name, value, saveNewValue, setNewBankAccountNumbe
                                     setIsSaving(true);
                                     saveNewValue(innerValue)
                                         .then(() => {
-                                            setNewBankAccountNumber(parseInt(innerValue));
+                                            setNewValue(innerValue);
                                         })
                                         .catch((reason: 'network' | 'error' | 'timeout') => {
                                             setInnerValue(value);

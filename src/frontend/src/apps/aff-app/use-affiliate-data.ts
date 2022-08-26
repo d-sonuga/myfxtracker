@@ -42,12 +42,43 @@ class AffiliateData {
     getNoOfSubscribers(): number {
         return this.rawData.no_of_subscribers
     }
-    getBankAccountNumber(): number | undefined | null {
-        return this.rawData.bank_account_number
+    getBankAccountNumber(): number {
+        const number = this.rawData.bank_account_number;
+        if(number === undefined || number === null){
+            return 0
+        } else {
+            return number;
+        }
+    }
+    getBankName(): string {
+        const name = this.rawData.bank_name;
+        if(name === undefined || name === null) {
+            return ''
+        } else {
+            return name
+        }
+    }
+    getBankAccountName(): string {
+        const name = this.rawData.bank_account_name;
+        if(name === undefined || name === null) {
+            return ''
+        } else {
+            return name
+        }
     }
     setBankAccountNumber(newBankAccountNumber: number): AffiliateData {
         const rawDataClone = lodash.clone(this.rawData);
         rawDataClone.bank_account_number = newBankAccountNumber;
+        return new AffiliateData(rawDataClone)
+    }
+    setBankName(newBankName: string): AffiliateData {
+        const rawDataClone = lodash.clone(this.rawData);
+        rawDataClone.bank_name = newBankName;
+        return new AffiliateData(rawDataClone)
+    }
+    setBankAccountName(newBankAccountName: string): AffiliateData {
+        const rawDataClone = lodash.clone(this.rawData);
+        rawDataClone.bank_account_name = newBankAccountName;
         return new AffiliateData(rawDataClone)
     }
     static refreshData(setData: (data: AffiliateData) => void, Toast: ToastFuncType): void {
@@ -68,14 +99,18 @@ const initEmptyRawData: RawData = {
     username: '',
     no_of_sign_ups: 0,
     no_of_subscribers: 0,
-    bank_account_number: undefined
+    bank_account_number: undefined,
+    bank_account_name: '',
+    bank_name: ''
 }
 
 type RawData = {
     username: string,
     no_of_sign_ups: number,
     no_of_subscribers: number,
-    bank_account_number?: number | null
+    bank_account_number?: number | null,
+    bank_name?: string | null,
+    bank_account_name?: string | null
 }
 
 export default useAffiliateData

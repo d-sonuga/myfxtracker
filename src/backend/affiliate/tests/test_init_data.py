@@ -41,7 +41,9 @@ class InitDataTests(TestCase):
             'username': self.affiliate.user.username,
             'no_of_sign_ups': len(referred_users),
             'no_of_subscribers': referred_users_subscription_info.filter(is_subscribed=True).count(),
-            'bank_account_number': self.affiliate.bank_account_number
+            'bank_account_number': self.affiliate.bank_account_number,
+            'bank_account_name': self.affiliate.bank_account_name,
+            'bank_name': self.affiliate.bank_name
         })
     
     def test_init_data_valid_token_some_referred_users(self):
@@ -62,7 +64,9 @@ class InitDataTests(TestCase):
             'username': self.affiliate.user.username,
             'no_of_sign_ups': len(referred_users),
             'no_of_subscribers': referred_users_subscription_info.filter(is_subscribed=True).count(),
-            'bank_account_number': self.affiliate.bank_account_number
+            'bank_account_number': self.affiliate.bank_account_number,
+            'bank_account_name': self.affiliate.bank_account_name,
+            'bank_name': self.affiliate.bank_name
         })
     
     def test_init_data_non_affiliate_token(self):

@@ -132,7 +132,9 @@ class GetInitData(APIView):
             'username': request.user.username,
             'no_of_sign_ups': referred_users_subscription_info.count(),
             'no_of_subscribers': referred_users_subscription_info.filter(is_subscribed=True).count(),
-            'bank_account_number': request.user.affiliate.bank_account_number
+            'bank_account_number': request.user.affiliate.bank_account_number,
+            'bank_account_name': request.user.affiliate.bank_account_name,
+            'bank_name': request.user.affiliate.bank_name
         })
 
 
