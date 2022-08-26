@@ -46,8 +46,8 @@ class ChangeBankNameTests(TestCase):
         resp = self.make_request(self.affiliate_no_bank_name_token_header, new_bank_name)
         self.assertEqual(resp.status_code, 200)
         affiliate = Affiliate.objects.get(id=self.affiliate_with_no_bank_name.id)
-        self.assertNotEqual(affiliate.bank_account_number, old_bank_name)
-        self.assertEqual(affiliate.bank_account_number, new_bank_name)
+        self.assertNotEqual(affiliate.bank_name, old_bank_name)
+        self.assertEqual(affiliate.bank_name, new_bank_name)
 
     def test_change_bank_name_not_an_affiliate(self):
         """
