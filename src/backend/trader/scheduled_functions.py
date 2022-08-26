@@ -16,17 +16,13 @@ To be called periodically to update all account data
 If any error occurs, it will still attempt to update other accounts.
 """
 conn = StrictRedis.from_url(settings.RQ_QUEUES['low']['URL'])
-def refresh_all_accounts_data():
+def refresh_all_accounts_data(queue, timefunc):
     logger.critical('About to enqueue traders for general trading account data refreshing')
     for trader in Trader.objects.all():
         logger.critical(f'Enqueueing trader with id {trader.id} for general trading account refreshing')
-        rq_enqueue(
-            resolve_refresh_account_data, trader,
-            queue_class='low',
-        )
+        queue.enqueue(resolve_refresh_account_data, trader)
     logger.info('Done enqueueing all traders for general account refreshing')
-    AccountDataLastRefreshed.set_last_refreshed(timezone.now())
-    queue = django_rq.get_queue(connection=conn, name='low')
+    AccountDataLastRefreshed.set_last_refreshed(timefunc())
     queue.enqueue_in(
         timezone.timedelta(minutes=settings.TRADER_ACCOUNT_DATA_REFRESH_INTERVAL),
         refresh_all_accounts_data
