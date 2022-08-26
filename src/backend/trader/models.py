@@ -6,10 +6,10 @@ from django.core import mail
 from trader.metaapi_types import AccountData, TradeData, RawDepositWithdrawalDealData, RawTradeDealData
 from users.models import Trader, User
 from typing import List
+import logging
 
+logger = logging.getLogger(__name__)
 
-# Variables used to keep track of how many mails concerning model errors have been sent
-no_of_unknown_transactions_sent = 0
 
 class IntegerFromCharField(models.CharField):
     def __init__(self, *args, **kwargs):
@@ -384,7 +384,7 @@ class UnknownTransactionManager(models.Manager):
         account: Account,
         rawdata: RawTradeDealData | RawDepositWithdrawalDealData
     ):
-        self.mail_unknown_transaction(account)
+        logger.error(f'Recording an unknown transaction for user {account.user} with account {account.id}')
         return self.create(
             account=account,
             data=rawdata
@@ -397,17 +397,6 @@ class UnknownTransactionManager(models.Manager):
     ):
         for data in rawdata:
             self.create_unknown_transaction(account, data)
-
-    def mail_unknown_transaction(self, account):
-        global no_of_unknown_transactions_sent
-        if no_of_unknown_transactions_sent < 3:
-            mail.mail_admins(
-                'An Unrecognized Transaction',
-                f'An unrecognized transaction has been saved for a user {account.user.email} '
-                f'with id {account.user_id} for his/her account with id {account.id} at '
-                'time %s'.format(timezone.now().strftime('%Y-%m-%d %H:%M:%S'))
-            )
-            no_of_unknown_transactions_sent += 1
 
 
 class UnknownTransaction(models.Model):
