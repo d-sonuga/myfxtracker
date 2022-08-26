@@ -157,6 +157,27 @@ class DatasourceUsername(models.Model):
     def has_expired(self):
         return self.traderinfo.user.subscriptioninfo.subscription_has_expired()
 
+from django.core import exceptions
+class IntegerAsCharField(models.CharField):
+    """
+    A field that saves integers as characters in the db
+    """
+    description = 'Integer with as many as %(max_length)s digits'
+
+    def from_db_value(self, value, *args, **kwargs):
+        if value is None:
+            return value
+        return int(value)
+    
+    def to_python(self, value):
+        if value is None:
+            return None
+        try:
+            return int(value)
+        except Exception:
+            print('here', value)
+            raise exceptions.ValidationError('Invalid integer')
+
 
 class AffiliateManager(models.Manager):
     def create_affiliate(self, **kwargs):
@@ -172,7 +193,7 @@ class AffiliateManager(models.Manager):
 
 class Affiliate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bank_account_number = models.PositiveBigIntegerField(null=True)
+    bank_account_number = IntegerAsCharField(null=True, max_length=50)
     #payment_email = models.EmailField()
     #amount_earned = models.DecimalField(max_digits=10, decimal_places=2)
     #next_payout = models.DecimalField(max_digits=10, decimal_places=2)

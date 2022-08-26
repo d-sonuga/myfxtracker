@@ -49,6 +49,19 @@ class ChangeAccountNumberTests(TestCase):
         self.assertNotEqual(affiliate.bank_account_number, old_bank_account_number)
         self.assertEqual(affiliate.bank_account_number, new_bank_account_number)
 
+    def test_change_account_number_valid_affiliate_big_number(self):
+        """
+        To test the scenario where an affiliate with requests to change his account number to
+        a very big one
+        """
+        old_bank_account_number = self.affiliate_with_no_account_number.bank_account_number
+        new_bank_account_number = 648347389273800024364328664873648726483673
+        resp = self.make_request(self.affiliate_no_account_number_token_header, new_bank_account_number)
+        self.assertEqual(resp.status_code, 200)
+        affiliate = Affiliate.objects.get(id=self.affiliate_with_no_account_number.id)
+        self.assertNotEqual(affiliate.bank_account_number, old_bank_account_number)
+        self.assertEqual(affiliate.bank_account_number, new_bank_account_number)
+
     def test_change_account_number_not_an_affiliate(self):
         """
         To test the scenario where a non affiliate makes a request to change a bank account number
@@ -82,7 +95,7 @@ class ChangeAccountNumberTests(TestCase):
         old_account_number = self.affiliate_with_account_number.bank_account_number
         resp = self.make_request(self.affiliate_with_account_number_token_header)
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(resp.json(), {'bank_account_number': ['A valid integer is required.']})
+        self.assertEqual(resp.json(), {'bank_account_number': ['This field may not be blank.']})
         affiliate = Affiliate.objects.get(id=self.affiliate_with_account_number.id)
         self.assertEqual(affiliate.bank_account_number, old_account_number)
 
