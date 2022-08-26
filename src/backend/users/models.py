@@ -200,6 +200,9 @@ class Affiliate(models.Model):
 
     objects = AffiliateManager()
 
+    def __str__(self):
+        return f'{self.user.username}'
+
 
 class SubscriptionInfo(models.Model):
     FLUTTERWAVE = 2
