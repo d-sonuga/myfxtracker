@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import login, get_init_data, change_bank_account_number, logout
+from .views import login, get_init_data, change_bank_account_number, logout, create_wba_affiliate
 
 
 urlpatterns = [
@@ -8,5 +8,6 @@ urlpatterns = [
     path('login/', login),
     path('get-init-data/', get_init_data),
     path('change-bank-account-number/', change_bank_account_number),
-    path('logout/', logout)
+    path('logout/', logout),
+    path('create-wba-affiliate/', create_wba_affiliate)
 ]

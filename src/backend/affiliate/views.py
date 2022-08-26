@@ -164,6 +164,18 @@ class LogoutView(APIView):
         request.user.auth_token.delete()
         return Response()
 
+from affiliate.permissions import IsAdmin
+class CreateWbaAff(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+    """
+    Quick and dirty view to create the affiliate
+    """
+    def get(self, request, *args, **kwargs):
+        if Affiliate.objects.filter(username='wba').count() == 0:
+            Affiliate.objects.create_affiliate(username='wba', password='password')
+        return Response()
+        
+
 
 login = LoginView.as_view()
 get_init_data = GetInitData.as_view()
