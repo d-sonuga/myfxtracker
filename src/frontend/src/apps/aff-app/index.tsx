@@ -9,6 +9,10 @@ import useAffiliateData from './use-affiliate-data'
 const AffApp = () => {
     const [affiliateData, setAffiliateData] = useAffiliateData();
     const {AFF_APP_ROUTE, AFF_LOG_IN_ROUTE, AFF_OVERVIEW_ROUTE} = RouteConst;
+    const setNewBankAccountNumber = (newNumber: number): void => {
+        const newAffiliateData = affiliateData.setBankAccountNumber(newNumber);
+        setAffiliateData(newAffiliateData);
+    }
     const navigate = useNavigate();
     useEffect(() => {
         Http.initNavigate(navigate);
@@ -16,7 +20,7 @@ const AffApp = () => {
     return(
         <Routes>
             <Route path={`${AFF_LOG_IN_ROUTE}`} element={<Login />} />
-            <Route path={`${AFF_OVERVIEW_ROUTE}`} element={<Overview affiliateData={affiliateData} />} />
+            <Route path={`${AFF_OVERVIEW_ROUTE}`} element={<Overview affiliateData={affiliateData} setNewBankAccountNumber={setNewBankAccountNumber} />} />
         </Routes>
     )
 }

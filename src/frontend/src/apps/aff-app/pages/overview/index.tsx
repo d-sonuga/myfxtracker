@@ -1,4 +1,5 @@
 import { SyntheticEvent, useState, useContext } from 'react'
+import {useNavigate} from 'react-router-dom'
 import Navbar from '@components/navbar'
 import Card from '@mui/material/Card'
 import List from '@mui/material/List'
@@ -10,21 +11,25 @@ import { getDimen } from '@conf/utils'
 import { Grid, GridProps } from '@mui/material'
 import { Input } from '@components/inputs'
 import {Http, HttpResponseType, HttpErrorType} from '@apps/trader-app/services'
-import {HttpConst} from '@conf/const'
+import {HttpConst, RouteConst} from '@conf/const'
 import {AffiliateData} from './../../use-affiliate-data'
 import { ToastContext } from '@components/toast'
 import LoadingIcon from '@components/loading-icon'
 
 
-const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
+const Overview = ({affiliateData, setNewBankAccountNumber}: {affiliateData: AffiliateData, setNewBankAccountNumber: (n: number) => void}) => {
     const noOfSignUps = affiliateData.getNoOfSignUps().toString();
     const noOfSubscribers = affiliateData.getNoOfSubscribers().toString();
     const payout = `$${affiliateData.getNoOfSubscribers() * 5}`;
     const username = affiliateData.getUsername();
     const signUpLink = `https://myfxtracker.com/sign-up/${username}`;
-    let rawBankAccountNumber = affiliateData.getBankAccountNumber();
-    const bankAccountNumber = rawBankAccountNumber !== undefined && rawBankAccountNumber !== null ?
-        rawBankAccountNumber.toString() : '0';
+    const formatBankAccountNumber = (rawBankAccountNumber?: number | null): string => {
+        const bankAccountNumber = rawBankAccountNumber !== undefined && rawBankAccountNumber !== null ?
+            rawBankAccountNumber.toString() : '0';
+        return bankAccountNumber
+    }
+    const navigate = useNavigate();
+    const Toast = useContext(ToastContext);
     const saveNewBankAccountNumber = (newAccountNumber: string): Promise<void> => {
         const {BASE_URL, AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL} = HttpConst;
         return new Promise((resolve, reject) => (
@@ -36,6 +41,20 @@ const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
                 },
                 errorFunc: (err: HttpErrorType) => {
                     reject()
+                }
+            })
+        ))
+    }
+    const logout = (): Promise<void> => {
+        const {BASE_URL, AFF_LOGOUT_URL} = HttpConst;
+        return new Promise((resolve, reject) => (
+            Http.delete({
+                url: `${BASE_URL}/${AFF_LOGOUT_URL}/`,
+                successFunc: (resp: HttpResponseType) => {
+                    resolve();
+                },
+                errorFunc: (err: HttpErrorType) => {
+                    reject();
                 }
             })
         ))
@@ -71,8 +90,9 @@ const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
                 <DetailsCard
                     username={username}
                     signUpLink={signUpLink}
-                    bankAccountNumber={bankAccountNumber}
-                    saveNewBankAccountNumber={saveNewBankAccountNumber} />
+                    bankAccountNumber={formatBankAccountNumber(affiliateData.getBankAccountNumber())}
+                    saveNewBankAccountNumber={saveNewBankAccountNumber}
+                    setNewBankAccountNumber={setNewBankAccountNumber} />
             </Grid>
         </Container>
         <Grid container sx={{
@@ -85,14 +105,20 @@ const Overview = ({affiliateData}: {affiliateData: AffiliateData}) => {
                     variant='outlined' 
                     style={{alignSelf: 'center'}}
                     onClick={() => {
-                        // Call a logout function
+                        const {AFF_APP_ROUTE, AFF_LOG_IN_ROUTE} = RouteConst;
+                        logout()
+                            .then(() => {
+                                localStorage.removeItem('KEY');
+                                navigate(`/${AFF_APP_ROUTE}/${AFF_LOG_IN_ROUTE}/`)
+                            })
+                            .catch(() => Toast.error('Something went wrong.'))
                     }}>Log Out</Button>
         </Grid>
         </>
     )
 }
 
-const DetailsCard = ({username, signUpLink, bankAccountNumber, saveNewBankAccountNumber}: {username: string, signUpLink: string, bankAccountNumber: string, saveNewBankAccountNumber: (s: string) => Promise<void>}) => {
+const DetailsCard = ({username, signUpLink, bankAccountNumber, saveNewBankAccountNumber, setNewBankAccountNumber}: {username: string, signUpLink: string, bankAccountNumber: string, saveNewBankAccountNumber: (s: string) => Promise<void>, setNewBankAccountNumber: (n: number) => void}) => {
     return(
         <InfoCard
             title='Your Details'
@@ -100,7 +126,8 @@ const DetailsCard = ({username, signUpLink, bankAccountNumber, saveNewBankAccoun
                 <InfoListItem name='Username' value={username} />,
                 <InfoListItem name='Sign Up Link' value={signUpLink} />,
                 <EditableInfoListItem name='Bank Account number' value={bankAccountNumber}
-                    saveNewValue={saveNewBankAccountNumber} />
+                    saveNewValue={saveNewBankAccountNumber}
+                    setNewBankAccountNumber={setNewBankAccountNumber} />
             ]}
         />
     )
@@ -141,9 +168,8 @@ const InfoListItem = ({name, value}: {name: string, value: string}) => {
     )
 }
 
-const EditableInfoListItem = ({name, value, saveNewValue}: {name: string, value: string, saveNewValue: (s: string) => Promise<void>}) => {
+const EditableInfoListItem = ({name, value, saveNewValue, setNewBankAccountNumber}: {name: string, value: string, saveNewValue: (s: string) => Promise<void>, setNewBankAccountNumber: (n: number) => void}) => {
     const [editing, setIsEditing] = useState(false);
-    const [oldValue, setOldValue] = useState(value);
     const [innerValue, setInnerValue] = useState(value);
     const [isSaving, setIsSaving] = useState(false);
     const Toast = useContext(ToastContext);
@@ -170,9 +196,12 @@ const EditableInfoListItem = ({name, value, saveNewValue}: {name: string, value:
                                 onClick={() => {
                                     setIsSaving(true);
                                     saveNewValue(innerValue)
-                                        .then(() => setOldValue(innerValue))
+                                        .then(() => {
+                                            setNewBankAccountNumber(parseInt(innerValue));
+                                        })
                                         .catch(() => {
-                                            Toast.error('Something went wrong')
+                                            setInnerValue(value);
+                                            Toast.error('Something went wrong');
                                         })
                                         .finally(() => {
                                             setIsSaving(false);
@@ -184,7 +213,7 @@ const EditableInfoListItem = ({name, value, saveNewValue}: {name: string, value:
                                     size='small' color='error' variant='outlined'
                                     onClick={() => {
                                         setIsEditing(false);
-                                        setInnerValue(oldValue);
+                                        setInnerValue(value);
                                     }}>Cancel</Button>
                                 : null
                             }
@@ -192,7 +221,10 @@ const EditableInfoListItem = ({name, value, saveNewValue}: {name: string, value:
                         : <>
                         {value}
                         <Button 
-                            onClick={() => setIsEditing(true)}
+                            onClick={() => {
+                                setIsEditing(true);
+                                setInnerValue(value);
+                            }}
                             style={{marginLeft: getDimen('padding-xs')}}>Edit</Button>
                         </>
                     }

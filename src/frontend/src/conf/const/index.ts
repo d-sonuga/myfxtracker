@@ -14,6 +14,7 @@ const HttpConst = {
     SIGN_UP_URL: 'trader/sign-up',
     LOGIN_URL: 'trader/login',
     AFF_LOGIN_URL: 'aff/login',
+    AFF_LOGOUT_URL: 'aff/logout',
     AFF_INIT_DATA_URL: 'aff/get-init-data',
     AFF_CHANGE_BANK_ACCOUNT_NUMBER_URL: 'aff/change-bank-account-number',
     CHANGE_PASSWORD_URL: 'users/password-change',
@@ -76,7 +77,7 @@ const RouteConst = {
      * So an affiliate route of 'log-in/' should be read as 'aff/log-in/'
      */
     AFF_OVERVIEW_ROUTE: '',
-    AFF_LOG_IN_ROUTE: 'log-in/'
+    AFF_LOG_IN_ROUTE: 'log-in'
 }
 
 const ConfigConst = {
