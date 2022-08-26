@@ -21,6 +21,8 @@ class Queue:
         self.queue.append((item, args, kwargs))
     def enqueue_in(self, time_delta, f, *args, **kwargs):
         self.queue_in_time.append((time_delta, f, args, kwargs))
+    def __call__(self):
+        return self
     def run_queue_items(self):
         for (f, args, kwargs) in self.queue:
             f(*args, **kwargs)

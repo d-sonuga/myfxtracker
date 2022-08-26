@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 LOW_QUEUE = 'low'
 
 
-def schedule_account_data_refresh(queue, timefunc):
+def schedule_account_data_refresh(queue_func, timefunc):
+    queue = queue_func()
     logger.info('Getting ready to schedule')
     ACCOUNT_DATA_REFRESH_INTERVAL = settings.TRADER_ACCOUNT_DATA_REFRESH_INTERVAL
 
@@ -30,14 +31,15 @@ def schedule_account_data_refresh(queue, timefunc):
     thirty_mins = timezone.timedelta(minutes=ACCOUNT_DATA_REFRESH_INTERVAL)
     if timefunc() - last_refresh_time >= thirty_mins:
         logger.info('Enqueueing the refreshing of all accounts before scheduling')
-        queue.enqueue(refresh_all_accounts_data, queue, timefunc)
+        queue.enqueue(refresh_all_accounts_data, queue_func, timefunc)
         next_time_to_be_done = timefunc() + thirty_mins
     else:
         next_time_to_be_done = last_refresh_time + thirty_mins
     logger.info(f'Scheduling general account refreshing to be done at {next_time_to_be_done}')
     logger.info('Initial scheduling done')
 
-def schedule_update_status_of_free_trial_users(queue, timefunc):
+def schedule_update_status_of_free_trial_users(queue_func, timefunc):
+    queue = queue_func()
     logger.info('Updating status of free trial users')
     for user in Trader.objects.filter(subscriptioninfo__on_free=True):
         if user.time_of_free_trial_start:
@@ -68,6 +70,6 @@ def schedule_update_status_of_free_trial_users(queue, timefunc):
 
 if __name__ == '__main__':
     queue = django_rq.get_queue(LOW_QUEUE)
-    schedule_account_data_refresh(queue, timezone.now)
-    schedule_update_status_of_free_trial_users(queue, timezone.now)
+    schedule_account_data_refresh(lambda: django_rq.get_queue(LOW_QUEUE), timezone.now)
+    schedule_update_status_of_free_trial_users(lambda: django_rq.get_queue(LOW_QUEUE), timezone.now)
     

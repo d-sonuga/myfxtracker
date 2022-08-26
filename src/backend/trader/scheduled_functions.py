@@ -16,7 +16,8 @@ To be called periodically to update all account data
 If any error occurs, it will still attempt to update other accounts.
 """
 conn = StrictRedis.from_url(settings.RQ_QUEUES['low']['URL'])
-def refresh_all_accounts_data(queue, timefunc):
+def refresh_all_accounts_data(queue_func, timefunc):
+    queue = queue_func()
     logger.critical('About to enqueue traders for general trading account data refreshing')
     for trader in Trader.objects.all():
         logger.critical(f'Enqueueing trader with id {trader.id} for general trading account refreshing')
