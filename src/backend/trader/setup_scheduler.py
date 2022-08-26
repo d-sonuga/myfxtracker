@@ -72,6 +72,7 @@ def get_queue():
     return django_rq.get_queue(LOW_QUEUE)
 
 if __name__ == '__main__':
+    from trader.setup_scheduler import get_queue
     schedule_account_data_refresh(get_queue, timezone.now)
     schedule_update_status_of_free_trial_users(get_queue, timezone.now)
     
