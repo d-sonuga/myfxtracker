@@ -188,7 +188,11 @@ class AffiliateManager(models.Manager):
         user.set_password(kwargs['password'])
         user.is_affiliate = True
         user.save()
-        affiliate = Affiliate.objects.create(user=user)
+        affiliate = Affiliate.objects.create(
+            user=user,
+            bank_account_number=kwargs.get('bank_account_number'),
+            bank_name=kwargs.get('bank_name')
+        )
         return affiliate
 
 class Affiliate(models.Model):
