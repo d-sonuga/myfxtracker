@@ -25,6 +25,9 @@ def main():
             # --keepdb, so a new db won't have to be created for every test
             run_only_unit_tests = ['manage.py', 'test', '--exclude-tag=functional', '--keepdb']
             execute_from_command_line(run_only_unit_tests)
+    elif sys.argv[1] == 'run':
+        run_command = ['manage.py', 'runserver', '0.0.0.0:8000']
+        execute_from_command_line(run_command)
     else:
         execute_from_command_line(sys.argv)
 
