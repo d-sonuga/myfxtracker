@@ -230,5 +230,7 @@ class RefreshAllAccountDataTests(TestCase):
 
     def request_refresh_all_accounts(self, valid_authentication=True):
         from trader.scheduled_functions import refresh_all_accounts_data
-        queue = django_rq.get_queue('low')
-        refresh_all_accounts_data(queue, timezone.now)
+        refresh_all_accounts_data(get_queue, timezone.now)
+
+def get_queue():
+    return django_rq.get_queue('low')

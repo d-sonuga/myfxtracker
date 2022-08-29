@@ -41,18 +41,20 @@ def schedule_account_data_refresh(queue_func, timefunc):
 def schedule_update_status_of_free_trial_users(queue_func, timefunc):
     queue = queue_func()
     logger.info('Updating status of free trial users')
-    for user in Trader.objects.filter(subscriptioninfo__on_free=True):
+    for user in Trader.objects.all():
         if user.time_of_free_trial_start:
             no_of_days_user_has_been_active = (timefunc() - user.time_of_free_trial_start).days
             if no_of_days_user_has_been_active > settings.FREE_TRIAL_PERIOD:
-                user.subscriptioninfo.on_free = False
-                user.subscriptioninfo.save()
+                if user.subscriptioninfo.on_free:
+                    user.subscriptioninfo.on_free = False
+                    user.subscriptioninfo.save()
                 mtapi = metaapi.MetaApi()
                 for account in Account.objects.filter(user=user):
                     try:
-                        mtapi.undeploy_account(account.ma_account_id)
-                        account.deployed = False
-                        account.save()
+                        if account.deployed:
+                            mtapi.undeploy_account(account.ma_account_id)
+                            account.deployed = False
+                            account.save()
                     except Exception:
                         logger.exception(
                             f'An error occured while undeploying trader {user.id}\'s'
