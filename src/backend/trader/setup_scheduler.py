@@ -64,7 +64,7 @@ def schedule_update_status_of_free_trial_users(queue_func, timefunc):
     queue.enqueue_in(
         timezone.timedelta(days=1),
         schedule_update_status_of_free_trial_users,
-        queue, timefunc
+        queue_func, timefunc
     )
     
 
