@@ -169,14 +169,14 @@ class LogoutView(APIView):
         return Response()
 
 from affiliate.permissions import IsAdmin
-class CreateWbaAff(APIView):
+class CreateAff(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
     """
     Quick and dirty view to create the affiliate
     """
-    def get(self, request, *args, **kwargs):
-        if Affiliate.objects.filter(user__username='wba').count() == 0:
-            Affiliate.objects.create_affiliate(username='wba', password='password')
+    def post(self, request, *args, **kwargs):
+        if Affiliate.objects.filter(user__username=request.data.get('username')).count() == 0:
+            Affiliate.objects.create_affiliate(username=request.data.get('username'), password='password')
         return Response()
 
 
@@ -186,4 +186,4 @@ change_bank_account_number = AffiliateViewSet.as_view({'post': 'update'})
 change_bank_name = AffiliateViewSet.as_view({'post': 'update'})
 change_bank_account_name = AffiliateViewSet.as_view({'post': 'update'})
 logout = LogoutView.as_view()
-create_wba_affiliate = CreateWbaAff.as_view()
+create_affiliate = CreateAff.as_view()
