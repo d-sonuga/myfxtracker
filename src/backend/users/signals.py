@@ -5,13 +5,13 @@ from django.urls import reverse
 from allauth.account.signals import email_confirmed
 from django_rest_passwordreset.signals import reset_password_token_created, pre_password_reset, post_password_reset
 from django.contrib.sites.models import Site
-from mailchimp_marketing import Client
 from django.conf import settings
 from trader.models import Preferences
 from users.models import User
 from django.db.models.signals import post_delete, post_save
 import hashlib
 from .models import SubscriptionInfo, Trader, MailChimpError
+from . import mailchimp
 import os
 
 
@@ -54,24 +54,15 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
 
 @receiver(email_confirmed)
 def email_confirmed_(request, email_address, **kwargs):
-    if not settings.DEBUG:
-        API_KEY = settings.MAILCHIMP_API_KEY
-        AUDIENCE_ID = settings.MAILCHIMP_AUDIENCE_ID
-        SERVER_PREFIX = settings.MAILCHIMP_SERVER_PREFIX
-        mailchimp = Client()
-
-        mailchimp.set_config({
-            'api_key': API_KEY,
-            'server': SERVER_PREFIX
-        })
+    try:
         member_info = {
             'email_address': email_address.email,
             'status': 'subscribed'
         }
-        try:
-            mailchimp.lists.add_list_member(AUDIENCE_ID, member_info)
-        except Exception:
-            MailChimpError.objects.create(email=email_address.email, action='add_list_member')
+        mailchimp_api = mailchimp.MailChimpApi()
+        mailchimp_api.add_member_to_list(member_info=member_info)
+    except Exception:
+        MailChimpError.objects.create(email=email_address.email, action='add_list_member')
 
 
 @receiver(post_save, sender=Trader)
@@ -82,19 +73,9 @@ def user_account_saved(sender, instance, created, using, **kwargs):
 
 @receiver(post_delete, sender=User)
 def user_account_deleted(sender, instance, using, **kwargs):
-    if not settings.DEBUG:
-        API_KEY = settings.MAILCHIMP_API_KEY
-        AUDIENCE_ID = settings.MAILCHIMP_AUDIENCE_ID
-        SERVER_PREFIX = settings.MAILCHIMP_SERVER_PREFIX
-        mailchimp = Client()
-
-        mailchimp.set_config({
-            'api_key': API_KEY,
-            'server': SERVER_PREFIX
-        })
-        try:
-            mailchimp.lists.delete_list_member(
-                AUDIENCE_ID, hashlib.md5(instance.email.encode()).hexdigest()
-            )
-        except Exception:
-            MailChimpError.objects.create(email=instance.email, action='delete_list_member')
+    try:
+        email_encoding = hashlib.md5(instance.email.encode()).hexdigest()
+        mailchimp_api = mailchimp.MailChimpApi()
+        mailchimp_api.delete_list_member(email_encoding=email_encoding)
+    except Exception:
+        MailChimpError.objects.create(email=instance.email, action='delete_list_member')
