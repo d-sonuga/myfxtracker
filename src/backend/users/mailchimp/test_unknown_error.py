@@ -4,13 +4,13 @@ class MainMailChimpApi:
         self.customerJourneys = self
 
     def set_config(self, config):
-        pass
+        raise Exception
 
     def add_list_member(self, *args, **kwargs):
-        pass
+        raise Exception
 
     def delete_list_member(self, *args, **kwargs):
-        pass
+        raise Exception
 
     def trigger(self, *args, **kwargs):
-        pass
+        raise Exception

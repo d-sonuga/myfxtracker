@@ -295,7 +295,8 @@ class MailChimpError(models.Model):
     """
     actions = (
         ('dellistmem', 'delete_list_member'),
-        ('addlistmem', 'add_list_member')
+        ('addlistmem', 'add_list_member'),
+        ('trigjourney', 'customerJourneys.trigger')
     )
     email = models.CharField(max_length=60)
     action = models.CharField(max_length=20)

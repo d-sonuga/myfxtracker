@@ -233,7 +233,9 @@ ADMINS = [('MyFxTracker', os.getenv('ADMIN_EMAIL'))]
 MAILCHIMP_AUDIENCE_ID = os.getenv('MAILCHIMP_AUDIENCE_ID')
 MAILCHIMP_API_KEY = os.getenv('MAILCHIMP_API_KEY')
 MAILCHIMP_SERVER_PREFIX = os.getenv('MAILCHIMP_SERVER_PREFIX')
-MAILCHIMP_CLASS_MODULE = 'user.mailchimp.test_no_error' if DEBUG else 'user.mailchimp.main'
+MAILCHIMP_API_CLASS_MODULE = 'users.mailchimp.test_no_error' if DEBUG else 'users.mailchimp.main'
+MAILCHIMP_JOURNEY_ID = 6793
+MAILCHIMP_STEP_ID = 47389
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True

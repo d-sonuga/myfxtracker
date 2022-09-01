@@ -6,12 +6,12 @@ from django.conf import settings
 import django_rq
 from itsdangerous import base64_decode
 from rest_framework.authtoken.models import Token
-from trader.metaapi.main import Transaction
+from trader.metaapi.main import MetaApi, Transaction
 from trader.models import (
     Account, Deposit, Preferences, MetaApiError, Trade,
     UnknownTransaction, Withdrawal, UnresolvedAddAccount, AddAccountError
 )
-from users.models import Trader, SubscriptionInfo
+from users.models import Trader, SubscriptionInfo, TraderInfo
 from trader import metaapi
 from .test_data import AddTradingAccountRegisterDetails, AddTradingAccountTestData, SignUpDetails
 
@@ -581,6 +581,47 @@ class AddTradingAccountTests(TestCase):
         resp = self.request_add_account(test_account_details)
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp.json(), {'non_field_errors': [metaapi.UnknownError.detail]})
+
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', MAILCHIMP_API_CLASS_MODULE='users.mailchimp.test_no_error')
+    def test_add_account_trigger_mailchimp_customer_journey(self):
+        """
+        To test the triggering of the mailchimp customer journey in the scenario where
+        a user is adding a trading account for the first time
+        """
+        from users.models import MailChimpError, TraderInfo
+        # The journey must only be initialized when the user is adding a first trading account
+        self.assertEqual(Account.objects.filter(user=self.trader).count(), 0)
+        self.assertEqual(MailChimpError.objects.all().count(), 0)
+        self.assertEqual(MetaApiError.objects.all().count(), 0)
+        self.assertFalse(self.trader.traderinfo.post_account_connect_mailchimp_journey_triggered)
+        test_account_data = AddTradingAccountTestData.good_account_details
+        account_details = test_account_data['register-details']
+        traderinfo = TraderInfo.objects.get(user=self.trader)
+        self.assertFalse(traderinfo.post_account_connect_mailchimp_journey_triggered)
+        self.request_add_account(account_details)
+        traderinfo = TraderInfo.objects.get(user=self.trader)
+        self.assertFalse(traderinfo.post_account_connect_mailchimp_journey_triggered)
+        self.resolve_test_account()
+        self.assertEqual(MailChimpError.objects.all().count(), 0)
+        self.assertEqual(MetaApiError.objects.all().count(), 0)
+        traderinfo = TraderInfo.objects.get(user=self.trader)
+        self.assertTrue(traderinfo.post_account_connect_mailchimp_journey_triggered)
+    
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', MAILCHIMP_API_CLASS_MODULE='users.mailchimp.test_unknown_error')
+    def test_add_account_trigger_mailchimp_customer_journey_unknown_error(self):
+        """
+        To test the scenario where an error is thrown by the MailChimp api
+        """
+        from users.models import MailChimpError, TraderInfo
+        self.assertEqual(MailChimpError.objects.all().count(), 0)
+        self.assertEqual(MetaApiError.objects.all().count(), 0)
+        test_account_data = AddTradingAccountTestData.good_account_details
+        account_details = test_account_data['register-details']
+        self.request_add_account(account_details)
+        self.resolve_test_account()
+        self.assertEqual(MailChimpError.objects.all().count(), 1)
+        self.assertEqual(MetaApiError.objects.all().count(), 0)
+        
 
     def test_unauthorized_trader_request_add_account(self):
         test_account_data = AddTradingAccountTestData.good_account_details

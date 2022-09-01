@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class MailChimpApi:
     def __init__(self):
-        mailchimp_module_name = getattr(settings, 'MAILCHIMP_API_CLASS_MODULE', 'user.mailchimp.main')
+        mailchimp_module_name = getattr(settings, 'MAILCHIMP_API_CLASS_MODULE', 'users.mailchimp.main')
         mailchimp_module = import_module(mailchimp_module_name)
         api_initializer: MainMailChimpApi = getattr(mailchimp_module, 'MainMailChimpApi')
         try:
@@ -28,3 +28,9 @@ class MailChimpApi:
     def delete_list_member(self, email_encoding: str) -> None:
         self._api.lists.delete_list_member(settings.MAILCHIMP_AUDIENCE_ID, email_encoding)
 
+    def trigger_customer_journey(self, email: str) -> None:
+        self._api.customerJourneys.trigger(
+            settings.MAILCHIMP_JOURNEY_ID,
+            settings.MAILCHIMP_STEP_ID,
+            {'email_address': email}
+        )
