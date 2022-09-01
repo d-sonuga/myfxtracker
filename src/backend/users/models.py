@@ -121,6 +121,9 @@ class TraderInfo(models.Model):
     trading_time_before_joining = models.TextField()
     # The last time the user's trading account data was refreshed
     last_data_refresh_time = models.DateTimeField(default=trader_info_default_last_data_refresh_time)
+    # Whether or not the mailchimp journey has been triggered for this user
+    # The journey ought to be triggered only after the addition of the first trading account
+    post_account_connect_mailchimp_journey_triggered = models.BooleanField(default=False)
 
     def datasource_username_has_expired(self):
         return self.datasourceusername.has_expired()
