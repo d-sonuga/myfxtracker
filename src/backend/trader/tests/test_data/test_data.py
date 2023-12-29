@@ -192,7 +192,7 @@ class AddTradingAccountTestData:
             'margin': 0, 
             'freeMargin': 10823, 
             'leverage': 100, 
-            'name': 'My Forex Funds - Evaluation Phase 1 Demo - Eyitemi Fadayomi', 
+            'name': 'My Forex Funds - Evaluation Phase 1 Demo - Human\'s Account',
             'login': 129320, 
             'credit': 0, 
             'tradeAllowed': True, 
