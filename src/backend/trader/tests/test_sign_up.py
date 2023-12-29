@@ -44,7 +44,7 @@ class SignUpTests(TestCase):
         # Does the user exist already
         self.assertEquals(Trader.objects.filter(email=SignUpDetails.good_details['email']).count(), 0)
         resp = self.client.post('/trader/sign-up/', SignUpDetails.good_details)
-        self.assertEquals(resp.status_code, 201)
+        self.assertEquals(resp.status_code, 204)
         user_set = Trader.objects.filter(email=SignUpDetails.good_details['email'])
         # The user should exist now
         self.assertEquals(user_set.count(), 1)
@@ -166,7 +166,7 @@ class SignUpTests(TestCase):
         trader_set = Trader.objects.filter(email=user_details['email'])
         self.assertEquals(trader_set.count(), 0)
         resp = self.make_request(user_details)
-        self.assertEquals(resp.status_code, 201)
+        self.assertEquals(resp.status_code, 204)
         new_trader = Trader.objects.get(email=user_details['email'])
         self.assertEquals(new_trader.referrer, affiliate)
     
@@ -179,7 +179,7 @@ class SignUpTests(TestCase):
         trader_set = Trader.objects.filter(email=user_details['email'])
         self.assertEquals(trader_set.count(), 0)
         resp = self.make_request(user_details)
-        self.assertEquals(resp.status_code, 201)
+        self.assertEquals(resp.status_code, 204)
         new_trader = Trader.objects.get(email=user_details['email'])
         self.assertEquals(new_trader.referrer, None)
 

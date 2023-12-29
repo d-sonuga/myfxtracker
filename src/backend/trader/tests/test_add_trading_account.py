@@ -108,7 +108,7 @@ class AddTradingAccountTests(TestCase):
     def tearDown(self) -> None:
         django_rq.get_queue('default').empty()
     
-    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', IS_ARCHIVE=False)
     def test_add_account_good_details_mt4_account_resolved_before_pending_request(self):
         """
         To test the scenario where the user with no account enters proper, well-formed details
@@ -194,7 +194,7 @@ class AddTradingAccountTests(TestCase):
                 }
             })
 
-    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', IS_ARCHIVE=False)
     def test_add_account_good_details_broker_info_file(self):
         """
         To test the scenario where the user with no account enters proper, well-formed details
@@ -280,7 +280,7 @@ class AddTradingAccountTests(TestCase):
                 }
             })
 
-    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error')
+    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', IS_ARCHIVE=False)
     def test_add_account_good_details_mt4_account_resolved_after_pending_request(self):
         """
         To test the scenario where the user with no account enters proper, well-formed details
@@ -357,7 +357,11 @@ class AddTradingAccountTests(TestCase):
                 }
             })
     
-    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', TEST_DATA=AddTradingAccountTestData.GoodAccountMT5)
+    @override_settings(
+        META_API_CLASS_MODULE='trader.metaapi.test_no_error',
+        TEST_DATA=AddTradingAccountTestData.GoodAccountMT5,
+        IS_ARCHIVE=False
+    )
     def test_add_account_good_details_mt5_account_resolved_after_pending_request(self):
         """
         To test the scenario where the user with no account enters proper, well-formed details
@@ -582,7 +586,11 @@ class AddTradingAccountTests(TestCase):
         self.assertEquals(resp.status_code, 400)
         self.assertEquals(resp.json(), {'non_field_errors': [metaapi.UnknownError.detail]})
 
-    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', MAILCHIMP_API_CLASS_MODULE='users.mailchimp.test_no_error')
+    @override_settings(
+        META_API_CLASS_MODULE='trader.metaapi.test_no_error',
+        MAILCHIMP_API_CLASS_MODULE='users.mailchimp.test_no_error',
+        IS_ARCHIVE=False
+    )
     def test_add_account_trigger_mailchimp_customer_journey(self):
         """
         To test the triggering of the mailchimp customer journey in the scenario where
@@ -607,7 +615,11 @@ class AddTradingAccountTests(TestCase):
         traderinfo = TraderInfo.objects.get(user=self.trader)
         self.assertTrue(traderinfo.post_account_connect_mailchimp_journey_triggered)
     
-    @override_settings(META_API_CLASS_MODULE='trader.metaapi.test_no_error', MAILCHIMP_API_CLASS_MODULE='users.mailchimp.test_unknown_error')
+    @override_settings(
+        META_API_CLASS_MODULE='trader.metaapi.test_no_error',
+        MAILCHIMP_API_CLASS_MODULE='users.mailchimp.test_unknown_error',
+        IS_ARCHIVE=False
+    )
     def test_add_account_trigger_mailchimp_customer_journey_unknown_error(self):
         """
         To test the scenario where an error is thrown by the MailChimp api

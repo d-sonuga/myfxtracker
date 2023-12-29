@@ -16,6 +16,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'true'
 
+# Is this the archived version of MyFxTracker?
+IS_ARCHIVE = os.getenv('IS_ARCHIVE') == 'true'
+
 ALLOWED_HOSTS = ['*'] if DEBUG else [
     'myfxtracker.com',
     'myfxtracker.herokuapp.com',
@@ -68,7 +71,7 @@ if DEBUG:
 if DEBUG:
     MIDDLEWARE = [
         'corsheaders.middleware.CorsMiddleware',
-        'corsheaders.middleware.CorsPostCsrfMiddleware'
+        #'corsheaders.middleware.CorsPostCsrfMiddleware'
     ]
 else:
     MIDDLEWARE = []
@@ -76,6 +79,7 @@ else:
 MIDDLEWARE += [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -203,7 +207,7 @@ REST_FRAMEWORK = {
 }
 
 # For trader registration
-REST_AUTH_REGISTER_SERIALIZERS = {
+REST_AUTH = {
     'REGISTER_SERIALIZER': 'trader.serializers.SignUpSerializer'
 }
 
@@ -240,7 +244,7 @@ MAILCHIMP_STEP_ID = 47389
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory' if not DEBUG else 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory' if not DEBUG and not IS_ARCHIVE else 'none'
 
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
@@ -276,8 +280,8 @@ PAY_USER_KEY = os.getenv('PAY_USER_KEY') #'UXI^-)<Gv\&vhCD|QKl?a.{L>-BGNZdse/HPo
 # Paypal endpoint.
 
 # Paystack endpoint
-PAYSTACK_SECRET = 'sk_test_88cb3aa853218e67b746e53dd64450fd25de57c2'
-PAYSTACK_PUBLIC_KEY = 'pk_test_6c33b872ddac420b2fb9196f66e7cf5fc788c231'
+PAYSTACK_SECRET = os.getenv('PAYSTACK_SECRET')
+PAYSTACK_PUBLIC_KEY = os.getenv('PAYSTACK_PUBLIC_KEY')
 PAYSTACK_BASE_URL = 'https://api.paystack.co'
 # Paystack endpoint
 
@@ -290,10 +294,10 @@ WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
 if DEBUG:
     RQ_QUEUES = {
         'default': {
-            'URL': 'redis://:@172.17.0.1:6379',
+            'URL': 'redis://:@localhost:6379',
         },
         'low': {
-            'URL': 'redis://:@172.17.0.1:6379',
+            'URL': 'redis://:@localhost:6379',
         }
     }
 else:
@@ -360,3 +364,4 @@ RAVE_PUBLIC_KEY = os.getenv('RAVE_PUBLIC_KEY')
 RAVE_SECRET_KEY = os.getenv('RAVE_SECRET_KEY')
 
 FREE_TRIAL_PERIOD = 7
+META_API_CLASS_MODULE='trader.metaapi.test_no_error'

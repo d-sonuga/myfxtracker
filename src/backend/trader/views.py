@@ -1113,6 +1113,15 @@ But when there are errors, the response is of the following format:
 """
 from users.models import Affiliate
 class SignUpView(RegisterView):
+    def post(self, *args, **kwargs):
+        # A limit on the number of users that can register for the
+        # archived app
+        if settings.IS_ARCHIVE and Trader.objects.all().count() >= 150:
+            return Response({
+                "non_field_errors": ["Can't create any more new users (This is not a bug. This archived version has simply reached the max no. of users)"]
+            }, status=status.HTTP_400_BAD_REQUEST)
+        return super().post(*args, **kwargs)
+
     def perform_create(self, serializer):
         new_trader = super().perform_create(serializer)
         ref = self.request.data.get('ref')
@@ -1123,33 +1132,6 @@ class SignUpView(RegisterView):
                 new_trader.subscriptioninfo.referrer = affiliate
                 new_trader.subscriptioninfo.save()
         return new_trader
-                
-
-def create_tester_accounts(request):
-    """
-    Create accounts for the beta testing guys
-    """
-    emails = [
-        'tegaabiri08@gmail.com', 'dharey77@gmail.com', 'ezefranklin2@gmail.com',
-        'prinzkuldek@gmail.com', 'thejoshuasamuel@gmail.com', 'omoniyitolulope05@gmail.com',
-        'owiefavour7@gmail.com', 'fadaofficial01@gmail.com', 'oyewaledaniel48@gmail.com',
-        'bisiriyuadeniyi21@gmail.com', 'olakunlelawal290@gmail.com', 'wondyolulana@gmail.com'
-    ]
-    for email in emails:
-        if not Trader.objects.filter(email=email).exists():
-            new_tester = Trader.objects.create(email=email, password='password')
-            try:
-                email_info = new_tester.emailaddress_set.all()[0]
-                email_info.verified = True
-                email_info.save()
-            except Exception:
-                pass
-        tester = Trader.objects.get(email=email)
-        if tester.emailaddress_set.all().count() == 0:
-            from allauth.account.models import EmailAddress
-            EmailAddress.objects.create(user=tester, email=email, verified=True, primary=True)
-    from django.http import HttpResponse
-    return HttpResponse()
 
 login = LoginView.as_view()
 sign_up = SignUpView.as_view()

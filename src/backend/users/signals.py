@@ -73,9 +73,10 @@ def user_account_saved(sender, instance, created, using, **kwargs):
 
 @receiver(post_delete, sender=User)
 def user_account_deleted(sender, instance, using, **kwargs):
-    try:
-        email_encoding = hashlib.md5(instance.email.encode()).hexdigest()
-        mailchimp_api = mailchimp.MailChimpApi()
-        mailchimp_api.delete_list_member(email_encoding=email_encoding)
-    except Exception:
-        MailChimpError.objects.create(email=instance.email, action='delete_list_member')
+    if not settings.IS_ARCHIVE:
+        try:
+            email_encoding = hashlib.md5(instance.email.encode()).hexdigest()
+            mailchimp_api = mailchimp.MailChimpApi()
+            mailchimp_api.delete_list_member(email_encoding=email_encoding)
+        except Exception:
+            MailChimpError.objects.create(email=instance.email, action='delete_list_member')

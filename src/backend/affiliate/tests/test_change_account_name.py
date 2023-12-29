@@ -1,5 +1,4 @@
 from django.test import TestCase
-from pyparsing import CharsNotIn
 from rest_framework.authtoken.models import Token
 from .test_data.login_test_data import LoginTestData
 from .test_data.init_data_test_data import InitDataTestData

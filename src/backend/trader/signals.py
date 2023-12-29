@@ -22,7 +22,7 @@ def clear_redis_db():
 
 @receiver(post_save, sender=Account)
 def record_free_trial_start(sender, instance: Account, created: bool, **kwargs):
-    if created:
+    if created and not settings.IS_ARCHIVE:
         if instance.user.time_of_free_trial_start is None:
             instance.user.subscriptioninfo.time_of_free_trial_start = instance.time_added
             instance.user.subscriptioninfo.save()
@@ -31,10 +31,11 @@ def record_free_trial_start(sender, instance: Account, created: bool, **kwargs):
 @receiver(post_save, sender=Account)
 def trigger_mailchimp_customer_journey(sender, instance: Account, created: bool, **kwargs):
     try:
-        if not instance.user.traderinfo.post_account_connect_mailchimp_journey_triggered:
-            mailchimp_api = mailchimp.MailChimpApi()
-            mailchimp_api.trigger_customer_journey(email=instance.user.email)
-            instance.user.traderinfo.post_account_connect_mailchimp_journey_triggered = True
-            instance.user.traderinfo.save()
+        if not settings.IS_ARCHIVE:
+            if not instance.user.traderinfo.post_account_connect_mailchimp_journey_triggered:
+                mailchimp_api = mailchimp.MailChimpApi()
+                mailchimp_api.trigger_customer_journey(email=instance.user.email)
+                instance.user.traderinfo.post_account_connect_mailchimp_journey_triggered = True
+                instance.user.traderinfo.save()
     except Exception:
         MailChimpError.objects.create(email=instance.user.email, action='trigjourney')
