@@ -43,14 +43,18 @@ const LogoAndLinks = ({links, showLogo}: {links: Array<Array<string>>, showLogo?
                             to={linkInfo[1]}
                             style={{
                                 marginLeft: getDimen('padding-xs'),
-                                textDecoration: 'none'
+                                textDecoration: 'none',
                             }}
                             className='components-navbar-link'>
-                                <BP style={{
-                                    color: getColor('dark-gray'),
-                                    textAlign: 'center',
-                                    padding: 0
-                                }}>{linkInfo[0]}</BP>
+                                <RowBox>
+                                    {linkInfo[0].split(" ").map((word) => (
+                                        <BP style={{
+                                            color: getColor('dark-gray'),
+                                            textAlign: 'center',
+                                            padding: 0
+                                        }}>{word}</BP>
+                                    ))}
+                                </RowBox>
                             </Link>
                     ))
                 }

@@ -20,7 +20,7 @@
     "@types/lodash": "^4.14.178",
     "babel-jest": "^27.4.6",
     "jest": "^27.4.6",
-    "ttypescript": "^1.5.13",
+    "ttypescript": "^1.5.15",
     "typescript": "^4.5.5",
     "typescript-transform-paths": "^3.3.1"
   },

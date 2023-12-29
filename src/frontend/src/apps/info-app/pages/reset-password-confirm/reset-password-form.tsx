@@ -9,6 +9,7 @@ import LoadingIcon from '@components/loading-icon'
 import {buildErrors, canSubmit} from '@components/forms'
 import {Form} from '@apps/info-app/components'
 import { FormikProps } from 'formik'
+import { ConfigConst } from '@conf/const'
 
 
 const ResetPasswordConfirmForm = ({submitValues}: {submitValues: Function}) => {
@@ -84,8 +85,9 @@ const ResetPasswordConfirmForm = ({submitValues}: {submitValues: Function}) => {
                     <TextInput name='newPassword2' placeholder='Confirm New Password' type='password'
                         data-testid='new-password2' />
                     <Button
-                        onClick={canSubmit(errors, values) ? () => submitForm() : () => {}}
-                        disabled={!canSubmit(errors, values)}
+                        onClick={!ConfigConst.IS_ARCHIVE && 
+                            canSubmit(errors, values) ? () => submitForm() : () => {}}
+                        disabled={ConfigConst.IS_ARCHIVE || !canSubmit(errors, values)}
                         data-testid='submit-button'>
                         {isSubmitting ?
                             <LoadingIcon />

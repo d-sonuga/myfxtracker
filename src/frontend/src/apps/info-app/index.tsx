@@ -2,14 +2,14 @@ import {Route, useNavigate} from 'react-router-dom'
 import Routes from '@components/router'
 import {RouteConst} from '@conf/const'
 import {HomePage, SignUpPage, LoginPage, ResetPasswordPage, ResetPasswordConfirmPage,
-    FAQPage, PricingPage, ChangePasswordPage} from './pages'
+    FAQPage, PricingPage, ChangePasswordPage, ArchiveInfoPage} from './pages'
 import { InfoAppNavbar } from './components'
 import { MONTHLY_PLAN_PRICE, YEARLY_PLAN_PER_MONTH_PRICE, YEARLY_PLAN_PRICE } from '@apps/trader-app/const'
 
 const InfoApp = () => {
     const navigate = useNavigate();
     const {INFO_HOME_ROUTE, INFO_SIGN_UP_ROUTE, INFO_CHANGE_PASSWORD_ROUTE, INFO_RESET_PASSWORD_ROUTE,
-        INFO_LOGIN_ROUTE, INFO_FAQ_ROUTE, INFO_PRICING_ROUTE} = RouteConst;
+        INFO_LOGIN_ROUTE, INFO_FAQ_ROUTE, INFO_PRICING_ROUTE, ARCHIVE_INFO_ROUTE} = RouteConst;
     return(
         <div style={{width: '100%'}}>
             <Routes>
@@ -43,6 +43,7 @@ const InfoApp = () => {
                             ]}
                             defaultPlanIndex={1}
                     />} />
+                <Route path={ARCHIVE_INFO_ROUTE} element={<ArchiveInfoPage />} />
             </Routes>
         </div>
     );

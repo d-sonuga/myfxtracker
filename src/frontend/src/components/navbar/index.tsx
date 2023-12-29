@@ -2,6 +2,9 @@ import {useScreenIsSmall} from '@conf/utils'
 import SmallScreenNavbar from './small-screen-navbar'
 import BigScreenNavbar from './big-screen-navbar'
 import {MainNavbarPropTypes} from './types'
+import { ConfigConst } from '@conf/const'
+import { P, BP, H6 } from '@components/text'
+import ArchiveBanner from '@components/archive'
 import './style.css'
 
 
@@ -29,25 +32,33 @@ const Navbar = ({rightElement, sidebar, dontShowOnBigScreen, onSidebarMenuButton
     }
 
     return(
-        <div className='components-navbar-container'>
-            {(() => {
-                if(isSmallScreen){
-                    return(
-                        <SmallScreenNavbar
-                            sidebar={sidebar}
-                            sidebarOnlyLinks={sidebarOnlyLinks}
-                            onSidebarMenuButtonClick={onSidebarMenuButtonClick}
-                            {...props} />
-                    );  
-                } else {
-                    return(
-                        <BigScreenNavbar
-                            rightElement={rightElement}
-                            {...props} />
-                    );
-                }
-            })()}
-        </div>
+        <>
+            {ConfigConst.IS_ARCHIVE ?
+                <ArchiveBanner />
+                : null
+            }
+            <div className='components-navbar-container' style={{
+                top: ConfigConst.IS_ARCHIVE ? 90 : 0
+            }}>
+                {(() => {
+                    if(isSmallScreen){
+                        return(
+                            <SmallScreenNavbar
+                                sidebar={sidebar}
+                                sidebarOnlyLinks={sidebarOnlyLinks}
+                                onSidebarMenuButtonClick={onSidebarMenuButtonClick}
+                                {...props} />
+                        );  
+                    } else {
+                        return(
+                            <BigScreenNavbar
+                                rightElement={rightElement}
+                                {...props} />
+                        );
+                    }
+                })()}
+            </div>
+        </>
     );
 }
 

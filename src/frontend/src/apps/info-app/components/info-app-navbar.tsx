@@ -8,7 +8,7 @@ import {ConfigConst, RouteConst} from '@conf/const'
 
 const InfoAppNavbar = () => {
     const navigate = useNavigate();
-    const {INFO_LOGIN_ROUTE, INFO_PRICING_ROUTE, INFO_SIGN_UP_ROUTE, INFO_FAQ_ROUTE} = RouteConst;
+    const {INFO_LOGIN_ROUTE, INFO_PRICING_ROUTE, INFO_SIGN_UP_ROUTE, INFO_FAQ_ROUTE, ARCHIVE_INFO_ROUTE} = RouteConst;
     const formatRoute = (route: string): string => {
         return `/${route}`;
     }
@@ -16,7 +16,8 @@ const InfoAppNavbar = () => {
         <Navbar
             links={[
                 ['FAQ', formatRoute(INFO_FAQ_ROUTE)],
-                ['Features/Pricing', formatRoute(INFO_PRICING_ROUTE)]
+                ['Features/Pricing', formatRoute(INFO_PRICING_ROUTE)],
+                ['Archive Info', formatRoute(ARCHIVE_INFO_ROUTE)]
             ]}
             sidebarOnlyLinks={[
                 ['Sign Up', formatRoute(INFO_SIGN_UP_ROUTE)],

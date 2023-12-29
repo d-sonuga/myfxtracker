@@ -6,7 +6,6 @@
     height: var(--dimen-navbar-height);
     display: flex;
     z-index: 500;
-    top: 0;
     width: 100%;
     position: absolute;
     overflow: hidden;
