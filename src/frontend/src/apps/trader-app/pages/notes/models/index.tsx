@@ -1,5 +1,5 @@
 import {Http, HttpErrorType, HttpResponseType} from '@apps/trader-app/services'
-import {HttpConst} from '@conf/const'
+import {HttpConst, ConfigConst} from '@conf/const'
 
 
 class Note {
@@ -64,6 +64,9 @@ class Note {
     }
 
     save(){
+        if(ConfigConst.IS_ARCHIVE) {
+            return;
+        }
         if(this.isSaving){
             // save the last state of the note
             this.saveQueue.push({
@@ -79,7 +82,7 @@ class Note {
     }
 
     delete(): Promise<void> {
-        if(this.id === -1){
+        if(this.id === -1 || ConfigConst.IS_ARCHIVE){
             return Promise.resolve();
         } else {
             const {BASE_URL, DELETE_NOTE_URL} = HttpConst

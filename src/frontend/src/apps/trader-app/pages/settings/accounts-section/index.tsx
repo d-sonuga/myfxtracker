@@ -64,7 +64,8 @@ const AccountsSection = ({accounts, removeAccountFromData, userIsOnFreeTrial, us
                     <P style={{marginRight: getDimen('padding-sm')}}>{account.name}</P>
                     <Button 
                         size='small' 
-                        variant='outlined' 
+                        variant='outlined'
+                        disabled={ConfigConst.IS_ARCHIVE}
                         onClick={() => {
                             setAccountToDelete(account);
                         }}>Remove Account</Button>

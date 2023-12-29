@@ -28,7 +28,8 @@ const info = [
     "This is a version with limited functionality",
     "You can still create a user account but you will not be able to add any MetaTrader accounts for analytics, so it won't be useful",
     "You can delete your user account but you can't change your password after account creation",
-    "But you can still view analytics in the dashboard by logging in with the pre-created dummy account: email \"dummy-account@gmail.com\" with password \"password\""
+    "And if you create or edit any note, it won't be saved",
+    "But you can still view analytics in the dashboard by logging in with the pre-created dummy account: email \"i-hope-this-account-doenst-exist@gmail.com\" with password \"password\""
 ]
 
 export default ArchiveInfoPage

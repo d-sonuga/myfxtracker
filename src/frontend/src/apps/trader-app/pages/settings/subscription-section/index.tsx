@@ -11,6 +11,7 @@ import {ToastContext} from '@components/toast'
 import {useNavigate} from 'react-router-dom'
 import {RouteConst} from '@conf/const'
 import {SubscriptionCancelContext} from '@apps/trader-app'
+import { ConfigConst } from '@conf/const'
 
 
 const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires, userId}: {subscriptionPlan: UserData['subscription_plan'], daysLeftBeforeFreeTrialExpires: number | string, userId: number}) => {
@@ -64,7 +65,9 @@ const SubscriptionSection = ({subscriptionPlan, daysLeftBeforeFreeTrialExpires, 
                     <FreeTrialInfo navigate={navigate}
                         userId={userId}
                         daysLeftBeforeFreeTrialExpires={daysLeftBeforeFreeTrialExpires} />
-                    : <Button color='error' onClick={() => setDialogIsOpen(true)}>Cancel Subscription</Button>
+                    : <Button color='error'
+                        disabled={ConfigConst.IS_ARCHIVE}
+                        onClick={() => setDialogIsOpen(true)}>Cancel Subscription</Button>
                 }
             </RowBox>
         </ColumnBox>
@@ -86,7 +89,7 @@ const FreeTrialInfo = ({daysLeftBeforeFreeTrialExpires, navigate, userId}: {days
         return(
             <ColumnBox>
                 <P>Your free trial has expired</P>
-                <Button onClick={() => {
+                <Button disabled={ConfigConst.IS_ARCHIVE} onClick={() => {
                     ReactGA.event('call_to_action_subscribe', {
                         'user_id': userId
                     })

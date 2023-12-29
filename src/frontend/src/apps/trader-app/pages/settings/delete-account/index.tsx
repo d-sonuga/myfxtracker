@@ -8,6 +8,7 @@ import Dialog from '@components/dialog'
 import {ToastContext} from '@components/toast'
 import deleteAccount from './delete-account'
 import LoadingIcon from '@components/loading-icon'
+import { ConfigConst } from '@conf/const'
 
 
 const DeleteAccountSection = ({userId}: {userId: number}) => {  
@@ -23,6 +24,9 @@ const DeleteAccountSection = ({userId}: {userId: number}) => {
                 okButtonContent={accountIsDeleting ? <LoadingIcon /> : 'Delete Account'}
                 okButtonProps={{'data-testid': 'confirm-delete-account-button'}}
                 onOkClick={() => {
+                    if(ConfigConst.IS_ARCHIVE) {
+                        return;
+                    }
                     ReactGA.event('delete_account_attempt', {
                         'user_id': userId
                     });
@@ -54,6 +58,7 @@ const DeleteAccountSection = ({userId}: {userId: number}) => {
                 <Button
                     onClick={() => setDialogIsOpen(true)}
                     color='error'
+                    disabled={ConfigConst.IS_ARCHIVE}
                     data-testid='delete-account-button'>Delete Account</Button>
             </ColumnBox>
         </ColumnBox>

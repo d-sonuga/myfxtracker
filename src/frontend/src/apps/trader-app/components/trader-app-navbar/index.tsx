@@ -8,6 +8,7 @@ import Http, {HttpErrorType} from '@services/http'
 import NavbarList from './navbar-list'
 import {HttpConst, RouteConst} from '@conf/const'
 import {ToastContext} from '@components/toast'
+import ArchiveBanner from '@components/archive'
 
 
 const TraderAppNavbar = () => {
@@ -34,6 +35,10 @@ const TraderAppNavbar = () => {
     
     return(
         <>
+            {!isScreenSmall ?
+                <ArchiveBanner />
+                : null
+            }
             <Navbar
                 dontShowOnBigScreen={true}
                 links={[]}

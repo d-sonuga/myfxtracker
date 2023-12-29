@@ -11,6 +11,7 @@ import {RouteConst} from '@conf/const'
 import {getColor, getDimen} from '@conf/utils'
 import {RefreshDataContext, DataIsRefreshingContext, GlobalDataContext, PermissionsContext} from '@apps/trader-app'
 import LoadingIcon from '@components/loading-icon'
+import { ConfigConst } from '@conf/const'
 
 /*
 const DataStatusBar = () => {
@@ -116,6 +117,7 @@ const DataStatusBar = () => {
                                     <Button 
                                         size='small'
                                         style={{marginRight: getDimen('padding-xs')}}
+                                        disabled={ConfigConst.IS_ARCHIVE}
                                         onClick={() => {
                                             ReactGA.event('call_to_action_subscribe', {
                                                 'user_id': globalData.getUserId()
@@ -144,7 +146,7 @@ const DataStatusBar = () => {
                         <Button 
                             variant='outlined'
                             size='small'
-                            disabled={!permissions.canRefreshAccount}
+                            disabled={ConfigConst.IS_ARCHIVE || !permissions.canRefreshAccount}
                             onClick={() => {
                                 if(!dataIsRefreshing){
                                     refreshData();
