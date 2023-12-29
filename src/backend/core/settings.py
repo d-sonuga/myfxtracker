@@ -19,16 +19,15 @@ DEBUG = os.getenv('DEBUG') == 'true'
 # Is this the archived version of MyFxTracker?
 IS_ARCHIVE = os.getenv('IS_ARCHIVE') == 'true'
 
-ALLOWED_HOSTS = ['*'] if DEBUG else [
-    'myfxtracker.com',
-    'myfxtracker.herokuapp.com',
-    'new.myfxtracker.com',
-    'test-myfxtracker.herokuapp.com'
-]
+# App name for deploying with Fly.io
+FLY_APP_NAME = os.getenv('FLY_APP_NAME')
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://myfxtracker.com'
-]
+ALLOWED_HOSTS = ['*'] if DEBUG else []
+
+if FLY_APP_NAME:
+    ALLOWED_HOSTS += [f'{FLY_APP_NAME}.fly.dev']
+
+CSRF_TRUSTED_ORIGINS = []
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -261,15 +260,15 @@ if DEBUG:
     else:
         LOGIN_URL = 'http://localhost:3000/log-in'
 else:
-    LOGIN_URL = 'https://myfxtracker.com/log-in'
+    LOGIN_URL = 'https://myfxtracker.fly.dev/log-in'
 
 # Trader is redirected here if he/she clicks email confirmation link 
 # after authentication and logging in
-TRADER_APP_URL = 'https://myfxtracker.com/app'
+TRADER_APP_URL = 'https://myfxtracker.fly.dev/app'
 
 # Trader is redirected here if he/she clicks email confirmation link 
 # after deleting account, meaning he/she has to sign up again
-SIGN_UP_URL = 'https://myfxtracker.com/sign-up'
+SIGN_UP_URL = 'https://myfxtracker.fly.dev/sign-up'
 
 # Paypal endpoint
 PAYPAL_BASE_URL = os.getenv('PAYPAL_BASE_URL') #'https://api-m.sandbox.paypal.com'
@@ -291,7 +290,7 @@ MEDIA_URL = '/media/'
 WEEKLY_REPORTS_KEY = os.getenv('WEEKLY_REPORTS_KEY')
 
 # Queues to use for processing of account adding and interactions with the metaapi servers
-if DEBUG:
+if DEBUG or IS_ARCHIVE:
     RQ_QUEUES = {
         'default': {
             'URL': 'redis://:@localhost:6379',
@@ -364,4 +363,3 @@ RAVE_PUBLIC_KEY = os.getenv('RAVE_PUBLIC_KEY')
 RAVE_SECRET_KEY = os.getenv('RAVE_SECRET_KEY')
 
 FREE_TRIAL_PERIOD = 7
-META_API_CLASS_MODULE='trader.metaapi.test_no_error'
